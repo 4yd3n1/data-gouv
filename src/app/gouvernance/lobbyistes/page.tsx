@@ -1,0 +1,77 @@
+import Link from "next/link";
+import { prisma } from "@/lib/db";
+import { fmt } from "@/lib/format";
+import { PageHeader } from "@/components/page-header";
+import { SearchInput } from "@/components/search-input";
+import { Pagination } from "@/components/pagination";
+import { Suspense } from "react";
+
+const PER_PAGE = 30;
+
+async function LobbyistesList({ searchParams }: { searchParams: Record<string, string> }) {
+  const q = searchParams.q ?? "";
+  const page = Math.max(1, parseInt(searchParams.page ?? "1", 10));
+
+  const where = q ? {
+    nom: { contains: q, mode: "insensitive" as const },
+  } : {};
+
+  const [lobbyistes, total] = await Promise.all([
+    prisma.lobbyiste.findMany({
+      where,
+      orderBy: { nom: "asc" },
+      skip: (page - 1) * PER_PAGE,
+      take: PER_PAGE,
+      include: { _count: { select: { actions: true } } },
+    }),
+    prisma.lobbyiste.count({ where }),
+  ]);
+
+  return (
+    <>
+      <p className="mb-4 text-xs text-bureau-500">{fmt(total)} résultats</p>
+      <div className="grid gap-2">
+        {lobbyistes.map((l) => (
+          <Link
+            key={l.id}
+            href={`/gouvernance/lobbyistes/${l.id}`}
+            className="card-accent group flex items-center justify-between rounded-lg border border-bureau-700/20 bg-bureau-800/20 px-4 py-3 transition-all hover:border-bureau-600/40 hover:bg-bureau-800/40"
+          >
+            <div className="min-w-0">
+              <p className="truncate text-sm font-medium text-bureau-100 group-hover:text-teal transition-colors">{l.nom}</p>
+              <p className="truncate text-xs text-bureau-500">
+                {l.categorieActivite ?? "—"} {l.effectif ? `· ${l.effectif}` : ""}
+              </p>
+            </div>
+            <div className="shrink-0 text-right text-xs text-bureau-500">
+              <p className="text-bureau-300">{l._count.actions}</p>
+              <p>actions</p>
+            </div>
+          </Link>
+        ))}
+      </div>
+      <Pagination currentPage={page} totalPages={Math.ceil(total / PER_PAGE)} baseUrl="/gouvernance/lobbyistes" searchParams={searchParams} />
+    </>
+  );
+}
+
+export default async function LobbyistesPage({ searchParams }: { searchParams: Promise<Record<string, string>> }) {
+  const params = await searchParams;
+  return (
+    <>
+      <PageHeader
+        title="Représentants d'intérêts"
+        subtitle="Registre HATVP — organisations de lobbying"
+        breadcrumbs={[{ label: "Accueil", href: "/" }, { label: "Gouvernance", href: "/gouvernance" }, { label: "Lobbyistes" }]}
+      />
+      <div className="mx-auto max-w-7xl px-6 py-8">
+        <Suspense><SearchInput placeholder="Rechercher une organisation..." /></Suspense>
+        <div className="mt-6">
+          <Suspense fallback={<div className="animate-pulse text-bureau-600">Chargement...</div>}>
+            <LobbyistesList searchParams={params} />
+          </Suspense>
+        </div>
+      </div>
+    </>
+  );
+}

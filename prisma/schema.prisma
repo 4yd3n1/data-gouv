@@ -1,0 +1,399 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Territory Layer (COG - Code Officiel Géographique) ───
+
+model Region {
+  code     String @id // "84", "75", etc.
+  cheflieu String?
+  tncc     Int? // Type de nom en clair (0-8)
+  ncc      String // Uppercase: "ILE-DE-FRANCE"
+  libelle  String // With article: "Île-de-France"
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  departements Departement[]
+
+  @@index([libelle])
+}
+
+model Departement {
+  code       String @id // "75", "2A", "974", etc.
+  regionCode String
+  cheflieu   String?
+  tncc       Int?
+  ncc        String // Uppercase: "PARIS"
+  libelle    String // "Paris"
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  region    Region    @relation(fields: [regionCode], references: [code])
+  communes  Commune[]
+  deputes   Depute[]
+  senateurs Senateur[]
+  musees    Musee[]
+  monuments Monument[]
+
+  @@index([regionCode])
+  @@index([libelle])
+}
+
+model Commune {
+  code            String @id // "75056", "13055", 5-char INSEE
+  departementCode String
+  regionCode      String // Denormalized for query convenience
+  typecom         String // COM, COMA, COMD, ARM
+  tncc            Int?
+  ncc             String // Uppercase: "PARIS"
+  libelle         String // "Paris"
+  can             String? // Canton code
+  arr             String? // Arrondissement code
+  comparent       String? // Parent commune code
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  departement Departement @relation(fields: [departementCode], references: [code])
+  musees      Musee[]
+  monuments   Monument[]
+
+  @@index([departementCode])
+  @@index([regionCode])
+  @@index([libelle])
+  @@index([typecom])
+}
+
+// ─── Governance Layer ───
+
+// Deputies - from Datan dataset (577 active, 2101 historic)
+model Depute {
+  id                  String    @id // PA1008, PA1567, etc.
+  legislature         Int
+  civilite            String // M., Mme
+  nom                 String
+  prenom              String
+  villeNaissance      String?
+  dateNaissance       DateTime?
+  age                 Int?
+  groupe              String // Political group full name
+  groupeAbrev         String // SOC, DR, RN, etc.
+  departementNom      String
+  departementCode     String // Raw code from source (may not exist in Departement table for overseas)
+  departementRefCode  String? // Nullable FK to Departement (set only when code exists)
+  circonscription     Int
+  datePriseFonction   DateTime?
+  profession          String?
+  email               String?
+  twitter             String?
+  facebook            String?
+  website             String?
+  nombreMandats       Int?
+  experienceDepute    String? // "9 ans"
+  scoreParticipation  Float?
+  scoreSpecialite     Float?
+  scoreLoyaute        Float?
+  scoreMajorite       Float?
+  actif               Boolean   @default(true)
+  dateMaj             DateTime?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  departement Departement? @relation(fields: [departementRefCode], references: [code])
+
+  @@index([nom, prenom])
+  @@index([groupeAbrev])
+  @@index([departementCode])
+  @@index([departementRefCode])
+  @@index([actif])
+}
+
+// Senators - from official Sénat open data
+model Senateur {
+  id                String    @id // Sénat matricule
+  civilite          String?
+  nom               String
+  prenom            String
+  dateNaissance     DateTime?
+  groupe            String? // Political group
+  departement       String? // Department name from source
+  departementCode   String? // Resolved code for FK
+  profession        String?
+  datePriseFonction DateTime?
+  actif             Boolean   @default(true)
+  dateMaj           DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  departementRef Departement? @relation(fields: [departementCode], references: [code])
+  mandats        MandatSenateur[]
+  commissions    CommissionSenateur[]
+
+  @@index([nom, prenom])
+  @@index([groupe])
+  @@index([departementCode])
+  @@index([actif])
+}
+
+model MandatSenateur {
+  id         String    @id @default(cuid())
+  senateurId String
+  type       String // senatorial, deputy, european, metropolitan, municipal, etc.
+  libelle    String
+  dateDebut  DateTime?
+  dateFin    DateTime?
+  senateur   Senateur  @relation(fields: [senateurId], references: [id], onDelete: Cascade)
+
+  @@index([senateurId])
+}
+
+model CommissionSenateur {
+  id         String    @id @default(cuid())
+  senateurId String
+  nom        String
+  fonction   String? // President, Member, etc.
+  dateDebut  DateTime?
+  dateFin    DateTime?
+  senateur   Senateur  @relation(fields: [senateurId], references: [id], onDelete: Cascade)
+
+  @@index([senateurId])
+}
+
+// Lobbyists - from HATVP official registry
+model Lobbyiste {
+  id                String    @id // HATVP registry ID
+  nom               String // Organization name
+  type              String? // Type of entity
+  categorieActivite String?
+  adresse           String?
+  siren             String?
+  effectif          String? // Staff count range
+  chiffreAffaires   String? // Revenue range
+  dateInscription   DateTime?
+  dateMaj           DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  actions ActionLobbyiste[]
+
+  @@index([nom])
+  @@index([categorieActivite])
+}
+
+model ActionLobbyiste {
+  id          String    @id @default(cuid())
+  lobbyisteId String
+  type        String? // Type of lobbying action
+  description String?
+  domaine     String? // Policy domain
+  periode     String? // Reporting period
+  lobbyiste   Lobbyiste @relation(fields: [lobbyisteId], references: [id], onDelete: Cascade)
+
+  @@index([lobbyisteId])
+  @@index([domaine])
+}
+
+// ─── Economy Layer (INSEE BDM time-series) ───
+
+model Indicateur {
+  id              String  @id @default(cuid())
+  code            String  @unique // "PIB_ANNUEL", "CHOMAGE_TRIM_NATIONAL"
+  idBank          String? // INSEE BDM idBank
+  dataflow        String? // INSEE BDM dataflow
+  nom             String // "PIB annuel"
+  description     String?
+  domaine         String // "pib", "emploi", "entreprises"
+  unite           String // "millions_eur", "pourcent", "nombre"
+  frequence       String // "annuel", "trimestriel", "mensuel"
+  source          String // "data.gouv.fr", "INSEE BDM"
+  sourceUrl       String?
+  correction      String? // "CVS", "brut"
+  dernierePeriode String? // Latest period: "2025-Q4"
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  observations Observation[]
+
+  @@index([domaine])
+}
+
+model Observation {
+  id           String   @id @default(cuid())
+  indicateurId String
+  periode      String // "2022", "2024-Q3", "2025-01"
+  periodeDebut DateTime // Normalized start date for sorting
+  valeur       Float
+  statut       String? // OBS_STATUS: "A" (normal), "P" (provisional)
+
+  createdAt DateTime @default(now())
+
+  indicateur Indicateur @relation(fields: [indicateurId], references: [id], onDelete: Cascade)
+
+  @@unique([indicateurId, periode])
+  @@index([indicateurId])
+  @@index([periodeDebut])
+  @@index([indicateurId, periodeDebut])
+}
+
+// ─── Culture Layer ───
+
+model Musee {
+  id              String  @id // IDMuseofile
+  idPatrimostat   String?
+  nom             String
+  ville           String?
+  communeCode     String? // FK to Commune
+  departementCode String? // FK to Departement
+  region          String? // From source, for display
+  dateAppellation String?
+  ferme           String? // "oui"/"non"
+  anneeFermeture  Int?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  commune        Commune?            @relation(fields: [communeCode], references: [code])
+  departement    Departement?        @relation(fields: [departementCode], references: [code])
+  frequentations FrequentationMusee[]
+
+  @@index([nom])
+  @@index([communeCode])
+  @@index([departementCode])
+}
+
+model FrequentationMusee {
+  id                      String @id @default(cuid())
+  museeId                 String
+  annee                   Int
+  payant                  Int?
+  gratuit                 Int?
+  total                   Int?
+  individuel              Int?
+  scolaires               Int?
+  groupesHorsScolaires    Int?
+  moins18AnsHorsScolaires Int?
+  de18a25Ans              Int?
+
+  createdAt DateTime @default(now())
+
+  musee Musee @relation(fields: [museeId], references: [id], onDelete: Cascade)
+
+  @@unique([museeId, annee])
+  @@index([museeId])
+  @@index([annee])
+}
+
+model Monument {
+  id               String  @id // Reference code: "PA00078066"
+  denomination     String?
+  domaine          String? // "architecture religieuse", etc.
+  communeNom       String?
+  communeCode      String? // FK to Commune
+  departementCode  String? // FK to Departement
+  departementNom   String?
+  region           String?
+  adresse          String?
+  sieclePrincipal  String? // "16e siècle"
+  siecleSecondaire String?
+  protectionType   String? // "classé MH", "inscrit MH"
+  protectionDate   String? // Complex string
+  statutJuridique  String?
+  description      String?
+  historique       String?
+  coordonnees      String? // GPS WGS84 as stored
+  latitude         Float?
+  longitude        Float?
+  dateMaj          String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  commune     Commune?     @relation(fields: [communeCode], references: [code])
+  departement Departement? @relation(fields: [departementCode], references: [code])
+
+  @@index([denomination])
+  @@index([communeCode])
+  @@index([departementCode])
+  @@index([domaine])
+  @@index([protectionType])
+  @@index([region])
+}
+
+// ─── Declarations (HATVP interest declarations) ───
+
+model DeclarationInteret {
+  id                String    @id // UUID from HATVP XML
+  civilite          String?
+  nom               String
+  prenom            String
+  dateNaissance     DateTime?
+  typeDeclaration   String // "DI" (intérêts), "DIA" (intérêts et activités)
+  typeMandat        String // "Député", "Sénateur", "Ministre", "Maire ou adjoint municipal", etc.
+  organe            String? // "Seine-Saint-Denis(93)", "Occitanie (76)", etc.
+  qualiteDeclarant  String? // "Président EPCI", "maire", etc.
+  dateDepot         DateTime?
+  dateDebutMandat   DateTime?
+  totalParticipations Float? // Sum of all participationFinanciere evaluations
+  totalRevenus      Float? // Sum of latest-year remunerations across all activities
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  participations ParticipationFinanciere[]
+  revenus        RevenuDeclaration[]
+
+  @@index([nom, prenom])
+  @@index([typeMandat])
+  @@index([totalParticipations])
+}
+
+model ParticipationFinanciere {
+  id            String  @id @default(cuid())
+  declarationId String
+  nomSociete    String
+  evaluation    Float?
+  remuneration  String? // Free text: "151 en 2021"
+  capitalDetenu String?
+  nombreParts   String?
+
+  declaration DeclarationInteret @relation(fields: [declarationId], references: [id], onDelete: Cascade)
+
+  @@index([declarationId])
+}
+
+model RevenuDeclaration {
+  id            String  @id @default(cuid())
+  declarationId String
+  type          String // "professionnel", "mandat_electif", "dirigeant", "consultant"
+  description   String?
+  employeur     String?
+  annee         Int?
+  montant       Float?
+
+  declaration DeclarationInteret @relation(fields: [declarationId], references: [id], onDelete: Cascade)
+
+  @@index([declarationId])
+  @@index([type])
+}
+
+// ─── System ───
+
+model IngestionLog {
+  id           String   @id @default(cuid())
+  source       String // "deputes", "senateurs", "lobbyistes", "territoires", "pib", "chomage", "entreprises", "musees", "monuments"
+  status       String // "success", "error", "partial"
+  rowsIngested Int
+  rowsTotal    Int? // Total rows available at source
+  duration     Int // ms
+  error        String?
+  metadata     String? // JSON string for source-specific info
+  createdAt    DateTime @default(now())
+}
