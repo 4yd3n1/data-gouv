@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db";
 import { PageHeader } from "@/components/page-header";
 import { SearchInput } from "@/components/search-input";
 import { Pagination } from "@/components/pagination";
+import { Avatar } from "@/components/avatar";
 import { Suspense } from "react";
 
 const PER_PAGE = 30;
@@ -66,9 +67,7 @@ async function DeputesList({ searchParams }: { searchParams: Record<string, stri
             href={`/gouvernance/deputes/${d.id}`}
             className="card-accent group flex items-center gap-4 rounded-lg border border-bureau-700/20 bg-bureau-800/20 px-4 py-3 transition-all hover:border-bureau-600/40 hover:bg-bureau-800/40"
           >
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-bureau-700/40 text-xs font-medium text-bureau-300">
-              {d.prenom[0]}{d.nom[0]}
-            </div>
+            <Avatar src={d.photoUrl} initials={`${d.prenom[0]}${d.nom[0]}`} size="sm" />
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">
                 <p className="truncate text-sm font-medium text-bureau-100 group-hover:text-teal transition-colors">

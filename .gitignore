@@ -30,3 +30,14 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# large data files (HATVP XML, raw datasets)
+documentation/HATVP-data/
+documentation/hatvp-old-context/
+
+# reference PDFs and screenshots
+*.pdf
+image.png
+
+# claude code internal state
+.claude/

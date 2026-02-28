@@ -84,3 +84,7 @@ body::after {
 .search-glow:focus {
   box-shadow: 0 0 0 1px rgba(45, 212, 191, 0.25), 0 0 30px -10px rgba(45, 212, 191, 0.15);
 }
+
+/* Hide scrollbar for tab navigation */
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }

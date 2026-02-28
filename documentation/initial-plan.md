@@ -1,74 +1,72 @@
-# Transparency Data Tool — Session Recap
+# Transparency Data Tool — Project Plan & Status
 
-> Date: Feb 26, 2026
+> Started: Feb 26, 2026
+> Last updated: Feb 28, 2026
 > Project: `/Users/aydenmomika/data-gouv/`
 
 ---
 
-## What We Did
+## What We Built
 
-### 1. Evaluated the datagouv MCP
+### Phase 1: Setup & Architecture (Feb 26)
 
-Started by assessing whether to use data.gouv.fr's official MCP server or build a custom skill.
+1. **Evaluated the datagouv MCP** — kept for data discovery, local DB for serving
+2. **Explored datasets via MCP** — produced [data-cat.md](../data-cat.md) catalog
+3. **Architecture decisions** — Next.js full-stack, App Router, Server Actions, PostgreSQL + Prisma
+4. **Initialized project** — Next.js 16, React 19, Tailwind CSS 4, Prisma 7
+5. **Set up database** — PostgreSQL `datagouv`, initial migration, Prisma client singleton
 
-**Decision**: Keep the MCP for data discovery + build a local DB for serving. The MCP provides 10 read-only tools for searching/querying data.gouv.fr — no skill can replace that. The MCP is for exploration, not runtime.
+### Phase 2: Data Ingestion (Feb 26–27)
 
-**MCP config**: `.mcp.json` → `https://mcp.data.gouv.fr/mcp`
+Built 12 ingestion scripts covering 5 data layers:
 
-### 2. Explored Available Data via MCP
+| Wave | Script | Source | Rows |
+|------|--------|--------|------|
+| 1 | `ingest-territoires.ts` | INSEE COG CSV | ~37,031 (18 regions + 101 depts + 36,912 communes) |
+| 1 | `ingest-deputes.ts` | data.gouv.fr Tabular API | 2,101 |
+| 1 | `ingest-senateurs.ts` | Sénat CSVs (ISO-8859-1) | ~5,907 (1,943 + 3,348 mandats + 616 commissions) |
+| 1 | `ingest-lobbyistes.ts` | HATVP registry JSON | ~98,529 (3,883 + 94,646 actions) |
+| 2 | `ingest-economie.ts` | GDP CSV + INSEE BDM SDMX XML | ~358 (4 indicateurs + 354 observations) |
+| 3 | `ingest-musees.ts` | data.gouv.fr Tabular API | ~13,374 (1,226 + 12,148 fréquentations) |
+| 3 | `ingest-monuments.ts` | data.gouv.fr Tabular API | 46,697 |
+| 4 | `ingest-declarations.ts` | HATVP declarations ZIP | DeclarationInteret + participations + revenus |
+| 5a | `ingest-organes.ts` | AN JSON files (local) | ~7,137 |
+| 5b | `ingest-scrutins.ts` | AN JSON files (local) | ~994K (4,691 scrutins + ~51,600 groupe votes + ~938K vote records) |
+| 5b | `ingest-deports.ts` | AN JSON files (local) | 33 |
+| 6 | `ingest-photos.ts` | AN/Sénat official URLs | ~4,044 updates |
 
-Used MCP tools to discover and preview datasets. Key findings:
+**Supporting libraries**: `api-client.ts` (Tabular API paginator), `csv-parser.ts` (papaparse wrapper), `sdmx-parser.ts` (INSEE BDM XML), `ingestion-log.ts` (timing), `departement-lookup.ts` (fuzzy matching).
 
-| Source | Dataset ID | Rows | Queryable |
-|--------|-----------|------|-----------|
-| Active Deputies (Datan) | `5fc8b732d30fbf1ed6648aab` | 577 | Tabular API |
-| Historic Deputies (Datan) | `60f2ffc8284ff5e8c1ed0655` | 2,101 | Tabular API |
-| Senators (official Sénat) | `58c2c63f88ee387e365cfcf1` | ~348 | Direct CSV |
-| HATVP Lobbyist Registry | `5a2adc8688ee382ed328b586` | Large | JSON download |
-| Lobbyist Actions (separated) | `5d13692f634f41364f8929b8` | Large | CSV.GZ (104.8 MB) |
-| Parliamentary Declarations | `53dfccb5a3a729110ca8d363` | — | ZIP files |
+### Phase 3: Governance UI (Feb 27)
 
-Also produced a comprehensive data catalog: [data-cat.md](../data-cat.md) covering economy, governance, elections, public finances, culture, and demographics.
+- **Deputies** — searchable list with photo avatars + detail pages (bio, contact, voting record, déclarations d'intérêts, déports)
+- **Senators** — searchable list with photo avatars + detail pages (bio, mandats, commissions, déclarations d'intérêts)
+- **Lobbyists** — searchable list + detail pages (organization info, actions de représentation)
+- **Scrutins** — searchable/filterable list + detail pages (result badge, group breakdown bars, individual votes with deputy links)
+- **Governance hub** — 4-card navigation (Députés, Sénateurs, Lobbyistes, Scrutins) with aggregate stats
 
-### 3. Made Architecture Decisions
+### Phase 4: Economy, Territory, & Heritage UI (Feb 27)
 
-User chose:
-- **Tech stack**: Next.js full-stack (App Router, Server Actions, PostgreSQL + Prisma)
-- **V1 scope**: All officials + lobbyists (deputies, senators, HATVP registry)
-- **MCP role**: Ingest then serve (pull data into local DB, serve from DB)
+- **Économie** — GDP, unemployment, enterprise creation time-series with French formatting
+- **Territoire** — regions/departments/communes overview + department detail pages
+- **Patrimoine** — museums (list + detail with attendance data) + monuments (list + detail with coordinates)
 
-### 4. Created CLAUDE.md
+### Phase 5: Homepage & Cross-cutting (Feb 27–28)
 
-Project instructions file with data sources, directory structure, commands, API URLs, database info, and rules.
+- **Homepage** ("L'Observatoire Citoyen") — hero stats (députés, sénateurs, scrutins, monuments), 4 exploration cards, recent declarations with financial highlights, full overview statistics
+- **Déclarations d'intérêts** — displayed on both deputy and senator profile pages (type, deposit date, financial participations, revenus), matched by nom + prénom + typeMandat
+- **Photo integration** — real AN/Sénat photos with fallback initials avatar
 
-### 5. Initialized the Project
+### Phase 6: Declaration Content Enhancement (Feb 28)
 
-**Packages installed**:
-- next 16.1.6, react 19.2.4, react-dom 19.2.4
-- @prisma/client 7.4.1, prisma 7.4.1
-- tailwindcss 4.2.1, @tailwindcss/postcss, postcss
-- typescript 5.9.3, tsx 4.21.0, dotenv 17.3.1
-- eslint 10.0.2, eslint-config-next
-
-**Issues resolved**:
-- Prisma 7 requires Node 20.19+ → pinned via `.nvmrc`, nvm use
-- Prisma 7 moved `url` out of `schema.prisma` → created `prisma.config.ts` at project root with `datasource.url`
-- `create-next-app` conflicts with existing files → manually assembled project
-- PostgreSQL user is `aydenmomika` not `postgres` → fixed connection string
-
-### 6. Set Up Database
-
-- Created PostgreSQL database `datagouv`
-- Prisma schema with 7 models: `Depute`, `Senateur`, `MandatSenateur`, `CommissionSenateur`, `Lobbyiste`, `ActionLobbyiste`, `IngestionLog`
-- Applied initial migration `20260226190034_init`
-- Generated Prisma client
-- Created singleton at `src/lib/db.ts`
-
-### 7. Verified Everything Works
-
-- Dev server starts and returns 200 OK
-- Database connected and migrated
-- All scripts configured in package.json
+- **Bug fix**: Revenue parsing was returning 0 rows due to triple-nested `<montant>` XML tags breaking the `indexOf`-based parser. Replaced with regex-based `parseAllMontants` function.
+- **Data enrichment**: Now stores all years per activity (not just latest), producing 231K revenue rows across 4 types (dirigeant, mandat_electif, professionnel, consultant).
+- **New component**: `DeclarationSection` (client component) — expandable cards with organized content:
+  - Revenue sections grouped by type (color-coded: blue/teal/purple/amber)
+  - Activities aggregated by description + employer, showing year-by-year breakdowns
+  - Financial participations with company details (shares, capital, remuneration)
+  - Summary totals in collapsed header for quick scanning
+- **Shared component**: Used on both deputy and senator profile pages, replacing inline duplicated code.
 
 ---
 
@@ -76,33 +74,176 @@ Project instructions file with data sources, directory structure, commands, API 
 
 ### DONE
 - [x] MCP evaluation and data discovery
-- [x] Architecture decisions
-- [x] CLAUDE.md project instructions
-- [x] Next.js 16 + React 19 + TypeScript
-- [x] Tailwind CSS 4 + PostCSS
-- [x] PostgreSQL `datagouv` database
-- [x] Prisma 7 schema (7 models) + migration
-- [x] Prisma client singleton
-- [x] Dev server verified
-- [x] Data catalog ([data-cat.md](../data-cat.md))
+- [x] Architecture decisions + CLAUDE.md
+- [x] Next.js 16 + React 19 + TypeScript + Tailwind CSS 4
+- [x] PostgreSQL `datagouv` database + Prisma 7
+- [x] Prisma schema: **22 models** + IngestionLog
+- [x] 12 ingestion scripts (all idempotent, ~1.2M rows total)
+- [x] Governance UI: deputies, senators, lobbyists, scrutins
+- [x] Economy UI: time-series indicators
+- [x] Territory UI: regions, departments, communes
+- [x] Heritage UI: museums + monuments
+- [x] Homepage with aggregate stats + recent declarations
+- [x] Photo avatars (deputies + senators)
+- [x] Parliamentary votes with per-deputy positions
+- [x] Déclarations d'intérêts on deputy/senator profiles
+- [x] Déports (conflict-of-interest recusals) on deputy profiles
+- [x] Declaration content: expandable cards with revenues (231K rows), participations, year-by-year breakdowns
 
-### NEXT UP — Phase 2: Data Ingestion
-- [ ] `scripts/lib/api-client.ts` — HTTP client for Tabular API
-- [ ] `scripts/ingest-deputes.ts` — 577 active + 2101 historic
-- [ ] `scripts/ingest-senateurs.ts` — CSV parsing from data.senat.fr
-- [ ] `scripts/ingest-lobbyistes.ts` — JSON + CSV.GZ parsing from HATVP
-- [ ] `scripts/ingest.ts` — Orchestrator
-- [ ] Run and verify row counts
-
-### PENDING
-- Phase 3: Deputies UI (list + profile pages)
-- Phase 4: Senators UI (list + profile + mandates/commissions)
-- Phase 5: Lobbyists UI (registry + detail + actions)
-- Phase 6: Homepage, global search, polish
+### POTENTIAL NEXT STEPS
+- Global search across all data layers
+- Elections data (results by commune/department)
+- Public finances (budget data)
+- Data freshness / auto-refresh ingestion
+- Additional cross-referencing (lobbyist ↔ deputy connections)
+- Performance optimization (pagination, caching)
 
 ---
 
-## Tech Stack (Actual Versions)
+## Database: 22 Models
+
+### Territory Layer (3 models)
+| Model | Rows | Source |
+|-------|------|--------|
+| Region | 18 | INSEE COG CSV |
+| Departement | 101 | INSEE COG CSV |
+| Commune | 36,912 | INSEE COG CSV |
+
+### Governance Layer (9 models)
+| Model | Rows | Source |
+|-------|------|--------|
+| Depute | 2,101 | data.gouv.fr Tabular API |
+| Senateur | 1,943 | Sénat CSVs (ISO-8859-1) |
+| MandatSenateur | 3,348 | Sénat ODSEN_ELUSEN.csv |
+| CommissionSenateur | 616 | Sénat ODSEN_CUR_COMS.csv |
+| Lobbyiste | 3,883 | HATVP registry JSON |
+| ActionLobbyiste | 94,646 | HATVP registry JSON (nested) |
+| DeclarationInteret | 6,320 | HATVP declarations XML |
+| ParticipationFinanciere | 6,552 | HATVP declarations XML (nested) |
+| RevenuDeclaration | 231,036 | HATVP declarations XML (nested) |
+
+### Economy Layer (2 models)
+| Model | Rows | Source |
+|-------|------|--------|
+| Indicateur | 4 | GDP CSV + INSEE BDM SDMX XML |
+| Observation | 354 | GDP CSV + INSEE BDM SDMX XML |
+
+### Culture Layer (3 models)
+| Model | Rows | Source |
+|-------|------|--------|
+| Musee | 1,226 | data.gouv.fr Tabular API |
+| FrequentationMusee | 12,148 | data.gouv.fr Tabular API |
+| Monument | 46,697 | data.gouv.fr Tabular API |
+
+### Parliamentary Votes (4 models)
+| Model | Rows | Source |
+|-------|------|--------|
+| Organe | ~7,137 | AN JSON files |
+| Scrutin | 4,691 | AN JSON files |
+| GroupeVote | ~51,600 | AN JSON files (nested) |
+| VoteRecord | ~938,000 | AN JSON files (nested) |
+
+### Recusals (1 model)
+| Model | Rows | Source |
+|-------|------|--------|
+| Deport | 33 | AN JSON files |
+
+**Total: ~1.2M rows across 22 models.**
+
+---
+
+## UI Routes
+
+```
+/                                    Homepage ("L'Observatoire Citoyen")
+/gouvernance                         Governance hub (4 cards)
+/gouvernance/deputes                 Deputies list (searchable, photo avatars)
+/gouvernance/deputes/[id]            Deputy detail (photo, votes, déclarations, déports)
+/gouvernance/senateurs               Senators list (searchable, photo avatars)
+/gouvernance/senateurs/[id]          Senator detail (photo, mandats, commissions, déclarations)
+/gouvernance/lobbyistes              Lobbyists list (searchable)
+/gouvernance/lobbyistes/[id]         Lobbyist detail (actions de représentation)
+/gouvernance/scrutins                Scrutins list (searchable, filterable)
+/gouvernance/scrutins/[id]           Scrutin detail (group bars, individual votes)
+/economie                            Economic indicators (time-series)
+/territoire                          Territory overview
+/territoire/[departementCode]        Department detail
+/patrimoine                          Heritage overview
+/patrimoine/musees                   Museums list
+/patrimoine/musees/[id]              Museum detail (attendance)
+/patrimoine/monuments                Monuments list
+/patrimoine/monuments/[id]           Monument detail
+```
+
+---
+
+## Components
+
+| Component | Purpose |
+|-----------|---------|
+| `avatar.tsx` | Client component: `<img>` with `onError` fallback to initials |
+| `vote-badge.tsx` | Pour (teal), Contre (rose), Abstention (amber), Non-votant (gray) |
+| `scrutin-result-badge.tsx` | Adopté (teal) / Rejeté (rose) |
+| `stat-card.tsx` | Statistics display card |
+| `search-input.tsx` | Search field with loading spinner |
+| `score-bar.tsx` | Score visualization bar |
+| `page-header.tsx` | Page title/subtitle header with breadcrumbs |
+| `pagination.tsx` | Pagination controls with ellipsis |
+| `declaration-section.tsx` | Expandable declaration cards with revenues/participations |
+
+---
+
+## Directory Structure
+
+```
+data-gouv/
+├── .mcp.json                  # datagouv MCP config
+├── prisma/
+│   ├── schema.prisma          # 22 models + IngestionLog
+│   └── migrations/
+├── scripts/
+│   ├── ingest.ts              # Orchestrator (6 waves)
+│   ├── ingest-territoires.ts  # Wave 1: COG regions/depts/communes
+│   ├── ingest-deputes.ts      # Wave 1: Deputies
+│   ├── ingest-senateurs.ts    # Wave 1: Senators
+│   ├── ingest-lobbyistes.ts   # Wave 1: Lobbyists
+│   ├── ingest-economie.ts     # Wave 2: GDP + INSEE BDM series
+│   ├── ingest-musees.ts       # Wave 3: Museums + attendance
+│   ├── ingest-monuments.ts    # Wave 3: Historical monuments
+│   ├── ingest-declarations.ts # Wave 4: HATVP declarations
+│   ├── ingest-organes.ts      # Wave 5a: AN institutional bodies
+│   ├── ingest-scrutins.ts     # Wave 5b: Parliamentary votes
+│   ├── ingest-deports.ts      # Wave 5b: Recusals
+│   ├── ingest-photos.ts       # Wave 6: Deputy/Senator photos
+│   └── lib/
+│       ├── api-client.ts      # Tabular API paginator + fetchText/Json/Gzip
+│       ├── csv-parser.ts      # papaparse wrapper, date/number parsing
+│       ├── sdmx-parser.ts     # INSEE BDM SDMX XML parser
+│       ├── ingestion-log.ts   # Timing + IngestionLog wrapper
+│       └── departement-lookup.ts  # Name→code fuzzy matching
+├── src/
+│   ├── app/
+│   │   ├── layout.tsx         # Dark theme, Inter, fr lang
+│   │   ├── page.tsx           # Homepage
+│   │   ├── globals.css        # Tailwind import
+│   │   ├── gouvernance/       # Governance section (4 subsections)
+│   │   ├── economie/          # Economy section
+│   │   ├── territoire/        # Territory section
+│   │   └── patrimoine/        # Heritage section (musees + monuments)
+│   ├── components/            # 9 reusable components
+│   ├── lib/
+│   │   └── db.ts              # Prisma client singleton (pg adapter)
+│   └── types/
+├── documentation/
+│   ├── initial-plan.md        # This file
+│   └── hatvp-old-context/     # Source AN/HATVP data (JSON files)
+└── public/
+    └── photos/ministres/      # Minister photos (copied from HATVP data)
+```
+
+---
+
+## Tech Stack
 
 | Package | Version |
 |---------|---------|
@@ -117,36 +258,29 @@ Project instructions file with data sources, directory structure, commands, API 
 
 ---
 
-## Files Created
+## Commands
 
-```
-data-gouv/
-├── .mcp.json              # datagouv MCP (pre-existing)
-├── .nvmrc                 # Node 20.19.2
-├── .env.local             # DATABASE_URL
-├── .gitignore
-├── CLAUDE.md              # Project instructions
-├── data-cat.md            # Full data catalog from MCP exploration
-├── package.json           # 12 scripts (dev, build, ingest:*, db:*)
-├── next.config.ts
-├── tsconfig.json
-├── postcss.config.mjs
-├── prisma.config.ts       # Prisma 7 datasource (project root)
-├── prisma/
-│   ├── schema.prisma      # 7 models
-│   └── migrations/20260226190034_init/
-├── documentation/
-│   ├── hatvp/hatvp-blueprint.md  # Original blueprint (read-only)
-│   └── initial-plan.md           # This file
-├── src/
-│   ├── app/
-│   │   ├── globals.css    # Tailwind import
-│   │   ├── layout.tsx     # Dark theme, Inter, fr lang
-│   │   └── page.tsx       # Placeholder
-│   ├── components/ui/     # Ready for shadcn/ui
-│   ├── lib/db.ts          # Prisma singleton
-│   └── types/             # Ready for shared types
-└── scripts/lib/           # Ready for ingestion utils
+```bash
+pnpm dev                # Next.js dev server (port 3000)
+pnpm build              # Production build
+pnpm db:migrate         # Run Prisma migrations
+pnpm db:generate        # Generate Prisma client
+pnpm db:studio          # Open Prisma Studio
+
+# Ingestion (all idempotent, safe to re-run)
+pnpm ingest             # Full ingestion (all 6 waves in order)
+pnpm ingest:territoires # Wave 1: COG territories
+pnpm ingest:deputes     # Wave 1: Deputies
+pnpm ingest:senateurs   # Wave 1: Senators
+pnpm ingest:lobbies     # Wave 1: Lobbyists
+pnpm ingest:economie    # Wave 2: GDP + unemployment + enterprises
+pnpm ingest:musees      # Wave 3: Museums + attendance
+pnpm ingest:monuments   # Wave 3: Historical monuments
+pnpm ingest:declarations # Wave 4: HATVP declarations
+pnpm ingest:organes     # Wave 5a: AN institutional bodies
+pnpm ingest:scrutins    # Wave 5b: Parliamentary votes
+pnpm ingest:deports     # Wave 5b: Recusals
+pnpm ingest:photos      # Wave 6: Deputy/Senator photos
 ```
 
 ---
@@ -155,19 +289,25 @@ data-gouv/
 
 | Target | URL |
 |--------|-----|
-| Active Deputies | `https://tabular-api.data.gouv.fr/api/resources/092bd7bb-1543-405b-b53c-932ebb49bb8e/data/` |
-| Historic Deputies | `https://tabular-api.data.gouv.fr/api/resources/817fda38-d616-43e9-852f-790510f4d157/data/` |
+| Active Deputies | `https://tabular-api.data.gouv.fr/api/resources/092bd7bb-.../data/` |
+| Historic Deputies | `https://tabular-api.data.gouv.fr/api/resources/817fda38-.../data/` |
 | Senators General | `https://data.senat.fr/data/senateurs/ODSEN_GENERAL.csv` |
 | Senators Mandates | `https://data.senat.fr/data/senateurs/ODSEN_ELUSEN.csv` |
 | Senators Commissions | `https://data.senat.fr/data/senateurs/ODSEN_CUR_COMS.csv` |
-| HATVP Registry | `http://www.hatvp.fr/agora/opendata/agora_repertoire_opendata.json` |
-| HATVP Actions | `https://static.data.gouv.fr/resources/donnees-du-repertoire-des-representants-dinterets-au-format-csv/20250610-152939/2-actions.csv.gz` |
+| HATVP Registry | `https://www.hatvp.fr/agora/opendata/agora_repertoire_opendata.json` |
+| INSEE BDM | `https://bdm.insee.fr/series/sdmx/data/SERIES_BDM/{idbanks}` |
+| Museums | `https://tabular-api.data.gouv.fr/api/resources/7708e380-.../data/` |
+| Monuments | `https://tabular-api.data.gouv.fr/api/resources/3a52af4a-.../data/` |
 
 ---
 
 ## Lessons Learned
 
-1. **Prisma 7 breaking change**: `url` removed from `schema.prisma`, must use `prisma.config.ts` at project root with `datasource.url`
-2. **data.gouv.fr MCP search**: Uses AND logic — short specific queries work, multi-word French queries often return zero
-3. **Sénat data**: Not on Tabular API — must download CSVs directly from `data.senat.fr` (redirects HTTP→HTTPS)
-4. **Port 3000**: May be in use by other projects, Next.js auto-falls back to 3001
+1. **Prisma 7 breaking change**: `url` removed from `schema.prisma`, must use `prisma.config.ts` at project root
+2. **data.gouv.fr MCP search**: Uses AND logic — short specific queries work best
+3. **Sénat data**: Not on Tabular API — direct CSV download from `data.senat.fr` (ISO-8859-1 encoding)
+4. **AN JSON data**: Single-voter objects must be normalized to arrays (`Array.isArray(x) ? x : x ? [x] : []`)
+5. **VoteRecord volume**: ~938K records requires batch inserts (500 per batch) and pre-loaded Depute ID sets for FK validation
+6. **Declarations matching**: No direct FK — uses `[nom, prenom]` index + typeMandat filter for deputy/senator lookup
+7. **tsconfig.json**: Exclude `documentation/` from build to avoid TS errors on non-source files
+8. **HATVP `<montant>` triple nesting**: XML uses `<montant>` at 3 levels (list container → year entry → amount value). Simple `indexOf` tag matching breaks; use regex `<annee>\s*(\d{4})\s*</annee>\s*<montant>\s*([^<]+)</montant>` instead

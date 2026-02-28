@@ -20,7 +20,11 @@
     "ingest:economie": "tsx scripts/ingest-economie.ts",
     "ingest:musees": "tsx scripts/ingest-musees.ts",
     "ingest:monuments": "tsx scripts/ingest-monuments.ts",
-    "ingest:declarations": "tsx scripts/ingest-declarations.ts"
+    "ingest:declarations": "tsx scripts/ingest-declarations.ts",
+    "ingest:organes": "tsx scripts/ingest-organes.ts",
+    "ingest:scrutins": "tsx scripts/ingest-scrutins.ts",
+    "ingest:deports": "tsx scripts/ingest-deports.ts",
+    "ingest:photos": "tsx scripts/ingest-photos.ts"
   },
   "keywords": [],
   "author": "",

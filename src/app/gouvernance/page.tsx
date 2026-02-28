@@ -4,12 +4,14 @@ import { fmt } from "@/lib/format";
 import { PageHeader } from "@/components/page-header";
 
 export default async function GouvernancePage() {
-  const [deputes, senateurs, lobbyistes, declarations, actions] = await Promise.all([
+  const [deputes, senateurs, lobbyistes, declarations, actions, scrutins, voteRecords] = await Promise.all([
     prisma.depute.count(),
     prisma.senateur.count(),
     prisma.lobbyiste.count(),
     prisma.declarationInteret.count(),
     prisma.actionLobbyiste.count(),
+    prisma.scrutin.count(),
+    prisma.voteRecord.count(),
   ]);
 
   const deputesActifs = await prisma.depute.count({ where: { actif: true } });
@@ -37,6 +39,13 @@ export default async function GouvernancePage() {
       sub: `${fmt(actions)} actions`,
       desc: "Registre HATVP — organisations, actions de représentation",
     },
+    {
+      href: "/gouvernance/scrutins",
+      title: "Scrutins",
+      stat: scrutins,
+      sub: `${fmt(voteRecords)} votes individuels`,
+      desc: "Votes parlementaires — comment chaque député a voté sur chaque texte",
+    },
   ];
 
   return (
@@ -47,7 +56,7 @@ export default async function GouvernancePage() {
         breadcrumbs={[{ label: "Accueil", href: "/" }, { label: "Gouvernance" }]}
       />
       <div className="mx-auto max-w-7xl px-6 py-10">
-        <div className="grid gap-4 sm:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {sections.map((s) => (
             <Link
               key={s.href}

@@ -19,6 +19,10 @@ import { ingestEconomie } from "./ingest-economie";
 import { ingestMusees } from "./ingest-musees";
 import { ingestMonuments } from "./ingest-monuments";
 import { ingestDeclarations } from "./ingest-declarations";
+import { ingestOrganes } from "./ingest-organes";
+import { ingestScrutins } from "./ingest-scrutins";
+import { ingestDeports } from "./ingest-deports";
+import { ingestPhotos } from "./ingest-photos";
 
 async function main() {
   const start = Date.now();
@@ -50,6 +54,20 @@ async function main() {
   // Wave 4: HATVP Declarations (large download, runs alone)
   console.log("\n── Wave 4: Declarations ──");
   await ingestDeclarations();
+
+  // Wave 5: AN open data (organes must come first, then scrutins + deports)
+  console.log("\n── Wave 5a: Organes ──");
+  await ingestOrganes();
+
+  console.log("\n── Wave 5b: Scrutins + Déports ──");
+  await Promise.all([
+    ingestScrutins(),
+    ingestDeports(),
+  ]);
+
+  // Wave 6: Photo enrichment
+  console.log("\n── Wave 6: Photos ──");
+  await ingestPhotos();
 
   const duration = ((Date.now() - start) / 1000).toFixed(1);
 

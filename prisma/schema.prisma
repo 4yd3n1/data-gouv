@@ -101,12 +101,15 @@ model Depute {
   scoreSpecialite     Float?
   scoreLoyaute        Float?
   scoreMajorite       Float?
+  photoUrl            String? // Official AN photo URL
   actif               Boolean   @default(true)
   dateMaj             DateTime?
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
 
   departement Departement? @relation(fields: [departementRefCode], references: [code])
+  votes       VoteRecord[]
+  deports     Deport[]
 
   @@index([nom, prenom])
   @@index([groupeAbrev])
@@ -131,6 +134,8 @@ model Senateur {
   dateMaj           DateTime?
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
+
+  photoUrl       String? // Official Sénat photo URL
 
   departementRef Departement? @relation(fields: [departementCode], references: [code])
   mandats        MandatSenateur[]
@@ -382,6 +387,122 @@ model RevenuDeclaration {
 
   @@index([declarationId])
   @@index([type])
+}
+
+// ─── Parliamentary Votes (AN open data) ───
+
+model Organe {
+  id            String    @id // "PO845401", "PO59047"
+  codeType      String // "GP", "COMPER", "COMNL", "CMP", "ORGEXTPARL", "GA", "MISINFO", etc.
+  libelle       String // "Rassemblement National"
+  libelleAbrege String? // "RN"
+  libelleAbrev  String? // "RN" (alternate short name)
+  dateDebut     DateTime?
+  dateFin       DateTime?
+  legislature   Int?
+  couleur       String? // "#313567" (for political groups only)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  scrutins    Scrutin[]
+  votesGroupe GroupeVote[]
+
+  @@index([codeType])
+  @@index([legislature])
+}
+
+model Scrutin {
+  id                 String   @id // "VTANR5L17V1"
+  numero             Int
+  legislature        Int
+  dateScrutin        DateTime
+  organeRef          String // PO* ref to the assembly organe
+  codeTypeVote       String // "MOC", "SPO", "SPS", etc.
+  libelleTypeVote    String // "motion de censure", "scrutin public ordinaire"
+  typeMajorite       String? // "majorité absolue des suffrages exprimés"
+  sortCode           String // "rejeté", "adopté"
+  titre              String // Full vote title/description
+  demandeur          String? // Who requested the vote
+  nombreVotants      Int
+  suffragesExprimes  Int
+  nbrSuffragesRequis Int?
+  pour               Int
+  contre             Int
+  abstentions        Int
+  nonVotants         Int?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  organe      Organe?      @relation(fields: [organeRef], references: [id])
+  votes       VoteRecord[]
+  groupeVotes GroupeVote[]
+
+  @@index([dateScrutin])
+  @@index([legislature])
+  @@index([sortCode])
+  @@index([codeTypeVote])
+  @@index([numero])
+}
+
+model GroupeVote {
+  id                  String @id @default(cuid())
+  scrutinId           String
+  organeRef           String // Political group PO* ID
+  nombreMembresGroupe Int
+  positionMajoritaire String // "pour", "contre", "abstention"
+  pour                Int
+  contre              Int
+  abstentions         Int
+  nonVotants          Int
+
+  scrutin Scrutin @relation(fields: [scrutinId], references: [id], onDelete: Cascade)
+  organe  Organe? @relation(fields: [organeRef], references: [id])
+
+  @@unique([scrutinId, organeRef])
+  @@index([scrutinId])
+  @@index([organeRef])
+}
+
+model VoteRecord {
+  id                String  @id @default(cuid())
+  scrutinId         String
+  deputeId          String // PA* acteurRef
+  position          String // "pour", "contre", "abstention", "nonVotant"
+  parDelegation     Boolean @default(false)
+  groupeOrganeRef   String? // Political group the deputy voted within
+  causePositionVote String? // "MG" (membre du gouvernement), "PAN", "PSE"
+
+  scrutin Scrutin @relation(fields: [scrutinId], references: [id], onDelete: Cascade)
+  depute  Depute  @relation(fields: [deputeId], references: [id])
+
+  @@unique([scrutinId, deputeId])
+  @@index([scrutinId])
+  @@index([deputeId])
+  @@index([position])
+}
+
+model Deport {
+  id              String    @id // "DPTR5L15PA335999D0001"
+  legislature     Int
+  deputeId        String // PA* ref
+  dateCreation    DateTime?
+  datePublication DateTime?
+  porteeCode      String? // "COMPLET"
+  porteeLibelle   String? // "Etre absent pour la totalite..."
+  instanceCode    String? // "COM"
+  instanceLibelle String? // "Commission"
+  cibleType       String? // "AUD" (audition)
+  cibleTexte      String? // Description of what was recused
+  explication     String? // HTML explanation text
+
+  createdAt DateTime @default(now())
+
+  depute Depute @relation(fields: [deputeId], references: [id])
+
+  @@index([deputeId])
+  @@index([legislature])
 }
 
 // ─── System ───

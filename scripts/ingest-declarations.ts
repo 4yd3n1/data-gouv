@@ -16,6 +16,13 @@ import { logIngestion } from "./lib/ingestion-log";
 
 const DECLARATIONS_URL =
   "https://hatvp.fr/livraison/merge/declarations.xml";
+const LOCAL_CACHE_PATH = join(
+  import.meta.dirname ?? process.cwd(),
+  "..",
+  "documentation",
+  "hatvp-old-context",
+  "declarations.xml"
+);
 const LOCAL_PATH = join(tmpdir(), "hatvp-declarations.xml");
 const MAX_RETRIES = 30;
 const RETRY_DELAY_MS = 2000;
@@ -270,27 +277,36 @@ function extractAllBlocks(xml: string, tag: string): string[] {
   return blocks;
 }
 
+function parseAllMontants(
+  remunerationBlock: string
+): { annee: number; montant: number }[] {
+  // XML has triple-nested <montant> tags:
+  //   <montant>              ← list container
+  //     <montant>            ← year entry
+  //       <annee>2020</annee>
+  //       <montant>46 775</montant>  ← actual value
+  //     </montant>
+  //   </montant>
+  // Use regex to reliably extract <annee>+<montant> pairs.
+  const results: { annee: number; montant: number }[] = [];
+  const re = /<annee>\s*(\d{4})\s*<\/annee>\s*<montant>\s*([^<]+)<\/montant>/g;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(remunerationBlock)) !== null) {
+    const annee = parseInt(m[1], 10);
+    const montant = parseMontant(m[2]);
+    if (!isNaN(annee) && montant !== null) {
+      results.push({ annee, montant });
+    }
+  }
+  return results;
+}
+
 function parseLatestMontant(
   remunerationBlock: string
 ): { annee: number; montant: number } | null {
-  // Find all <montant> blocks that contain <annee> and <montant>
-  const montantBlocks = extractAllBlocks(remunerationBlock, "montant");
-  let latest: { annee: number; montant: number } | null = null;
-
-  for (const block of montantBlocks) {
-    const anneeResult = extractText(block, "annee");
-    const montantResult = extractText(block, "montant");
-    if (anneeResult && montantResult) {
-      const annee = parseInt(anneeResult.value, 10);
-      const montant = parseMontant(montantResult.value);
-      if (!isNaN(annee) && montant !== null) {
-        if (!latest || annee > latest.annee) {
-          latest = { annee, montant };
-        }
-      }
-    }
-  }
-  return latest;
+  const all = parseAllMontants(remunerationBlock);
+  if (all.length === 0) return null;
+  return all.reduce((best, cur) => (cur.annee > best.annee ? cur : best));
 }
 
 function parseDeclaration(xml: string): ParsedDeclaration | null {
@@ -368,6 +384,25 @@ function parseDeclaration(xml: string): ParsedDeclaration | null {
   // Revenus from various activity sections
   const revenus: ParsedDeclaration["revenus"] = [];
 
+  // Helper: extract all year+montant pairs from an activity target
+  function pushRevenus(
+    target: string,
+    type: string,
+    descTag: string,
+    employeurTag: string | null
+  ) {
+    const remuBlock = extractBlock(target, "remuneration");
+    if (!remuBlock) return;
+    const allYears = parseAllMontants(remuBlock.value);
+    const description = extractText(target, descTag)?.value ?? null;
+    const employeur = employeurTag
+      ? extractText(target, employeurTag)?.value ?? null
+      : null;
+    for (const { annee, montant } of allYears) {
+      revenus.push({ type, description, employeur, annee, montant });
+    }
+  }
+
   // Professional activities (last 5 years)
   const profBlock = extractBlock(xml, "activProfCinqDerniereDto");
   if (profBlock) {
@@ -376,19 +411,7 @@ function parseDeclaration(xml: string): ParsedDeclaration | null {
       const innerItems = extractAllBlocks(item, "items");
       const targets = innerItems.length > 0 ? innerItems : [item];
       for (const target of targets) {
-        const remuBlock = extractBlock(target, "remuneration");
-        if (!remuBlock) continue;
-        const latest = parseLatestMontant(remuBlock.value);
-        if (latest) {
-          revenus.push({
-            type: "professionnel",
-            description:
-              extractText(target, "description")?.value ?? null,
-            employeur: extractText(target, "employeur")?.value ?? null,
-            annee: latest.annee,
-            montant: latest.montant,
-          });
-        }
+        pushRevenus(target, "professionnel", "description", "employeur");
       }
     }
   }
@@ -401,19 +424,7 @@ function parseDeclaration(xml: string): ParsedDeclaration | null {
       const innerItems = extractAllBlocks(item, "items");
       const targets = innerItems.length > 0 ? innerItems : [item];
       for (const target of targets) {
-        const remuBlock = extractBlock(target, "remuneration");
-        if (!remuBlock) continue;
-        const latest = parseLatestMontant(remuBlock.value);
-        if (latest) {
-          revenus.push({
-            type: "mandat_electif",
-            description:
-              extractText(target, "descriptionMandat")?.value ?? null,
-            employeur: null,
-            annee: latest.annee,
-            montant: latest.montant,
-          });
-        }
+        pushRevenus(target, "mandat_electif", "descriptionMandat", null);
       }
     }
   }
@@ -426,19 +437,7 @@ function parseDeclaration(xml: string): ParsedDeclaration | null {
       const innerItems = extractAllBlocks(item, "items");
       const targets = innerItems.length > 0 ? innerItems : [item];
       for (const target of targets) {
-        const remuBlock = extractBlock(target, "remuneration");
-        if (!remuBlock) continue;
-        const latest = parseLatestMontant(remuBlock.value);
-        if (latest) {
-          revenus.push({
-            type: "consultant",
-            description:
-              extractText(target, "descriptionActivite")?.value ?? null,
-            employeur: extractText(target, "nomEmployeur")?.value ?? null,
-            annee: latest.annee,
-            montant: latest.montant,
-          });
-        }
+        pushRevenus(target, "consultant", "descriptionActivite", "nomEmployeur");
       }
     }
   }
@@ -451,29 +450,27 @@ function parseDeclaration(xml: string): ParsedDeclaration | null {
       const innerItems = extractAllBlocks(item, "items");
       const targets = innerItems.length > 0 ? innerItems : [item];
       for (const target of targets) {
-        const remuBlock = extractBlock(target, "remuneration");
-        if (!remuBlock) continue;
-        const latest = parseLatestMontant(remuBlock.value);
-        if (latest) {
-          revenus.push({
-            type: "dirigeant",
-            description: extractText(target, "activite")?.value ?? null,
-            employeur: extractText(target, "nomSociete")?.value ?? null,
-            annee: latest.annee,
-            montant: latest.montant,
-          });
-        }
+        pushRevenus(target, "dirigeant", "activite", "nomSociete");
       }
     }
   }
 
-  // Compute totals
+  // Compute totals (latest year per activity for totalRevenus)
   const totalParticipations = participations.reduce(
     (sum, p) => sum + (p.evaluation ?? 0),
     0
   );
-  const totalRevenus = revenus.reduce(
-    (sum, r) => sum + (r.montant ?? 0),
+  // Group by type+description+employeur, take latest year per group
+  const revenueGroups = new Map<string, { annee: number; montant: number }>();
+  for (const r of revenus) {
+    const key = `${r.type}|${r.description}|${r.employeur}`;
+    const existing = revenueGroups.get(key);
+    if (!existing || (r.annee ?? 0) > existing.annee) {
+      revenueGroups.set(key, { annee: r.annee ?? 0, montant: r.montant ?? 0 });
+    }
+  }
+  const totalRevenus = Array.from(revenueGroups.values()).reduce(
+    (sum, g) => sum + g.montant,
     0
   );
 
@@ -516,9 +513,15 @@ function splitDeclarations(xml: string): string[] {
 
 export async function ingestDeclarations() {
   await logIngestion("declarations", async () => {
-    // Download
-    console.log("  Downloading declarations.xml (may take several minutes)...");
-    const filePath = await downloadWithResume();
+    // Use local cached file if available, otherwise download
+    let filePath: string;
+    if (existsSync(LOCAL_CACHE_PATH) && statSync(LOCAL_CACHE_PATH).size > 1_000_000) {
+      console.log(`  Using local XML: ${LOCAL_CACHE_PATH} (${(statSync(LOCAL_CACHE_PATH).size / 1024 / 1024).toFixed(1)}MB)`);
+      filePath = LOCAL_CACHE_PATH;
+    } else {
+      console.log("  Downloading declarations.xml (may take several minutes)...");
+      filePath = await downloadWithResume();
+    }
 
     // Read and parse
     console.log("  Reading XML file...");

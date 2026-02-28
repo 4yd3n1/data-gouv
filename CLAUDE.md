@@ -81,7 +81,7 @@ data-gouv/
 │       └── departement-lookup.ts  # Name→code fuzzy matching
 ├── src/
 │   ├── app/                   # Next.js App Router pages
-│   ├── components/            # UI components
+│   ├── components/            # 12 UI components (see documentation/frontend.md)
 │   ├── lib/
 │   │   └── db.ts              # Prisma client singleton (pg adapter)
 │   └── types/
@@ -144,12 +144,19 @@ Territories must be ingested first (other scripts resolve FK references to depar
 - **Commune types**: COM (full commune), ARM (arrondissement), COMD (delegated), COMA (associated). Filter to COM for most UI displays.
 - **Monument coordinates**: `latitude`/`longitude` parsed from `coordonnees_au_format_WGS84` field.
 
+## UI Patterns
+
+- **Profile pages** (deputies, senators): `ProfileHero` + `ProfileTabs` with URL-driven `?tab=` navigation, `max-w-4xl` centered content
+- **List pages**: `PageHeader` + `SearchInput` + `Pagination`, `max-w-7xl` wide layout
+- **4 client components**: `SearchInput`, `Avatar`, `DeclarationSection`, `ProfileTabs`
+- Full frontend reference: `documentation/frontend.md`
+
 ## Rules
 
 - Never commit secrets or `.env.local`
 - Never push without explicit user approval
 - Ingestion scripts must be idempotent (upsert, not insert)
 - All monetary/numeric displays use French formatting (1 234,56 €)
-- Dark theme (slate bg, blue accents) - match blueprint aesthetic
+- Dark theme (slate bg, teal accents) - "Intelligence Bureau" aesthetic
 - Keep it focused: every UI element must serve transparency
 - Node.js 20.19.2+ required (Prisma 7 compatibility)

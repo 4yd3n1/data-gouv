@@ -3,7 +3,7 @@ import { prisma } from "@/lib/db";
 import { fmt, fmtEuro } from "@/lib/format";
 
 async function getStats() {
-  const [deputes, senateurs, lobbyistes, declarations, musees, monuments, communes, departements, indicateurs] = await Promise.all([
+  const [deputes, senateurs, lobbyistes, declarations, musees, monuments, communes, departements, indicateurs, scrutins] = await Promise.all([
     prisma.depute.count(),
     prisma.senateur.count(),
     prisma.lobbyiste.count(),
@@ -13,6 +13,7 @@ async function getStats() {
     prisma.commune.count({ where: { typecom: "COM" } }),
     prisma.departement.count(),
     prisma.indicateur.count(),
+    prisma.scrutin.count(),
   ]);
 
   const recentDeclarations = await prisma.declarationInteret.findMany({
@@ -21,7 +22,7 @@ async function getStats() {
     take: 6,
   });
 
-  return { deputes, senateurs, lobbyistes, declarations, musees, monuments, communes, departements, indicateurs, recentDeclarations };
+  return { deputes, senateurs, lobbyistes, declarations, musees, monuments, communes, departements, indicateurs, scrutins, recentDeclarations };
 }
 
 const SECTIONS = [
@@ -87,7 +88,7 @@ export default async function HomePage() {
             {[
               { v: stats.deputes, l: "Députés", c: "text-teal border-teal/20" },
               { v: stats.senateurs, l: "Sénateurs", c: "text-teal border-teal/20" },
-              { v: stats.declarations, l: "Déclarations", c: "text-amber border-amber/20" },
+              { v: stats.scrutins, l: "Scrutins", c: "text-blue border-blue/20" },
               { v: stats.monuments, l: "Monuments", c: "text-rose border-rose/20" },
             ].map((s) => (
               <div key={s.l} className={`rounded-xl border bg-bureau-800/40 px-4 py-4 ${s.c}`}>
@@ -195,8 +196,8 @@ export default async function HomePage() {
             { v: stats.monuments, l: "Monuments" },
             { v: stats.departements, l: "Départements" },
             { v: stats.communes, l: "Communes" },
+            { v: stats.scrutins, l: "Scrutins" },
             { v: stats.indicateurs, l: "Indicateurs éco." },
-            { v: 204000, l: "Total lignes" },
           ].map((s) => (
             <div key={s.l} className="rounded-lg border border-bureau-700/20 bg-bureau-800/20 p-4">
               <p className="text-xl font-bold text-bureau-100">{fmt(s.v)}</p>
