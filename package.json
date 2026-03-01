@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "bash -c 'source ~/.nvm/nvm.sh && nvm use && next dev --turbopack'",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -24,7 +24,10 @@
     "ingest:organes": "tsx scripts/ingest-organes.ts",
     "ingest:scrutins": "tsx scripts/ingest-scrutins.ts",
     "ingest:deports": "tsx scripts/ingest-deports.ts",
-    "ingest:photos": "tsx scripts/ingest-photos.ts"
+    "ingest:photos": "tsx scripts/ingest-photos.ts",
+    "ingest:elus": "NODE_OPTIONS=--max-old-space-size=8192 tsx scripts/ingest-elus.ts",
+    "ingest:elections": "tsx scripts/ingest-elections.ts",
+    "ingest:partis": "tsx scripts/ingest-partis.ts"
   },
   "keywords": [],
   "author": "",

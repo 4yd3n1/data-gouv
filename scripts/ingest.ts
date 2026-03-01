@@ -7,6 +7,9 @@
  * 2. Governance (deputes, senateurs, lobbyistes) — parallel
  * 3. Economy (GDP + BDM series)
  * 4. Culture (musees, monuments) — parallel
+ * 5. AN open data (organes, scrutins, deports)
+ * 6. Photos
+ * 7. RNE elus, elections, party accounts — parallel
  */
 
 import "dotenv/config";
@@ -23,6 +26,9 @@ import { ingestOrganes } from "./ingest-organes";
 import { ingestScrutins } from "./ingest-scrutins";
 import { ingestDeports } from "./ingest-deports";
 import { ingestPhotos } from "./ingest-photos";
+import { ingestElus } from "./ingest-elus";
+import { ingestElections } from "./ingest-elections";
+import { ingestPartis } from "./ingest-partis";
 
 async function main() {
   const start = Date.now();
@@ -68,6 +74,14 @@ async function main() {
   // Wave 6: Photo enrichment
   console.log("\n── Wave 6: Photos ──");
   await ingestPhotos();
+
+  // Wave 7: RNE + Elections + Parties (can run in parallel, territories already loaded)
+  console.log("\n── Wave 7: Élus, Élections, Partis ──");
+  await Promise.all([
+    ingestElus(),
+    ingestElections(),
+    ingestPartis(),
+  ]);
 
   const duration = ((Date.now() - start) / 1000).toFixed(1);
 

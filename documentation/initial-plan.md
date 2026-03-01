@@ -1,7 +1,7 @@
 # Transparency Data Tool — Project Plan & Status
 
 > Started: Feb 26, 2026
-> Last updated: Feb 28, 2026
+> Last updated: Feb 28, 2026 (vision + roadmap added)
 > Project: `/Users/aydenmomika/data-gouv/`
 
 ---
@@ -92,11 +92,144 @@ Built 12 ingestion scripts covering 5 data layers:
 
 ### POTENTIAL NEXT STEPS
 - Global search across all data layers
-- Elections data (results by commune/department)
-- Public finances (budget data)
 - Data freshness / auto-refresh ingestion
-- Additional cross-referencing (lobbyist ↔ deputy connections)
 - Performance optimization (pagination, caching)
+
+---
+
+## Vision — "L'Observatoire Citoyen"
+
+A single place where any citizen can understand how France actually works — who governs, where the money goes, and what the results are. Not opinions, not media narratives. Just data, cross-referenced and made readable.
+
+### Three Core Questions
+
+Every page on the platform should help answer one of these:
+
+1. **Who decides?** — Deputies, senators, mayors, councillors, lobbyists. Their votes, declarations, conflicts of interest, campaign finance, party funding.
+2. **Where does the money go?** — State budget, local taxes, public procurement, subsidies, dotations, parliamentary reserves. Follow the euro from taxpayer to contractor.
+3. **What are the results?** — Crime rates, school quality, hospital coverage, unemployment, enterprise creation, road safety, cultural access. Territory-level outcomes that tell you if the money and decisions are producing results.
+
+### Target Architecture — 6 Interconnected Layers
+
+```
+┌─────────────────────────────────────────────────┐
+│                  GOVERNANCE                      │
+│  Deputies · Senators · Mayors · Councillors      │
+│  Lobbyists · Declarations · Votes · Parties      │
+├─────────────────────────────────────────────────┤
+│                  ELECTIONS                        │
+│  Legislative results · Presidential sponsorships │
+│  Campaign finance · Party accounts               │
+├─────────────────────────────────────────────────┤
+│               PUBLIC FINANCE                     │
+│  Commune budgets · Local taxes · Procurement     │
+│  State dotations · Parliamentary reserves        │
+├─────────────────────────────────────────────────┤
+│                  ECONOMY                         │
+│  GDP · Unemployment · Enterprise creation        │
+│  Real estate prices (DVF)                        │
+├─────────────────────────────────────────────────┤
+│                 TERRITORY                        │
+│  Regions · Départements · Communes               │
+│  Crime stats · Schools · Hospitals · Risks       │
+├─────────────────────────────────────────────────┤
+│               CULTURE & HERITAGE                 │
+│  Museums · Monuments · Attendance                │
+└─────────────────────────────────────────────────┘
+```
+
+### Cross-Reference Power
+
+- **Deputy profile** → votes + declarations + election results in their constituency + campaign finance + crime/education/health stats of communes they represent
+- **Commune page** → mayor (RNE) + budget (balances comptables) + tax rates (REI) + crime + schools + hospitals + monuments + procurement contracts + state dotations
+- **Party page** → financial accounts (CNCCFP) + all elected officials (RNE) + aggregate campaign spending
+- **Département dashboard** → aggregates all of the above across communes
+
+### What This Is NOT
+
+- Not a news site or opinion platform
+- Not a social network for citizens
+- Not a tool for government officials
+- Not trying to be comprehensive about everything — curated around the three questions above
+
+---
+
+## Expansion Roadmap
+
+### Phase 7: Elections & Elected Officials (RNE)
+
+**New datasets:**
+
+| Dataset | data.gouv.fr ID | Source | Est. Rows |
+|---------|-----------------|--------|-----------|
+| Répertoire National des Élus (RNE) | `5c34c4d1634f4173183a64f1` | Min. Intérieur | ~600K |
+| Élections législatives 2024 — 1er tour | `6682d0c255dcda5df20b1d90` | Min. Intérieur | ~100K |
+| Élections législatives 2024 — 2nd tour | `668b4092826ddcf70e9e62cd` | Min. Intérieur | ~100K |
+| Comptes des partis politiques | `53699158a3a729239d203c2f` | CNCCFP | 40 resources |
+
+**New models:** Elu, ElectionLegislative, CandidatLegislatif, PartiPolitique
+
+**New ingestion scripts:** `ingest-elus.ts`, `ingest-elections.ts`, `ingest-partis.ts`
+
+**New UI routes:**
+```
+/gouvernance/elus                   All elected officials (RNE)
+/gouvernance/elus/maires            Mayors list
+/gouvernance/partis                 Political parties + finances
+/gouvernance/partis/[id]            Party detail (accounts + members)
+/elections                          Elections hub
+/elections/legislatives-2024        Results by constituency
+```
+
+### Phase 8: Public Finance
+
+**New datasets:**
+
+| Dataset | data.gouv.fr ID | Source |
+|---------|-----------------|--------|
+| Balances comptables des communes | `5551f561c751df7646190c78` | Min. Économie |
+| Impôts locaux (REI) | `6657c57abbefc8869c7c6364` | Min. Économie |
+| DECP — Commande publique consolidée | `5cd57bf68b4c4179299eb0e9` | Min. Économie |
+| Dotations investissement collectivités | `6176785207139a929a2776fe` | DGCL |
+| Réserve parlementaire | `558837cfc751df7991a453bc` | Assemblée nationale |
+
+**New models:** BalanceComptable, ImpotLocal, MarchePublic, Dotation
+
+### Phase 9: Territory Outcomes
+
+**New datasets:**
+
+| Dataset | data.gouv.fr ID | Source |
+|---------|-----------------|--------|
+| Délinquance enregistrée | `621df2954fa5a3b5a023e23c` | Min. Intérieur |
+| FINESS — Établissements santé | `53699569a3a729239d2046eb` | Min. Santé |
+| Annuaire de l'éducation | `5889d03fa3a72974cbf0d5b1` | Min. Éducation |
+| Accidents corporels | `53698f4ca3a729239d2036df` | Min. Intérieur |
+
+**New models:** StatDelinquance, EtablissementSante, EtablissementScolaire
+
+### Phase 10: Enrichment
+
+**New datasets:**
+
+| Dataset | data.gouv.fr ID | Source |
+|---------|-----------------|--------|
+| DVF — Valeurs foncières | `5c4ae55a634f4117716d5656` | Min. Économie |
+| Comptes de campagne | Various CNCCFP | CNCCFP |
+| Questions-Réponses AN | `53699e82a3a729239d205ec1` | DILA/JORF |
+| Amendements Sénat | `53a8b7f8a3a72905b7ce595d` | Sénat |
+| Rapports Cour des comptes | `57470e8688ee38574dd1b934` | Cour des comptes |
+
+**Available APIs (no ingestion needed — query at runtime):**
+- API Geo (`geo.api.gouv.fr`) — GeoJSON boundaries + populations
+- API Recherche d'Entreprises (`recherche-entreprises.api.gouv.fr`) — Enterprise search
+- API Géorisques (`georisques.gouv.fr/api/v1/`) — Natural/tech risks per territory
+
+### Known Gaps (No Open Data Exists)
+
+- IRFM / parliamentary expenses — no structured open data anywhere
+- Élysée/Matignon spending — not published
+- National consolidated association subsidies — only fragmented municipal datasets (162 local datasets, no national rollup)
 
 ---
 

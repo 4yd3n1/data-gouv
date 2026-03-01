@@ -10,7 +10,7 @@ French civic intelligence platform that ingests public data from data.gouv.fr, I
 
 - **Next.js 16** (App Router, Server Actions, TypeScript)
 - **PostgreSQL 14** + **Prisma 7** ORM (with `@prisma/adapter-pg` driver)
-- **Tailwind CSS 4** + **shadcn/ui**
+- **Tailwind CSS 4**
 - **pnpm** package manager
 - **Node.js 20.19.2** (minimum 20.19 required for Prisma 7)
 
@@ -48,7 +48,33 @@ Series: PIB annuel, Taux de chômage trimestriel, Nombre de chômeurs trimestrie
 | FrequentationMusee | 12,148 | data.gouv.fr Tabular API |
 | Monument | 46,697 | data.gouv.fr Tabular API |
 
-**Total: ~204,000 rows across 15 models.**
+### Declarations Layer (HATVP)
+| Model | Rows | Source |
+|-------|------|--------|
+| DeclarationInteret | varies | HATVP XML open data |
+| ParticipationFinanciere | varies | HATVP XML (nested) |
+| RevenuDeclaration | varies | HATVP XML (nested) |
+
+### Parliamentary Votes Layer (AN open data)
+| Model | Rows | Source |
+|-------|------|--------|
+| Organe | varies | AN open data XML |
+| Scrutin | varies | AN open data XML |
+| GroupeVote | varies | AN open data XML |
+| VoteRecord | varies | AN open data XML |
+| Deport | varies | AN open data XML |
+
+### Elections & RNE Layer
+| Model | Rows | Source |
+|-------|------|--------|
+| Elu | 593,153 | DGCL Répertoire National des Élus CSVs |
+| ElectionLegislative | 1,078 | data.gouv.fr static CSV (2024 results) |
+| CandidatLegislatif | 5,103 | data.gouv.fr static CSV (nested candidates) |
+| PartiPolitique | 2,180 | CNCCFP party accounts CSV (2021–2024) |
+
+**Total: ~800,000+ rows across 22 models + IngestionLog.**
+
+Full schema reference: [`documentation/schema.md`](documentation/schema.md)
 
 ## MCP Integration
 
@@ -61,11 +87,12 @@ Series: PIB annuel, Taux de chômage trimestriel, Nombre de chômeurs trimestrie
 ```
 data-gouv/
 ├── .mcp.json                  # datagouv MCP config
+├── .nvmrc                     # Node 20.19.2 — auto-used by pnpm dev
 ├── prisma/
-│   ├── schema.prisma          # 15 models + IngestionLog
+│   ├── schema.prisma          # 22 models + IngestionLog
 │   └── migrations/
 ├── scripts/
-│   ├── ingest.ts              # Orchestrator (runs all waves in order)
+│   ├── ingest.ts              # Orchestrator (runs all 7 waves in order)
 │   ├── ingest-territoires.ts  # COG regions/depts/communes
 │   ├── ingest-deputes.ts      # Deputies from Tabular API
 │   ├── ingest-senateurs.ts    # Senators from Sénat CSVs
@@ -73,6 +100,14 @@ data-gouv/
 │   ├── ingest-economie.ts     # GDP + INSEE BDM series
 │   ├── ingest-musees.ts       # Museum attendance
 │   ├── ingest-monuments.ts    # Historical monuments
+│   ├── ingest-declarations.ts # HATVP interest declarations
+│   ├── ingest-organes.ts      # AN parliamentary bodies
+│   ├── ingest-scrutins.ts     # AN parliamentary votes
+│   ├── ingest-deports.ts      # AN recusal declarations
+│   ├── ingest-photos.ts       # Deputy/senator photo enrichment
+│   ├── ingest-elus.ts         # RNE elected officials (593K rows)
+│   ├── ingest-elections.ts    # 2024 legislative results
+│   ├── ingest-partis.ts       # CNCCFP party accounts
 │   └── lib/
 │       ├── api-client.ts      # Tabular API paginator + fetchText/Json/Gzip
 │       ├── csv-parser.ts      # papaparse wrapper, date/number parsing
@@ -80,31 +115,44 @@ data-gouv/
 │       ├── ingestion-log.ts   # Timing + IngestionLog wrapper
 │       └── departement-lookup.ts  # Name→code fuzzy matching
 ├── src/
-│   ├── app/                   # Next.js App Router pages
-│   ├── components/            # 12 UI components (see documentation/frontend.md)
+│   ├── app/                   # Next.js App Router — 22 routes
+│   ├── components/            # 12 UI components
 │   ├── lib/
-│   │   └── db.ts              # Prisma client singleton (pg adapter)
+│   │   ├── db.ts              # Prisma client singleton (pg adapter)
+│   │   ├── format.ts          # French number/date formatting
+│   │   └── nuance-colors.ts   # Political nuance code → color mapping
 │   └── types/
+└── documentation/
+    ├── frontend.md            # All pages, components, design system, patterns
+    └── schema.md              # All 22 models, fields, relations, row counts
 ```
 
 ## Commands
 
 ```bash
-pnpm dev              # Next.js dev server (port 3000)
+pnpm dev              # Next.js dev server (port 3000) — auto-uses Node 20.19.2 via .nvmrc
 pnpm build            # Production build
 pnpm db:migrate       # Run Prisma migrations
 pnpm db:generate      # Generate Prisma client
 pnpm db:studio        # Open Prisma Studio
 
 # Ingestion (all idempotent, safe to re-run)
-pnpm ingest           # Full ingestion (all waves in order)
-pnpm ingest:territoires  # Wave 1: COG territories
-pnpm ingest:deputes      # Wave 1: Deputies
-pnpm ingest:senateurs    # Wave 1: Senators
-pnpm ingest:lobbies      # Wave 1: Lobbyists
+pnpm ingest              # Full ingestion (all 7 waves in order)
+pnpm ingest:territoires  # Wave 1a: COG territories
+pnpm ingest:deputes      # Wave 1b: Deputies
+pnpm ingest:senateurs    # Wave 1b: Senators
+pnpm ingest:lobbies      # Wave 1b: Lobbyists
 pnpm ingest:economie     # Wave 2: GDP + unemployment + enterprises
 pnpm ingest:musees       # Wave 3: Museums + attendance
 pnpm ingest:monuments    # Wave 3: Historical monuments
+pnpm ingest:declarations # Wave 4: HATVP interest declarations
+pnpm ingest:organes      # Wave 5a: AN parliamentary bodies
+pnpm ingest:scrutins     # Wave 5b: Parliamentary votes
+pnpm ingest:deports      # Wave 5b: Recusal declarations
+pnpm ingest:photos       # Wave 6: Deputy/senator photos
+pnpm ingest:elus         # Wave 7: RNE elected officials (uses 8GB heap)
+pnpm ingest:elections    # Wave 7: 2024 legislative results
+pnpm ingest:partis       # Wave 7: CNCCFP party accounts
 ```
 
 ## Ingestion Order
@@ -112,10 +160,15 @@ pnpm ingest:monuments    # Wave 3: Historical monuments
 Territories must be ingested first (other scripts resolve FK references to departments/communes).
 
 ```
-1. ingestTerritoires()                              # Must be first
-2. Promise.all([ingestDeputes(), ingestSenateurs(), ingestLobbyistes()])
-3. ingestEconomie()
-4. Promise.all([ingestMusees(), ingestMonuments()])
+Wave 1a:  ingestTerritoires()
+Wave 1b:  Promise.all([ingestDeputes(), ingestSenateurs(), ingestLobbyistes()])
+Wave 2:   ingestEconomie()
+Wave 3:   Promise.all([ingestMusees(), ingestMonuments()])
+Wave 4:   ingestDeclarations()
+Wave 5a:  ingestOrganes()                   # must precede scrutins
+Wave 5b:  Promise.all([ingestScrutins(), ingestDeports()])
+Wave 6:   ingestPhotos()
+Wave 7:   Promise.all([ingestElus(), ingestElections(), ingestPartis()])
 ```
 
 ## Key API URLs
@@ -143,13 +196,16 @@ Territories must be ingested first (other scripts resolve FK references to depar
 - **Senateur.departementCode**: Resolved from department name via fuzzy matching (accent/hyphen normalization).
 - **Commune types**: COM (full commune), ARM (arrondissement), COMD (delegated), COMA (associated). Filter to COM for most UI displays.
 - **Monument coordinates**: `latitude`/`longitude` parsed from `coordonnees_au_format_WGS84` field.
+- **ElectionLegislative.codeDepartement**: Plain string, no FK to Departement — overseas constituencies use codes like `"ZZ"` not in COG. FK was removed in migration `20260301102159_drop_election_dept_fk`.
+- Full schema details: [`documentation/schema.md`](documentation/schema.md)
 
 ## UI Patterns
 
 - **Profile pages** (deputies, senators): `ProfileHero` + `ProfileTabs` with URL-driven `?tab=` navigation, `max-w-4xl` centered content
 - **List pages**: `PageHeader` + `SearchInput` + `Pagination`, `max-w-7xl` wide layout
 - **4 client components**: `SearchInput`, `Avatar`, `DeclarationSection`, `ProfileTabs`
-- Full frontend reference: `documentation/frontend.md`
+- **22 routes**: 6 static + 16 dynamic (see [`documentation/frontend.md`](documentation/frontend.md))
+- Full frontend reference: [`documentation/frontend.md`](documentation/frontend.md)
 
 ## Rules
 
@@ -157,6 +213,6 @@ Territories must be ingested first (other scripts resolve FK references to depar
 - Never push without explicit user approval
 - Ingestion scripts must be idempotent (upsert, not insert)
 - All monetary/numeric displays use French formatting (1 234,56 €)
-- Dark theme (slate bg, teal accents) - "Intelligence Bureau" aesthetic
+- Dark theme (slate bg, teal accents) — "Intelligence Bureau" aesthetic
 - Keep it focused: every UI element must serve transparency
 - Node.js 20.19.2+ required (Prisma 7 compatibility)

@@ -41,6 +41,7 @@ model Departement {
   senateurs Senateur[]
   musees    Musee[]
   monuments Monument[]
+  elus      Elu[]
 
   @@index([regionCode])
   @@index([libelle])
@@ -64,6 +65,7 @@ model Commune {
   departement Departement @relation(fields: [departementCode], references: [code])
   musees      Musee[]
   monuments   Monument[]
+  elus        Elu[]
 
   @@index([departementCode])
   @@index([regionCode])
@@ -503,6 +505,131 @@ model Deport {
 
   @@index([deputeId])
   @@index([legislature])
+}
+
+// ─── Elections & RNE Layer (Phase 7) ───
+
+// Elected officials from Répertoire National des Élus
+model Elu {
+  id                    String    @id @default(cuid())
+  typeMandat            String // "maire", "conseiller_municipal", "conseiller_departemental", "conseiller_regional", "depute_europeen", "conseiller_arrondissement", "membre_assemblee", "conseiller_francais_etranger", "assemblee_francais_etranger"
+  nom                   String
+  prenom                String
+  sexe                  String // "M", "F"
+  dateNaissance         DateTime?
+  codeCSP               String? // Socio-professional category code
+  libelleCSP            String? // Socio-professional category label
+  codeDepartement       String? // FK to Departement (set only when code exists)
+  libelleDepartement    String?
+  codeCommune           String? // FK to Commune (set only when code exists)
+  libelleCommune        String?
+  codeCanton            String? // For conseillers départementaux
+  libelleCanton         String?
+  codeCollParticuliere  String? // For collectivités à statut particulier
+  libelleCollParticuliere String?
+  fonction              String? // Role: "Président", "Vice-président", etc.
+  dateDebutMandat       DateTime?
+  dateDebutFonction     DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  departementRef Departement? @relation(fields: [codeDepartement], references: [code])
+  communeRef     Commune?     @relation(fields: [codeCommune], references: [code])
+
+  @@index([typeMandat])
+  @@index([nom, prenom])
+  @@index([codeDepartement])
+  @@index([codeCommune])
+  @@index([sexe])
+  @@index([typeMandat, codeDepartement])
+  @@index([typeMandat, codeCommune])
+}
+
+// Legislative election results per constituency
+model ElectionLegislative {
+  id                     String @id @default(cuid())
+  annee                  Int // 2024
+  tour                   Int // 1 or 2
+  codeDepartement        String
+  libelleDepartement     String
+  codeCirconscription    String // "01", "02" — circo number within dept
+  libelleCirconscription String
+  inscrits               Int
+  votants                Int
+  abstentions            Int
+  exprimes               Int
+  blancs                 Int
+  nuls                   Int
+
+  createdAt DateTime @default(now())
+
+  candidats      CandidatLegislatif[]
+
+  @@unique([annee, tour, codeDepartement, codeCirconscription])
+  @@index([annee, tour])
+  @@index([codeDepartement])
+}
+
+// Individual candidates in legislative elections
+model CandidatLegislatif {
+  id            String  @id @default(cuid())
+  electionId    String
+  numeroPanneau Int
+  nuance        String // "RN", "ENS", "LR", "UG", etc.
+  nom           String
+  prenom        String
+  sexe          String // "MASCULIN", "FEMININ"
+  voix          Int
+  pctInscrits   Float?
+  pctExprimes   Float?
+  elu           Boolean @default(false)
+
+  election ElectionLegislative @relation(fields: [electionId], references: [id], onDelete: Cascade)
+
+  @@index([electionId])
+  @@index([nuance])
+  @@index([elu])
+  @@index([nom, prenom])
+}
+
+// Political party accounts from CNCCFP
+model PartiPolitique {
+  id                   String @id @default(cuid())
+  codeCNCC             Int // Code_CNCCFP
+  nom                  String
+  exercice             Int // Year
+
+  // Revenue
+  cotisationsAdherents Float @default(0)
+  cotisationsElus      Float @default(0)
+  aidePublique1        Float @default(0) // 1ère fraction
+  aidePublique2        Float @default(0) // 2nde fraction
+  donsPersonnes        Float @default(0)
+  contributionsPartis  Float @default(0) // From other parties
+
+  // Key expenses
+  contributionsCandidats Float @default(0)
+  salaires               Float @default(0)
+  chargesSociales        Float @default(0)
+  communication          Float @default(0)
+
+  // Totals
+  totalProduits Float @default(0)
+  totalCharges  Float @default(0)
+  resultat      Float @default(0) // EXCEDENT_OU_DEFICIT_D_ENSEMBLE
+
+  // Balance sheet
+  emprunts       Float @default(0)
+  disponibilites Float @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([codeCNCC, exercice])
+  @@index([nom])
+  @@index([exercice])
+  @@index([resultat])
 }
 
 // ─── System ───

@@ -3,7 +3,7 @@ import { prisma } from "@/lib/db";
 import { fmt, fmtEuro } from "@/lib/format";
 
 async function getStats() {
-  const [deputes, senateurs, lobbyistes, declarations, musees, monuments, communes, departements, indicateurs, scrutins] = await Promise.all([
+  const [deputes, senateurs, lobbyistes, declarations, musees, monuments, communes, departements, indicateurs, scrutins, elus, partis, elections] = await Promise.all([
     prisma.depute.count(),
     prisma.senateur.count(),
     prisma.lobbyiste.count(),
@@ -14,6 +14,9 @@ async function getStats() {
     prisma.departement.count(),
     prisma.indicateur.count(),
     prisma.scrutin.count(),
+    prisma.elu.count(),
+    prisma.partiPolitique.count({ where: { exercice: 2024 } }),
+    prisma.electionLegislative.count(),
   ]);
 
   const recentDeclarations = await prisma.declarationInteret.findMany({
@@ -22,18 +25,27 @@ async function getStats() {
     take: 6,
   });
 
-  return { deputes, senateurs, lobbyistes, declarations, musees, monuments, communes, departements, indicateurs, scrutins, recentDeclarations };
+  return { deputes, senateurs, lobbyistes, declarations, musees, monuments, communes, departements, indicateurs, scrutins, elus, partis, elections, recentDeclarations };
 }
 
 const SECTIONS = [
   {
     href: "/gouvernance",
     title: "Gouvernance",
-    desc: "Députés, sénateurs, lobbyistes et déclarations d'intérêts",
+    desc: "Députés, sénateurs, élus locaux, lobbyistes et partis politiques",
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M12 2 2 7l10 5 10-5-10-5z" /><path d="M2 17l10 5 10-5" /><path d="M2 12l10 5 10-5" /></svg>
     ),
     accent: "teal",
+  },
+  {
+    href: "/elections",
+    title: "Élections",
+    desc: "Résultats électoraux par circonscription, nuance, candidat",
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M9 11l3 3L22 4" /><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" /></svg>
+    ),
+    accent: "blue",
   },
   {
     href: "/economie",
@@ -87,8 +99,8 @@ export default async function HomePage() {
           <div className="fade-up delay-3 mt-12 grid grid-cols-2 gap-3 sm:grid-cols-4 md:gap-4">
             {[
               { v: stats.deputes, l: "Députés", c: "text-teal border-teal/20" },
-              { v: stats.senateurs, l: "Sénateurs", c: "text-teal border-teal/20" },
-              { v: stats.scrutins, l: "Scrutins", c: "text-blue border-blue/20" },
+              { v: stats.elus, l: "Élus locaux", c: "text-blue border-blue/20" },
+              { v: stats.elections, l: "Scrutins élect.", c: "text-amber border-amber/20" },
               { v: stats.monuments, l: "Monuments", c: "text-rose border-rose/20" },
             ].map((s) => (
               <div key={s.l} className={`rounded-xl border bg-bureau-800/40 px-4 py-4 ${s.c}`}>
@@ -105,7 +117,7 @@ export default async function HomePage() {
         <h2 className="font-[family-name:var(--font-display)] text-2xl text-bureau-100">
           Explorer les données
         </h2>
-        <p className="mt-1 text-sm text-bureau-500">Quatre axes d&apos;analyse pour comprendre la France.</p>
+        <p className="mt-1 text-sm text-bureau-500">Cinq axes d&apos;analyse pour comprendre la France.</p>
 
         <div className="mt-8 grid gap-4 sm:grid-cols-2">
           {SECTIONS.map((s) => {
@@ -186,7 +198,7 @@ export default async function HomePage() {
           Vue d&apos;ensemble
         </h2>
         <p className="mt-1 text-sm text-bureau-500">Données agrégées sur l&apos;ensemble des sources publiques françaises.</p>
-        <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-5">
+        <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
           {[
             { v: stats.deputes, l: "Députés" },
             { v: stats.senateurs, l: "Sénateurs" },
@@ -196,7 +208,10 @@ export default async function HomePage() {
             { v: stats.monuments, l: "Monuments" },
             { v: stats.departements, l: "Départements" },
             { v: stats.communes, l: "Communes" },
-            { v: stats.scrutins, l: "Scrutins" },
+            { v: stats.elus, l: "Élus locaux" },
+            { v: stats.partis, l: "Partis" },
+            { v: stats.elections, l: "Scrutins élect." },
+            { v: stats.scrutins, l: "Scrutins parl." },
             { v: stats.indicateurs, l: "Indicateurs éco." },
           ].map((s) => (
             <div key={s.l} className="rounded-lg border border-bureau-700/20 bg-bureau-800/20 p-4">

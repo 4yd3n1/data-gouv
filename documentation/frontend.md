@@ -1,6 +1,6 @@
 # Frontend Implementation
 
-> Last updated: Feb 28, 2026
+> Last updated: Mar 1, 2026
 
 Complete reference for all UI pages, components, styling, and patterns.
 
@@ -12,6 +12,7 @@ Complete reference for all UI pages, components, styling, and patterns.
 - **Tailwind CSS 4** with custom theme tokens defined in `globals.css`
 - **No client-side data fetching** — every page queries Prisma directly at render time
 - **4 client components**: `SearchInput`, `Avatar`, `DeclarationSection`, `ProfileTabs` (all use `"use client"`)
+- **1 shared lib**: `nuance-colors.ts` — political party color mapping used by elections pages
 - **French localization** throughout: `<html lang="fr">`, `fr-FR` locale for numbers/dates
 
 ---
@@ -76,7 +77,7 @@ Applied with: `font-[family-name:var(--font-display)]` for headings.
 
 [layout.tsx](../src/app/layout.tsx) provides the shell:
 
-- **Navbar**: Sticky top, backdrop-blur, SVG logo + "L'Observatoire" brand + 5 nav links (Accueil, Gouvernance, Economie, Territoire, Patrimoine)
+- **Navbar**: Sticky top, backdrop-blur, SVG logo + "L'Observatoire" brand + 6 nav links (Accueil, Gouvernance, Élections, Économie, Territoire, Patrimoine)
 - **Main**: `flex-1` content area
 - **Footer**: Data source attribution ("data.gouv.fr, INSEE, Senat, HATVP") + "L'Observatoire Citoyen 2025"
 - **Container**: `max-w-7xl px-6` on list pages; `max-w-4xl px-6` on profile detail pages (focused editorial width)
@@ -85,13 +86,14 @@ Applied with: `font-[family-name:var(--font-display)]` for headings.
 
 ---
 
-## Route Map (19 routes)
+## Route Map (22 routes)
 
 ### Static (prerendered at build time)
 | Route | Purpose |
 |-------|---------|
-| `/` | Homepage — hero stats, 4 section cards, recent declarations, overview grid |
-| `/gouvernance` | Hub — 4 cards (Deputes, Senateurs, Lobbyistes, Scrutins) with counts |
+| `/` | Homepage — hero stats, 5 section cards, recent declarations, overview grid |
+| `/gouvernance` | Hub — 6 cards (Deputes, Senateurs, Lobbyistes, Scrutins, Élus, Partis) with counts |
+| `/elections` | Hub — Législatives 2024 card + national summary stats |
 | `/economie` | Dashboard — SVG MiniChart per indicator |
 | `/territoire` | Browser — regions with department cards |
 | `/patrimoine` | Hub — top 10 museums + monument domains |
@@ -107,6 +109,9 @@ Applied with: `font-[family-name:var(--font-display)]` for headings.
 | `/gouvernance/lobbyistes/[id]` | Info panel, actions list |
 | `/gouvernance/scrutins` | Search, result filter (adopte/rejete), pagination |
 | `/gouvernance/scrutins/[id]` | Result summary, group bars, individual votes |
+| `/gouvernance/partis` | Year selector (2021–2024), sort options, aggregate stats |
+| `/gouvernance/partis/[id]` | Revenue/expense breakdown bars, multi-year comparison table |
+| `/elections/legislatives-2024` | Tour switcher, dept filter, nuance color bars, candidate list |
 | `/patrimoine/musees` | Search, pagination |
 | `/patrimoine/musees/[id]` | SVG bar chart, attendance table |
 | `/patrimoine/monuments` | Search, protection type filter, pagination |
@@ -121,13 +126,13 @@ Applied with: `font-[family-name:var(--font-display)]` for headings.
 
 **File**: [page.tsx](../src/app/page.tsx)
 
-**Data**: Counts of all entities + 6 recent declarations with highest `totalParticipations`.
+**Data**: Counts of all entities (deputes, senateurs, lobbyistes, declarations, musees, monuments, communes, departements, indicateurs, scrutins, elus, partis, elections) + 6 recent declarations with highest `totalParticipations`.
 
 **Sections**:
-1. **Hero** — `.grid-bg` pattern, display-font title, 4 `StatCard` (Deputes teal, Senateurs blue, Scrutins amber, Monuments rose)
-2. **Explorer les donnees** — 4 section cards with SVG icons, accent colors, descriptions, arrow links
-3. **Declarations d'interets** — 6 cards showing officials with highest financial participations
-4. **Vue d'ensemble** — 10-stat grid covering all data sources
+1. **Hero** — `.grid-bg` pattern, display-font title, 4 hero stat tiles (Députés teal, Élus locaux blue, Scrutins élect. amber, Monuments rose)
+2. **Explorer les données** — 5 section cards with SVG icons (Gouvernance, Élections, Économie, Territoire, Patrimoine)
+3. **Déclarations d'intérêts** — 6 cards showing officials with highest financial participations
+4. **Vue d'ensemble** — 13-stat grid (deputes, senateurs, lobbyistes, declarations, musees, monuments, departements, communes, elus, partis, elections, scrutins parl., indicateurs eco.)
 
 ---
 
@@ -135,9 +140,9 @@ Applied with: `font-[family-name:var(--font-display)]` for headings.
 
 **File**: [page.tsx](../src/app/gouvernance/page.tsx)
 
-**Data**: Counts + active counts for deputes/senateurs/lobbyistes/scrutins.
+**Data**: Counts + active counts for deputes/senateurs/lobbyistes/scrutins/elus/partis.
 
-**Layout**: 4 accent-bordered cards, each linking to subsection with aggregate stats.
+**Layout**: 6 accent-bordered cards (Députés, Sénateurs, Lobbyistes, Scrutins, Élus locaux, Partis politiques), each linking to subsection with aggregate stats.
 
 ---
 
@@ -248,6 +253,67 @@ Applied with: `font-[family-name:var(--font-display)]` for headings.
 2. Summary — 5 stat boxes (Votants, Pour, Contre, Abstentions, Non-votants)
 3. Group breakdown — horizontal stacked bars per group (teal=pour, rose=contre, amber=abstention, grey=non-votant)
 4. Individual votes — 4 columns by position with deputy name links
+
+---
+
+### `/gouvernance/partis` — Party Finance List
+
+**File**: [page.tsx](../src/app/gouvernance/partis/page.tsx)
+
+**Data**: PartiPolitique records for the selected year. Aggregate totals (sum of recettes/charges/aide publique/dons for the year). Sorted by selected field.
+
+**Features**:
+- Year selector: 2021, 2022, 2023, 2024 (URL `?annee=`)
+- Sort options: recettes, charges, resultat, aide, dons (URL `?sort=`)
+- Aggregate stats row: total recettes, total dépenses, total aide, total dons for the year
+- Party rows with revenue bar (proportional to max), result badge (surplus teal / deficit rose), link to detail
+
+**Components**: `PageHeader`
+
+---
+
+### `/gouvernance/partis/[id]` — Party Detail
+
+**File**: [page.tsx](../src/app/gouvernance/partis/[id]/page.tsx)
+
+**Data**: All PartiPolitique records for the given `codeCNCC` (may span multiple years), ordered by exercice.
+
+**Sections**:
+1. **4-stat row** — Recettes totales (teal), Dépenses (amber), Résultat (teal/rose based on sign), Aide publique (blue)
+2. **Revenue breakdown** — Progress bars per category (cotisations adhérents, cotisations élus, aide publique 1ère/2nde fraction, dons personnes, contributions partis) as % of total recettes
+3. **Expense breakdown** — Progress bars per category (contributions candidats, salaires, charges sociales, communication) as % of total charges
+4. **Multi-year table** — If multiple exercices: columns = Exercice / Recettes / Charges / Résultat / Aide publique; result colored teal (surplus) or rose (deficit)
+
+**Components**: `PageHeader`
+
+---
+
+### `/elections` — Elections Hub
+
+**File**: [page.tsx](../src/app/elections/page.tsx)
+
+**Data**: Aggregate counts from ElectionLegislative — total inscrits, votants, exprimés, taux de participation (tour 1). Count of constituencies per tour.
+
+**Sections**:
+1. **Législatives 2024 card** — Participation %, constituency count, link to detail, teal accent
+2. **National summary stats** — 4 tiles: Total inscrits, Votants, Exprimés, Taux participation
+3. **Placeholder cards** — Municipales 2026, Présidentielle 2027 (greyed out, "Données à venir")
+
+---
+
+### `/elections/legislatives-2024` — 2024 Legislative Results
+
+**File**: [page.tsx](../src/app/elections/legislatives-2024/page.tsx)
+
+**Data**: ElectionLegislative with candidats, filtered by tour + optional dept. National totals (inscrits/votants/exprimes aggregated). Nuance aggregates (total voix per nuance for the selected tour).
+
+**Features**:
+- Tour switcher: 1er tour / 2nd tour (URL `?tour=`)
+- Department filter — dropdown of all departments present in data (URL `?dept=`)
+- Nuance summary — stacked color bars showing % voix per nuance across all constituencies, with legend
+- Constituency list — per-row: dept + circo label, inscrits, participation %, candidate list with color dot, name, nuance, voix, %, "Élu" badge if elected
+
+**Lib**: Uses `getNuanceStyle()` + `getNuanceLabel()` from `nuance-colors.ts`
 
 ---
 
@@ -605,10 +671,14 @@ Route (app)                                Type
 ├ ƒ /gouvernance/deputes/[id]              Dynamic
 ├ ƒ /gouvernance/lobbyistes                Dynamic
 ├ ƒ /gouvernance/lobbyistes/[id]           Dynamic
+├ ƒ /gouvernance/partis                    Dynamic
+├ ƒ /gouvernance/partis/[id]              Dynamic
 ├ ƒ /gouvernance/scrutins                  Dynamic
 ├ ƒ /gouvernance/scrutins/[id]             Dynamic
 ├ ƒ /gouvernance/senateurs                 Dynamic
 ├ ƒ /gouvernance/senateurs/[id]            Dynamic
+├ ○ /elections                             Static
+├ ƒ /elections/legislatives-2024           Dynamic
 ├ ○ /economie                              Static
 ├ ○ /patrimoine                            Static
 ├ ƒ /patrimoine/monuments                  Dynamic
@@ -619,7 +689,7 @@ Route (app)                                Type
 └ ƒ /territoire/[departementCode]          Dynamic
 ```
 
-5 static (prerendered) + 13 dynamic (server-rendered on demand) = 18 routes + `/_not-found`.
+6 static (prerendered) + 16 dynamic (server-rendered on demand) = 22 routes + `/_not-found`.
 
 ---
 
@@ -629,10 +699,10 @@ Route (app)                                Type
 src/
 ├── app/
 │   ├── globals.css              # Theme colors, effects, animations
-│   ├── layout.tsx               # Root: fonts, navbar (5 items), footer
+│   ├── layout.tsx               # Root: fonts, navbar (6 items), footer
 │   ├── page.tsx                 # Dashboard homepage
 │   ├── gouvernance/
-│   │   ├── page.tsx             # Hub (4 cards)
+│   │   ├── page.tsx             # Hub (6 cards)
 │   │   ├── deputes/
 │   │   │   ├── page.tsx         # List + group/dept filters
 │   │   │   └── [id]/page.tsx    # Hero profile + tabs (activite/declarations/infos)
@@ -642,9 +712,16 @@ src/
 │   │   ├── lobbyistes/
 │   │   │   ├── page.tsx         # Registry list
 │   │   │   └── [id]/page.tsx    # Detail + actions
+│   │   ├── partis/
+│   │   │   ├── page.tsx         # List + year/sort filters
+│   │   │   └── [id]/page.tsx    # Revenue/expense bars + multi-year table
 │   │   └── scrutins/
 │   │       ├── page.tsx         # Vote list + result filter
 │   │       └── [id]/page.tsx    # Group bars + individual votes
+│   ├── elections/
+│   │   ├── page.tsx             # Hub: Législatives 2024 card + stats
+│   │   └── legislatives-2024/
+│   │       └── page.tsx         # Results by constituency (tour + dept filter)
 │   ├── economie/
 │   │   └── page.tsx             # SVG charts dashboard
 │   ├── territoire/
@@ -673,5 +750,6 @@ src/
 │   └── vote-badge.tsx           # Server: Pour/Contre/Abstention/Non-votant
 └── lib/
     ├── db.ts                    # Prisma client (pg adapter, singleton)
-    └── format.ts                # French number/date formatting (7 functions)
+    ├── format.ts                # French number/date formatting (7 functions)
+    └── nuance-colors.ts         # Political nuance code → { color, bg, label } mapping
 ```
