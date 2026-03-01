@@ -1,6 +1,6 @@
 # Handoff — data-gouv Civic Intelligence Platform
 
-> Updated: Mar 1, 2026 (Session 11). For the next agent picking up this project.
+> Updated: Mar 1, 2026 (Session 12). For the next agent picking up this project.
 
 ---
 
@@ -30,7 +30,7 @@ The project is fully functional as of this handoff. Dev server runs, all data is
 
 ### UI Status (all pages render correctly)
 
-52 routes across 9 sections (build verified Mar 1, 2026, Session 11):
+52 routes across 9 sections (build verified Mar 1, 2026, Session 12):
 
 | Section | Routes |
 |---------|--------|
@@ -195,7 +195,7 @@ The platform has been fully redesigned from a **data-source browser** into a **c
 
 | Task | Script | Priority |
 |------|--------|----------|
-| DGFIP local budgets | `pnpm ingest:budgets` | HIGH — BudgetLocal empty, UI guards in place |
+| DGFIP local budgets | `pnpm ingest:budgets` | ✅ DONE — 69,023 rows (380 depts + 68,643 communes), OFGL Opendatasoft source |
 | Crime stats | `pnpm ingest:criminalite` | MEDIUM — StatCriminalite empty |
 | Medical density | `pnpm ingest:medecins` | MEDIUM — DensiteMedicale empty |
 | DEP 36 (Indre) retry | `pnpm ingest:insee-local` | LOW — lost to rate limit, 11/12 stats present |
@@ -211,9 +211,9 @@ The platform has been fully redesigned from a **data-source browser** into a **c
 ### Route duality: /gouvernance and /representants both exist
 Both directories serve content. `/gouvernance` has the original files (kept for scrutins at `/gouvernance/scrutins/*`). `/representants` is the canonical new path for deputes/senateurs/elus/lobbyistes/partis. HTTP 308 redirects in `next.config.ts` handle old `/gouvernance/*` URLs. Do not remove `/gouvernance/scrutins` — it's still the active route, linked from many pages.
 
-### StatLocale is populated (1,186 rows); BudgetLocal may be empty
-`StatLocale` was ingested via `pnpm ingest:insee-local` (Session 8). No API key required — uses Mélodi "libre" plan anonymously. DEP 36 (Indre) is missing population rows due to rate-limit exhaustion; Mayotte (976) has no Mélodi data at all. To re-run a single département: `pnpm ingest:insee-local` is idempotent.
-`BudgetLocal` script (`ingest-budgets.ts`) exists but DGFIP ingestion has not been run. The UI guards both with `statLocale.length > 0` and `budgetDept !== null`.
+### StatLocale is populated (1,186 rows); BudgetLocal is populated (69,023 rows)
+`StatLocale` was ingested via `pnpm ingest:insee-local` (Session 8). No API key required — uses Mélodi "libre" plan anonymously. DEP 36 (Indre) is missing population rows due to rate-limit exhaustion; Mayotte (976) has no Mélodi data at all.
+`BudgetLocal` was ingested via `pnpm ingest:budgets` (Session 12). Source: **OFGL Opendatasoft API** (original data.collectivites-locales.gouv.fr URLs were dead). 380 département records + 68,643 commune records (2022 + 2023 for ~34K communes). `/territoire/[dept]`, `/territoire/commune/[code]`, and `/dossiers/dette-publique` are now fully populated.
 
 ### Scrutin relation is `votes` not `voteRecords`
 The `Scrutin` model has `votes VoteRecord[]` — always use `votes` in Prisma where clauses. Using `voteRecords` causes a TypeScript build error.
@@ -227,6 +227,14 @@ The `Scrutin` model has `votes VoteRecord[]` — always use `votes` in Prisma wh
 ---
 
 ## Work History
+
+### Session 12 (Mar 1, 2026) — BudgetLocal Ingestion (OFGL)
+
+1. **Rewrote `scripts/ingest-budgets.ts`** — Original URLs (`data.collectivites-locales.gouv.fr`) are dead. New source: **OFGL Opendatasoft API** with targeted filtered queries per année + type (commune/département).
+2. **Regenerated Prisma client** — `pnpm db:generate` needed for `prisma.budgetLocal` to resolve after schema was already migrated.
+3. **Ingested 69,023 BudgetLocal rows** — 380 département records + 68,643 commune records (2022 + 2023 for ~34K communes).
+4. **Pages now live**: `/territoire/[dept]` budget section (4 KPIs + 4-year trend), `/territoire/commune/[code]` budget communal (6 KPIs), `/dossiers/dette-publique` top-10 ranked bar.
+5. **Sample data**: Paris 2020–2023 dépenses €3,776 → €4,187 → €4,300/hab, dette €3,519 → €4,579/hab. Top indebted depts: Paris, Cantal, Dordogne, Nièvre, Seine-Saint-Denis.
 
 ### Session 11 (Mar 1, 2026) — Lobbying Data Enrichment + Consulting Firm Profiles
 

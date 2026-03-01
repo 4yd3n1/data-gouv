@@ -1,17 +1,21 @@
 /**
- * Ingest DGFIP Finances Locales — BudgetLocal.
+ * Ingest local government finances — BudgetLocal.
  *
- * Sources:
- *   Communes: data.gouv.fr — "Comptes individuels des communes et des groupements"
- *   Départements: data.gouv.fr — "Comptes individuels des départements"
+ * Source: OFGL (Observatoire des Finances et de la Gestion publique Locale)
+ *   Communes:    data.ofgl.fr — ofgl-base-communes-consolidee
+ *   Départements: data.ofgl.fr — ofgl-base-departements-consolidee
  *
- * Data format: CSV, semicolon-separated
- * Coverage: Commune budgets (annual), latest 3 years
+ * Data format: long (one row per entity/year/aggregate), semicolon CSV.
+ * We select only the 4 aggregates the UI actually renders, pivot to wide,
+ * and compute derived per-habitant fields before upsert.
  *
- * Key columns (commune):
- *   INSEE_COM, LBUDG, EXERCICE, POP,
- *   TOTAL_PROD, TOTAL_CHARGES, FONCT_PROD, FONCT_CHARGES, INVEST_PROD, INVEST_CHARGES,
- *   IMPOTS_TAXES, DOTATIONS_SUBVENTIONS, CHARGES_PERSONNEL, ENCOURS_DETTE, ANNUITE_DETTE
+ * Aggregates used:
+ *   "Dépenses totales"       → totalDepenses
+ *   "Recettes totales"       → totalRecettes
+ *   "Frais de personnel"     → chargesPersonnel
+ *   "Encours de dette"       → encoursDette
+ *
+ * Years: 2020–2023 for depts (trend chart needs 3-4 pts); 2022-2023 for communes.
  *
  * Run: pnpm ingest:budgets
  */
@@ -22,279 +26,197 @@ import { fetchText } from "./lib/api-client";
 import { parseCsv, parseFloatSafe, parseIntSafe } from "./lib/csv-parser";
 import { logIngestion } from "./lib/ingestion-log";
 
-// ─── DGFIP resource URLs (data.gouv.fr Tabular API) ───
-// Communes — annual accounts, latest year available
-const COMMUNES_CSV_URL =
-  "https://data.collectivites-locales.gouv.fr/api/explore/v2.1/catalog/datasets/balances-comptables-des-communes/exports/csv?select=insee_code%2Cnombloc%2Cexercice%2Cpop%2Ctotal_prod%2Ctotal_charges%2Cfonct_prod%2Cfonct_charges%2Cinvest_prod%2Cinvest_charges%2Cimpots_taxes%2Cdotations_subventions%2Ccharges_personnel%2Cencours_dette%2Cannuite_dette&where=exercice%20in%20(2022%2C2021%2C2020)&limit=500000&offset=0&lang=fr&delimiter=%3B";
+// ─── OFGL Opendatasoft API ───
 
-// Fallback: data.gouv.fr static export
-const COMMUNES_FALLBACK_URL =
-  "https://www.data.gouv.fr/fr/datasets/r/f517e2c4-b1b7-47b7-8afe-a8b3e2a4f0b1";
+const OFGL = "https://data.ofgl.fr/api/explore/v2.1/catalog/datasets";
 
-// Départements CSV
-const DEPTS_CSV_URL =
-  "https://data.collectivites-locales.gouv.fr/api/explore/v2.1/catalog/datasets/balances-comptables-des-departements/exports/csv?select=dep_code%2Cnombloc%2Cexercice%2Cpop%2Ctotal_prod%2Ctotal_charges%2Cfonct_prod%2Cfonct_charges%2Cinvest_prod%2Cinvest_charges%2Cimpots_taxes%2Cdotations_subventions%2Ccharges_personnel%2Cencours_dette%2Cannuite_dette&where=exercice%20in%20(2022%2C2021%2C2020)&limit=1000&delimiter=%3B";
+// The 4 aggregates we actually render in the UI
+const NEEDED = [
+  "Dépenses totales",
+  "Recettes totales",
+  "Frais de personnel",
+  "Encours de dette",
+];
 
-// ─── Column name mapping (CSV columns vary by export year) ───
+// Fallback names for the same concepts (used by some years/entities)
+const DEPENSES_FALLBACK = "Dépenses totales hors remb";
+const RECETTES_FALLBACK = "Recettes totales hors emprunts";
 
-interface CommuneRow {
-  insee_code?: string;
-  INSEE_COM?: string;
-  CINSEE?: string;
-  nombloc?: string;
-  LBUDG?: string;
-  exercice?: string;
-  EXERCICE?: string;
-  pop?: string;
-  POP?: string;
-  total_prod?: string;
-  TOTAL_PROD?: string;
-  PROD_TOT_BP?: string;
-  total_charges?: string;
-  TOTAL_CHARGES?: string;
-  CHARGES_TOT_BP?: string;
-  fonct_prod?: string;
-  FONCT_PROD?: string;
-  fonct_charges?: string;
-  FONCT_CHARGES?: string;
-  invest_prod?: string;
-  INVEST_PROD?: string;
-  invest_charges?: string;
-  INVEST_CHARGES?: string;
-  impots_taxes?: string;
-  IMPOTS_TAXES?: string;
-  dotations_subventions?: string;
-  DOTATIONS_SUBVENTIONS?: string;
-  charges_personnel?: string;
-  CHARGES_PERSONNEL?: string;
-  encours_dette?: string;
-  ENCOURS_DETTE?: string;
-  annuite_dette?: string;
-  ANNUITE_DETTE?: string;
-  [key: string]: string | undefined;
+function buildUrl(dataset: string, extraWhere: string): string {
+  const agregats = [...NEEDED, DEPENSES_FALLBACK, RECETTES_FALLBACK]
+    .map((a) => `"${a}"`)
+    .join(",");
+  const where = encodeURIComponent(`${extraWhere} and agregat in (${agregats})`);
+  return `${OFGL}/${dataset}/exports/csv?select=exer,dep_code,dep_name,agregat,montant,ptot&where=${where}&delimiter=%3B`;
 }
 
-function col(row: CommuneRow, ...names: string[]): string | undefined {
-  for (const name of names) {
-    if (row[name] !== undefined && row[name] !== "") return row[name];
-  }
-  return undefined;
+function buildCommuneUrl(extraWhere: string): string {
+  const agregats = [...NEEDED, DEPENSES_FALLBACK, RECETTES_FALLBACK]
+    .map((a) => `"${a}"`)
+    .join(",");
+  const where = encodeURIComponent(`${extraWhere} and agregat in (${agregats})`);
+  return `${OFGL}/ofgl-base-communes-consolidee/exports/csv?select=exer,insee,com_name,agregat,montant,ptot&where=${where}&delimiter=%3B`;
 }
 
-// ─── Commune ingestion ───
+// ─── Pivot helper ───
 
-async function ingestCommuneBudgets(): Promise<number> {
-  console.log("  [BudgetCommune] Fetching CSV...");
+interface WideRecord {
+  geoCode: string;
+  geoLibelle: string;
+  annee: number;
+  population: number | null;
+  totalDepenses: number | null;
+  totalRecettes: number | null;
+  chargesPersonnel: number | null;
+  encoursDette: number | null;
+  // fallback accumulators
+  totalDepensesHorsRemb: number | null;
+  totalRecettesHorsEmprunts: number | null;
+}
 
-  let csvText: string;
-  try {
-    csvText = await fetchText(COMMUNES_CSV_URL);
-  } catch {
-    console.warn("  [BudgetCommune] Primary URL failed, trying fallback...");
-    try {
-      csvText = await fetchText(COMMUNES_FALLBACK_URL);
-    } catch (err) {
-      console.error("  [BudgetCommune] Both URLs failed:", err);
-      console.warn("  [BudgetCommune] Skipping commune budget ingestion.");
-      return 0;
-    }
+function newWide(code: string, libelle: string, annee: number): WideRecord {
+  return {
+    geoCode: code,
+    geoLibelle: libelle,
+    annee,
+    population: null,
+    totalDepenses: null,
+    totalRecettes: null,
+    chargesPersonnel: null,
+    encoursDette: null,
+    totalDepensesHorsRemb: null,
+    totalRecettesHorsEmprunts: null,
+  };
+}
+
+function applyAgregat(rec: WideRecord, agregat: string, montant: number) {
+  switch (agregat) {
+    case "Dépenses totales":
+      rec.totalDepenses = (rec.totalDepenses ?? 0) + montant;
+      break;
+    case DEPENSES_FALLBACK:
+      rec.totalDepensesHorsRemb = (rec.totalDepensesHorsRemb ?? 0) + montant;
+      break;
+    case "Recettes totales":
+      rec.totalRecettes = (rec.totalRecettes ?? 0) + montant;
+      break;
+    case RECETTES_FALLBACK:
+      rec.totalRecettesHorsEmprunts = (rec.totalRecettesHorsEmprunts ?? 0) + montant;
+      break;
+    case "Frais de personnel":
+      rec.chargesPersonnel = (rec.chargesPersonnel ?? 0) + montant;
+      break;
+    case "Encours de dette":
+      rec.encoursDette = (rec.encoursDette ?? 0) + montant;
+      break;
   }
+}
 
-  const rows = parseCsv<CommuneRow>(csvText, { delimiter: ";" });
-  console.log(`  [BudgetCommune] ${rows.length} rows parsed`);
+function finalise(rec: WideRecord) {
+  // Use fallback if primary aggregate not present
+  const depenses = rec.totalDepenses ?? rec.totalDepensesHorsRemb;
+  const recettes = rec.totalRecettes ?? rec.totalRecettesHorsEmprunts;
+  const pop = rec.population;
 
-  if (rows.length === 0) {
-    console.warn("  [BudgetCommune] No rows — CSV may be empty or wrong format");
-    return 0;
-  }
+  const depenseParHab = depenses && pop ? Math.round((depenses / pop) * 100) / 100 : null;
+  const detteParHab = rec.encoursDette && pop
+    ? Math.round((rec.encoursDette / pop) * 100) / 100
+    : null;
+  const resultatComptable =
+    depenses !== null && recettes !== null ? recettes - depenses : null;
 
-  // Load valid commune codes for FK validation
-  const validCodes = new Set(
-    (await prisma.commune.findMany({ select: { code: true }, where: { typecom: "COM" } }))
-      .map((c) => c.code)
-  );
-
-  let count = 0;
-  let skipped = 0;
-
-  for (const row of rows) {
-    const geoCode = col(row, "insee_code", "INSEE_COM", "CINSEE");
-    const exerciceStr = col(row, "exercice", "EXERCICE");
-    const libelle = col(row, "nombloc", "LBUDG") ?? "";
-
-    if (!geoCode || !exerciceStr) { skipped++; continue; }
-
-    const annee = parseInt(exerciceStr);
-    if (isNaN(annee) || annee < 2000 || annee > 2030) { skipped++; continue; }
-
-    // Only ingest known communes
-    if (!validCodes.has(geoCode)) { skipped++; continue; }
-
-    const population = parseIntSafe(col(row, "pop", "POP"));
-    const totalRecettes = parseFloatSafe(col(row, "total_prod", "TOTAL_PROD", "PROD_TOT_BP"));
-    const totalDepenses = parseFloatSafe(col(row, "total_charges", "TOTAL_CHARGES", "CHARGES_TOT_BP"));
-    const recettesFonct = parseFloatSafe(col(row, "fonct_prod", "FONCT_PROD"));
-    const recettesInvest = parseFloatSafe(col(row, "invest_prod", "INVEST_PROD"));
-    const depensesFonct = parseFloatSafe(col(row, "fonct_charges", "FONCT_CHARGES"));
-    const depensesInvest = parseFloatSafe(col(row, "invest_charges", "INVEST_CHARGES"));
-    const impotsTaxes = parseFloatSafe(col(row, "impots_taxes", "IMPOTS_TAXES"));
-    const dotationsSubv = parseFloatSafe(col(row, "dotations_subventions", "DOTATIONS_SUBVENTIONS"));
-    const chargesPersonnel = parseFloatSafe(col(row, "charges_personnel", "CHARGES_PERSONNEL"));
-    const encoursDette = parseFloatSafe(col(row, "encours_dette", "ENCOURS_DETTE"));
-    const annuiteDette = parseFloatSafe(col(row, "annuite_dette", "ANNUITE_DETTE"));
-
-    // Derived per-habitant metrics
-    const depenseParHab =
-      population && totalDepenses ? Math.round((totalDepenses / population) * 100) / 100 : null;
-    const detteParHab =
-      population && encoursDette ? Math.round((encoursDette / population) * 100) / 100 : null;
-    const resultatComptable =
-      totalRecettes !== null && totalDepenses !== null
-        ? totalRecettes - totalDepenses
-        : null;
-
-    await prisma.budgetLocal.upsert({
-      where: { geoType_geoCode_annee: { geoType: "COM", geoCode, annee } },
-      update: {
-        geoLibelle: libelle,
-        population,
-        totalRecettes,
-        totalDepenses,
-        recettesFonct,
-        recettesInvest,
-        depensesFonct,
-        depensesInvest,
-        impotsTaxes,
-        dotationsSubv,
-        chargesPersonnel,
-        encoursDette,
-        annuiteDette,
-        resultatComptable,
-        depenseParHab,
-        detteParHab,
-      },
-      create: {
-        geoType: "COM",
-        geoCode,
-        geoLibelle: libelle,
-        annee,
-        population,
-        totalRecettes,
-        totalDepenses,
-        recettesFonct,
-        recettesInvest,
-        depensesFonct,
-        depensesInvest,
-        impotsTaxes,
-        dotationsSubv,
-        chargesPersonnel,
-        encoursDette,
-        annuiteDette,
-        resultatComptable,
-        depenseParHab,
-        detteParHab,
-      },
-    });
-    count++;
-  }
-
-  console.log(`  [BudgetCommune] ${count} upserted, ${skipped} skipped`);
-  return count;
+  return {
+    geoLibelle: rec.geoLibelle,
+    population: pop,
+    totalDepenses: depenses,
+    totalRecettes: recettes,
+    chargesPersonnel: rec.chargesPersonnel,
+    encoursDette: rec.encoursDette,
+    depenseParHab,
+    detteParHab,
+    resultatComptable,
+    // Unused by UI but in schema — leave null
+    recettesFonct: null,
+    recettesInvest: null,
+    depensesFonct: null,
+    depensesInvest: null,
+    impotsTaxes: null,
+    dotationsSubv: null,
+    annuiteDette: null,
+  };
 }
 
 // ─── Département ingestion ───
 
 async function ingestDeptBudgets(): Promise<number> {
-  console.log("  [BudgetDept] Fetching CSV...");
+  console.log("  [BudgetDept] Fetching from OFGL API (2020–2023)...");
+
+  const yearFilter =
+    "exer >= date'2020' and exer <= date'2023'";
+  const url = buildUrl("ofgl-base-departements-consolidee", yearFilter);
 
   let csvText: string;
   try {
-    csvText = await fetchText(DEPTS_CSV_URL);
+    csvText = await fetchText(url);
   } catch (err) {
-    console.warn(`  [BudgetDept] Fetch failed: ${err}. Skipping.`);
+    console.error("  [BudgetDept] Fetch failed:", err);
     return 0;
   }
 
+  // The dept dataset uses different column names; remap for parseCsv
+  // select=exer,dep_code,dep_name,agregat,montant,ptot
+  // The consolidated dept dataset doesn't have dep_code in select — use dep_code from field list
   const rows = parseCsv<Record<string, string>>(csvText, { delimiter: ";" });
   console.log(`  [BudgetDept] ${rows.length} rows parsed`);
 
+  if (rows.length === 0) return 0;
+
+  // Load valid dept codes
   const validDepts = new Set(
     (await prisma.departement.findMany({ select: { code: true } })).map((d) => d.code)
   );
 
-  let count = 0;
+  // Group by (dep_code, year)
+  const map = new Map<string, WideRecord>();
 
   for (const row of rows) {
-    const geoCode = row["dep_code"] ?? row["DEP_CODE"] ?? row["CINSEE"];
-    const exerciceStr = row["exercice"] ?? row["EXERCICE"];
-    const libelle = row["nombloc"] ?? row["LBUDG"] ?? "";
+    const depCode = row["dep_code"];
+    const exerStr = row["exer"];
+    const agregat = row["agregat"];
+    const montantStr = row["montant"];
+    const ptotStr = row["ptot"];
+    const libelle = row["dep_name"] ?? "";
 
-    if (!geoCode || !exerciceStr) continue;
-    const annee = parseInt(exerciceStr);
+    if (!depCode || !exerStr || !agregat) continue;
+    const annee = parseInt(exerStr);
     if (isNaN(annee)) continue;
-    if (!validDepts.has(geoCode)) continue;
+    if (!validDepts.has(depCode)) continue;
 
-    const population = parseIntSafe(row["pop"] ?? row["POP"]);
-    const totalRecettes = parseFloatSafe(row["total_prod"] ?? row["TOTAL_PROD"]);
-    const totalDepenses = parseFloatSafe(row["total_charges"] ?? row["TOTAL_CHARGES"]);
-    const recettesFonct = parseFloatSafe(row["fonct_prod"] ?? row["FONCT_PROD"]);
-    const recettesInvest = parseFloatSafe(row["invest_prod"] ?? row["INVEST_PROD"]);
-    const depensesFonct = parseFloatSafe(row["fonct_charges"] ?? row["FONCT_CHARGES"]);
-    const depensesInvest = parseFloatSafe(row["invest_charges"] ?? row["INVEST_CHARGES"]);
-    const impotsTaxes = parseFloatSafe(row["impots_taxes"] ?? row["IMPOTS_TAXES"]);
-    const dotationsSubv = parseFloatSafe(row["dotations_subventions"] ?? row["DOTATIONS_SUBVENTIONS"]);
-    const chargesPersonnel = parseFloatSafe(row["charges_personnel"] ?? row["CHARGES_PERSONNEL"]);
-    const encoursDette = parseFloatSafe(row["encours_dette"] ?? row["ENCOURS_DETTE"]);
-    const annuiteDette = parseFloatSafe(row["annuite_dette"] ?? row["ANNUITE_DETTE"]);
+    const montant = parseFloatSafe(montantStr);
+    if (montant === null) continue;
 
-    const depenseParHab =
-      population && totalDepenses ? Math.round((totalDepenses / population) * 100) / 100 : null;
-    const detteParHab =
-      population && encoursDette ? Math.round((encoursDette / population) * 100) / 100 : null;
-    const resultatComptable =
-      totalRecettes !== null && totalDepenses !== null ? totalRecettes - totalDepenses : null;
+    const key = `${depCode}_${annee}`;
+    if (!map.has(key)) map.set(key, newWide(depCode, libelle, annee));
+    const rec = map.get(key)!;
 
+    // Population: take first non-null
+    if (rec.population === null) {
+      const pop = parseIntSafe(ptotStr);
+      if (pop) rec.population = pop;
+    }
+
+    applyAgregat(rec, agregat, montant);
+  }
+
+  console.log(`  [BudgetDept] ${map.size} unique (dept × year) records to upsert`);
+
+  let count = 0;
+  for (const [, rec] of map) {
+    const fields = finalise(rec);
     await prisma.budgetLocal.upsert({
-      where: { geoType_geoCode_annee: { geoType: "DEP", geoCode, annee } },
-      update: {
-        geoLibelle: libelle,
-        population,
-        totalRecettes,
-        totalDepenses,
-        recettesFonct,
-        recettesInvest,
-        depensesFonct,
-        depensesInvest,
-        impotsTaxes,
-        dotationsSubv,
-        chargesPersonnel,
-        encoursDette,
-        annuiteDette,
-        resultatComptable,
-        depenseParHab,
-        detteParHab,
-      },
-      create: {
-        geoType: "DEP",
-        geoCode,
-        geoLibelle: libelle,
-        annee,
-        population,
-        totalRecettes,
-        totalDepenses,
-        recettesFonct,
-        recettesInvest,
-        depensesFonct,
-        depensesInvest,
-        impotsTaxes,
-        dotationsSubv,
-        chargesPersonnel,
-        encoursDette,
-        annuiteDette,
-        resultatComptable,
-        depenseParHab,
-        detteParHab,
-      },
+      where: { geoType_geoCode_annee: { geoType: "DEP", geoCode: rec.geoCode, annee: rec.annee } },
+      update: fields,
+      create: { geoType: "DEP", geoCode: rec.geoCode, annee: rec.annee, ...fields },
     });
     count++;
   }
@@ -303,16 +225,104 @@ async function ingestDeptBudgets(): Promise<number> {
   return count;
 }
 
+// ─── Commune ingestion ───
+
+async function ingestCommuneBudgets(): Promise<number> {
+  console.log("  [BudgetCommune] Fetching from OFGL API (2022–2023)...");
+
+  const yearFilter = "exer >= date'2022' and exer <= date'2023'";
+  const url = buildCommuneUrl(yearFilter);
+
+  let csvText: string;
+  try {
+    csvText = await fetchText(url);
+  } catch (err) {
+    console.error("  [BudgetCommune] Fetch failed:", err);
+    return 0;
+  }
+
+  const rows = parseCsv<Record<string, string>>(csvText, { delimiter: ";" });
+  console.log(`  [BudgetCommune] ${rows.length} rows parsed`);
+
+  if (rows.length === 0) return 0;
+
+  // Load valid commune codes (COM type only)
+  const validCodes = new Set(
+    (
+      await prisma.commune.findMany({
+        select: { code: true },
+        where: { typecom: "COM" },
+      })
+    ).map((c) => c.code)
+  );
+
+  const map = new Map<string, WideRecord>();
+
+  for (const row of rows) {
+    const insee = row["insee"];
+    const exerStr = row["exer"];
+    const agregat = row["agregat"];
+    const montantStr = row["montant"];
+    const ptotStr = row["ptot"];
+    const libelle = row["com_name"] ?? "";
+
+    if (!insee || !exerStr || !agregat) continue;
+    const annee = parseInt(exerStr);
+    if (isNaN(annee)) continue;
+    if (!validCodes.has(insee)) continue;
+
+    const montant = parseFloatSafe(montantStr);
+    if (montant === null) continue;
+
+    const key = `${insee}_${annee}`;
+    if (!map.has(key)) map.set(key, newWide(insee, libelle, annee));
+    const rec = map.get(key)!;
+
+    if (rec.population === null) {
+      const pop = parseIntSafe(ptotStr);
+      if (pop) rec.population = pop;
+    }
+
+    applyAgregat(rec, agregat, montant);
+  }
+
+  console.log(`  [BudgetCommune] ${map.size} unique (commune × year) records to upsert`);
+
+  let count = 0;
+  // Batch upserts in chunks of 500
+  const entries = [...map.values()];
+  for (let i = 0; i < entries.length; i += 500) {
+    const chunk = entries.slice(i, i + 500);
+    await Promise.all(
+      chunk.map((rec) => {
+        const fields = finalise(rec);
+        return prisma.budgetLocal.upsert({
+          where: { geoType_geoCode_annee: { geoType: "COM", geoCode: rec.geoCode, annee: rec.annee } },
+          update: fields,
+          create: { geoType: "COM", geoCode: rec.geoCode, annee: rec.annee, ...fields },
+        });
+      })
+    );
+    count += chunk.length;
+    if (i % 10000 === 0 && i > 0) {
+      console.log(`  [BudgetCommune] ${count} upserted...`);
+    }
+  }
+
+  console.log(`  [BudgetCommune] ${count} upserted`);
+  return count;
+}
+
 // ─── Orchestrator ───
 
 export async function ingestBudgets() {
   await logIngestion("budgets", async () => {
     let total = 0;
-    total += await ingestCommuneBudgets();
     total += await ingestDeptBudgets();
+    total += await ingestCommuneBudgets();
     return {
       rowsIngested: total,
-      metadata: { types: ["COM", "DEP"] },
+      metadata: { types: ["DEP", "COM"], source: "OFGL" },
     };
   });
 }
