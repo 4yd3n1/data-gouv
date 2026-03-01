@@ -24,6 +24,14 @@ export default async function GouvernancePage() {
 
   const sections = [
     {
+      href: "/president",
+      title: "Président de la République",
+      stat: null as number | null,
+      sub: "Emmanuel Macron · en fonction depuis 2017",
+      desc: "Promesses vs réalité, bilan économique, lobbying, déclarations HATVP — le dossier phare",
+      accent: "amber" as const,
+    },
+    {
       href: "/representants/deputes",
       title: "Députés",
       stat: deputes,
@@ -95,7 +103,7 @@ export default async function GouvernancePage() {
               href={s.href}
               className="card-accent group rounded-xl border border-bureau-700/30 bg-bureau-800/30 p-6 transition-all hover:border-bureau-600/50 hover:bg-bureau-800/50"
             >
-              <p className={`text-3xl font-bold ${accentColors[s.accent]}`}>{fmt(s.stat)}</p>
+              <p className={`text-3xl font-bold ${accentColors[s.accent]}`}>{s.stat !== null ? fmt(s.stat) : "2017–"}</p>
               <p className="text-xs text-bureau-500">{s.sub}</p>
               <h3 className="mt-3 text-lg font-medium text-bureau-100 group-hover:text-teal transition-colors">{s.title}</h3>
               <p className="mt-1 text-sm text-bureau-500">{s.desc}</p>

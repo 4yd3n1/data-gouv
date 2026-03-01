@@ -130,6 +130,12 @@ export default async function HomePage() {
               Dossiers thématiques →
             </Link>
             <Link
+              href="/president"
+              className="rounded-lg border border-amber/20 bg-amber/5 px-5 py-2.5 text-sm font-medium text-amber transition-all hover:bg-amber/10"
+            >
+              Profil Macron — Exemple →
+            </Link>
+            <Link
               href="/representants"
               className="rounded-lg border border-bureau-700/40 bg-bureau-800/40 px-5 py-2.5 text-sm text-bureau-300 transition-all hover:border-bureau-600/50 hover:text-bureau-100"
             >
