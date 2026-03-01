@@ -3,6 +3,8 @@ import { prisma } from "@/lib/db";
 import { fmt } from "@/lib/format";
 import { PageHeader } from "@/components/page-header";
 
+export const revalidate = 86400; // Heritage data changes only on ingestion
+
 export default async function PatrimoinePage() {
   const [museeCount, monumentCount, topMusees] = await Promise.all([
     prisma.musee.count(),

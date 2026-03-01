@@ -92,6 +92,7 @@ interface BdmSeriesConfig {
 }
 
 const BDM_SERIES: BdmSeriesConfig[] = [
+  // ─── Existing series ───
   {
     code: "CHOMAGE_TAUX_TRIM",
     idBanks: "001688527", // Taux de chômage France entière, ensemble, CVS
@@ -124,6 +125,136 @@ const BDM_SERIES: BdmSeriesConfig[] = [
     frequence: "mensuel",
     correction: "CVS",
     lastNObs: 120,
+  },
+
+  // ─── New series: Prix / Pouvoir d'achat ───
+  {
+    code: "IPC_MENSUEL",
+    idBanks: "001763852",
+    nom: "Inflation mensuelle (IPC)",
+    description: "Indice des prix à la consommation, ensemble des ménages, France, variation annuelle",
+    domaine: "prix",
+    unite: "pourcent",
+    frequence: "mensuel",
+    lastNObs: 120,
+  },
+  {
+    code: "IPC_ALIMENTAIRE",
+    idBanks: "001768682",
+    nom: "Inflation alimentaire mensuelle",
+    description: "IPC pour les produits alimentaires, variation annuelle",
+    domaine: "prix",
+    unite: "pourcent",
+    frequence: "mensuel",
+    lastNObs: 120,
+  },
+  {
+    code: "IPC_ENERGIE",
+    idBanks: "001769682",
+    nom: "Inflation énergie mensuelle",
+    description: "IPC pour l'énergie, variation annuelle",
+    domaine: "prix",
+    unite: "pourcent",
+    frequence: "mensuel",
+    lastNObs: 120,
+  },
+
+  // ─── New series: Salaires ───
+  {
+    code: "SMIC_HORAIRE",
+    idBanks: "010605027",
+    nom: "SMIC horaire brut",
+    description: "Salaire minimum interprofessionnel de croissance, valeur horaire brute en euros",
+    domaine: "salaires",
+    unite: "eur",
+    frequence: "annuel",
+    lastNObs: 40,
+  },
+  {
+    code: "SALAIRE_MOYEN",
+    idBanks: "001587885",
+    nom: "Salaire moyen par tête (SMPT)",
+    description: "Salaire moyen par tête, ensemble des branches, brut, euros courants",
+    domaine: "salaires",
+    unite: "eur",
+    frequence: "trimestriel",
+    lastNObs: 60,
+  },
+
+  // ─── New series: Construction / Logement ───
+  {
+    code: "LOGEMENTS_AUTORISES",
+    idBanks: "001656956",
+    nom: "Logements autorisés (permis de construire)",
+    description: "Nombre de logements autorisés à la construction, ensemble, France métropolitaine",
+    domaine: "construction",
+    unite: "nombre",
+    frequence: "mensuel",
+    lastNObs: 120,
+  },
+  {
+    code: "LOGEMENTS_COMMENCES",
+    idBanks: "001656957",
+    nom: "Logements commencés (mises en chantier)",
+    description: "Nombre de logements dont la construction a démarré, ensemble, France métropolitaine",
+    domaine: "construction",
+    unite: "nombre",
+    frequence: "mensuel",
+    lastNObs: 120,
+  },
+
+  // ─── New series: Finances publiques / Dette ───
+  {
+    code: "DETTE_PIB",
+    idBanks: "001694258",
+    nom: "Dette publique (% du PIB)",
+    description: "Dette des administrations publiques au sens de Maastricht, en % du PIB",
+    domaine: "finances",
+    unite: "pourcent",
+    frequence: "annuel",
+    lastNObs: 40,
+  },
+  {
+    code: "INTERETS_DETTE",
+    idBanks: "001694274",
+    nom: "Charge d'intérêts de la dette publique",
+    description: "Intérêts payés par les administrations publiques, en milliards d'euros",
+    domaine: "finances",
+    unite: "milliards_eur",
+    frequence: "annuel",
+    lastNObs: 40,
+  },
+  {
+    code: "DEPENSES_PUBLIQUES_PIB",
+    idBanks: "001710399",
+    nom: "Dépenses publiques (% du PIB)",
+    description: "Dépenses des administrations publiques en % du PIB",
+    domaine: "finances",
+    unite: "pourcent",
+    frequence: "annuel",
+    lastNObs: 40,
+  },
+
+  // ─── New series: Emploi ───
+  {
+    code: "EMPLOI_SALARIE",
+    idBanks: "001587878",
+    nom: "Emploi salarié total",
+    description: "Emploi salarié dans les secteurs marchands et non-marchands, en milliers",
+    domaine: "emploi",
+    unite: "milliers",
+    frequence: "trimestriel",
+    lastNObs: 60,
+  },
+  {
+    code: "EMPLOI_INTERIMAIRE",
+    idBanks: "001587791",
+    nom: "Emploi intérimaire",
+    description: "Nombre d'intérimaires en équivalent-emplois à temps plein, en milliers",
+    domaine: "emploi",
+    unite: "milliers",
+    frequence: "trimestriel",
+    lastNObs: 60,
   },
 ];
 

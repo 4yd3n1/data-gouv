@@ -27,7 +27,12 @@
     "ingest:photos": "tsx scripts/ingest-photos.ts",
     "ingest:elus": "NODE_OPTIONS=--max-old-space-size=8192 tsx scripts/ingest-elus.ts",
     "ingest:elections": "tsx scripts/ingest-elections.ts",
-    "ingest:partis": "tsx scripts/ingest-partis.ts"
+    "ingest:partis": "tsx scripts/ingest-partis.ts",
+    "tag:scrutins": "tsx scripts/tag-scrutins.ts",
+    "ingest:insee-local": "tsx scripts/ingest-insee-local.ts",
+    "ingest:budgets": "tsx scripts/ingest-budgets.ts",
+    "ingest:criminalite": "tsx scripts/ingest-criminalite.ts",
+    "ingest:medecins": "tsx scripts/ingest-medecins.ts"
   },
   "keywords": [],
   "author": "",

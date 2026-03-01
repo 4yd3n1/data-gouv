@@ -6,6 +6,15 @@ Guidance for Claude Code. Keep current; remove or update if things change.
 
 French civic intelligence platform that ingests public data from data.gouv.fr, INSEE, and other government open data sources into PostgreSQL. Cross-references governance, economy, territory, and cultural heritage data through a Next.js interface. Sole objective: **show transparency through data**.
 
+## Architectural Plan
+
+The platform is being redesigned from a data-source browser into a citizen-centric transparency tool. The master blueprint is:
+
+- **Local file**: [`ARCHITECTURAL-PLAN.md`](ARCHITECTURAL-PLAN.md)
+- **Permanent reference**: https://x.com/Gdams70/status/2027876110659371343
+
+This plan covers: issue-centric dossier system, cross-reference engine (lobbying → votes → declarations), INSEE local data expansion, local government budgets, vote topic classification, and a 5-phase implementation roadmap. **Never lose this plan.**
+
 ## Tech Stack
 
 - **Next.js 16** (App Router, Server Actions, TypeScript)
@@ -153,6 +162,10 @@ pnpm ingest:photos       # Wave 6: Deputy/senator photos
 pnpm ingest:elus         # Wave 7: RNE elected officials (uses 8GB heap)
 pnpm ingest:elections    # Wave 7: 2024 legislative results
 pnpm ingest:partis       # Wave 7: CNCCFP party accounts
+pnpm ingest:insee-local  # Wave 8: INSEE Données Locales (requires INSEE_API_KEY)
+pnpm ingest:budgets      # Wave 8: DGFIP finances locales
+pnpm ingest:criminalite  # Wave 9: SSMSI crime stats by département
+pnpm ingest:medecins     # Wave 9: DREES medical density by département
 ```
 
 ## Ingestion Order
@@ -169,6 +182,8 @@ Wave 5a:  ingestOrganes()                   # must precede scrutins
 Wave 5b:  Promise.all([ingestScrutins(), ingestDeports()])
 Wave 6:   ingestPhotos()
 Wave 7:   Promise.all([ingestElus(), ingestElections(), ingestPartis()])
+Wave 8:   Promise.all([ingestInseeLocal(), ingestBudgets()])
+Wave 9:   Promise.all([ingestCriminalite(), ingestMedecins()])
 ```
 
 ## Key API URLs

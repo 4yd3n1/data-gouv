@@ -1,6 +1,6 @@
 # Frontend Implementation
 
-> Last updated: Mar 1, 2026
+> Last updated: Mar 1, 2026 — Phase 5 complete. 50 routes, 22 components.
 
 Complete reference for all UI pages, components, styling, and patterns.
 
@@ -11,9 +11,11 @@ Complete reference for all UI pages, components, styling, and patterns.
 - **Next.js 16** App Router — all pages are React Server Components by default
 - **Tailwind CSS 4** with custom theme tokens defined in `globals.css`
 - **No client-side data fetching** — every page queries Prisma directly at render time
-- **4 client components**: `SearchInput`, `Avatar`, `DeclarationSection`, `ProfileTabs` (all use `"use client"`)
+- **5 client components**: `SearchInput`, `Avatar`, `DeclarationSection`, `ProfileTabs`, `DeptLookup` (all use `"use client"`)
 - **1 shared lib**: `nuance-colors.ts` — political party color mapping used by elections pages
 - **French localization** throughout: `<html lang="fr">`, `fr-FR` locale for numbers/dates
+- **ISR** (`export const revalidate = N`): homepage + votes = 3600s; dossiers + representants hub + economie + patrimoine + territoire hub = 86400s; profiles = dynamic (no revalidate)
+- **generateMetadata**: all 9 key dynamic routes export `generateMetadata` for SEO
 
 ---
 
@@ -77,327 +79,346 @@ Applied with: `font-[family-name:var(--font-display)]` for headings.
 
 [layout.tsx](../src/app/layout.tsx) provides the shell:
 
-- **Navbar**: Sticky top, backdrop-blur, SVG logo + "L'Observatoire" brand + 6 nav links (Accueil, Gouvernance, Élections, Économie, Territoire, Patrimoine)
+- **Navbar**: Sticky top, backdrop-blur, SVG logo + "L'Observatoire" brand + **7 nav links** (Accueil, Dossiers, Représentants, Votes, Économie, Territoire, Patrimoine)
 - **Main**: `flex-1` content area
 - **Footer**: Data source attribution ("data.gouv.fr, INSEE, Senat, HATVP") + "L'Observatoire Citoyen 2025"
 - **Container**: `max-w-7xl px-6` on list pages; `max-w-4xl px-6` on profile detail pages (focused editorial width)
 
-**Metadata**: `"L'Observatoire Citoyen — Intelligence civique francaise"`
+**Metadata**: `"L'Observatoire Citoyen — Intelligence civique française"`
 
 ---
 
-## Route Map (22 routes)
+## Route Map (50 routes)
 
 ### Static (prerendered at build time)
 | Route | Purpose |
 |-------|---------|
-| `/` | Homepage — hero stats, 5 section cards, recent declarations, overview grid |
-| `/gouvernance` | Hub — 6 cards (Deputes, Senateurs, Lobbyistes, Scrutins, Élus, Partis) with counts |
+| `/` | Homepage — dynamic headline, dossier cards, recent votes, conflict alerts, dept lookup |
+| `/dossiers` | Dossier hub — 8 issue cards |
+| `/representants` | Représentants hub — 6 section cards with counts |
 | `/elections` | Hub — Législatives 2024 card + national summary stats |
-| `/economie` | Dashboard — SVG MiniChart per indicator |
+| `/economie` | Dashboard — SVG MiniChart per indicator (15+ series) |
 | `/territoire` | Browser — regions with department cards |
 | `/patrimoine` | Hub — top 10 museums + monument domains |
+| `/votes` | Votes hub — 13 topic grid + recent scrutins |
 
-### Dynamic (server-rendered on demand)
+### Dossiers (8 dynamic pages)
+| Route | Topic |
+|-------|-------|
+| `/dossiers/pouvoir-dachat` | Purchasing power — income map, inflation, votes, lobbying |
+| `/dossiers/confiance-democratique` | Democratic trust — declarations, party money, 49.3 |
+| `/dossiers/dette-publique` | Public debt — KPIs, budget votes, local debt |
+| `/dossiers/emploi-jeunesse` | Employment & youth — dept map, education stats |
+| `/dossiers/logement` | Housing — permits, vacancy, votes, lobbying |
+| `/dossiers/sante` | Healthcare — GP density map, PLFSS votes |
+| `/dossiers/transition-ecologique` | Ecology — votes, lobbying, declared energy interests |
+| `/dossiers/retraites` | Pensions — 49.3 votes, group positions, individual votes |
+
+### Représentants (canonical people section)
 | Route | Key Features |
 |-------|-------------|
-| `/gouvernance/deputes` | Search, groupe filter, dept filter, pagination |
-| `/gouvernance/deputes/[id]` | Hero profile + tabs (Activite/Declarations/Informations) |
-| `/gouvernance/senateurs` | Search, pagination |
-| `/gouvernance/senateurs/[id]` | Hero profile + tabs (Mandats & Commissions/Declarations/Informations) |
-| `/gouvernance/lobbyistes` | Search, pagination |
-| `/gouvernance/lobbyistes/[id]` | Info panel, actions list |
-| `/gouvernance/scrutins` | Search, result filter (adopte/rejete), pagination |
-| `/gouvernance/scrutins/[id]` | Result summary, group bars, individual votes |
-| `/gouvernance/partis` | Year selector (2021–2024), sort options, aggregate stats |
-| `/gouvernance/partis/[id]` | Revenue/expense breakdown bars, multi-year comparison table |
-| `/elections/legislatives-2024` | Tour switcher, dept filter, nuance color bars, candidate list |
+| `/representants/deputes` | Search, groupe filter, dept filter, pagination |
+| `/representants/deputes/[id]` | Hero profile + tabs (Activité / Déclarations / **Transparence** / Informations) |
+| `/representants/senateurs` | Search, pagination |
+| `/representants/senateurs/[id]` | Hero profile + tabs (Mandats & Commissions / Déclarations / Informations) |
+| `/representants/elus` | Local officials list — 593K rows, paginated |
+| `/representants/elus/maires` | Mayors subset |
+| `/representants/lobbyistes` | Search, pagination |
+| `/representants/lobbyistes/[id]` | Info panel, actions list |
+| `/representants/scrutins` | Search, result filter, pagination |
+| `/representants/scrutins/[id]` | Result summary, group bars, individual votes |
+| `/representants/partis` | Year selector, sort options, aggregate stats |
+| `/representants/partis/[id]` | Revenue/expense breakdown bars, multi-year table |
+
+### Gouvernance (legacy — HTTP 308 redirects to /representants)
+`/gouvernance/*` routes remain active (still served; linked from older bookmarks and deputy profiles). Redirects configured in `next.config.ts`.
+
+### Votes (dedicated votes section)
+| Route | Key Features |
+|-------|-------------|
+| `/votes` | Tag grid (13 topics), stats, recent scrutins |
+| `/votes/par-sujet/[tag]` | Tag-filtered scrutins, pagination, vote bars, related tags |
+| `/votes/mon-depute` | 3-state deputy lookup: empty → list → detail with tag breakdown |
+
+### Territory & Economy
+| Route | Key Features |
+|-------|-------------|
+| `/territoire/[departementCode]` | Full département dashboard: demographics, economy, budget, representatives, culture, security/health |
+| `/territoire/commune/[communeCode]` | Commune card: elu list, budget, patrimoine |
+| `/elections/legislatives-2024` | Tour switcher, dept filter, nuance bars, candidate list |
 | `/patrimoine/musees` | Search, pagination |
 | `/patrimoine/musees/[id]` | SVG bar chart, attendance table |
 | `/patrimoine/monuments` | Search, protection type filter, pagination |
 | `/patrimoine/monuments/[id]` | Info panel, GPS link, description/historique |
-| `/territoire/[departementCode]` | Stats bar + deputies + senators + museums + monuments |
 
 ---
 
 ## Pages Detail
 
-### `/` — Homepage ("L'Observatoire Citoyen")
+### `/` — Homepage
 
-**File**: [page.tsx](../src/app/page.tsx)
+**File**: [page.tsx](../src/app/page.tsx) | `revalidate = 3600`
 
-**Data**: Counts of all entities (deputes, senateurs, lobbyistes, declarations, musees, monuments, communes, departements, indicateurs, scrutins, elus, partis, elections) + 6 recent declarations with highest `totalParticipations`.
-
-**Sections**:
-1. **Hero** — `.grid-bg` pattern, display-font title, 4 hero stat tiles (Députés teal, Élus locaux blue, Scrutins élect. amber, Monuments rose)
-2. **Explorer les données** — 5 section cards with SVG icons (Gouvernance, Élections, Économie, Territoire, Patrimoine)
-3. **Déclarations d'intérêts** — 6 cards showing officials with highest financial participations
-4. **Vue d'ensemble** — 13-stat grid (deputes, senateurs, lobbyistes, declarations, musees, monuments, departements, communes, elus, partis, elections, scrutins parl., indicateurs eco.)
-
----
-
-### `/gouvernance` — Governance Hub
-
-**File**: [page.tsx](../src/app/gouvernance/page.tsx)
-
-**Data**: Counts + active counts for deputes/senateurs/lobbyistes/scrutins/elus/partis.
-
-**Layout**: 6 accent-bordered cards (Députés, Sénateurs, Lobbyistes, Scrutins, Élus locaux, Partis politiques), each linking to subsection with aggregate stats.
-
----
-
-### `/gouvernance/deputes` — Deputies List
-
-**File**: [page.tsx](../src/app/gouvernance/deputes/page.tsx)
-
-**Features**:
-- Search by nom/prenom/departement (case-insensitive `contains`)
-- Filter by groupe — chiplet buttons from `groupBy`
-- Filter by departement — chiplet buttons
-- Pagination: 30 per page
-- Sort: `actif desc, nom asc`
-
-**Display per row**: Avatar, name, groupe badge, department, participation + loyaute score bars.
-
-**Components**: `PageHeader`, `SearchInput`, `Avatar`, `Pagination`
-
----
-
-### `/gouvernance/deputes/[id]` — Deputy Detail
-
-**File**: [page.tsx](../src/app/gouvernance/deputes/[id]/page.tsx)
-
-**Data**:
-- Deputy with departement relation
-- 10 recent votes (with scrutin)
-- Deports ordered by dateCreation desc
-- Declarations matched by `nom + prenom + typeMandat:"Depute"` (with participations + revenus)
-- Reads `searchParams.tab` (default: `"activite"`)
-
-**Layout** (hero + tabbed content, `max-w-4xl` centered):
-- **Hero banner** (`ProfileHero`): 96px avatar with teal ring, display-font name, group badge pill, status dot (teal glow if active), contact pills (email/twitter/website), 4 `ScoreGauge` boxes (participation/specialite/loyaute/majorite in teal/blue/amber/rose)
-- **Tab bar** (`ProfileTabs`): URL-driven `?tab=` navigation, teal active indicator
-- **Tab: Activite** (default): Recent votes as clickable cards (`VoteBadge` + title + date) + deports list
-- **Tab: Declarations**: `DeclarationSection` (expandable cards, unchanged)
-- **Tab: Informations**: `dl` grid (`sm:grid-cols-2`) — groupe, dept, circ., legislature, naissance, profession, mandats, experience, prise de fonction
-
-**Components**: `ProfileHero`, `ProfileTabs`, `Avatar`, `ScoreGauge`, `VoteBadge`, `DeclarationSection`
-
----
-
-### `/gouvernance/senateurs` — Senators List
-
-**File**: [page.tsx](../src/app/gouvernance/senateurs/page.tsx)
-
-**Features**: Search by nom/prenom/departement, pagination (30/page).
-
-**Display**: Avatar, name, groupe, department.
-
----
-
-### `/gouvernance/senateurs/[id]` — Senator Detail
-
-**File**: [page.tsx](../src/app/gouvernance/senateurs/[id]/page.tsx)
-
-**Data**: Senator with mandats + commissions, declarations by `nom + prenom + typeMandat:"Senateur"`. Reads `searchParams.tab` (default: `"mandats"`).
-
-**Layout** (hero + tabbed content, `max-w-4xl` centered):
-- **Hero banner** (`ProfileHero`): 96px avatar with teal ring, display-font name, status dot, no scores (senators), no badge
-- **Tab bar** (`ProfileTabs`): URL-driven `?tab=` navigation
-- **Tab: Mandats & Commissions** (default): Mandate cards (libelle, type, date range with "en cours" in teal) + commission cards (nom, fonction, date range)
-- **Tab: Declarations**: `DeclarationSection` (expandable cards, unchanged)
-- **Tab: Informations**: `dl` grid — groupe, departement, profession, naissance, prise de fonction
-
-**Components**: `ProfileHero`, `ProfileTabs`, `Avatar`, `DeclarationSection`
-
----
-
-### `/gouvernance/lobbyistes` — Lobbyists List
-
-**File**: [page.tsx](../src/app/gouvernance/lobbyistes/page.tsx)
-
-**Data**: Lobbyiste with `_count.actions`, search by org name, 30/page.
-
-**Display**: Org name, category, effectif, action count.
-
----
-
-### `/gouvernance/lobbyistes/[id]` — Lobbyist Detail
-
-**File**: [page.tsx](../src/app/gouvernance/lobbyistes/[id]/page.tsx)
-
-**Data**: Lobbyiste with actions (limit 50).
-
-**Layout**: Info card (type, category, SIREN, effectif, chiffre d'affaires, address, registration) + actions list.
-
----
-
-### `/gouvernance/scrutins` — Parliamentary Votes List
-
-**File**: [page.tsx](../src/app/gouvernance/scrutins/page.tsx)
-
-**Features**: Search by title, filter by result (adopte/rejete), pagination (30/page).
-
-**Display**: Scrutin number, date, `ScrutinResultBadge`, title, vote counts.
-
----
-
-### `/gouvernance/scrutins/[id]` — Vote Detail
-
-**File**: [page.tsx](../src/app/gouvernance/scrutins/[id]/page.tsx)
-
-**Data**: Scrutin with groupeVotes (with organe) + all voteRecords (with depute subset).
+**Data**: Latest economic indicator value (dynamic headline), 8 dossier configs, 6 recent scrutins with group votes, 6 high-declaration officials (conflict alerts), all entity counts for the grid.
 
 **Sections**:
-1. Title + `ScrutinResultBadge` + demandeur
-2. Summary — 5 stat boxes (Votants, Pour, Contre, Abstentions, Non-votants)
-3. Group breakdown — horizontal stacked bars per group (teal=pour, rose=contre, amber=abstention, grey=non-votant)
-4. Individual votes — 4 columns by position with deputy name links
+1. **Hero** — `.grid-bg` pattern, Instrument Serif headline from latest data (e.g. "La dette publique atteint 115,6% du PIB"), 4 hero stat tiles
+2. **Dossiers Thématiques** — 8 issue cards with key stats, each linking to `/dossiers/[slug]`
+3. **Derniers Scrutins** — 6 most recent parliamentary votes with result badge + group breakdown
+4. **Alertes Transparence** — Officials with highest financial participations (amber alert cards)
+5. **Votre Territoire** — `DeptLookup` client component → département dashboard redirect
+6. **Vue d'ensemble** — 13-stat grid (all entity counts)
 
 ---
 
-### `/gouvernance/partis` — Party Finance List
+### `/dossiers` — Dossier Hub
 
-**File**: [page.tsx](../src/app/gouvernance/partis/page.tsx)
+**File**: [page.tsx](../src/app/dossiers/page.tsx) | `revalidate = 86400`
 
-**Data**: PartiPolitique records for the selected year. Aggregate totals (sum of recettes/charges/aide publique/dons for the year). Sorted by selected field.
-
-**Features**:
-- Year selector: 2021, 2022, 2023, 2024 (URL `?annee=`)
-- Sort options: recettes, charges, resultat, aide, dons (URL `?sort=`)
-- Aggregate stats row: total recettes, total dépenses, total aide, total dons for the year
-- Party rows with revenue bar (proportional to max), result badge (surplus teal / deficit rose), link to detail
-
-**Components**: `PageHeader`
+8 issue cards from `dossier-config.ts`, each with label, description, stat, and link. `DossierNav` sidebar.
 
 ---
 
-### `/gouvernance/partis/[id]` — Party Detail
+### `/dossiers/[slug]` — Dossier Pages
 
-**File**: [page.tsx](../src/app/gouvernance/partis/[id]/page.tsx)
+All 8 follow the same layout pattern:
 
-**Data**: All PartiPolitique records for the given `codeCNCC` (may span multiple years), ordered by exercice.
+**Components**: `DossierHero` + `DossierNav` + `IndicatorCard` row + `TopicVoteList` + `LobbyingDensity` + `ConflictAlert` (where applicable) + `RankingTable` (where applicable) + `DeptMap` (where applicable)
+
+**Data patterns by dossier**:
+
+| Dossier | Key Data Queries |
+|---------|----------------|
+| `pouvoir-dachat` | Indicateurs (pib/emploi/prix/salaires), StatLocale MEDIAN_INCOME by dept, Scrutins tagged budget/fiscalite, ActionLobbyiste fiscal/économi |
+| `confiance-democratique` | DeclarationInteret counts, Lobbyiste/ActionLobbyiste aggregates, PartiPolitique aide vs dons, Scrutin motions de censure |
+| `dette-publique` | Indicateurs (finances domain), Scrutins tagged budget, BudgetLocal aggregates |
+| `emploi-jeunesse` | Indicateurs (emploi domain), StatLocale EMPLOYMENT_RATE/UNEMPLOYMENT_RATE by dept, Scrutins travail/education |
+| `logement` | Indicateurs (construction domain), StatLocale housing vacancy, Scrutins logement, ActionLobbyiste immobili |
+| `sante` | DensiteMedicale by dept (GP density), Scrutins sante, ActionLobbyiste santé/pharma, `DeptMap` |
+| `transition-ecologique` | Scrutins ecologie, ActionLobbyiste énergi/environnement, DeclarationInteret energy sector |
+| `retraites` | Scrutins retraites (especially 49.3), GroupeVote breakdown, VoteRecord per-deputy on censure motions |
+
+---
+
+### `/representants/deputes/[id]` — Deputy Detail (Enhanced)
+
+**File**: [page.tsx](../src/app/representants/deputes/[id]/page.tsx)
+
+**Tabs**: Activité / Déclarations / **Transparence** / Informations
+
+**Transparence tab** (new in Phase 3):
+- `ConflictAlert`: declared participations financières cross-referenced against votes on matching ScrutinTag domains
+- Tag breakdown: bar chart of deputy's vote positions per policy domain (% pour/contre/abstention)
+- Déports list with scrutin links
+- "A voté sur N textes liés à ses intérêts déclarés"
+
+---
+
+### `/votes` — Votes Hub
+
+**File**: [page.tsx](../src/app/votes/page.tsx) | `revalidate = 3600`
+
+**Data**: ScrutinTag counts per tag (13 topics), total scrutin count, 10 recent scrutins.
 
 **Sections**:
-1. **4-stat row** — Recettes totales (teal), Dépenses (amber), Résultat (teal/rose based on sign), Aide publique (blue)
-2. **Revenue breakdown** — Progress bars per category (cotisations adhérents, cotisations élus, aide publique 1ère/2nde fraction, dons personnes, contributions partis) as % of total recettes
-3. **Expense breakdown** — Progress bars per category (contributions candidats, salaires, charges sociales, communication) as % of total charges
-4. **Multi-year table** — If multiple exercices: columns = Exercice / Recettes / Charges / Résultat / Aide publique; result colored teal (surplus) or rose (deficit)
-
-**Components**: `PageHeader`
+1. Tag grid — 13 topic pills with vote counts, each linking to `/votes/par-sujet/[tag]`
+2. Stats row — total votes, total tagged, date range
+3. Recent scrutins — last 10 with result badge, title, date
 
 ---
 
-### `/elections` — Elections Hub
+### `/votes/par-sujet/[tag]` — Votes by Topic
 
-**File**: [page.tsx](../src/app/elections/page.tsx)
+**File**: [page.tsx](../src/app/votes/par-sujet/[tag]/page.tsx)
 
-**Data**: Aggregate counts from ElectionLegislative — total inscrits, votants, exprimés, taux de participation (tour 1). Count of constituencies per tour.
+**Data**: Scrutins filtered by ScrutinTag, paginated (20/page). Related tags from overlapping ScrutinTag records.
 
-**Sections**:
-1. **Législatives 2024 card** — Participation %, constituency count, link to detail, teal accent
-2. **National summary stats** — 4 tiles: Total inscrits, Votants, Exprimés, Taux participation
-3. **Placeholder cards** — Municipales 2026, Présidentielle 2027 (greyed out, "Données à venir")
+**Layout**: `PageHeader` (tag label + count) + recent related tags pills + scrutin list with group vote bars + `Pagination`.
 
----
-
-### `/elections/legislatives-2024` — 2024 Legislative Results
-
-**File**: [page.tsx](../src/app/elections/legislatives-2024/page.tsx)
-
-**Data**: ElectionLegislative with candidats, filtered by tour + optional dept. National totals (inscrits/votants/exprimes aggregated). Nuance aggregates (total voix per nuance for the selected tour).
-
-**Features**:
-- Tour switcher: 1er tour / 2nd tour (URL `?tour=`)
-- Department filter — dropdown of all departments present in data (URL `?dept=`)
-- Nuance summary — stacked color bars showing % voix per nuance across all constituencies, with legend
-- Constituency list — per-row: dept + circo label, inscrits, participation %, candidate list with color dot, name, nuance, voix, %, "Élu" badge if elected
-
-**Lib**: Uses `getNuanceStyle()` + `getNuanceLabel()` from `nuance-colors.ts`
+**Note**: `VALID_TAGS` array hardcoded — returns 404 for unknown tags.
 
 ---
 
-### `/economie` — Economic Indicators
+### `/votes/mon-depute` — Deputy Voting Lookup
 
-**File**: [page.tsx](../src/app/economie/page.tsx)
+**File**: [page.tsx](../src/app/votes/mon-depute/page.tsx) | `revalidate = 3600`
 
-**Data**: All indicateurs with observations ordered by periodeDebut asc.
+**URL params**: `?q=` for name search, `?id=` for selected deputy.
 
-**Layout**: Card per indicator — name, source, frequency, latest value, inline SVG line chart (MiniChart function), description.
-
-**Charts**: SVG polyline + gradient fill. Colors: amber (GDP), rose (unemployment), teal (enterprises).
-
----
-
-### `/territoire` — Territory Overview
-
-**File**: [page.tsx](../src/app/territoire/page.tsx)
-
-**Data**: Regions with departments, each with counts (communes COM, deputes, senateurs, musees, monuments).
-
-**Layout**: Regions as sections, department cards with count badges.
+**3-state rendering**:
+1. **Empty** (no params) — prompt to search
+2. **List** (`?q=`) — deputies matching name, each with link that sets `?id=`
+3. **Detail** (`?id=`) — tag breakdown bar chart + position stats (% pour/contre/abstention) + 20 recent votes
 
 ---
 
-### `/territoire/[departementCode]` — Department Detail
+### `/territoire/[departementCode]` — Département Dashboard (Phase 3 rewrite)
 
 **File**: [page.tsx](../src/app/territoire/[departementCode]/page.tsx)
 
-**Data**: Department + region, deputes, senateurs, musees (20), monuments (20), counts.
+**Data** (all parallel): dept + region, communes count, deputes, senateurs, elu count, StatLocale (all indicators for this dept), BudgetLocal (latest year), musees/monuments counts, recent VoteRecords by dept's deputies, DensiteMedicale, StatCriminalite.
 
-**Layout**: 5-stat bar + 2x2 grid (deputies, senators, museums, monuments with links).
-
----
-
-### `/patrimoine` — Heritage Overview
-
-**File**: [page.tsx](../src/app/patrimoine/page.tsx)
-
-**Data**: Museum/monument counts, top 10 museums by attendance, top 8 monument domains.
-
-**Layout**: 2 section cards + top 10 ranking (animated bar-fill) + domains grid.
+**Sections**:
+1. **Header** — dept name + region, commune/elu counts
+2. **Démographie** — `IndicatorCard` row: POP_TOTAL, POP_65PLUS, POP_0019, SVG trend
+3. **Économie locale** — median income, poverty rate, employment rate, unemployment rate
+4. **Représentants** — deputies list with vote participation, senators list, elu count
+5. **Votes récents** — last 10 votes by this dept's deputies
+6. **Budget** — BudgetLocal: recettes/dépenses/dette per habitant (if populated)
+7. **Santé & Sécurité** — GP density (DensiteMedicale) + top crime categories (StatCriminalite)
+8. **Patrimoine** — museum + monument counts with links
 
 ---
 
-### `/patrimoine/musees` — Museums List
+### `/territoire/commune/[communeCode]` — Commune Card (Phase 3 new)
 
-**File**: [page.tsx](../src/app/patrimoine/musees/page.tsx)
+**File**: [page.tsx](../src/app/territoire/commune/[communeCode]/page.tsx)
 
-Search by name/ville, 30/page. Shows name, ville, region, last attendance.
+**Data**: Commune + département + elu list (paginated) + BudgetLocal (latest) + musees/monuments counts.
 
----
-
-### `/patrimoine/musees/[id]` — Museum Detail
-
-**File**: [page.tsx](../src/app/patrimoine/musees/[id]/page.tsx)
-
-**Data**: Museum with frequentations, departement, commune.
-
-**Layout**: 3 info cards + SVG bar chart (52px per year, hover opacity) + table (Total, Payant, Gratuit, Scolaires, <18, 18-25).
+**Sections**: Commune header + budget KPIs + elu list + patrimoine links.
 
 ---
 
-### `/patrimoine/monuments` — Monuments List
+### All other pages (unchanged from v1)
 
-**File**: [page.tsx](../src/app/patrimoine/monuments/page.tsx)
-
-Search + protectionType filter (top 6 types), 30/page. Shows name, commune, dept, region, type badge, siecle.
-
----
-
-### `/patrimoine/monuments/[id]` — Monument Detail
-
-**File**: [page.tsx](../src/app/patrimoine/monuments/[id]/page.tsx)
-
-**Data**: Monument with departement + commune.
-
-**Layout**: Status badges + 3-col info panel + OpenStreetMap link (if coordinates) + description + historique (whitespace-pre-line).
+- `/economie` — `revalidate = 86400`, SVG MiniChart per indicator (now 15+ series)
+- `/representants/scrutins` + `/[id]` — group bars, individual votes (same as legacy `/gouvernance/scrutins`)
+- `/representants/lobbyistes` + `/[id]` — info panel, actions
+- `/representants/partis` + `/[id]` — year selector, revenue/expense bars
+- `/elections/legislatives-2024` — tour switcher, nuance bars
+- `/patrimoine/musees` + `/[id]` — SVG attendance chart
+- `/patrimoine/monuments` + `/[id]` — GPS link, description
 
 ---
 
-## Components (12)
+## Components (22)
 
-### `PageHeader` — Server Component
+### New in Phase 2–4
+
+#### `DossierHero` — Server Component
+
+**File**: [dossier-hero.tsx](../src/components/dossier-hero.tsx)
+
+```typescript
+{ slug: string; label: string; description: string; stat?: string; statSource?: string }
+```
+
+Full-width hero banner for dossier pages. `.grid-bg` pattern, Instrument Serif heading, framing stat with source attribution. `bg-bureau-900/60 border-b`.
+
+---
+
+#### `DossierNav` — Server Component
+
+**File**: [dossier-nav.tsx](../src/components/dossier-nav.tsx)
+
+```typescript
+{ current: string }  // current dossier slug
+```
+
+Horizontal pill navigation between the 8 dossiers. Active dossier highlighted `bg-teal/10 text-teal`. Reads slug list from `dossier-config.ts`.
+
+---
+
+#### `IndicatorCard` — Server Component
+
+**File**: [indicator-card.tsx](../src/components/indicator-card.tsx)
+
+```typescript
+{ label: string; value: string | number; unit?: string; trend?: "up" | "down" | "flat"; color?: "teal" | "amber" | "rose" | "blue"; sublabel?: string }
+```
+
+KPI tile with trend arrow (↑↓→), colored value, unit, and optional sublabel. Used in dossier pages and département dashboard.
+
+---
+
+#### `TopicVoteList` — Server Component
+
+**File**: [topic-vote-list.tsx](../src/components/topic-vote-list.tsx)
+
+```typescript
+{ scrutins: ScrutinWithTags[]; title?: string; limit?: number }
+```
+
+Scrutin list filtered by topic — each row shows title, date, `ScrutinResultBadge`, and horizontal group vote bars (teal=pour, rose=contre, amber=abstention). Links to `/representants/scrutins/[id]`.
+
+---
+
+#### `LobbyingDensity` — Server Component
+
+**File**: [lobbying-density.tsx](../src/components/lobbying-density.tsx)
+
+```typescript
+{ actions: ActionWithLobbyiste[]; domaine: string; title?: string }
+```
+
+Summary of lobbying actions in a given domain. Shows top organizations ranked by action count, total action count, and "X organisations · Y actions déclarées" summary line.
+
+---
+
+#### `ConflictAlert` — Server Component
+
+**File**: [conflict-alert.tsx](../src/components/conflict-alert.tsx)
+
+```typescript
+{ conflicts: { sectorLabel: string; voteCount: number; participationValue?: number }[]; deputeName?: string }
+```
+
+Amber-accented alert card for cross-reference findings. Factual tone: "Participations financières déclarées dans le secteur [X]. A voté sur [N] textes liés à ce secteur." Returns null if no conflicts.
+
+---
+
+#### `RankingTable` — Server Component
+
+**File**: [ranking-table.tsx](../src/components/ranking-table.tsx)
+
+```typescript
+{ rows: { code: string; libelle: string; value: number; rank: number }[]; unit: string; color?: string; linkBase?: string }
+```
+
+Sortable département ranking table. Each row shows rank number, dept name (linked to `/territoire/[code]` if `linkBase` provided), value with unit, and a thin proportional bar.
+
+---
+
+#### `DeptLookup` — Client Component
+
+**File**: [dept-lookup.tsx](../src/components/dept-lookup.tsx)
+
+```typescript
+{ placeholder?: string }
+```
+
+Search input that accepts a département name, code, or postal code prefix. On submit, redirects to `/territoire/[code]`. Uses `useRouter`. Shows a dropdown of matching departments from a static list. `.search-glow` focus effect.
+
+---
+
+#### `DeptMap` — Server Component
+
+**File**: [dept-map.tsx](../src/components/dept-map.tsx)
+
+```typescript
+{ data: { code: string; libelle: string; value: number }[]; color?: string; unit: string; limit?: number; linkBase?: string }
+```
+
+Ranked bar visualization for département data. Renders a vertical bar chart (not an SVG map) with all 101 departments sorted by value, colored by intensity. Used on dossier pages for geographic indicator distribution.
+
+---
+
+#### `TimelineChart` — Server Component
+
+**File**: [timeline-chart.tsx](../src/components/timeline-chart.tsx)
+
+```typescript
+{ data: { label: string; value: number }[]; color?: string; unit?: string; height?: number; showEvery?: number }
+```
+
+SVG polyline chart for time-series data. Gradient fill below line. `showEvery` controls x-axis label density. Server-rendered (no interactivity needed). Used on `/votes/mon-depute` and dossier pages.
+
+---
+
+### Original Components (12, unchanged)
+
+#### `PageHeader` — Server Component
 
 **File**: [page-header.tsx](../src/components/page-header.tsx)
 
@@ -409,7 +430,7 @@ Breadcrumbs nav (teal hover links) + display-font title + optional subtitle. `bo
 
 ---
 
-### `SearchInput` — Client Component
+#### `SearchInput` — Client Component
 
 **File**: [search-input.tsx](../src/components/search-input.tsx)
 
@@ -421,7 +442,7 @@ Reads `useSearchParams`, pushes `?q=...` via `useRouter` on change, resets `page
 
 ---
 
-### `Pagination` — Server Component
+#### `Pagination` — Server Component
 
 **File**: [pagination.tsx](../src/components/pagination.tsx)
 
@@ -433,7 +454,7 @@ Prev/next arrows + page numbers with ellipsis (shows +/-2 around current, first,
 
 ---
 
-### `ProfileHero` — Server Component
+#### `ProfileHero` — Server Component
 
 **File**: [profile-hero.tsx](../src/components/profile-hero.tsx)
 
@@ -443,18 +464,18 @@ Prev/next arrows + page numbers with ellipsis (shows +/-2 around current, first,
   name: string; subtitle: string
   status: { active: boolean; label: string }
   breadcrumbs: { label: string; href?: string }[]
-  badge?: string                    // Group abbreviation pill (teal)
+  badge?: string
   scores?: { value: number | null; label: string; color: "teal" | "amber" | "blue" | "rose" }[]
   contact?: { email?: string | null; twitter?: string | null; website?: string | null }
-  children?: React.ReactNode        // Tab bar slot
+  children?: React.ReactNode
 }
 ```
 
-Full-width hero banner shared by deputy and senator profiles. `bg-bureau-900/60 border-b`. Contains: breadcrumbs, 96px `Avatar` (lg) with teal ring, Instrument Serif `text-3xl` name, group badge pill, status dot (teal glow if active), horizontal contact pills with SVG icons, optional `ScoreGauge` row, and children slot for tab bar. Responsive: `flex-col` on mobile, `sm:flex-row` on desktop.
+Full-width hero banner shared by deputy and senator profiles. Contains: breadcrumbs, 96px `Avatar` with teal ring, Instrument Serif name, group badge pill, status dot, contact pills, optional `ScoreGauge` row, children slot for tab bar.
 
 ---
 
-### `ProfileTabs` — Client Component
+#### `ProfileTabs` — Client Component
 
 **File**: [profile-tabs.tsx](../src/components/profile-tabs.tsx)
 
@@ -462,11 +483,11 @@ Full-width hero banner shared by deputy and senator profiles. `bg-bureau-900/60 
 { tabs: { key: string; label: string; count?: number }[]; defaultTab: string }
 ```
 
-URL-driven tab navigation. Reads `?tab=` from `useSearchParams`, pushes new value via `useRouter`. Active tab: `text-teal` with `h-0.5 bg-teal` bottom indicator. Inactive: `text-bureau-500 hover:text-bureau-300`. Horizontal scroll on mobile with `.scrollbar-hide`. Wrapped in `<Suspense>` when used.
+URL-driven tab navigation. Reads `?tab=` from `useSearchParams`, pushes new value via `useRouter`. Active tab: `text-teal` with `h-0.5 bg-teal` bottom indicator. Horizontal scroll on mobile with `.scrollbar-hide`. Wrapped in `<Suspense>` when used.
 
 ---
 
-### `ScoreGauge` — Server Component
+#### `ScoreGauge` — Server Component
 
 **File**: [score-gauge.tsx](../src/components/score-gauge.tsx)
 
@@ -474,11 +495,11 @@ URL-driven tab navigation. Reads `?tab=` from `useSearchParams`, pushes new valu
 { value: number | null; label: string; color?: "teal" | "amber" | "blue" | "rose" }
 ```
 
-Compact stat box for profile hero. Bold `text-2xl` colored value + `text-[10px]` uppercase label below. Returns null if value is null. Used in a horizontal row with `divide-x` separators inside `ProfileHero`.
+Compact stat box for profile hero. Bold `text-2xl` colored value + `text-[10px]` uppercase label. Returns null if value is null.
 
 ---
 
-### `Avatar` — Client Component
+#### `Avatar` — Client Component
 
 **File**: [avatar.tsx](../src/components/avatar.tsx)
 
@@ -486,11 +507,11 @@ Compact stat box for profile hero. Bold `text-2xl` colored value + `text-[10px]`
 { src?: string | null; initials: string; size?: "sm" | "md" | "lg" }
 ```
 
-`<img>` with `onError` fallback to dark circle with text initials. sm = h-9 w-9, md = h-14 w-14, lg = h-24 w-24 with `ring-2 ring-teal/30 ring-offset-2 ring-offset-bureau-950`. `rounded-full object-cover`.
+`<img>` with `onError` fallback to dark circle with text initials. sm=h-9, md=h-14, lg=h-24 with teal ring. `rounded-full object-cover`.
 
 ---
 
-### `ScoreBar` — Server Component
+#### `ScoreBar` — Server Component
 
 **File**: [score-bar.tsx](../src/components/score-bar.tsx)
 
@@ -498,11 +519,11 @@ Compact stat box for profile hero. Bold `text-2xl` colored value + `text-[10px]`
 { value: number | null; label: string; color?: "teal" | "amber" | "blue" | "rose" }
 ```
 
-Horizontal bar clamped to 0-100%. Label + `value.toFixed(1)` above bar. Returns null if value is null. `.bar-fill` animation.
+Horizontal bar clamped to 0-100%. Label + `value.toFixed(1)` above bar. `.bar-fill` animation.
 
 ---
 
-### `VoteBadge` — Server Component
+#### `VoteBadge` — Server Component
 
 **File**: [vote-badge.tsx](../src/components/vote-badge.tsx)
 
@@ -510,11 +531,11 @@ Horizontal bar clamped to 0-100%. Label + `value.toFixed(1)` above bar. Returns 
 { position: string }
 ```
 
-Color-coded pill: Pour (teal), Contre (rose), Abstention (amber), Non-votant (grey). Maps raw position strings to French labels.
+Color-coded pill: Pour (teal), Contre (rose), Abstention (amber), Non-votant (grey).
 
 ---
 
-### `ScrutinResultBadge` — Server Component
+#### `ScrutinResultBadge` — Server Component
 
 **File**: [scrutin-result-badge.tsx](../src/components/scrutin-result-badge.tsx)
 
@@ -522,51 +543,32 @@ Color-coded pill: Pour (teal), Contre (rose), Abstention (amber), Non-votant (gr
 { sortCode: string }
 ```
 
-"Adopte" (teal) or "Rejete" (rose) based on `sortCode.toLowerCase().includes("adopt")`.
+"Adopté" (teal) or "Rejeté" (rose) based on `sortCode.toLowerCase().includes("adopt")`.
 
 ---
 
-### `StatCard` + `StatRow` — Server Component
+#### `StatCard` + `StatRow` — Server Component
 
 **File**: [stat-card.tsx](../src/components/stat-card.tsx)
 
 ```typescript
 StatCard: { value: number; label: string; accent?: "teal" | "amber" | "rose" | "blue"; delay?: number }
-StatRow: { children: React.ReactNode }  // grid-cols-2 sm:grid-cols-4
+StatRow: { children: React.ReactNode }
 ```
 
-Large bold `fmt(value)` + uppercase label. Colored border + text per accent. `.fade-up` with delay. `.glow-teal`/`.glow-amber` effects.
+Large bold `fmt(value)` + uppercase label. Colored border + text per accent. `.fade-up` with delay.
 
 ---
 
-### `DeclarationSection` — Client Component
+#### `DeclarationSection` — Client Component
 
 **File**: [declaration-section.tsx](../src/components/declaration-section.tsx)
 
 ```typescript
 { declarations: Declaration[] }
-// Declaration: { id, typeDeclaration, dateDepot, organe, qualiteDeclarant,
-//   totalParticipations, totalRevenus, participations[], revenus[] }
 ```
 
-Renders nothing if no declarations. Each declaration is an expandable `DeclarationCard`. Designed to distill verbose HATVP PDFs (often 5–9 pages of "0 € Net") into a scannable, intelligence-focused layout.
-
-**Collapsed state**: Type badge (DI/DIA/DIM color-coded) + title + date + metadata (qualite, organe) + quick summary line ("3 rémunérations · 25 bénévoles") + total revenue (teal) + chevron.
-
-**Expanded state**:
-1. **Revenue summary stat boxes** (`RevenueSummary`) — Horizontal boxes showing latest-year totals per category (Total Déclaré, Mandats Électifs, Activités Professionnelles, etc.). Only categories with revenue > 0 are shown.
-2. **Paid activity cards** (`ActivityCard`) — Per revenue type (ordered: mandats > professionnel > consultant > dirigeant). Each card has a colored left border by type (teal=mandats, blue=professional, purple=consulting, amber=board). Shows employer/org name, role, year range, latest amount. Multi-year data displayed as a **mini vertical bar chart** (`MiniChart`) — CSS-only bars proportional to max amount, with 2-digit year labels and hover tooltips.
-3. **Unpaid positions list** (`UnpaidPositions`) — All-zero board positions collapsed into a compact dense list with count badge. Shows "Org · Role · Period" per line. Initially shows 5 items with "+ N autres positions" toggle. Replaces pages of "0 € Net" from HATVP PDFs.
-4. **Financial participations** — Company name + shares/capital detail + evaluation (amber) + remuneration. Only shown when participations exist.
-
-**Smart filtering**: Empty categories (consultant: Néant, participations: none) are not rendered at all. Revenue types with all-zero amounts only appear in the compact unpaid list.
-
-**Sub-components** (internal to file):
-- `MiniChart` — Pure CSS vertical bar chart. Bars flex-1 with max-w-5, height as percentage of max. Hover changes opacity. Year labels as 2-digit text below.
-- `ActivityCard` — Colored left-border card. For dirigeant type: shows org as main label, role as sub. For others: description as main, employer as sub.
-- `UnpaidPositions` — Collapsible list with dot bullets, truncated names, and year ranges right-aligned. 5-item initial limit with expand toggle.
-- `RevenueSummary` — Stat boxes: grand total (bureau-100, xl font) + per-type breakdowns (colored text + dot).
-- `DeclarationCard` — Accordion container with smart header summary.
+Expandable HATVP declaration cards. Collapsed: type badge + title + date + summary line. Expanded: revenue summary stat boxes + paid activity cards with mini bar charts + unpaid positions collapsed list + financial participations. Smart filtering: empty categories not rendered.
 
 ---
 
@@ -579,8 +581,8 @@ Renders nothing if no declarations. Each declaration is an expandable `Declarati
 | `fmt` | `number \| null` | French-formatted number | `1 234 567` |
 | `fmtEuro` | `number \| null` | Currency (EUR, no decimals) | `50 000 EUR` |
 | `fmtPct` | `number \| null` | Percentage (1 decimal) | `45,3 %` |
-| `fmtDate` | `Date \| string \| null` | Full French date | `6 fevrier 2025` |
-| `fmtShortDate` | `Date \| string \| null` | Short date | `fevr. 2025` |
+| `fmtDate` | `Date \| string \| null` | Full French date | `6 février 2025` |
+| `fmtShortDate` | `Date \| string \| null` | Short date | `févr. 2025` |
 | `fmtCompact` | `number` | Compact notation | `1,5M` / `45k` |
 | `slugify` | `string` | URL-safe slug | `saint-denis` |
 
@@ -625,11 +627,21 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
 
 ### Pagination
 
-30 items per page. `skip` / `take` with Prisma. URL `?page=N` param preserved by `Pagination` component alongside other search params.
+30 items per page (40 for elus). `skip` / `take` with Prisma. URL `?page=N` param preserved by `Pagination` component alongside other search params.
 
-### Filter Chips
+### Dossier Config
 
-Group/type filters rendered as button links. Active filter highlighted with `bg-teal/10 text-teal`. Counts shown inline.
+**File**: [dossier-config.ts](../src/lib/dossier-config.ts)
+
+Central registry of all 8 dossiers. Each entry: `{ slug, label, description, stat, statSource, tags, lobbyDomains, color }`. Used by `DossierNav`, dossier hub page, and homepage.
+
+### ISR Revalidation
+
+```tsx
+export const revalidate = 3600;  // Homepage, votes pages
+export const revalidate = 86400; // Dossiers, economie, patrimoine, territoire hub, representants hub
+// (no export) = fully dynamic — deputy/senator/lobbyiste/scrutin profiles
+```
 
 ### Suspense Boundaries
 
@@ -645,7 +657,22 @@ Client components wrapped in `<Suspense>` with fallback divs:
 
 Economy page: inline `MiniChart` function — SVG polyline with gradient fill.
 Museum detail: SVG bar chart (52px per year, scaled to max).
+`TimelineChart` component: server-rendered SVG polyline.
 No external chart library dependency.
+
+### generateMetadata
+
+Dynamic routes export `generateMetadata` for SEO. Pattern:
+
+```tsx
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const item = await prisma.depute.findUnique({ where: { id } });
+  return { title: `${item?.prenom} ${item?.nom} — L'Observatoire Citoyen` };
+}
+```
+
+Applied to: deputés/[id], sénateurs/[id], lobbyistes/[id], partis/[id], territoire/[dept], territoire/commune/[code], scrutins/[id] (×2 routes), musées/[id], monuments/[id].
 
 ---
 
@@ -657,39 +684,67 @@ No external chart library dependency.
 | `sm` (640px) | Tablet | 2-column grids, side-by-side stats |
 | `lg` (1024px) | Desktop | 3-4 column grids, sidebar layouts |
 
-List pages: `max-w-7xl px-6`. Profile detail pages: `max-w-4xl px-6` (focused editorial width).
+List pages: `max-w-7xl px-6`. Profile detail pages: `max-w-4xl px-6` (focused editorial width). Dossier pages: `max-w-5xl px-6`.
 
 ---
 
-## Build Output
+## Build Output (Phase 5 — 50 routes)
 
 ```
-Route (app)                                Type
-┌ ○ /                                      Static
-├ ○ /gouvernance                           Static
-├ ƒ /gouvernance/deputes                   Dynamic
-├ ƒ /gouvernance/deputes/[id]              Dynamic
-├ ƒ /gouvernance/lobbyistes                Dynamic
-├ ƒ /gouvernance/lobbyistes/[id]           Dynamic
-├ ƒ /gouvernance/partis                    Dynamic
-├ ƒ /gouvernance/partis/[id]              Dynamic
-├ ƒ /gouvernance/scrutins                  Dynamic
-├ ƒ /gouvernance/scrutins/[id]             Dynamic
-├ ƒ /gouvernance/senateurs                 Dynamic
-├ ƒ /gouvernance/senateurs/[id]            Dynamic
-├ ○ /elections                             Static
-├ ƒ /elections/legislatives-2024           Dynamic
-├ ○ /economie                              Static
-├ ○ /patrimoine                            Static
-├ ƒ /patrimoine/monuments                  Dynamic
-├ ƒ /patrimoine/monuments/[id]             Dynamic
-├ ƒ /patrimoine/musees                     Dynamic
-├ ƒ /patrimoine/musees/[id]                Dynamic
-├ ○ /territoire                            Static
-└ ƒ /territoire/[departementCode]          Dynamic
+Route (app)                                         Type
+┌ ○ /                                               Static (ISR 3600)
+├ ○ /dossiers                                       Static (ISR 86400)
+├ ƒ /dossiers/confiance-democratique                Dynamic
+├ ƒ /dossiers/dette-publique                        Dynamic
+├ ƒ /dossiers/emploi-jeunesse                       Dynamic
+├ ƒ /dossiers/logement                              Dynamic
+├ ƒ /dossiers/pouvoir-dachat                        Dynamic
+├ ƒ /dossiers/retraites                             Dynamic
+├ ƒ /dossiers/sante                                 Dynamic
+├ ƒ /dossiers/transition-ecologique                 Dynamic
+├ ○ /representants                                  Static (ISR 86400)
+├ ƒ /representants/deputes                          Dynamic
+├ ƒ /representants/deputes/[id]                     Dynamic
+├ ƒ /representants/elus                             Dynamic
+├ ƒ /representants/elus/maires                      Dynamic
+├ ƒ /representants/lobbyistes                       Dynamic
+├ ƒ /representants/lobbyistes/[id]                  Dynamic
+├ ƒ /representants/partis                           Dynamic
+├ ƒ /representants/partis/[id]                      Dynamic
+├ ƒ /representants/scrutins                         Dynamic
+├ ƒ /representants/scrutins/[id]                    Dynamic
+├ ƒ /representants/senateurs                        Dynamic
+├ ƒ /representants/senateurs/[id]                   Dynamic
+├ ○ /gouvernance                                    Static (legacy)
+├ ƒ /gouvernance/deputes                            Dynamic (legacy)
+├ ƒ /gouvernance/deputes/[id]                       Dynamic (legacy)
+├ ƒ /gouvernance/elus                               Dynamic (legacy)
+├ ƒ /gouvernance/elus/maires                        Dynamic (legacy)
+├ ƒ /gouvernance/lobbyistes                         Dynamic (legacy)
+├ ƒ /gouvernance/lobbyistes/[id]                    Dynamic (legacy)
+├ ƒ /gouvernance/partis                             Dynamic (legacy)
+├ ƒ /gouvernance/partis/[id]                        Dynamic (legacy)
+├ ƒ /gouvernance/scrutins                           Dynamic (legacy, still active)
+├ ƒ /gouvernance/scrutins/[id]                      Dynamic (legacy, still active)
+├ ƒ /gouvernance/senateurs                          Dynamic (legacy)
+├ ƒ /gouvernance/senateurs/[id]                     Dynamic (legacy)
+├ ○ /votes                                          Static (ISR 3600)
+├ ƒ /votes/mon-depute                               Dynamic
+├ ƒ /votes/par-sujet/[tag]                          Dynamic
+├ ○ /elections                                      Static
+├ ƒ /elections/legislatives-2024                    Dynamic
+├ ○ /economie                                       Static (ISR 86400)
+├ ○ /territoire                                     Static (ISR 86400)
+├ ƒ /territoire/[departementCode]                   Dynamic
+├ ƒ /territoire/commune/[communeCode]               Dynamic
+├ ○ /patrimoine                                     Static (ISR 86400)
+├ ƒ /patrimoine/monuments                           Dynamic
+├ ƒ /patrimoine/monuments/[id]                      Dynamic
+├ ƒ /patrimoine/musees                              Dynamic
+└ ƒ /patrimoine/musees/[id]                         Dynamic
 ```
 
-6 static (prerendered) + 16 dynamic (server-rendered on demand) = 22 routes + `/_not-found`.
+8 static + 42 dynamic = 50 routes.
 
 ---
 
@@ -699,57 +754,94 @@ Route (app)                                Type
 src/
 ├── app/
 │   ├── globals.css              # Theme colors, effects, animations
-│   ├── layout.tsx               # Root: fonts, navbar (6 items), footer
-│   ├── page.tsx                 # Dashboard homepage
-│   ├── gouvernance/
-│   │   ├── page.tsx             # Hub (6 cards)
+│   ├── layout.tsx               # Root: fonts, navbar (7 items), footer
+│   ├── page.tsx                 # Homepage (ISR 3600)
+│   ├── dossiers/
+│   │   ├── page.tsx             # Dossier hub (ISR 86400)
+│   │   ├── pouvoir-dachat/page.tsx
+│   │   ├── confiance-democratique/page.tsx
+│   │   ├── dette-publique/page.tsx
+│   │   ├── emploi-jeunesse/page.tsx
+│   │   ├── logement/page.tsx
+│   │   ├── sante/page.tsx
+│   │   ├── transition-ecologique/page.tsx
+│   │   └── retraites/page.tsx
+│   ├── representants/
+│   │   ├── page.tsx             # Hub (ISR 86400)
 │   │   ├── deputes/
 │   │   │   ├── page.tsx         # List + group/dept filters
-│   │   │   └── [id]/page.tsx    # Hero profile + tabs (activite/declarations/infos)
+│   │   │   └── [id]/page.tsx    # Hero + tabs (activite/declarations/transparence/infos)
 │   │   ├── senateurs/
-│   │   │   ├── page.tsx         # List
-│   │   │   └── [id]/page.tsx    # Hero profile + tabs (mandats/declarations/infos)
+│   │   │   ├── page.tsx
+│   │   │   └── [id]/page.tsx
+│   │   ├── elus/
+│   │   │   ├── page.tsx
+│   │   │   └── maires/page.tsx
 │   │   ├── lobbyistes/
-│   │   │   ├── page.tsx         # Registry list
-│   │   │   └── [id]/page.tsx    # Detail + actions
+│   │   │   ├── page.tsx
+│   │   │   └── [id]/page.tsx
 │   │   ├── partis/
-│   │   │   ├── page.tsx         # List + year/sort filters
-│   │   │   └── [id]/page.tsx    # Revenue/expense bars + multi-year table
+│   │   │   ├── page.tsx
+│   │   │   └── [id]/page.tsx
 │   │   └── scrutins/
-│   │       ├── page.tsx         # Vote list + result filter
-│   │       └── [id]/page.tsx    # Group bars + individual votes
+│   │       ├── page.tsx
+│   │       └── [id]/page.tsx
+│   ├── gouvernance/             # Legacy (still active for scrutins; others redirect)
+│   │   ├── page.tsx
+│   │   ├── deputes/[id]/page.tsx
+│   │   ├── senateurs/[id]/page.tsx
+│   │   ├── lobbyistes/[id]/page.tsx
+│   │   ├── partis/[id]/page.tsx
+│   │   └── scrutins/
+│   │       ├── page.tsx
+│   │       └── [id]/page.tsx
+│   ├── votes/
+│   │   ├── page.tsx             # Hub (ISR 3600)
+│   │   ├── par-sujet/[tag]/page.tsx
+│   │   └── mon-depute/page.tsx
 │   ├── elections/
-│   │   ├── page.tsx             # Hub: Législatives 2024 card + stats
-│   │   └── legislatives-2024/
-│   │       └── page.tsx         # Results by constituency (tour + dept filter)
+│   │   ├── page.tsx
+│   │   └── legislatives-2024/page.tsx
 │   ├── economie/
-│   │   └── page.tsx             # SVG charts dashboard
+│   │   └── page.tsx             # ISR 86400
 │   ├── territoire/
-│   │   ├── page.tsx             # Region/dept browser
-│   │   └── [departementCode]/page.tsx  # Cross-reference
+│   │   ├── page.tsx             # ISR 86400
+│   │   ├── [departementCode]/page.tsx  # Full dashboard
+│   │   └── commune/[communeCode]/page.tsx
 │   └── patrimoine/
-│       ├── page.tsx             # Hub: top museums + domains
+│       ├── page.tsx             # ISR 86400
 │       ├── musees/
-│       │   ├── page.tsx         # List + search
-│       │   └── [id]/page.tsx    # Detail + attendance chart + table
+│       │   ├── page.tsx
+│       │   └── [id]/page.tsx
 │       └── monuments/
-│           ├── page.tsx         # List + type filters
-│           └── [id]/page.tsx    # Detail + GPS link + description
+│           ├── page.tsx
+│           └── [id]/page.tsx
 ├── components/
-│   ├── avatar.tsx               # Client: img with fallback initials (sm/md/lg)
-│   ├── declaration-section.tsx  # Client: expandable declaration cards
+│   ├── dossier-hero.tsx         # Server: dossier page hero banner
+│   ├── dossier-nav.tsx          # Server: horizontal dossier pill nav
+│   ├── indicator-card.tsx       # Server: KPI tile with trend arrow
+│   ├── topic-vote-list.tsx      # Server: scrutins filtered by tag
+│   ├── lobbying-density.tsx     # Server: domain-filtered lobbying summary
+│   ├── conflict-alert.tsx       # Server: cross-reference finding alert
+│   ├── ranking-table.tsx        # Server: département ranking by indicator
+│   ├── dept-lookup.tsx          # Client: dept search → territoire redirect
+│   ├── dept-map.tsx             # Server: ranked bar visualization for dept data
+│   ├── timeline-chart.tsx       # Server: SVG polyline time-series chart
+│   ├── avatar.tsx               # Client: img with fallback initials
+│   ├── declaration-section.tsx  # Client: expandable HATVP declaration cards
 │   ├── page-header.tsx          # Server: breadcrumbs + title (list pages)
 │   ├── pagination.tsx           # Server: page numbers with ellipsis
-│   ├── profile-hero.tsx         # Server: full-width hero banner (profile pages)
-│   ├── profile-tabs.tsx         # Client: URL-driven tab navigation (profile pages)
-│   ├── score-bar.tsx            # Server: animated horizontal bar (list pages)
+│   ├── profile-hero.tsx         # Server: full-width hero banner (profiles)
+│   ├── profile-tabs.tsx         # Client: URL-driven tab navigation
+│   ├── score-bar.tsx            # Server: animated horizontal bar
 │   ├── score-gauge.tsx          # Server: compact stat box (profile hero)
-│   ├── scrutin-result-badge.tsx # Server: Adopte/Rejete badge
+│   ├── scrutin-result-badge.tsx # Server: Adopté/Rejeté badge
 │   ├── search-input.tsx         # Client: URL-based search with spinner
 │   ├── stat-card.tsx            # Server: number + label card
 │   └── vote-badge.tsx           # Server: Pour/Contre/Abstention/Non-votant
 └── lib/
     ├── db.ts                    # Prisma client (pg adapter, singleton)
+    ├── dossier-config.ts        # Dossier metadata (slug, label, tags, lobbyDomains)
     ├── format.ts                # French number/date formatting (7 functions)
     └── nuance-colors.ts         # Political nuance code → { color, bg, label } mapping
 ```

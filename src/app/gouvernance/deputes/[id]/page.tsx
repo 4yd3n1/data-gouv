@@ -2,11 +2,28 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
-import { fmtDate } from "@/lib/format";
+import { fmtDate, fmtEuro, fmt } from "@/lib/format";
 import { ProfileHero } from "@/components/profile-hero";
 import { ProfileTabs } from "@/components/profile-tabs";
 import { VoteBadge } from "@/components/vote-badge";
 import { DeclarationSection } from "@/components/declaration-section";
+import { ConflictAlert } from "@/components/conflict-alert";
+
+const TAG_LABELS: Record<string, string> = {
+  budget: "Budget & Finances",
+  fiscalite: "Fiscalité",
+  sante: "Santé",
+  logement: "Logement",
+  retraites: "Retraites",
+  education: "Éducation",
+  securite: "Sécurité & Justice",
+  immigration: "Immigration",
+  ecologie: "Écologie",
+  travail: "Emploi & Travail",
+  defense: "Défense",
+  agriculture: "Agriculture",
+  culture: "Culture",
+};
 
 export default async function DeputeDetailPage({
   params,
@@ -24,7 +41,7 @@ export default async function DeputeDetailPage({
   });
   if (!d) notFound();
 
-  const [votes, deports, declarations] = await Promise.all([
+  const [votes, deports, declarations, scrutinTagCounts, taggedVoteCount] = await Promise.all([
     prisma.voteRecord.findMany({
       where: { deputeId: id },
       include: { scrutin: true },
@@ -40,7 +57,25 @@ export default async function DeputeDetailPage({
       include: { participations: true, revenus: true },
       orderBy: { dateDepot: "desc" },
     }),
+    prisma.scrutinTag.groupBy({
+      by: ["tag"],
+      where: { scrutin: { votes: { some: { deputeId: id } } } },
+      _count: { tag: true },
+      orderBy: { _count: { tag: "desc" } },
+    }),
+    prisma.voteRecord.count({
+      where: { deputeId: id, scrutin: { tags: { some: {} } } },
+    }),
   ]);
+
+  const conflictDeclarations = declarations.filter(
+    (decl) => (decl.totalParticipations ?? 0) > 0
+  );
+  const totalParticipationsAmount = conflictDeclarations.reduce(
+    (s, decl) => s + (decl.totalParticipations ?? 0),
+    0
+  );
+  const maxTagCount = scrutinTagCounts[0]?._count.tag ?? 1;
 
   return (
     <>
@@ -79,6 +114,7 @@ export default async function DeputeDetailPage({
             tabs={[
               { key: "activite", label: "Activit\u00e9", count: votes.length + deports.length },
               { key: "declarations", label: "D\u00e9clarations", count: declarations.length },
+              { key: "transparence", label: "Transparence", count: conflictDeclarations.length || undefined },
               { key: "infos", label: "Informations" },
             ]}
             defaultTab="activite"
@@ -170,6 +206,123 @@ export default async function DeputeDetailPage({
             ) : (
               <p className="py-8 text-center text-sm text-bureau-500 italic">
                 Aucune d&eacute;claration d&apos;int&eacute;r&ecirc;ts.
+              </p>
+            )}
+          </div>
+        )}
+
+        {/* ── Transparence ── */}
+        {tab === "transparence" && (
+          <div className="space-y-8 fade-up">
+            {/* Financial interests */}
+            <section>
+              <h2 className="mb-1 text-xs font-semibold uppercase tracking-[0.15em] text-bureau-500">
+                Int&eacute;r&ecirc;ts financiers d&eacute;clar&eacute;s
+              </h2>
+              <p className="mb-4 text-xs text-bureau-500">
+                Source : HATVP &mdash; d&eacute;clarations d&apos;int&eacute;r&ecirc;ts
+              </p>
+              {conflictDeclarations.length > 0 ? (
+                <>
+                  <div className="mb-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
+                    <div className="rounded-xl border border-amber/20 bg-amber/5 px-4 py-3">
+                      <p className="text-[10px] uppercase tracking-widest text-bureau-500">Participations d&eacute;clar&eacute;es</p>
+                      <p className="mt-1 text-xl font-bold text-amber">{fmtEuro(totalParticipationsAmount)}</p>
+                    </div>
+                    <div className="rounded-xl border border-bureau-700/20 bg-bureau-800/20 px-4 py-3">
+                      <p className="text-[10px] uppercase tracking-widest text-bureau-500">Votes sur textes thématiques</p>
+                      <p className="mt-1 text-xl font-bold text-bureau-200">{fmt(taggedVoteCount)}</p>
+                    </div>
+                    <div className="rounded-xl border border-bureau-700/20 bg-bureau-800/20 px-4 py-3">
+                      <p className="text-[10px] uppercase tracking-widest text-bureau-500">D&eacute;ports (r&eacute;cusations)</p>
+                      <p className="mt-1 text-xl font-bold text-bureau-200">{fmt(deports.length)}</p>
+                    </div>
+                  </div>
+                  <div className="space-y-3">
+                    {conflictDeclarations.map((decl) => {
+                      const sector =
+                        decl.participations.length > 0
+                          ? decl.participations
+                              .map((p) => p.nomSociete)
+                              .slice(0, 2)
+                              .join(", ")
+                          : (decl.organe ?? decl.typeMandat);
+                      return (
+                        <ConflictAlert
+                          key={decl.id}
+                          declarationId={decl.id}
+                          deputyName={`${d.prenom} ${d.nom}`}
+                          sector={sector}
+                          participationTotal={decl.totalParticipations ?? 0}
+                          relatedVoteCount={taggedVoteCount}
+                          typeMandat={decl.typeMandat}
+                        />
+                      );
+                    })}
+                  </div>
+                </>
+              ) : (
+                <div className="rounded-xl border border-bureau-700/20 bg-bureau-800/10 px-6 py-8 text-center">
+                  <p className="text-sm text-bureau-500 italic">
+                    Aucune participation financi&egrave;re d&eacute;clar&eacute;e.
+                  </p>
+                </div>
+              )}
+            </section>
+
+            {/* Vote theme breakdown */}
+            {scrutinTagCounts.length > 0 && (
+              <section>
+                <h2 className="mb-4 text-xs font-semibold uppercase tracking-[0.15em] text-bureau-500">
+                  Votes par th&egrave;me l&eacute;gislatif
+                </h2>
+                <div className="space-y-2 rounded-xl border border-bureau-700/20 overflow-hidden">
+                  {scrutinTagCounts.map((t) => (
+                    <div
+                      key={t.tag}
+                      className="flex items-center gap-4 bg-bureau-800/10 px-4 py-2.5 hover:bg-bureau-800/20 transition-colors"
+                    >
+                      <span className="w-40 shrink-0 text-sm text-bureau-300">
+                        {TAG_LABELS[t.tag] ?? t.tag}
+                      </span>
+                      <div className="flex-1 h-1.5 rounded-full bg-bureau-700/40 overflow-hidden">
+                        <div
+                          className="h-full bg-teal/50 rounded-full"
+                          style={{ width: `${Math.min(100, (t._count.tag / maxTagCount) * 100)}%` }}
+                        />
+                      </div>
+                      <span className="shrink-0 text-xs text-bureau-400">{fmt(t._count.tag)}</span>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* Déports */}
+            {deports.length > 0 && (
+              <section>
+                <h2 className="mb-4 text-xs font-semibold uppercase tracking-[0.15em] text-bureau-500">
+                  D&eacute;ports &mdash; r&eacute;cusations pour conflit d&apos;int&eacute;r&ecirc;t
+                </h2>
+                <div className="space-y-2">
+                  {deports.map((dp) => (
+                    <div
+                      key={dp.id}
+                      className="rounded-xl border border-bureau-700/20 bg-bureau-800/20 px-5 py-4"
+                    >
+                      <p className="text-sm leading-relaxed text-bureau-200">{dp.cibleTexte}</p>
+                      <p className="mt-1.5 text-xs text-bureau-500">
+                        {dp.instanceLibelle} &middot; {dp.porteeLibelle} &middot; {fmtDate(dp.datePublication)}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {conflictDeclarations.length === 0 && deports.length === 0 && scrutinTagCounts.length === 0 && (
+              <p className="py-8 text-center text-sm text-bureau-500 italic">
+                Aucune donn&eacute;e de transparence disponible pour cet &eacute;lu.
               </p>
             )}
           </div>

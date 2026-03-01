@@ -1,107 +1,149 @@
 import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { fmt, fmtEuro } from "@/lib/format";
+import { DOSSIERS } from "@/lib/dossier-config";
+import { DeptLookup } from "@/components/dept-lookup";
 
-async function getStats() {
-  const [deputes, senateurs, lobbyistes, declarations, musees, monuments, communes, departements, indicateurs, scrutins, elus, partis, elections] = await Promise.all([
+export const revalidate = 3600; // Homepage shows latest votes + conflict alerts — revalidate hourly
+
+async function getHomeData() {
+  const [
+    deputes, elus, scrutins, monuments,
+    recentScrutins, topDeclarations,
+    latestDetteObs, latestIpcObs, latestChomageObs,
+    depts,
+  ] = await Promise.all([
     prisma.depute.count(),
-    prisma.senateur.count(),
-    prisma.lobbyiste.count(),
-    prisma.declarationInteret.count(),
-    prisma.musee.count(),
-    prisma.monument.count(),
-    prisma.commune.count({ where: { typecom: "COM" } }),
-    prisma.departement.count(),
-    prisma.indicateur.count(),
-    prisma.scrutin.count(),
     prisma.elu.count(),
-    prisma.partiPolitique.count({ where: { exercice: 2024 } }),
-    prisma.electionLegislative.count(),
+    prisma.scrutin.count(),
+    prisma.monument.count(),
+    // 5 most recent votes with group breakdown
+    prisma.scrutin.findMany({
+      orderBy: { dateScrutin: "desc" },
+      take: 5,
+      select: {
+        id: true,
+        titre: true,
+        dateScrutin: true,
+        sortCode: true,
+        pour: true,
+        contre: true,
+        abstentions: true,
+      },
+    }),
+    // Top 3 conflict-of-interest alerts
+    prisma.declarationInteret.findMany({
+      where: { typeMandat: { in: ["Député", "Sénateur"] }, totalParticipations: { gt: 0 } },
+      orderBy: { totalParticipations: "desc" },
+      take: 3,
+      select: { id: true, prenom: true, nom: true, typeMandat: true, totalParticipations: true },
+    }),
+    // Latest debt/GDP indicator
+    prisma.indicateur.findFirst({
+      where: { code: "DETTE_PIB" },
+      include: {
+        observations: { orderBy: { periodeDebut: "desc" }, take: 1 },
+      },
+    }),
+    // Latest inflation
+    prisma.indicateur.findFirst({
+      where: { code: "IPC_MENSUEL" },
+      include: {
+        observations: { orderBy: { periodeDebut: "desc" }, take: 1 },
+      },
+    }),
+    // Latest unemployment
+    prisma.indicateur.findFirst({
+      where: { code: "CHOMAGE_TAUX_TRIM" },
+      include: {
+        observations: { orderBy: { periodeDebut: "desc" }, take: 1 },
+      },
+    }),
+    // Dept list for lookup
+    prisma.departement.findMany({
+      select: { code: true, libelle: true },
+      orderBy: { code: "asc" },
+    }),
   ]);
 
-  const recentDeclarations = await prisma.declarationInteret.findMany({
-    where: { typeMandat: { in: ["Député", "Sénateur"] }, totalParticipations: { gt: 0 } },
-    orderBy: { totalParticipations: "desc" },
-    take: 6,
-  });
-
-  return { deputes, senateurs, lobbyistes, declarations, musees, monuments, communes, departements, indicateurs, scrutins, elus, partis, elections, recentDeclarations };
+  return {
+    deputes, elus, scrutins, monuments,
+    recentScrutins, topDeclarations,
+    detteVal: latestDetteObs?.observations[0]?.valeur ?? null,
+    ipcVal: latestIpcObs?.observations[0]?.valeur ?? null,
+    chomageVal: latestChomageObs?.observations[0]?.valeur ?? null,
+    depts,
+  };
 }
 
-const SECTIONS = [
-  {
-    href: "/gouvernance",
-    title: "Gouvernance",
-    desc: "Députés, sénateurs, élus locaux, lobbyistes et partis politiques",
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M12 2 2 7l10 5 10-5-10-5z" /><path d="M2 17l10 5 10-5" /><path d="M2 12l10 5 10-5" /></svg>
-    ),
-    accent: "teal",
-  },
-  {
-    href: "/elections",
-    title: "Élections",
-    desc: "Résultats électoraux par circonscription, nuance, candidat",
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M9 11l3 3L22 4" /><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" /></svg>
-    ),
-    accent: "blue",
-  },
-  {
-    href: "/economie",
-    title: "Économie",
-    desc: "PIB, chômage, créations d'entreprises — séries temporelles",
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M3 3v18h18" /><path d="m19 9-5 5-4-4-3 3" /></svg>
-    ),
-    accent: "amber",
-  },
-  {
-    href: "/territoire",
-    title: "Territoire",
-    desc: "Régions, départements, communes — maillage administratif",
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="12" cy="10" r="3" /><path d="M12 2a8 8 0 0 0-8 8c0 5.4 7 11.5 7.3 11.8a1 1 0 0 0 1.4 0C13 21.5 20 15.4 20 10a8 8 0 0 0-8-8z" /></svg>
-    ),
-    accent: "blue",
-  },
-  {
-    href: "/patrimoine",
-    title: "Patrimoine",
-    desc: "Musées, monuments historiques — héritage culturel français",
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11m16-11v11M8 14v3m4-3v3m4-3v3" /></svg>
-    ),
-    accent: "rose",
-  },
-];
+const colorAccent = {
+  amber: "text-amber group-hover:border-amber/30",
+  teal: "text-teal group-hover:border-teal/30",
+  blue: "text-blue group-hover:border-blue/30",
+  rose: "text-rose group-hover:border-rose/30",
+};
 
 export default async function HomePage() {
-  const stats = await getStats();
+  const data = await getHomeData();
+  const { detteVal, ipcVal, chomageVal } = data;
+
+  // Dynamic hero headline based on latest data
+  const heroStat = detteVal
+    ? { label: "dette publique", value: `${detteVal.toFixed(1)}%`, unit: "du PIB", color: "text-amber" }
+    : ipcVal
+      ? { label: "inflation", value: `+${ipcVal.toFixed(1)}%`, unit: "en glissement annuel", color: "text-rose" }
+      : chomageVal
+        ? { label: "taux de chômage", value: `${chomageVal.toFixed(1)}%`, unit: "France entière", color: "text-amber" }
+        : null;
 
   return (
     <>
-      {/* Hero */}
+      {/* ── Hero ── */}
       <section className="grid-bg relative overflow-hidden border-b border-bureau-700/30">
         <div className="mx-auto max-w-7xl px-6 py-20 text-center">
           <div className="fade-up mb-4 inline-block rounded-full border border-teal/20 bg-teal/5 px-4 py-1 text-xs uppercase tracking-widest text-teal">
             Intelligence civique
           </div>
-          <h1 className="fade-up delay-1 font-[family-name:var(--font-display)] text-5xl leading-tight text-bureau-100 sm:text-6xl">
-            L&apos;Observatoire{" "}
-            <span className="italic text-teal">Citoyen</span>
-          </h1>
+
+          {heroStat ? (
+            <h1 className="fade-up delay-1 font-[family-name:var(--font-display)] text-5xl leading-tight text-bureau-100 sm:text-6xl">
+              La {heroStat.label} atteint{" "}
+              <span className={`italic ${heroStat.color}`}>{heroStat.value}</span>{" "}
+              <span className="text-bureau-400 text-3xl sm:text-4xl">{heroStat.unit}</span>
+            </h1>
+          ) : (
+            <h1 className="fade-up delay-1 font-[family-name:var(--font-display)] text-5xl leading-tight text-bureau-100 sm:text-6xl">
+              L&apos;Observatoire{" "}
+              <span className="italic text-teal">Citoyen</span>
+            </h1>
+          )}
+
           <p className="fade-up delay-2 mx-auto mt-4 max-w-xl text-bureau-400">
-            Explorez les données publiques françaises. Transparence, accessibilité, citoyenneté.
+            Données publiques croisées — gouvernance, économie, territoire. La transparence, c&apos;est maintenant.
           </p>
 
-          {/* Key stats */}
+          <div className="fade-up delay-3 mt-8 flex flex-wrap items-center justify-center gap-3">
+            <Link
+              href="/dossiers"
+              className="rounded-lg bg-teal/10 border border-teal/20 px-5 py-2.5 text-sm font-medium text-teal transition-all hover:bg-teal/20"
+            >
+              Dossiers thématiques →
+            </Link>
+            <Link
+              href="/representants"
+              className="rounded-lg border border-bureau-700/40 bg-bureau-800/40 px-5 py-2.5 text-sm text-bureau-300 transition-all hover:border-bureau-600/50 hover:text-bureau-100"
+            >
+              Représentants
+            </Link>
+          </div>
+
+          {/* Quick KPIs */}
           <div className="fade-up delay-3 mt-12 grid grid-cols-2 gap-3 sm:grid-cols-4 md:gap-4">
             {[
-              { v: stats.deputes, l: "Députés", c: "text-teal border-teal/20" },
-              { v: stats.elus, l: "Élus locaux", c: "text-blue border-blue/20" },
-              { v: stats.elections, l: "Scrutins élect.", c: "text-amber border-amber/20" },
-              { v: stats.monuments, l: "Monuments", c: "text-rose border-rose/20" },
+              { v: data.deputes, l: "Députés", c: "text-teal border-teal/20" },
+              { v: data.elus, l: "Élus locaux", c: "text-blue border-blue/20" },
+              { v: data.scrutins, l: "Scrutins parl.", c: "text-amber border-amber/20" },
+              { v: data.monuments, l: "Monuments", c: "text-rose border-rose/20" },
             ].map((s) => (
               <div key={s.l} className={`rounded-xl border bg-bureau-800/40 px-4 py-4 ${s.c}`}>
                 <p className="text-2xl font-bold tracking-tight sm:text-3xl">{fmt(s.v)}</p>
@@ -112,113 +154,187 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Section cards */}
+      {/* ── Dossiers thématiques ── */}
       <section className="mx-auto max-w-7xl px-6 py-16">
-        <h2 className="font-[family-name:var(--font-display)] text-2xl text-bureau-100">
-          Explorer les données
-        </h2>
-        <p className="mt-1 text-sm text-bureau-500">Cinq axes d&apos;analyse pour comprendre la France.</p>
+        <div className="flex items-end justify-between mb-8">
+          <div>
+            <h2 className="font-[family-name:var(--font-display)] text-2xl text-bureau-100">
+              Dossiers thématiques
+            </h2>
+            <p className="mt-1 text-sm text-bureau-500">
+              8 grandes questions citoyennes croisées avec les données publiques
+            </p>
+          </div>
+          <Link href="/dossiers" className="text-xs uppercase tracking-widest text-teal hover:underline shrink-0">
+            Voir tout →
+          </Link>
+        </div>
 
-        <div className="mt-8 grid gap-4 sm:grid-cols-2">
-          {SECTIONS.map((s) => {
-            const accentClass =
-              s.accent === "teal" ? "group-hover:text-teal group-hover:bg-teal/10" :
-              s.accent === "amber" ? "group-hover:text-amber group-hover:bg-amber/10" :
-              s.accent === "blue" ? "group-hover:text-blue group-hover:bg-blue/10" :
-              "group-hover:text-rose group-hover:bg-rose/10";
-            return (
-              <Link
-                key={s.href}
-                href={s.href}
-                className="card-accent group rounded-xl border border-bureau-700/30 bg-bureau-800/30 p-6 transition-all hover:border-bureau-600/50 hover:bg-bureau-800/50"
-              >
-                <div className={`mb-4 inline-flex rounded-lg bg-bureau-700/30 p-2.5 text-bureau-400 transition-all ${accentClass}`}>
-                  {s.icon}
-                </div>
-                <h3 className="text-lg font-medium text-bureau-100">{s.title}</h3>
-                <p className="mt-1 text-sm text-bureau-500">{s.desc}</p>
-              </Link>
-            );
-          })}
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {DOSSIERS.map((d) => (
+            <Link
+              key={d.slug}
+              href={`/dossiers/${d.slug}`}
+              className={`card-accent group rounded-xl border border-bureau-700/30 bg-bureau-800/30 p-5 transition-all hover:bg-bureau-800/50 ${colorAccent[d.color].split(" ")[1]}`}
+            >
+              <p className={`text-xs uppercase tracking-widest mb-2 ${colorAccent[d.color].split(" ")[0]}`}>
+                Dossier
+              </p>
+              <h3 className="text-base font-medium text-bureau-100 group-hover:text-bureau-50">
+                {d.label}
+              </h3>
+              <p className="mt-1 text-xs text-bureau-500 line-clamp-2">{d.subtitle}</p>
+            </Link>
+          ))}
         </div>
       </section>
 
-      {/* Recent declarations with highest patrimoine */}
-      {stats.recentDeclarations.length > 0 && (
-        <section className="border-t border-bureau-700/30 bg-bureau-900/30">
-          <div className="mx-auto max-w-7xl px-6 py-16">
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="font-[family-name:var(--font-display)] text-2xl text-bureau-100">
-                  Déclarations d&apos;intérêts
-                </h2>
-                <p className="mt-1 text-sm text-bureau-500">Participations financières les plus élevées</p>
-              </div>
-              <Link href="/gouvernance" className="text-xs uppercase tracking-widest text-teal hover:underline">
-                Voir tout &rarr;
-              </Link>
+      {/* ── Derniers scrutins ── */}
+      <section className="border-t border-bureau-700/30 bg-bureau-900/30">
+        <div className="mx-auto max-w-7xl px-6 py-12">
+          <div className="flex items-end justify-between mb-6">
+            <div>
+              <h2 className="font-[family-name:var(--font-display)] text-2xl text-bureau-100">
+                Derniers votes au Parlement
+              </h2>
+              <p className="mt-1 text-sm text-bureau-500">Scrutins les plus récents à l&apos;Assemblée nationale</p>
             </div>
-            <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {stats.recentDeclarations.map((d) => (
-                <div
-                  key={d.id}
-                  className="card-accent rounded-xl border border-bureau-700/30 bg-bureau-800/30 p-5"
+            <Link href="/gouvernance/scrutins" className="text-xs uppercase tracking-widest text-teal hover:underline shrink-0">
+              Tous les votes →
+            </Link>
+          </div>
+
+          <div className="divide-y divide-bureau-700/30 rounded-xl border border-bureau-700/30 overflow-hidden">
+            {data.recentScrutins.map((s) => {
+              const sortColor =
+                s.sortCode.toLowerCase() === "adopté"
+                  ? "text-teal border-teal/30 bg-teal/10"
+                  : s.sortCode.toLowerCase() === "rejeté"
+                    ? "text-rose border-rose/30 bg-rose/10"
+                    : "text-bureau-400 border-bureau-600/30 bg-bureau-700/30";
+              const date = new Date(s.dateScrutin).toLocaleDateString("fr-FR", {
+                day: "numeric",
+                month: "short",
+              });
+              const total = s.pour + s.contre + s.abstentions;
+              const pPct = total > 0 ? (s.pour / total) * 100 : 0;
+              const cPct = total > 0 ? (s.contre / total) * 100 : 0;
+
+              return (
+                <Link
+                  key={s.id}
+                  href={`/gouvernance/scrutins/${s.id}`}
+                  className="flex items-center gap-4 bg-bureau-800/20 px-5 py-3.5 transition-colors hover:bg-bureau-800/40"
                 >
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-bureau-700/50 text-xs font-medium text-bureau-300">
-                          {d.prenom[0]}{d.nom[0]}
-                        </div>
-                        <div>
-                          <p className="text-sm font-medium text-bureau-100">
-                            {d.civilite} {d.prenom} {d.nom}
-                          </p>
-                          <p className="text-xs text-bureau-500">{d.typeMandat}</p>
-                        </div>
-                      </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm text-bureau-200 truncate">{s.titre}</p>
+                    <div className="mt-1.5 flex h-1.5 w-40 overflow-hidden rounded-full bg-bureau-700/40">
+                      <div className="bg-teal/60" style={{ width: `${pPct}%` }} />
+                      <div className="bg-rose/60" style={{ width: `${cPct}%` }} />
                     </div>
                   </div>
-                  {d.totalParticipations != null && d.totalParticipations > 0 && (
-                    <div className="mt-4 rounded-lg bg-amber/5 px-3 py-2">
-                      <p className="text-xs text-bureau-500">Participations financières</p>
-                      <p className="text-lg font-bold text-amber">{fmtEuro(d.totalParticipations)}</p>
-                    </div>
-                  )}
-                </div>
-              ))}
+                  <div className="shrink-0 flex items-center gap-3">
+                    <span className="text-xs text-bureau-500">{date}</span>
+                    <span className={`rounded-full border px-2 py-0.5 text-[10px] uppercase tracking-wide ${sortColor}`}>
+                      {s.sortCode}
+                    </span>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Alertes transparence ── */}
+      {data.topDeclarations.length > 0 && (
+        <section className="mx-auto max-w-7xl px-6 py-12">
+          <div className="flex items-end justify-between mb-6">
+            <div>
+              <h2 className="font-[family-name:var(--font-display)] text-2xl text-bureau-100">
+                Alertes transparence
+              </h2>
+              <p className="mt-1 text-sm text-bureau-500">
+                Élus avec les participations financières déclarées les plus élevées — source HATVP
+              </p>
             </div>
+            <Link href="/dossiers/confiance-democratique" className="text-xs uppercase tracking-widest text-amber hover:underline shrink-0">
+              Dossier confiance →
+            </Link>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-3">
+            {data.topDeclarations.map((d) => (
+              <div
+                key={d.id}
+                className="rounded-xl border border-amber/15 bg-amber/5 p-5"
+              >
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-bureau-700/50 text-xs font-medium text-bureau-300">
+                    {d.prenom[0]}{d.nom[0]}
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-bureau-100">
+                      {d.prenom} {d.nom}
+                    </p>
+                    <p className="text-xs text-bureau-500">{d.typeMandat}</p>
+                  </div>
+                </div>
+                <div className="rounded-lg bg-bureau-800/40 px-3 py-2">
+                  <p className="text-[10px] uppercase tracking-widest text-bureau-500">Participations déclarées</p>
+                  <p className="text-lg font-bold text-amber">{fmtEuro(d.totalParticipations)}</p>
+                </div>
+                <Link
+                  href={`/gouvernance/declarations/${d.id}`}
+                  className="mt-3 block text-[10px] uppercase tracking-widest text-amber/60 hover:text-amber transition-colors"
+                >
+                  Voir la déclaration →
+                </Link>
+              </div>
+            ))}
           </div>
         </section>
       )}
 
-      {/* Vue d'ensemble */}
-      <section className="mx-auto max-w-7xl px-6 py-16">
-        <h2 className="font-[family-name:var(--font-display)] text-2xl text-bureau-100">
-          Vue d&apos;ensemble
-        </h2>
-        <p className="mt-1 text-sm text-bureau-500">Données agrégées sur l&apos;ensemble des sources publiques françaises.</p>
-        <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
-          {[
-            { v: stats.deputes, l: "Députés" },
-            { v: stats.senateurs, l: "Sénateurs" },
-            { v: stats.lobbyistes, l: "Lobbyistes" },
-            { v: stats.declarations, l: "Déclarations" },
-            { v: stats.musees, l: "Musées" },
-            { v: stats.monuments, l: "Monuments" },
-            { v: stats.departements, l: "Départements" },
-            { v: stats.communes, l: "Communes" },
-            { v: stats.elus, l: "Élus locaux" },
-            { v: stats.partis, l: "Partis" },
-            { v: stats.elections, l: "Scrutins élect." },
-            { v: stats.scrutins, l: "Scrutins parl." },
-            { v: stats.indicateurs, l: "Indicateurs éco." },
-          ].map((s) => (
-            <div key={s.l} className="rounded-lg border border-bureau-700/20 bg-bureau-800/20 p-4">
-              <p className="text-xl font-bold text-bureau-100">{fmt(s.v)}</p>
-              <p className="text-[10px] uppercase tracking-widest text-bureau-500">{s.l}</p>
+      {/* ── Votre territoire ── */}
+      <section className="border-t border-bureau-700/30 bg-bureau-900/30">
+        <div className="mx-auto max-w-7xl px-6 py-12">
+          <div className="grid gap-8 lg:grid-cols-2 items-center">
+            <div>
+              <h2 className="font-[family-name:var(--font-display)] text-2xl text-bureau-100">
+                Votre territoire
+              </h2>
+              <p className="mt-2 text-sm text-bureau-400">
+                Élus locaux, budget communal, statistiques locales — explorez les données de votre département.
+              </p>
+              <div className="mt-6 max-w-sm">
+                <DeptLookup
+                  depts={data.depts}
+                  placeholder="Rechercher un département..."
+                />
+              </div>
             </div>
-          ))}
+            <div className="grid grid-cols-2 gap-3">
+              {[
+                { href: "/territoire", label: "Régions & Départements", stat: "101", sub: "départements" },
+                { href: "/representants/elus", label: "Élus locaux", stat: fmt(data.elus), sub: "élus recensés" },
+                { href: "/patrimoine/monuments", label: "Monuments historiques", stat: fmt(data.monuments), sub: "monuments" },
+                { href: "/territoire", label: "Communes", stat: "36K+", sub: "communes" },
+              ].map((item) => (
+                <Link
+                  key={item.label}
+                  href={item.href}
+                  className="card-accent group rounded-xl border border-bureau-700/30 bg-bureau-800/20 p-4 transition-all hover:bg-bureau-800/40"
+                >
+                  <p className="text-xl font-bold text-bureau-100">{item.stat}</p>
+                  <p className="text-[10px] uppercase tracking-widest text-bureau-500">{item.sub}</p>
+                  <p className="mt-2 text-xs text-bureau-400 group-hover:text-bureau-300 transition-colors">
+                    {item.label} →
+                  </p>
+                </Link>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
     </>

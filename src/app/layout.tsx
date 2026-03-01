@@ -13,8 +13,9 @@ export const metadata: Metadata = {
 
 const NAV = [
   { href: "/", label: "Accueil" },
-  { href: "/gouvernance", label: "Gouvernance" },
-  { href: "/elections", label: "Élections" },
+  { href: "/dossiers", label: "Dossiers" },
+  { href: "/representants", label: "Représentants" },
+  { href: "/votes", label: "Votes" },
   { href: "/economie", label: "Économie" },
   { href: "/territoire", label: "Territoire" },
   { href: "/patrimoine", label: "Patrimoine" },

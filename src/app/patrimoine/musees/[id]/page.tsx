@@ -1,8 +1,26 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { fmt } from "@/lib/format";
 import { PageHeader } from "@/components/page-header";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const m = await prisma.musee.findUnique({
+    where: { id },
+    select: { nom: true, ville: true, region: true },
+  });
+  if (!m) return { title: "Musée introuvable — L'Observatoire Citoyen" };
+  return {
+    title: `${m.nom}${m.ville ? ` — ${m.ville}` : ""} · L'Observatoire Citoyen`,
+    description: `Musée ${m.nom}${m.ville ? ` à ${m.ville}` : ""}${m.region ? `, ${m.region}` : ""}. Données de fréquentation et informations patrimoniales.`,
+  };
+}
 
 export default async function MuseeDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;

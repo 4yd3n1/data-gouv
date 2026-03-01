@@ -3,6 +3,8 @@ import { prisma } from "@/lib/db";
 import { fmt } from "@/lib/format";
 import { PageHeader } from "@/components/page-header";
 
+export const revalidate = 86400; // Territory data changes only on ingestion
+
 export default async function TerritoirePage() {
   const regions = await prisma.region.findMany({
     orderBy: { libelle: "asc" },

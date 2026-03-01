@@ -1,9 +1,27 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { fmt, fmtDate } from "@/lib/format";
 import { PageHeader } from "@/components/page-header";
 import { ScrutinResultBadge } from "@/components/scrutin-result-badge";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const s = await prisma.scrutin.findUnique({
+    where: { id },
+    select: { titre: true, numero: true, sortCode: true },
+  });
+  if (!s) return { title: "Scrutin introuvable — L'Observatoire Citoyen" };
+  return {
+    title: `Scrutin n°${s.numero} — ${s.sortCode} · L'Observatoire Citoyen`,
+    description: s.titre.slice(0, 160),
+  };
+}
 import { VoteBadge } from "@/components/vote-badge";
 
 export default async function ScrutinDetailPage({ params }: { params: Promise<{ id: string }> }) {

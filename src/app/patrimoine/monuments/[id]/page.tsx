@@ -1,7 +1,26 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { PageHeader } from "@/components/page-header";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const m = await prisma.monument.findUnique({
+    where: { id },
+    select: { denomination: true, communeNom: true, departementNom: true, protectionType: true },
+  });
+  if (!m) return { title: "Monument introuvable — L'Observatoire Citoyen" };
+  const name = m.denomination ?? "Monument historique";
+  return {
+    title: `${name}${m.communeNom ? ` — ${m.communeNom}` : ""} · L'Observatoire Citoyen`,
+    description: `${m.protectionType ?? "Monument"} à ${m.communeNom ?? ""}${m.departementNom ? `, ${m.departementNom}` : ""}. Données patrimoniales issues du Ministère de la Culture.`.trim(),
+  };
+}
 
 export default async function MonumentDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;

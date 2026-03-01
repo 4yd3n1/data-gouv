@@ -36,12 +36,14 @@ model Departement {
   updatedAt DateTime @updatedAt
 
   region    Region    @relation(fields: [regionCode], references: [code])
-  communes  Commune[]
-  deputes   Depute[]
-  senateurs Senateur[]
-  musees    Musee[]
-  monuments Monument[]
-  elus      Elu[]
+  communes        Commune[]
+  deputes         Depute[]
+  senateurs       Senateur[]
+  musees          Musee[]
+  monuments       Monument[]
+  elus            Elu[]
+  criminalite     StatCriminalite[]
+  densiteMedicale DensiteMedicale[]
 
   @@index([regionCode])
   @@index([libelle])
@@ -440,6 +442,7 @@ model Scrutin {
   organe      Organe?      @relation(fields: [organeRef], references: [id])
   votes       VoteRecord[]
   groupeVotes GroupeVote[]
+  tags        ScrutinTag[]
 
   @@index([dateScrutin])
   @@index([legislature])
@@ -630,6 +633,117 @@ model PartiPolitique {
   @@index([nom])
   @@index([exercice])
   @@index([resultat])
+}
+
+// ─── Localized Statistics (INSEE Données Locales) ───
+
+model StatLocale {
+  id         String   @id @default(cuid())
+  source     String   // "FILOSOFI", "RP", "REE"
+  indicateur String   // "MEDIAN_INCOME", "POVERTY_RATE", "POP_TOTAL", etc.
+  annee      Int
+  geoType    String   // "COM", "DEP", "REG"
+  geoCode    String   // "75056", "75", "11"
+  valeur     Float
+  unite      String   // "EUR", "%", "NB"
+  metadata   String?  // JSON for additional breakdowns
+  createdAt  DateTime @default(now())
+
+  @@unique([source, indicateur, annee, geoType, geoCode])
+  @@index([indicateur, geoType])
+  @@index([geoCode, geoType])
+  @@index([annee])
+  @@index([indicateur, geoCode])
+}
+
+// ─── Local Government Finances (DGFIP) ───
+
+model BudgetLocal {
+  id               String   @id @default(cuid())
+  geoType          String   // "COM", "DEP"
+  geoCode          String   // commune/dept code
+  geoLibelle       String
+  annee            Int
+  population       Int?
+  // Revenue
+  totalRecettes    Float?
+  recettesFonct    Float?
+  recettesInvest   Float?
+  impotsTaxes      Float?
+  dotationsSubv    Float?
+  // Expenditure
+  totalDepenses    Float?
+  depensesFonct    Float?
+  depensesInvest   Float?
+  chargesPersonnel Float?
+  // Debt
+  encoursDette     Float?
+  annuiteDette     Float?
+  // Derived
+  resultatComptable Float?
+  depenseParHab    Float?
+  detteParHab      Float?
+  createdAt        DateTime @default(now())
+
+  @@unique([geoType, geoCode, annee])
+  @@index([geoType, geoCode])
+  @@index([annee])
+  @@index([geoType, annee])
+}
+
+// ─── Vote Topic Tags ───
+
+model ScrutinTag {
+  id         String  @id @default(cuid())
+  scrutinId  String  // FK to Scrutin.id
+  tag        String  // "budget", "fiscalite", "sante", "logement", etc.
+  confidence Float   @default(1.0) // 0-1: 1.0 for multi-word match, 0.7 for single keyword
+
+  scrutin    Scrutin @relation(fields: [scrutinId], references: [id], onDelete: Cascade)
+
+  @@unique([scrutinId, tag])
+  @@index([tag])
+  @@index([scrutinId])
+}
+
+// ─── Crime Statistics (SSMSI — Service Statistique Ministériel de la Sécurité Intérieure) ───
+
+model StatCriminalite {
+  id              String   @id @default(cuid())
+  departementCode String   // FK to Departement (code)
+  indicateur      String   // "coups_blessures", "vols_sans_violence", "cambriolages", "violences_sexuelles", "escroqueries", "destructions"
+  annee           Int
+  total           Int?     // Raw count (number of offences recorded)
+  tauxPour1000    Float?   // Rate per 1,000 inhabitants
+  variationPct    Float?   // Year-over-year % change (may be null for first year)
+  createdAt       DateTime @default(now())
+
+  departement Departement @relation(fields: [departementCode], references: [code])
+
+  @@unique([departementCode, indicateur, annee])
+  @@index([departementCode])
+  @@index([indicateur])
+  @@index([annee])
+}
+
+// ─── Medical Density (DREES — Direction de la Recherche, des Études, de l'Évaluation et des Statistiques) ───
+
+model DensiteMedicale {
+  id              String   @id @default(cuid())
+  departementCode String   // FK to Departement (code)
+  specialite      String   // "MG" (médecin généraliste), "SPEC" (spécialiste), "INFIRMIER", "KINESITHERAPEUTE", "DENTISTE", "PHARMACIEN"
+  annee           Int
+  nombreMedecins  Int      // Headcount (raw)
+  pour10k         Float?   // Practitioners per 10,000 inhabitants
+  population      Int?     // Reference population used for density calculation
+  createdAt       DateTime @default(now())
+
+  departement Departement @relation(fields: [departementCode], references: [code])
+
+  @@unique([departementCode, specialite, annee])
+  @@index([departementCode])
+  @@index([specialite])
+  @@index([annee])
 }
 
 // ─── System ───

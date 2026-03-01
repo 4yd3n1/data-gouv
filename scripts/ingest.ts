@@ -5,11 +5,14 @@
  * Order:
  * 1. Territories (must be first — other models FK into these)
  * 2. Governance (deputes, senateurs, lobbyistes) — parallel
- * 3. Economy (GDP + BDM series)
+ * 3. Economy (GDP + BDM series, expanded to 15+ indicators)
  * 4. Culture (musees, monuments) — parallel
  * 5. AN open data (organes, scrutins, deports)
+ * 5c. Tag scrutins with topic keywords
  * 6. Photos
  * 7. RNE elus, elections, party accounts — parallel
+ * 8. Local data (INSEE local stats, DGFIP budgets) — parallel
+ * 9. New data sources (crime stats, medical density) — parallel
  */
 
 import "dotenv/config";
@@ -25,10 +28,15 @@ import { ingestDeclarations } from "./ingest-declarations";
 import { ingestOrganes } from "./ingest-organes";
 import { ingestScrutins } from "./ingest-scrutins";
 import { ingestDeports } from "./ingest-deports";
+import { tagScrutins } from "./tag-scrutins";
 import { ingestPhotos } from "./ingest-photos";
 import { ingestElus } from "./ingest-elus";
 import { ingestElections } from "./ingest-elections";
 import { ingestPartis } from "./ingest-partis";
+import { ingestInseeLocal } from "./ingest-insee-local";
+import { ingestBudgets } from "./ingest-budgets";
+import { ingestCriminalite } from "./ingest-criminalite";
+import { ingestMedecins } from "./ingest-medecins";
 
 async function main() {
   const start = Date.now();
@@ -71,6 +79,10 @@ async function main() {
     ingestDeports(),
   ]);
 
+  // Wave 5c: Tag scrutins with policy domain keywords (must run after scrutins)
+  console.log("\n── Wave 5c: Tag Scrutins ──");
+  await tagScrutins();
+
   // Wave 6: Photo enrichment
   console.log("\n── Wave 6: Photos ──");
   await ingestPhotos();
@@ -81,6 +93,20 @@ async function main() {
     ingestElus(),
     ingestElections(),
     ingestPartis(),
+  ]);
+
+  // Wave 8: Local data (INSEE Données Locales + DGFIP budgets)
+  console.log("\n── Wave 8: Données Locales (INSEE + DGFIP) ──");
+  await Promise.all([
+    ingestInseeLocal(),
+    ingestBudgets(),
+  ]);
+
+  // Wave 9: Crime stats + medical density
+  console.log("\n── Wave 9: Criminalité + Densité médicale ──");
+  await Promise.all([
+    ingestCriminalite(),
+    ingestMedecins(),
   ]);
 
   const duration = ((Date.now() - start) / 1000).toFixed(1);

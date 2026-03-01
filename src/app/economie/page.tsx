@@ -2,6 +2,8 @@ import { prisma } from "@/lib/db";
 import { fmt } from "@/lib/format";
 import { PageHeader } from "@/components/page-header";
 
+export const revalidate = 86400; // Revalidate every 24h — economy data changes on ingestion only
+
 function MiniChart({ data, color = "teal" }: { data: { label: string; value: number }[]; color?: string }) {
   if (data.length === 0) return null;
   const max = Math.max(...data.map((d) => d.value));
