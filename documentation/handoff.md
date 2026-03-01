@@ -1,6 +1,6 @@
 # Handoff — data-gouv Civic Intelligence Platform
 
-> Updated: Mar 1, 2026 (Session 9). For the next agent picking up this project.
+> Updated: Mar 1, 2026 (Session 11). For the next agent picking up this project.
 
 ---
 
@@ -30,7 +30,7 @@ The project is fully functional as of this handoff. Dev server runs, all data is
 
 ### UI Status (all pages render correctly)
 
-50 routes across 8 sections (build verified Mar 1, 2026, Session 9):
+52 routes across 9 sections (build verified Mar 1, 2026, Session 11):
 
 | Section | Routes |
 |---------|--------|
@@ -43,6 +43,7 @@ The project is fully functional as of this handoff. Dev server runs, all data is
 | `/economie` | Dashboard with SVG charts |
 | `/territoire` | Region browser + Département dashboard (StatLocale + BudgetLocal + votes) + Commune card |
 | `/patrimoine` | Hub + Musées list/detail + Monuments list/detail |
+| `/president` | Macron profile — 4 tabs: Promesses (20 curated), Bilan Économique, Lobbying & Agenda, Déclarations HATVP |
 
 ---
 
@@ -77,7 +78,10 @@ pnpm ingest:elus         # 593K rows — uses 8GB heap via NODE_OPTIONS
 | [`next.config.ts`](../next.config.ts) | HTTP 308 redirects: `/gouvernance/*` → `/representants/*` |
 | [`src/app/globals.css`](../src/app/globals.css) | Design tokens — bureau palette, teal/amber/rose accents |
 | [`src/app/layout.tsx`](../src/app/layout.tsx) | Root layout — navbar (7 links incl. Dossiers, Votes, Représentants), footer |
-| [`documentation/frontend.md`](frontend.md) | Full UI reference: all 50 routes, 22 components, design system |
+| [`src/data/lobbyists-curated.ts`](../src/data/lobbyists-curated.ts) | Curated power lobbyist profiles — 7 power orgs + 3 consulting firms with `victoireLegislative`, `alerte`, `connexionMacron` |
+| [`src/data/president-macron.ts`](../src/data/president-macron.ts) | Static Macron data — BIO, 20 curated campaign promises (10×2017, 10×2022) |
+| [`src/lib/president-utils.ts`](../src/lib/president-utils.ts) | `getBaselineObservation()` + `computeDelta()` — reuse for any "before mandate / now" KPI |
+| [`documentation/frontend.md`](frontend.md) | Full UI reference: all 52 routes, 24 components, design system |
 | [`documentation/schema.md`](schema.md) | Full DB reference: all 29 models with fields, indexes, row counts |
 | [`CLAUDE.md`](../CLAUDE.md) | Project rules and quick reference for Claude |
 
@@ -96,6 +100,8 @@ PostgreSQL 14 — database: datagouv
 No API routes used for UI — all pages are server components that call Prisma directly at render time. Zero client-side data fetching.
 
 **5 client components** (need `"use client"`): `SearchInput`, `Avatar`, `DeclarationSection`, `ProfileTabs`, `DeptLookup`.
+
+**2 static data files** (no DB, curated by hand): `src/data/lobbyists-curated.ts` (10 orgs), `src/data/president-macron.ts` (20 promises + bio).
 
 ---
 
@@ -132,7 +138,7 @@ The `Commune` table has 4 types: COM (full communes), ARM (arrondissements), COM
 
 ## Architectural Plan — Complete ✅
 
-The platform has been fully redesigned from a **data-source browser** into a **citizen-centric transparency tool**. All 5 phases are complete as of March 1, 2026. Full blueprint: [`ARCHITECTURAL-PLAN.md`](../ARCHITECTURAL-PLAN.md).
+The platform has been fully redesigned from a **data-source browser** into a **citizen-centric transparency tool**. All 6 phases are complete as of March 1, 2026. Full blueprint: [`ARCHITECTURAL-PLAN.md`](../ARCHITECTURAL-PLAN.md).
 
 ### The Core Shift (Achieved)
 
@@ -154,6 +160,7 @@ The platform has been fully redesigned from a **data-source browser** into a **c
 | **3. Enhanced Profiles + Territory** | Cross-referenced profiles | ✅ Done | "Transparence" tab on deputy profiles, route rename `/gouvernance`→`/representants`, full département dashboards (StatLocale + BudgetLocal + votes), commune card page |
 | **4. Votes Section** | Dedicated vote exploration | ✅ Done | `/votes/` hub (tag grid + stats + recent scrutins), `/votes/par-sujet/[tag]` (paginated per topic), `/votes/mon-depute` (deputy lookup 3-state), `TimelineChart` SVG component, `DeptMap` ranked component |
 | **5. Polish + Data** | Additional sources + quality | ✅ Done | Crime stats (SSMSI → `StatCriminalite`), medical density (DREES → `DensiteMedicale`), ISR caching (`revalidate` on 7 pages), `generateMetadata` on 9 dynamic routes, UI integration in `/dossiers/sante` + `/territoire/[dept]`, Wave 9 in orchestrator |
+| **6. Presidential Profile** | Flagship cross-reference page | ✅ Done | `/president` (Macron) — 4-tab architecture: 20 curated promises w/ evidence deltas, before/after economic KPIs, lobby domain × vote cross-reference, HATVP declarations. Static data: `src/data/lobbyists-curated.ts` (10 orgs with `victoireLegislative`, `alerte`, `connexionMacron`) + `src/data/president-macron.ts`. Utility: `src/lib/president-utils.ts` (`getBaselineObservation`, `computeDelta`). Homepage CTA + `/representants` president card. |
 
 ### New Data Sources
 
@@ -179,8 +186,8 @@ The platform has been fully redesigned from a **data-source browser** into a **c
 |--------|---------|--------|
 | Models | 22 | **29** |
 | Total rows | ~800K | **~800K+** (BudgetLocal not yet ingested) |
-| Routes | 22 | **50** |
-| Components | 12 | **22** |
+| Routes | 22 | **52** |
+| Components | 12 | **24** |
 | Data sources | 7 | **12** (added INSEE Mélodi, SSMSI, DREES, DGFIP) |
 | Cross-references | 0 | **5 systemic** (conflict, lobbying→votes, party finances, territory, deputy accountability) |
 
@@ -192,6 +199,8 @@ The platform has been fully redesigned from a **data-source browser** into a **c
 | Crime stats | `pnpm ingest:criminalite` | MEDIUM — StatCriminalite empty |
 | Medical density | `pnpm ingest:medecins` | MEDIUM — DensiteMedicale empty |
 | DEP 36 (Indre) retry | `pnpm ingest:insee-local` | LOW — lost to rate limit, 11/12 stats present |
+| Deputy profile enrichment | Edit `/representants/deputes/[id]/page.tsx` | MEDIUM — 3 items: (1) Activité tab: "Domaines d'activité" bar (ScrutinTag groupBy), (2) Transparence tab: lobby cross-reference (matchDomainToTag), (3) Déclarations tab: ConflictAlert when totalParticipations > 0 |
+| Senator profile enrichment | Edit `/representants/senateurs/[id]/page.tsx` | MEDIUM — 2 items: (1) New "Transparence" tab with DeclarationInteret × lobby cross-ref, (2) Déclarations tab: ConflictAlert |
 
 **Full plan**: [`ARCHITECTURAL-PLAN.md`](../ARCHITECTURAL-PLAN.md)
 
@@ -212,9 +221,32 @@ The `Scrutin` model has `votes VoteRecord[]` — always use `votes` in Prisma wh
 ### Elu field names
 `Elu.codeDepartement` (not `departementCode`), `Elu.codeCommune` (not `communeCode`).
 
+### Curated data editorial policy
+`src/data/lobbyists-curated.ts` and `src/data/president-macron.ts` are **factual only** — no editorial labels, no verdicts. State the fact ("Marie-Anne Barbat-Layani, DG de la FBF, nommée présidente de l'AMF") and let the reader draw the conclusion. Never use loaded terms ("pantouflage", "conflit d'intérêt avéré") as labels — use `alerte` to surface the raw structural fact. UI copy throughout uses classic French register (Le Monde / Libération style), not slang or bureaucratic language.
+
 ---
 
 ## Work History
+
+### Session 11 (Mar 1, 2026) — Lobbying Data Enrichment + Consulting Firm Profiles
+
+1. **Corrected Boury Tallon founder names** — Previous data had wrong names ("Thierry Boury + Jean-Michel Tallon"). Corrected to Paul Boury (HEC, founded 1987) + Pascal Tallon (HEC, DG from 2000). Firm renamed in 2012. Added: both founders co-created AFCL (1991, French lobbying industry's self-regulatory body) and held AFCL presidency — noted as conflict in the `alerte` field.
+2. **Enriched Anthenor Public Affairs** — Updated leader to Timothé de Romance (CEO since 2021). Added `connexionMacron` field: founder Gilles Lamarque (Sciences Po + INSEAD) came from MEDEF → Publicis European affairs → Renault public affairs, and current CEO teaches lobbying at Sciences Po Paris. Added *société à mission* status to note. Corrected sector details (ANSM, CEPS, DGAC, DGITM).
+3. **Enriched Lysios Public Affairs** — Corrected name to "Lysios Public Affairs", updated to 30+ consultants across Paris + Brussels (not 24), added founding year (2003), Brussels expansion (2007), EPACA membership.
+4. **Updated consulting card rendering** (`src/app/president/page.tsx`) — Cards now display: Direction / Réseau & parcours / À noter / amber conflict alert (when `alerte` set). Previously showed only secteur + note.
+5. **Neutrality policy** — Removed "pantouflage" label from FBF entry; replaced with neutral factual description of Marie-Anne Barbat-Layani's move from FBF DG to AMF president. Platform principle: state facts, let the reader conclude. No editorial labels on any curated content.
+6. **Build**: 52 routes, zero TypeScript errors.
+
+### Session 10 (Mar 1, 2026) — Phase 6: Presidential Profile + Lobbying Intelligence
+
+1. **`/president` page** — Macron profile: 4 tabs (`promesses`, `bilan`, `lobbying`, `declarations`). ProfileHero with 4 summary stats. Tab navigation via existing `ProfileTabs` + `Suspense`.
+2. **`src/data/president-macron.ts`** — 20 curated campaign promises (10 × 2017, 10 × 2022) with `indicateurCode`, `scrutinTag`, `status`, `statusNote`. Static BIO object.
+3. **`src/data/lobbyists-curated.ts`** — New static file: `POWER_LOBBYISTS` (7 orgs — MEDEF, FNSEA, Mutualité, FFA, CNB, FBF, SER) + `CONSULTING_LOBBYISTS` (3 firms) with `victoireLegislative`, `alerte`, `connexionMacron` fields. Research via 5 parallel background agents covering all major legislation under Macron's two mandates.
+4. **`src/lib/president-utils.ts`** — `getBaselineObservation(observations, targetDate)` + `computeDelta(baseline, current, unit)` — reuse for any "before mandate / now" KPI on other profile pages.
+5. **`LOBBY_DOMAIN_KEYWORDS` + `matchDomainToTag()`** in `president/page.tsx` — cross-reference HATVP action domains to ScrutinTag vocabulary; shows "N votes parlementaires sur ce thème" per domain.
+6. **Homepage + `/representants` hub** — Amber "Profil Macron — Exemple →" CTA added to homepage hero; amber president card added at top of `/representants` hub.
+7. **`ActionLobbyiste` has no DateTime** — lobbying stats are all-time; `periode` is free text only. Cannot filter by mandate period.
+8. **Build**: 52 routes, zero TypeScript errors.
 
 ### Session 9 (Mar 1, 2026) — Documentation, Bug Fixes, Full Commit
 

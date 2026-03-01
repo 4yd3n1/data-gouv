@@ -9,7 +9,6 @@ import { IndicatorCard } from "@/components/indicator-card";
 import { TimelineChart } from "@/components/timeline-chart";
 import { DeclarationSection } from "@/components/declaration-section";
 import { ConflictAlert } from "@/components/conflict-alert";
-import { LobbyingDensity } from "@/components/lobbying-density";
 import {
   BIO,
   PROMESSES,
@@ -17,6 +16,13 @@ import {
   STATUS_CONFIG,
   type Promesse,
 } from "@/data/president-macron";
+import {
+  POWER_LOBBYISTS,
+  CONSULTING_LOBBYISTS,
+  MUTUALITE_SIRENS,
+  ALL_CURATED_SIRENS,
+  TYPE_CONFIG,
+} from "@/data/lobbyists-curated";
 import {
   getBaselineObservation,
   computeDelta,
@@ -83,7 +89,7 @@ export default async function PresidentPage({
   const electionYear = election === "2017" ? 2017 : 2022;
 
   // ── Parallel data fetch ──
-  const [declarations, indicators, lobbyDomains, topOrgGroups, scrutinTagCounts] =
+  const [declarations, indicators, lobbyDomains, curatedActionGroups, scrutinTagCounts] =
     await Promise.all([
       // HATVP declarations (Macron has entries under several mandates)
       prisma.declarationInteret.findMany({
@@ -125,12 +131,11 @@ export default async function PresidentPage({
         take: 15,
       }),
 
-      // Top lobbying orgs by action count
+      // Action counts for curated lobbyists only
       prisma.actionLobbyiste.groupBy({
         by: ["lobbyisteId"],
         _count: { id: true },
-        orderBy: { _count: { id: "desc" } },
-        take: 10,
+        where: { lobbyisteId: { in: ALL_CURATED_SIRENS } },
       }),
 
       // ScrutinTag counts (votes per topic)
@@ -140,14 +145,6 @@ export default async function PresidentPage({
         orderBy: { _count: { tag: "desc" } },
       }),
     ]);
-
-  // Resolve org names for top lobbying orgs
-  const topOrgIds = topOrgGroups.map((g) => g.lobbyisteId);
-  const topOrgsData = await prisma.lobbyiste.findMany({
-    where: { id: { in: topOrgIds } },
-    select: { id: true, nom: true },
-  });
-  const orgNameMap = new Map(topOrgsData.map((o) => [o.id, o.nom]));
 
   // ── Derived data ──
 
@@ -206,10 +203,21 @@ export default async function PresidentPage({
     (s, d) => s + d._count.id,
     0,
   );
-  const topOrgsForDisplay = topOrgGroups.map((g) => ({
-    nom: orgNameMap.get(g.lobbyisteId) ?? g.lobbyisteId,
-    actions: g._count.id,
-  }));
+
+  // Build siren → action count map for curated orgs
+  const sirenActionMap = new Map(
+    curatedActionGroups.map((g) => [g.lobbyisteId, g._count.id]),
+  );
+
+  // Compute action count per curated lobbyist (consolidating Mutualité branches)
+  function getCuratedActions(sirens: string[]): number {
+    return sirens.reduce((sum, s) => sum + (sirenActionMap.get(s) ?? 0), 0);
+  }
+
+  // Total curated actions (for display)
+  const totalMutualiteActions = getCuratedActions(MUTUALITE_SIRENS);
+  const totalCuratedActions = [...POWER_LOBBYISTS, ...CONSULTING_LOBBYISTS]
+    .reduce((s, l) => s + getCuratedActions(l.sirens), 0);
 
   // Tag count map
   const tagCountMap = new Map(
@@ -745,13 +753,24 @@ export default async function PresidentPage({
 
             {/* Overview */}
             <section>
-              <h2 className="mb-4 text-xs font-semibold uppercase tracking-[0.15em] text-bureau-500">
-                Activité de lobbying déclarée (registre HATVP — toutes périodes)
-              </h2>
+              <div className="mb-1 flex items-end justify-between">
+                <h2 className="text-xs font-semibold uppercase tracking-[0.15em] text-bureau-500">
+                  Acteurs clés du lobbying (registre HATVP)
+                </h2>
+                <span className="text-[10px] text-bureau-600 uppercase tracking-widest">
+                  toutes périodes confondues
+                </span>
+              </div>
+              <p className="mb-4 text-xs text-bureau-600">
+                Le registre HATVP compte 3 883 organisations. Ce tableau filtre les 10 acteurs
+                les plus influents — la Mutualité Française (13 entités régionales autonomes) est
+                consolidée ici en une seule entrée. Les cabinets de conseil agissent pour le compte
+                de clients non divulgués par la loi.
+              </p>
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                 <div className="rounded-xl border border-bureau-700/30 bg-bureau-800/20 p-5">
                   <p className="text-[10px] uppercase tracking-widest text-bureau-500">
-                    Actions déclarées
+                    Actions déclarées (total)
                   </p>
                   <p className="mt-2 text-3xl font-bold text-amber">
                     {fmt(totalLobbyActions)}
@@ -759,34 +778,169 @@ export default async function PresidentPage({
                 </div>
                 <div className="rounded-xl border border-bureau-700/30 bg-bureau-800/20 p-5">
                   <p className="text-[10px] uppercase tracking-widest text-bureau-500">
-                    Organisations actives
+                    Mutualité Française (consolidée)
                   </p>
                   <p className="mt-2 text-3xl font-bold text-amber">
-                    {fmt(
-                      lobbyDomains.reduce((s, _) => s + 1, 0),
-                    )}
+                    {fmt(totalMutualiteActions)}
                   </p>
+                  <p className="text-[10px] text-bureau-600 mt-1">actions · 13 entités</p>
                 </div>
                 <div className="rounded-xl border border-bureau-700/30 bg-bureau-800/20 p-5">
                   <p className="text-[10px] uppercase tracking-widest text-bureau-500">
-                    Domaines identifiés
+                    Acteurs sélectionnés
                   </p>
                   <p className="mt-2 text-3xl font-bold text-amber">
-                    {lobbyDomains.filter((d) => d.domaine).length}
+                    {fmt(totalCuratedActions)}
                   </p>
+                  <p className="text-[10px] text-bureau-600 mt-1">actions · 10 organisations</p>
                 </div>
               </div>
             </section>
 
-            {/* Top domains with vote cross-reference */}
+            {/* Power lobbyists — direct interest groups */}
             <section>
               <h2 className="mb-4 text-xs font-semibold uppercase tracking-[0.15em] text-bureau-500">
-                Domaines les plus lobbied · croisés avec les votes au Parlement
+                Groupes d'intérêt directs · 7 acteurs clés
               </h2>
               <div className="space-y-3">
+                {POWER_LOBBYISTS.map((org) => {
+                  const actions = getCuratedActions(org.sirens);
+                  const tc = TYPE_CONFIG[org.type];
+                  return (
+                    <div
+                      key={org.id}
+                      className={`rounded-xl border ${tc.border} ${tc.bg} p-5`}
+                    >
+                      {/* Header row */}
+                      <div className="flex items-start justify-between gap-3 mb-3">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap mb-1">
+                            <span className={`text-[10px] uppercase tracking-widest font-medium ${tc.color}`}>
+                              {tc.label}
+                            </span>
+                            <span className="text-[10px] text-bureau-600">
+                              {org.secteur}
+                            </span>
+                          </div>
+                          <p className="text-base font-semibold text-bureau-100">
+                            {org.nom}
+                          </p>
+                        </div>
+                        {actions > 0 && (
+                          <div className="shrink-0 text-right">
+                            <p className={`text-xl font-bold ${tc.color}`}>
+                              {fmt(actions)}
+                            </p>
+                            <p className="text-[10px] text-bureau-600">actions HATVP</p>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Details grid */}
+                      <div className="grid gap-2 text-xs">
+                        <div className="flex gap-2">
+                          <span className="shrink-0 text-bureau-500 w-16">Direction</span>
+                          <span className="text-bureau-300">{org.leader}</span>
+                        </div>
+                        {org.membres && (
+                          <div className="flex gap-2">
+                            <span className="shrink-0 text-bureau-500 w-16">Membres</span>
+                            <span className="text-bureau-400">{org.membres}</span>
+                          </div>
+                        )}
+                        {org.victoireLegislative && (
+                          <div className="flex gap-2">
+                            <span className="shrink-0 text-bureau-500 w-16">Victoire</span>
+                            <span className="text-bureau-300">{org.victoireLegislative}</span>
+                          </div>
+                        )}
+                        {org.connexionMacron && (
+                          <div className="flex gap-2">
+                            <span className="shrink-0 text-bureau-500 w-16">Connexion</span>
+                            <span className="text-bureau-400 italic">{org.connexionMacron}</span>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Conflict alert */}
+                      {org.alerte && (
+                        <div className="mt-3 rounded-lg border border-rose/20 bg-rose/5 px-3 py-2 text-xs text-rose/80">
+                          Alerte : {org.alerte}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
+
+            {/* Consulting firms */}
+            <section>
+              <h2 className="mb-1 text-xs font-semibold uppercase tracking-[0.15em] text-bureau-500">
+                Cabinets de conseil pour compte de tiers · 3 firmes
+              </h2>
+              <p className="mb-4 text-xs text-bureau-600">
+                Ces firmes sont enregistrées au nom de leurs propres structures mais agissent pour des
+                clients payants non divulgués. Leur volume d'actions reflète leur portefeuille de mandats,
+                non leur propre intérêt sectoriel.
+              </p>
+              <div className="grid gap-3 sm:grid-cols-3">
+                {CONSULTING_LOBBYISTS.map((org) => {
+                  const actions = getCuratedActions(org.sirens);
+                  const tc = TYPE_CONFIG[org.type];
+                  return (
+                    <div
+                      key={org.id}
+                      className={`rounded-xl border ${tc.border} ${tc.bg} p-4 flex flex-col gap-3`}
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <p className="text-sm font-semibold text-bureau-100">{org.nom}</p>
+                        {actions > 0 && (
+                          <span className={`text-sm font-bold shrink-0 ${tc.color}`}>
+                            {fmt(actions)}
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-[10px] text-bureau-500 uppercase tracking-widest -mt-1">
+                        {org.secteur}
+                      </p>
+                      {org.leader && (
+                        <div>
+                          <p className="text-[10px] text-bureau-600 uppercase tracking-widest mb-0.5">Direction</p>
+                          <p className="text-xs text-bureau-300">{org.leader}</p>
+                        </div>
+                      )}
+                      {org.connexionMacron && (
+                        <div>
+                          <p className="text-[10px] text-bureau-600 uppercase tracking-widest mb-0.5">Réseau & parcours</p>
+                          <p className="text-xs text-bureau-400">{org.connexionMacron}</p>
+                        </div>
+                      )}
+                      <div>
+                        <p className="text-[10px] text-bureau-600 uppercase tracking-widest mb-0.5">À noter</p>
+                        <p className="text-xs text-bureau-400">{org.note}</p>
+                      </div>
+                      {org.alerte && (
+                        <div className="rounded-lg border border-amber/20 bg-amber/5 px-3 py-2">
+                          <p className="text-[10px] text-amber/80 uppercase tracking-widest mb-0.5">Conflit potentiel</p>
+                          <p className="text-xs text-bureau-300">{org.alerte}</p>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
+
+            {/* Domain cross-reference */}
+            <section>
+              <h2 className="mb-4 text-xs font-semibold uppercase tracking-[0.15em] text-bureau-500">
+                Domaines · croisés avec les votes au Parlement
+              </h2>
+              <div className="space-y-2">
                 {lobbyDomains
                   .filter((d) => d.domaine)
-                  .slice(0, 12)
+                  .slice(0, 10)
                   .map((d) => {
                     const match = matchDomainToTag(d.domaine!);
                     const voteCount = match
@@ -795,50 +949,34 @@ export default async function PresidentPage({
                     return (
                       <div
                         key={d.domaine}
-                        className="rounded-xl border border-bureau-700/30 bg-bureau-800/20 p-4"
+                        className="rounded-lg border border-bureau-700/20 bg-bureau-800/20 px-4 py-3"
                       >
-                        <div className="flex items-start justify-between gap-3 mb-2">
-                          <p className="text-sm text-bureau-200 truncate flex-1">
+                        <div className="flex items-center justify-between gap-3 mb-1.5">
+                          <p className="text-xs text-bureau-300 truncate flex-1">
                             {d.domaine}
                           </p>
-                          <span className="text-sm font-bold text-amber shrink-0">
+                          <span className="text-xs font-semibold text-amber shrink-0">
                             {fmt(d._count.id)} actions
                           </span>
                         </div>
-                        <div className="h-1.5 overflow-hidden rounded-full bg-bureau-700/30 mb-2">
+                        <div className="h-1 overflow-hidden rounded-full bg-bureau-700/30 mb-1.5">
                           <div
-                            className="h-full bg-amber/40 rounded-full"
+                            className="h-full bg-amber/30 rounded-full"
                             style={{
                               width: `${(d._count.id / (lobbyDomains[0]?._count.id ?? 1)) * 100}%`,
                             }}
                           />
                         </div>
                         {match && voteCount > 0 && (
-                          <div className="flex items-center gap-2 text-xs text-bureau-500">
-                            <svg
-                              className="h-3 w-3 text-teal/50"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                              strokeWidth={2}
+                          <span className="text-[10px] text-bureau-600">
+                            {fmt(voteCount)} votes parlementaires sur ce thème ·{" "}
+                            <Link
+                              href={`/votes/par-sujet/${match.tag}`}
+                              className="text-teal hover:underline"
                             >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M13 7l5 5m0 0l-5 5m5-5H6"
-                              />
-                            </svg>
-                            <span>
-                              {fmt(voteCount)} votes parlementaires sur «{" "}
-                              {match.label} » ·{" "}
-                              <Link
-                                href={`/votes/par-sujet/${match.tag}`}
-                                className="text-teal hover:underline"
-                              >
-                                Voir les scrutins
-                              </Link>
-                            </span>
-                          </div>
+                              Voir les scrutins
+                            </Link>
+                          </span>
                         )}
                       </div>
                     );
@@ -846,23 +984,18 @@ export default async function PresidentPage({
               </div>
             </section>
 
-            {/* Top lobbying orgs */}
-            <section>
-              <h2 className="mb-4 text-xs font-semibold uppercase tracking-[0.15em] text-bureau-500">
-                Organisations les plus actives
-              </h2>
-              <LobbyingDensity
-                actionCount={totalLobbyActions}
-                lobbyCount={topOrgGroups.length}
-                topOrgs={topOrgsForDisplay}
-                domainLabel="Ensemble des domaines"
-              />
-            </section>
-
             <p className="text-xs text-bureau-600">
-              Source : Répertoire des représentants d'intérêts — HATVP. Les
-              données couvrent l'ensemble des déclarations publiées, toutes
-              périodes confondues.
+              Source : Répertoire des représentants d&apos;intérêts — HATVP (
+              <a
+                href="https://www.hatvp.fr/le-repertoire/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-bureau-400"
+              >
+                hatvp.fr
+              </a>
+              ). Données toutes périodes confondues. Les connexions avec le gouvernement
+              Macron sont issues de sources publiques (presse, HATVP, JO).
             </p>
           </div>
         )}
