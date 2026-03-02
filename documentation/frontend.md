@@ -1,6 +1,6 @@
 # Frontend Implementation
 
-> Last updated: Mar 1, 2026 — Phase 5 complete. 50 routes, 22 components.
+> Last updated: Mar 2, 2026 — Phase 6 + Session 14 (7A). 53 routes, 22 components.
 
 Complete reference for all UI pages, components, styling, and patterns.
 
@@ -88,19 +88,20 @@ Applied with: `font-[family-name:var(--font-display)]` for headings.
 
 ---
 
-## Route Map (50 routes)
+## Route Map (53 routes)
 
 ### Static (prerendered at build time)
 | Route | Purpose |
 |-------|---------|
-| `/` | Homepage — dynamic headline, dossier cards, recent votes, conflict alerts, dept lookup |
+| `/` | Homepage — dynamic headline, dossier cards, recent votes, conflict alerts, dept lookup, postal code CTA |
 | `/dossiers` | Dossier hub — 8 issue cards |
-| `/representants` | Représentants hub — 6 section cards with counts |
+| `/representants` | Représentants hub — 6 section cards with counts + president card |
 | `/elections` | Hub — Législatives 2024 card + national summary stats |
 | `/economie` | Dashboard — SVG MiniChart per indicator (15+ series) |
 | `/territoire` | Browser — regions with department cards |
 | `/patrimoine` | Hub — top 10 museums + monument domains |
 | `/votes` | Votes hub — 13 topic grid + recent scrutins |
+| `/president` | Macron profile — 4 tabs: Promesses (20 curated), Bilan Économique, Lobbying & Agenda, Déclarations HATVP |
 
 ### Dossiers (8 dynamic pages)
 | Route | Topic |
@@ -139,6 +140,11 @@ Applied with: `font-[family-name:var(--font-display)]` for headings.
 | `/votes` | Tag grid (13 topics), stats, recent scrutins |
 | `/votes/par-sujet/[tag]` | Tag-filtered scrutins, pagination, vote bars, related tags |
 | `/votes/mon-depute` | 3-state deputy lookup: empty → list → detail with tag breakdown |
+
+### Mon Territoire
+| Route | Key Features |
+|-------|-------------|
+| `/mon-territoire` | 3-state civic dashboard: empty prompt (postal input) → disambiguation picker → full dashboard (représentants, économie, budget, santé & sécurité, votes, patrimoine, explorer plus) |
 
 ### Territory & Economy
 | Route | Key Features |
@@ -249,6 +255,37 @@ All 8 follow the same layout pattern:
 1. **Empty** (no params) — prompt to search
 2. **List** (`?q=`) — deputies matching name, each with link that sets `?id=`
 3. **Detail** (`?id=`) — tag breakdown bar chart + position stats (% pour/contre/abstention) + 20 recent votes
+
+---
+
+### `/mon-territoire` — Civic Dashboard by Postal Code (Session 14)
+
+**File**: [page.tsx](../src/app/mon-territoire/page.tsx)
+
+**URL params**: `?cp=XXXXX` (postal code), `?code=INSEE_CODE` (direct commune code).
+
+**Data infra**: `src/data/postal-codes.json` (6,328 postal codes → INSEE lists, La Poste Hexasmal) + `src/lib/postal-resolver.ts` (ARM→COM parent resolution).
+
+**3-state rendering**:
+1. **Empty** (no params) — `SearchInput paramName="cp"` + example postal codes (Paris, Lyon, Marseille, Bordeaux, Lille, Strasbourg) + link to `/territoire` browser
+2. **Resolve** (`?cp=` only) — 0 results: error state; 1 result: render dashboard directly; N results: disambiguation list with commune name, département, "Choisir" links
+3. **Dashboard** (`?code=` present, or single resolution) — 13-query `Promise.all`:
+   - `prisma.commune.findUnique` + `prisma.departement.findUnique`
+   - `prisma.depute.findMany` (actif, by dept, take 6)
+   - `prisma.senateur.findMany` (actif, by dept, take 4)
+   - `prisma.elu.findFirst` (maire of commune)
+   - `prisma.elu.count` (all commune elus)
+   - `prisma.statLocale.findMany` (by dept)
+   - `prisma.budgetLocal.findFirst` (by commune, fallback to dept)
+   - `prisma.densiteMedicale.findFirst` (`specialite: "MG"`, by dept)
+   - `prisma.statCriminalite.findMany` (by dept, take 20)
+   - `prisma.voteRecord.findMany` (by dept's deputies, take 8, with scrutin + tags + depute)
+   - `prisma.musee.findMany` (by dept, take 3)
+   - `prisma.monument.count` (by dept)
+
+**Dashboard sections**: Mes Représentants · Économie locale · Budget local · Santé & Sécurité · Comment votent mes députés · Patrimoine local · Explorer plus
+
+**generateMetadata**: when `?code=` present, queries commune + dept and returns `{ title: "${commune} (${deptCode}) — Mon Territoire · L'Observatoire Citoyen" }`.
 
 ---
 
@@ -688,7 +725,7 @@ List pages: `max-w-7xl px-6`. Profile detail pages: `max-w-4xl px-6` (focused ed
 
 ---
 
-## Build Output (Phase 5 — 50 routes)
+## Build Output (Session 14 — 53 routes)
 
 ```
 Route (app)                                         Type
@@ -741,10 +778,12 @@ Route (app)                                         Type
 ├ ƒ /patrimoine/monuments                           Dynamic
 ├ ƒ /patrimoine/monuments/[id]                      Dynamic
 ├ ƒ /patrimoine/musees                              Dynamic
-└ ƒ /patrimoine/musees/[id]                         Dynamic
+├ ƒ /patrimoine/musees/[id]                         Dynamic
+├ ○ /president                                      Static (Phase 6)
+└ ƒ /mon-territoire                                 Dynamic (Session 14)
 ```
 
-8 static + 42 dynamic = 50 routes.
+9 static + 44 dynamic = 53 routes.
 
 ---
 
@@ -808,6 +847,10 @@ src/
 │   │   ├── page.tsx             # ISR 86400
 │   │   ├── [departementCode]/page.tsx  # Full dashboard
 │   │   └── commune/[communeCode]/page.tsx
+│   ├── president/
+│   │   └── page.tsx             # Macron profile — 4 tabs (Phase 6)
+│   ├── mon-territoire/
+│   │   └── page.tsx             # 3-state civic dashboard by postal code (Session 14)
 │   └── patrimoine/
 │       ├── page.tsx             # ISR 86400
 │       ├── musees/
@@ -839,9 +882,15 @@ src/
 │   ├── search-input.tsx         # Client: URL-based search with spinner
 │   ├── stat-card.tsx            # Server: number + label card
 │   └── vote-badge.tsx           # Server: Pour/Contre/Abstention/Non-votant
+├── data/
+│   ├── lobbyists-curated.ts     # Static curated lobbyist profiles (10 orgs, Phase 6)
+│   ├── president-macron.ts      # Static Macron data — BIO + 20 promises (Phase 6)
+│   └── postal-codes.json        # La Poste Hexasmal: 6,328 postal codes → INSEE lists (Session 14)
 └── lib/
-    ├── db.ts                    # Prisma client (pg adapter, singleton)
+    ├── db.ts                    # Prisma client (pg adapter, singleton) — named export `{ prisma }`
     ├── dossier-config.ts        # Dossier metadata (slug, label, tags, lobbyDomains)
     ├── format.ts                # French number/date formatting (7 functions)
-    └── nuance-colors.ts         # Political nuance code → { color, bg, label } mapping
+    ├── nuance-colors.ts         # Political nuance code → { color, bg, label } mapping
+    ├── postal-resolver.ts       # resolvePostalCode(): CP → ResolvedTerritory[] (Session 14)
+    └── president-utils.ts       # getBaselineObservation() + computeDelta() (Phase 6)
 ```

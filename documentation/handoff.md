@@ -1,6 +1,6 @@
 # Handoff — data-gouv Civic Intelligence Platform
 
-> Updated: Mar 2, 2026 (Session 13). For the next agent picking up this project.
+> Updated: Mar 2, 2026 (Session 14). For the next agent picking up this project.
 
 ---
 
@@ -30,11 +30,11 @@ The project is fully functional as of this handoff. Dev server runs, all data is
 
 ### UI Status (all pages render correctly)
 
-52 routes across 9 sections (build verified Mar 1, 2026, Session 12):
+53 routes across 10 sections (build verified Mar 2, 2026, Session 14):
 
 | Section | Routes |
 |---------|--------|
-| `/` | Homepage — dynamic headline, dossiers grid, recent votes, conflict alerts, DeptLookup |
+| `/` | Homepage — dynamic headline, dossiers grid, recent votes, conflict alerts, DeptLookup + postal code CTA |
 | `/dossiers` | Hub + 8 thematic issue pages (pouvoir-dachat, confiance-democratique, dette-publique, emploi-jeunesse, logement, sante, transition-ecologique, retraites) |
 | `/representants` | Hub + Députés list/detail (4 tabs incl. Transparence) + Sénateurs list/detail + Lobbyistes list/detail + Élus locaux + Partis list/detail |
 | `/gouvernance` | Redirects to `/representants` (HTTP 308) — Scrutins list/detail stay here |
@@ -44,6 +44,7 @@ The project is fully functional as of this handoff. Dev server runs, all data is
 | `/territoire` | Region browser + Département dashboard (StatLocale + BudgetLocal + votes) + Commune card |
 | `/patrimoine` | Hub + Musées list/detail + Monuments list/detail |
 | `/president` | Macron profile — 4 tabs: Promesses (20 curated), Bilan Économique, Lobbying & Agenda, Déclarations HATVP |
+| `/mon-territoire` | Civic dashboard by postal code — 3-state: empty prompt / disambiguation / full dashboard (représentants, budget, santé, votes, patrimoine) |
 
 ---
 
@@ -81,7 +82,10 @@ pnpm ingest:elus         # 593K rows — uses 8GB heap via NODE_OPTIONS
 | [`src/data/lobbyists-curated.ts`](../src/data/lobbyists-curated.ts) | Curated power lobbyist profiles — 7 power orgs + 3 consulting firms with `victoireLegislative`, `alerte`, `connexionMacron` |
 | [`src/data/president-macron.ts`](../src/data/president-macron.ts) | Static Macron data — BIO, 20 curated campaign promises (10×2017, 10×2022) |
 | [`src/lib/president-utils.ts`](../src/lib/president-utils.ts) | `getBaselineObservation()` + `computeDelta()` — reuse for any "before mandate / now" KPI |
-| [`documentation/frontend.md`](frontend.md) | Full UI reference: all 52 routes, 24 components, design system |
+| [`src/data/postal-codes.json`](../src/data/postal-codes.json) | Static map: 6,328 postal codes → INSEE commune code list (La Poste Hexasmal, 347KB) |
+| [`src/lib/postal-resolver.ts`](../src/lib/postal-resolver.ts) | Resolves postal code → `ResolvedTerritory[]` with ARM→COM parent resolution and deduplication |
+| [`src/app/mon-territoire/page.tsx`](../src/app/mon-territoire/page.tsx) | 3-state civic dashboard: empty prompt / disambiguation picker / full civic dashboard |
+| [`documentation/frontend.md`](frontend.md) | Full UI reference: all 53 routes, 22 components, design system |
 | [`documentation/schema.md`](schema.md) | Full DB reference: all 29 models with fields, indexes, row counts |
 | [`CLAUDE.md`](../CLAUDE.md) | Project rules and quick reference for Claude |
 
@@ -186,7 +190,7 @@ The platform has been fully redesigned from a **data-source browser** into a **c
 |--------|---------|--------|
 | Models | 22 | **29** |
 | Total rows | ~800K | **~800K+** (BudgetLocal not yet ingested) |
-| Routes | 22 | **52** |
+| Routes | 22 | **53** |
 | Components | 12 | **24** |
 | Data sources | 7 | **12** (added INSEE Mélodi, SSMSI, DREES, DGFIP) |
 | Cross-references | 0 | **5 systemic** (conflict, lobbying→votes, party finances, territory, deputy accountability) |
@@ -215,6 +219,14 @@ Both directories serve content. `/gouvernance` has the original files (kept for 
 `StatLocale` was ingested via `pnpm ingest:insee-local` (Session 8). No API key required — uses Mélodi "libre" plan anonymously. DEP 36 (Indre) is missing population rows due to rate-limit exhaustion; Mayotte (976) has no Mélodi data at all.
 `BudgetLocal` was ingested via `pnpm ingest:budgets` (Session 12). Source: **OFGL Opendatasoft API** (original data.collectivites-locales.gouv.fr URLs were dead). 380 département records + 68,643 commune records (2022 + 2023 for ~34K communes). `/territoire/[dept]`, `/territoire/commune/[code]`, and `/dossiers/dette-publique` are now fully populated.
 
+### ARM communes — postal code to commune resolution
+
+Paris (75001–75020), Lyon (1st–9th), and Marseille (1st–16th) are arrondissements in the COG with `typecom: "ARM"`. They have a `comparent` field pointing to the parent COM code (75056, 69123, 13055). When resolving postal codes (`src/lib/postal-resolver.ts`), ARM communes must be detected and replaced with their parent COM — otherwise you get arrondissement INSEE codes that don't represent the actual city. `src/data/postal-codes.json` maps postal codes to the raw INSEE codes from La Poste (which include ARM codes); the resolver does the parent substitution.
+
+### `{ prisma }` is a named export
+
+`src/lib/db.ts` exports `prisma` as a **named export**: `export const prisma = ...`. Always import as `import { prisma } from "@/lib/db"`. Using `import prisma from "@/lib/db"` (default import) will cause a build error: `Export default doesn't exist in target module`.
+
 ### Scrutin relation is `votes` not `voteRecords`
 The `Scrutin` model has `votes VoteRecord[]` — always use `votes` in Prisma where clauses. Using `voteRecords` causes a TypeScript build error.
 
@@ -227,6 +239,30 @@ The `Scrutin` model has `votes VoteRecord[]` — always use `votes` in Prisma wh
 ---
 
 ## Work History
+
+### Session 14 (Mar 2, 2026) — Sub-phase 7A: `/mon-territoire` — Civic Dashboard by Postal Code
+
+1. **`src/data/postal-codes.json`** (NEW, 347KB) — 6,328 French postal codes mapped to lists of INSEE commune codes. Sourced from official La Poste Hexasmal CSV on data.gouv.fr (resource `008a2dda-...`). The datanova.laposte.fr API was rejected (returned only 1,342 codes from dept 01–09). CSV was fetched with `curl | iconv | awk | node` and deduplicated. Format: `{ "75011": ["75111"], "33000": ["33063"], "01000": ["01053", "01344"] }`.
+
+2. **`src/lib/postal-resolver.ts`** (NEW) — Resolves postal code → `ResolvedTerritory[]`. Looks up INSEE codes from the JSON, queries `Commune` with departement+region, then detects ARM communes (`typecom === "ARM"`) and replaces them with their parent COM via `Commune.comparent`. Deduplicates: multiple Paris ARMs all resolve to 75056 (Paris COM).
+
+3. **`src/app/mon-territoire/page.tsx`** (NEW, ~500 lines) — 3-state server page:
+   - **State 1** (no params): `SearchInput paramName="cp"` + example codes (Paris 75011, Lyon 69001, Marseille 13001, Bordeaux 33000, Lille 59000, Strasbourg 67000) + link to `/territoire` browser
+   - **State 2** (`?cp=` only): calls `resolvePostalCode()` → 0 results = error; 1 result = render dashboard directly; N results = disambiguation list with `?cp=XXX&code=INSEE` links
+   - **State 3** (`?code=` present): 13-query `Promise.all` fetching all data layers → full civic dashboard: Mes Représentants (deputes + senateurs + maire), Économie locale (StatLocale), Budget local (commune → dept fallback), Santé & Sécurité (DensiteMedicale + StatCriminalite), Comment votent mes députés (recent scrutins), Patrimoine local (musées + monuments), Explorer plus (links to `/territoire/[dept]`, `/territoire/commune/[code]`, `/votes/mon-depute`)
+   - Inline `SectionHeader` + `StatCard` helpers (identical pattern to `/territoire/[departementCode]/page.tsx`)
+   - `generateMetadata` returns commune name + dept code when `?code=` is present
+
+4. **`src/app/page.tsx`** (MODIFIED) — Added teal "Tableau de bord par code postal" CTA link below `DeptLookup` in the "Votre Territoire" section, navigating to `/mon-territoire`.
+
+5. **Build**: 53 routes, zero TypeScript errors.
+
+**Key bugs caught during implementation**:
+- `import prisma from "@/lib/db"` → must be `import { prisma } from "@/lib/db"` (named export, no default)
+- `Elu.prenomElu` / `Elu.nomElu` don't exist → correct fields are `Elu.prenom` / `Elu.nom`
+- `DensiteMedicale` query uses `specialite: "MG"` (not `profession: "MG"`)
+
+---
 
 ### Session 13 (Mar 2, 2026) — Département Dashboard UX Redesign
 

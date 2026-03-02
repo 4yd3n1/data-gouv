@@ -81,7 +81,7 @@ Series: PIB annuel, Taux de chômage trimestriel, Nombre de chômeurs trimestrie
 | CandidatLegislatif | 5,103 | data.gouv.fr static CSV (nested candidates) |
 | PartiPolitique | 2,180 | CNCCFP party accounts CSV (2021–2024) |
 
-**Total: ~800,000+ rows across 22 models + IngestionLog.**
+**Total: ~800,000+ rows across 29 models + IngestionLog.**
 
 Full schema reference: [`documentation/schema.md`](documentation/schema.md)
 
@@ -98,10 +98,10 @@ data-gouv/
 ├── .mcp.json                  # datagouv MCP config
 ├── .nvmrc                     # Node 20.19.2 — auto-used by pnpm dev
 ├── prisma/
-│   ├── schema.prisma          # 22 models + IngestionLog
+│   ├── schema.prisma          # 29 models + IngestionLog
 │   └── migrations/
 ├── scripts/
-│   ├── ingest.ts              # Orchestrator (runs all 7 waves in order)
+│   ├── ingest.ts              # Orchestrator (runs all 9 waves in order)
 │   ├── ingest-territoires.ts  # COG regions/depts/communes
 │   ├── ingest-deputes.ts      # Deputies from Tabular API
 │   ├── ingest-senateurs.ts    # Senators from Sénat CSVs
@@ -124,16 +124,23 @@ data-gouv/
 │       ├── ingestion-log.ts   # Timing + IngestionLog wrapper
 │       └── departement-lookup.ts  # Name→code fuzzy matching
 ├── src/
-│   ├── app/                   # Next.js App Router — 22 routes
-│   ├── components/            # 12 UI components
+│   ├── app/                   # Next.js App Router — 53 routes
+│   ├── components/            # 22 UI components
+│   ├── data/
+│   │   ├── lobbyists-curated.ts   # Curated power lobbyist profiles (10 orgs)
+│   │   ├── president-macron.ts    # Static Macron data (20 promises + bio)
+│   │   └── postal-codes.json      # La Poste Hexasmal: 6,328 CP → INSEE codes
 │   ├── lib/
-│   │   ├── db.ts              # Prisma client singleton (pg adapter)
-│   │   ├── format.ts          # French number/date formatting
-│   │   └── nuance-colors.ts   # Political nuance code → color mapping
+│   │   ├── db.ts              # Prisma client singleton — named export { prisma }
+│   │   ├── dossier-config.ts  # 8 thematic dossier definitions
+│   │   ├── format.ts          # French number/date formatting (7 functions)
+│   │   ├── nuance-colors.ts   # Political nuance code → color mapping
+│   │   ├── postal-resolver.ts # resolvePostalCode(): CP → ResolvedTerritory[]
+│   │   └── president-utils.ts # getBaselineObservation() + computeDelta()
 │   └── types/
 └── documentation/
-    ├── frontend.md            # All pages, components, design system, patterns
-    └── schema.md              # All 22 models, fields, relations, row counts
+    ├── frontend.md            # All 53 routes, 22 components, design system, patterns
+    └── schema.md              # All 29 models, fields, relations, row counts
 ```
 
 ## Commands
@@ -162,7 +169,7 @@ pnpm ingest:photos       # Wave 6: Deputy/senator photos
 pnpm ingest:elus         # Wave 7: RNE elected officials (uses 8GB heap)
 pnpm ingest:elections    # Wave 7: 2024 legislative results
 pnpm ingest:partis       # Wave 7: CNCCFP party accounts
-pnpm ingest:insee-local  # Wave 8: INSEE Données Locales (requires INSEE_API_KEY)
+pnpm ingest:insee-local  # Wave 8: INSEE Données Locales (no API key — Mélodi anonymous)
 pnpm ingest:budgets      # Wave 8: DGFIP finances locales
 pnpm ingest:criminalite  # Wave 9: SSMSI crime stats by département
 pnpm ingest:medecins     # Wave 9: DREES medical density by département
@@ -209,17 +216,19 @@ Wave 9:   Promise.all([ingestCriminalite(), ingestMedecins()])
 
 - **Depute.departementCode** vs **departementRefCode**: `departementCode` stores the raw source code (may include overseas codes like 099, 975 that aren't in COG). `departementRefCode` is the nullable FK to Departement (set only when code exists in DB).
 - **Senateur.departementCode**: Resolved from department name via fuzzy matching (accent/hyphen normalization).
-- **Commune types**: COM (full commune), ARM (arrondissement), COMD (delegated), COMA (associated). Filter to COM for most UI displays.
+- **Commune types**: COM (full commune), ARM (arrondissement), COMD (delegated), COMA (associated). Filter to COM for most UI displays. ARM communes (Paris 75001–75020, Lyon, Marseille arrondissements) have a `comparent` field pointing to the parent COM code — use this when resolving postal codes.
 - **Monument coordinates**: `latitude`/`longitude` parsed from `coordonnees_au_format_WGS84` field.
 - **ElectionLegislative.codeDepartement**: Plain string, no FK to Departement — overseas constituencies use codes like `"ZZ"` not in COG. FK was removed in migration `20260301102159_drop_election_dept_fk`.
+- **`{ prisma }` is a named export**: always `import { prisma } from "@/lib/db"` — default import causes build error.
+- **`Scrutin.votes`** (not `voteRecords`), **`Elu.nom`/`Elu.prenom`** (not `nomElu`/`prenomElu`), **`DensiteMedicale.specialite`** (not `profession`).
 - Full schema details: [`documentation/schema.md`](documentation/schema.md)
 
 ## UI Patterns
 
 - **Profile pages** (deputies, senators): `ProfileHero` + `ProfileTabs` with URL-driven `?tab=` navigation, `max-w-4xl` centered content
 - **List pages**: `PageHeader` + `SearchInput` + `Pagination`, `max-w-7xl` wide layout
-- **4 client components**: `SearchInput`, `Avatar`, `DeclarationSection`, `ProfileTabs`
-- **22 routes**: 6 static + 16 dynamic (see [`documentation/frontend.md`](documentation/frontend.md))
+- **5 client components**: `SearchInput`, `Avatar`, `DeclarationSection`, `ProfileTabs`, `DeptLookup`
+- **53 routes**: 9 static + 44 dynamic (see [`documentation/frontend.md`](documentation/frontend.md))
 - Full frontend reference: [`documentation/frontend.md`](documentation/frontend.md)
 
 ## Rules

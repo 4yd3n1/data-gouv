@@ -313,11 +313,18 @@ export default async function HomePage() {
               <p className="mt-2 text-sm text-bureau-400">
                 Élus locaux, budget communal, statistiques locales — explorez les données de votre département.
               </p>
-              <div className="mt-6 max-w-sm">
+              <div className="mt-6 max-w-sm space-y-3">
                 <DeptLookup
                   depts={data.depts}
                   placeholder="Rechercher un département..."
                 />
+                <Link
+                  href="/mon-territoire"
+                  className="flex items-center gap-2 rounded-lg border border-teal/20 bg-teal/5 px-4 py-2.5 text-sm text-teal transition-all hover:bg-teal/10"
+                >
+                  <span className="flex-1">Tableau de bord par code postal</span>
+                  <span className="text-teal/60">→</span>
+                </Link>
               </div>
             </div>
             <div className="grid grid-cols-2 gap-3">

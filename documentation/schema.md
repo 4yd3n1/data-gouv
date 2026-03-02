@@ -1,6 +1,6 @@
 # Database Schema Reference
 
-> Last updated: Mar 1, 2026
+> Last updated: Mar 2, 2026 (Session 14)
 
 Complete reference for all Prisma models, fields, relations, indexes, and ingestion sources.
 
@@ -27,7 +27,9 @@ Complete reference for all Prisma models, fields, relations, indexes, and ingest
 | Elections & RNE | Elu, ElectionLegislative, CandidatLegislatif, PartiPolitique | ~601,514 |
 | System | IngestionLog | grows over time |
 
-**Total models**: 22 + IngestionLog
+**Total models**: 29 + IngestionLog
+
+> Phase 1–5 additions: `StatLocale`, `BudgetLocal`, `ScrutinTag`, `StatCriminalite`, `DensiteMedicale`. Full counts and descriptions below under their respective layers.
 
 ---
 
@@ -102,7 +104,7 @@ All French communes (36,912 COM type). Also includes ARM (arrondissements), COMD
 | `libelle` | String | Display name |
 | `can` | String? | Canton code |
 | `arr` | String? | Arrondissement code |
-| `comparent` | String? | Parent commune code (for COMA/COMD) |
+| `comparent` | String? | Parent commune code — set for ARM (arrondissements: Paris 75111→75056, Lyon 69381→69123, Marseille 13201→13055) and COMA/COMD |
 | `createdAt` | DateTime | Auto |
 | `updatedAt` | DateTime | Auto |
 
@@ -808,13 +810,16 @@ Dependencies must run in this order (earlier layers are FK targets):
 ```
 Wave 1a:  ingestTerritoires()                              # Region, Departement, Commune
 Wave 1b:  Promise.all([ingestDeputes(), ingestSenateurs(), ingestLobbyistes()])
-Wave 2:   ingestEconomie()                                 # Indicateur, Observation
+Wave 2:   ingestEconomie()                                 # Indicateur, Observation (15+ BDM series)
 Wave 3:   Promise.all([ingestMusees(), ingestMonuments()])
 Wave 4:   ingestDeclarations()                             # Large HATVP XML
 Wave 5a:  ingestOrganes()                                  # Must precede scrutins
 Wave 5b:  Promise.all([ingestScrutins(), ingestDeports()])
+Wave 5c:  tagScrutins()                                    # ScrutinTag — run after scrutins
 Wave 6:   ingestPhotos()                                   # Enriches Depute/Senateur photoUrl
 Wave 7:   Promise.all([ingestElus(), ingestElections(), ingestPartis()])
+Wave 8:   Promise.all([ingestInseeLocal(), ingestBudgets()])   # StatLocale, BudgetLocal
+Wave 9:   Promise.all([ingestCriminalite(), ingestMedecins()]) # StatCriminalite, DensiteMedicale
 ```
 
 ---
@@ -836,3 +841,9 @@ The `Commune` table contains COM (full communes), ARM (Paris/Lyon/Marseille arro
 ### `IngestionLog.metadata` as JSON string
 
 Stored as `String?` rather than `Json` to avoid Prisma adapter type issues. Parse with `JSON.parse()` when reading.
+
+### Postal code → Commune resolution (static file, no DB model)
+
+`src/data/postal-codes.json` — 6,328 entries, La Poste Hexasmal dataset. Maps French postal codes to lists of INSEE commune codes: `{ "75011": ["75111"], "01000": ["01053", "01344"], ... }`. Used by `src/lib/postal-resolver.ts` to resolve a postal code to département + région context for the `/mon-territoire` page. ARM commune codes (Paris 75001–75020 → 75111, etc.) are resolved to their parent COM via `Commune.comparent`.
+
+Source: `https://www.data.gouv.fr/api/1/datasets/r/008a2dda-2c60-4b63-b910-998f6f818089` (CSV, ISO-8859-1, semicolon-delimited, fields: `Code_commune_INSEE;Nom_de_la_commune;Code_postal;...`).
