@@ -1,6 +1,6 @@
 # Handoff — data-gouv Civic Intelligence Platform
 
-> Updated: Mar 1, 2026 (Session 12). For the next agent picking up this project.
+> Updated: Mar 2, 2026 (Session 13). For the next agent picking up this project.
 
 ---
 
@@ -227,6 +227,19 @@ The `Scrutin` model has `votes VoteRecord[]` — always use `votes` in Prisma wh
 ---
 
 ## Work History
+
+### Session 13 (Mar 2, 2026) — Département Dashboard UX Redesign
+
+1. **Full visual redesign of `/territoire/[departementCode]/page.tsx`** (commit `79d9db7`):
+   - **Rich hero** replaces the generic `PageHeader`: département name in display font, region label, decorative dept code (large low-opacity background), and a horizontal key-stats row (Habitants · Communes · Élus locaux · Représentants nationaux · Revenu médian).
+   - **Removed duplicate top KPI grid** — the 8-cell grid was redundant with data shown in the hero and individual sections below.
+   - **Section headers** — consistent `SectionHeader` helper component: colored left-bar accent + uppercase label + optional sublabel + source note. Each section has a distinct accent color (amber → économie, teal → budget, rose → santé, blue → représentants).
+   - **Budget trend chart** — enlarged from 300×50 px to 560×90 px; added gradient area fill (teal→transparent), value labels above each data point, year labels below the baseline, outer ring + inner dot on each point.
+   - **Stat cards** — `card-accent` top gradient line, numbers at `text-3xl` (vs `text-xl` before), extracted as `StatCard` helper component.
+   - **Représentants section** — list-with-dividers layout replacing separate card blocks; colored avatar rings (blue for AN, teal for Sénat); header row with `card-accent`.
+2. **Build**: 52 routes, zero TypeScript errors.
+
+---
 
 ### Session 12 (Mar 1, 2026) — BudgetLocal Ingestion (OFGL)
 
