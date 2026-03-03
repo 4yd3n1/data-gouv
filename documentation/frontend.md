@@ -1,6 +1,6 @@
 # Frontend Implementation
 
-> Last updated: Mar 3, 2026 — Session 18 (7A–7F complete + QA). 57 routes + 3 OG image routes, 25 components.
+> Last updated: Mar 3, 2026 — Session 18/19 (7A–7F complete + QA + OG fixes). 57 routes + 5 OG image routes, 25 components.
 
 Complete reference for all UI pages, components, styling, and patterns.
 
@@ -88,7 +88,7 @@ Applied with: `font-[family-name:var(--font-display)]` for headings.
 
 ---
 
-## Route Map (57 routes + 3 OG image routes)
+## Route Map (57 routes + 5 OG image routes)
 
 ### Static (prerendered at build time)
 | Route | Purpose |
@@ -170,11 +170,13 @@ Applied with: `font-[family-name:var(--font-display)]` for headings.
 | `/patrimoine/monuments` | Search, protection type filter, pagination |
 | `/patrimoine/monuments/[id]` | Info panel, GPS link, description/historique |
 
-### OG Image Routes (Phase 7E)
+### OG Image Routes (Phase 7E + Session 18/19 fixes)
 Next.js `opengraph-image.tsx` files — `runtime = "nodejs"`, 1200×630, inline styles only (no Tailwind).
 
 | Route | Key Data |
 |-------|----------|
+| `/opengraph-image` | Homepage brand — platform name, tagline, 8 dossier chips, 3 stat cards (800K+ données, 57 dashboards, 8 dossiers). Static, no DB. |
+| `/dossiers/logement/opengraph-image` | Logement dossier — queries live housing stats: avg vacancy rate + avg secondary rate (StatLocale) + vote count (ScrutinTag). |
 | `/representants/deputes/[id]/opengraph-image` | Initials monogram + name + groupe + participation % + vote count + conflict count |
 | `/territoire/[departementCode]/opengraph-image` | Dept + region name + 3 INSEE indicators (MEDIAN_INCOME, POVERTY_RATE, UNEMPLOYMENT_RATE) + counts (deputés, sénateurs, élus) |
 | `/gouvernance/scrutins/[id]/opengraph-image` | Result badge (ADOPTÉ green / REJETÉ red) + truncated title + pour/contre bar + vote counts |
@@ -785,16 +787,18 @@ List pages: `max-w-7xl px-6`. Profile detail pages: `max-w-4xl px-6` (focused ed
 
 ---
 
-## Build Output (Session 18 — 57 routes + 3 OG)
+## Build Output (Session 18/19 — 57 routes + 5 OG)
 
 ```
 Route (app)                                                   Type
-┌ ○ /                                                         Static (ISR 3600)
+┌ ƒ /opengraph-image                                          Dynamic (OG — Session 18/19)
+├ ○ /                                                         Static (ISR 3600)
 ├ ○ /dossiers                                                 Static (ISR 86400)
 ├ ƒ /dossiers/confiance-democratique                          Dynamic
 ├ ƒ /dossiers/dette-publique                                  Dynamic
 ├ ƒ /dossiers/emploi-jeunesse                                 Dynamic
 ├ ƒ /dossiers/logement                                        Dynamic
+├ ƒ /dossiers/logement/opengraph-image                        Dynamic (OG — Session 18/19)
 ├ ƒ /dossiers/pouvoir-dachat                                  Dynamic
 ├ ƒ /dossiers/retraites                                       Dynamic
 ├ ƒ /dossiers/sante                                           Dynamic
@@ -850,7 +854,7 @@ Route (app)                                                   Type
 └ ƒ /mon-territoire                                           Dynamic (7A)
 ```
 
-10 static + 47 dynamic = 57 routes. Plus 3 OG image routes = 60 total in build output.
+10 static + 47 dynamic = 57 routes. Plus 5 OG image routes = 62 total in build output.
 
 ---
 
@@ -862,13 +866,16 @@ src/
 │   ├── globals.css              # Theme colors, effects, animations
 │   ├── layout.tsx               # Root: fonts, navbar (7 items), footer
 │   ├── page.tsx                 # Homepage (ISR 3600)
+│   ├── opengraph-image.tsx      # OG 1200×630: platform brand + 8 dossier chips + 3 stats (Session 18/19)
 │   ├── dossiers/
 │   │   ├── page.tsx             # Dossier hub (ISR 86400)
 │   │   ├── pouvoir-dachat/page.tsx
 │   │   ├── confiance-democratique/page.tsx
 │   │   ├── dette-publique/page.tsx
 │   │   ├── emploi-jeunesse/page.tsx
-│   │   ├── logement/page.tsx
+│   │   ├── logement/
+│   │   │   ├── page.tsx
+│   │   │   └── opengraph-image.tsx  # OG 1200×630: housing stats (vacancy %, secondary %, vote count) (Session 18/19)
 │   │   ├── sante/page.tsx
 │   │   ├── transition-ecologique/page.tsx
 │   │   └── retraites/page.tsx
