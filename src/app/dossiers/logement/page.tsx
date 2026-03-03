@@ -6,6 +6,7 @@ import { DossierNav } from "@/components/dossier-nav";
 import { IndicatorCard } from "@/components/indicator-card";
 import { TopicVoteList } from "@/components/topic-vote-list";
 import { LobbyingDensity } from "@/components/lobbying-density";
+import { RankingTable } from "@/components/ranking-table";
 
 export default async function LogementPage() {
   const dossier = getDossier("logement");
@@ -18,6 +19,9 @@ export default async function LogementPage() {
     immobilActionCount,
     immobilLobbyCount,
     topOrgsRaw,
+    vacancyRows,
+    secondaryRows,
+    depts,
   ] = await Promise.all([
     prisma.indicateur.findFirst({
       where: { code: "LOGEMENTS_AUTORISES" },
@@ -77,12 +81,48 @@ export default async function LogementPage() {
       orderBy: { actions: { _count: "desc" } },
       take: 5,
     }),
+    // Housing stats from Recensement 2022 via Mélodi
+    prisma.statLocale.findMany({
+      where: { indicateur: "HOUSING_VACANCY_RATE", geoType: "DEP" },
+      orderBy: { valeur: "desc" },
+      take: 15,
+    }),
+    prisma.statLocale.findMany({
+      where: { indicateur: "HOUSING_SECONDARY_RATE", geoType: "DEP" },
+      orderBy: { valeur: "desc" },
+      take: 15,
+    }),
+    prisma.departement.findMany({
+      select: { code: true, libelle: true },
+    }),
   ]);
 
   const topOrgs = topOrgsRaw.map((o) => ({
     nom: o.nom,
     actions: o._count.actions,
   }));
+
+  const deptMap = new Map(depts.map((d) => [d.code, d.libelle]));
+  const vacancyRanking = vacancyRows.map((s, i) => ({
+    code: s.geoCode,
+    libelle: deptMap.get(s.geoCode) ?? s.geoCode,
+    valeur: s.valeur,
+    rank: i + 1,
+  }));
+  const secondaryRanking = secondaryRows.map((s, i) => ({
+    code: s.geoCode,
+    libelle: deptMap.get(s.geoCode) ?? s.geoCode,
+    valeur: s.valeur,
+    rank: i + 1,
+  }));
+
+  const avgVacancy = vacancyRows.length > 0
+    ? Math.round((vacancyRows.reduce((a, r) => a + r.valeur, 0) / vacancyRows.length) * 10) / 10
+    : null;
+  const avgSecondary = secondaryRows.length > 0
+    ? Math.round((secondaryRows.reduce((a, r) => a + r.valeur, 0) / secondaryRows.length) * 10) / 10
+    : null;
+  const hasHousingStats = vacancyRanking.length > 0 || secondaryRanking.length > 0;
 
   const scrutinsForList = scrutins.map((s) => ({
     id: s.id,
@@ -169,7 +209,63 @@ export default async function LogementPage() {
           <TopicVoteList scrutins={scrutinsForList} />
         </section>
 
-        {/* Section 3 — Lobbying immobilier */}
+        {/* Section 3 — Parc immobilier par territoire */}
+        {hasHousingStats && (
+          <section>
+            <div className="mb-6">
+              <h2 className="font-[family-name:var(--font-display)] text-2xl text-bureau-100">
+                Parc immobilier par territoire
+              </h2>
+              <p className="mt-1 text-sm text-bureau-500">
+                Vacance et résidences secondaires par département — Recensement 2022 (INSEE)
+              </p>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2 mb-8">
+              <IndicatorCard
+                label="Taux de vacance moyen"
+                value={avgVacancy != null ? `${avgVacancy.toLocaleString("fr-FR")}` : "N/D"}
+                unit="%"
+                color="amber"
+                period="2022"
+              />
+              <IndicatorCard
+                label="Taux de rés. secondaires moyen"
+                value={avgSecondary != null ? `${avgSecondary.toLocaleString("fr-FR")}` : "N/D"}
+                unit="%"
+                color="teal"
+                period="2022"
+              />
+            </div>
+
+            <div className="grid gap-6 md:grid-cols-2">
+              <div>
+                <p className="mb-3 text-sm font-medium text-bureau-300">
+                  Logements vacants les plus élevés
+                </p>
+                <RankingTable
+                  rows={vacancyRanking}
+                  unit="%"
+                  label="Taux de vacance"
+                  territoireHref={(code) => `/territoire/${code}`}
+                />
+              </div>
+              <div>
+                <p className="mb-3 text-sm font-medium text-bureau-300">
+                  Résidences secondaires les plus élevées
+                </p>
+                <RankingTable
+                  rows={secondaryRanking}
+                  unit="%"
+                  label="Taux rés. secondaires"
+                  territoireHref={(code) => `/territoire/${code}`}
+                />
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* Section 4 — Lobbying immobilier */}
         <section>
           <div className="mb-6">
             <h2 className="font-[family-name:var(--font-display)] text-2xl text-bureau-100">

@@ -3,13 +3,14 @@ import { prisma } from "@/lib/db";
 import { fmt, fmtEuro } from "@/lib/format";
 import { DOSSIERS } from "@/lib/dossier-config";
 import { DeptLookup } from "@/components/dept-lookup";
+import { ConflictAlert } from "@/components/conflict-alert";
 
 export const revalidate = 3600; // Homepage shows latest votes + conflict alerts — revalidate hourly
 
 async function getHomeData() {
   const [
     deputes, elus, scrutins, monuments,
-    recentScrutins, topDeclarations,
+    recentScrutins, topConflicts,
     latestDetteObs, latestIpcObs, latestChomageObs,
     depts,
   ] = await Promise.all([
@@ -31,12 +32,12 @@ async function getHomeData() {
         abstentions: true,
       },
     }),
-    // Top 3 conflict-of-interest alerts
-    prisma.declarationInteret.findMany({
-      where: { typeMandat: { in: ["Député", "Sénateur"] }, totalParticipations: { gt: 0 } },
-      orderBy: { totalParticipations: "desc" },
+    // Top 3 conflict signals — pre-computed cross-reference of financial interests × votes
+    // Empty array if compute-conflicts hasn't been run yet (falls back to empty section)
+    prisma.conflictSignal.findMany({
+      where: { voteCount: { gt: 0 } },
+      orderBy: { participationCount: "desc" },
       take: 3,
-      select: { id: true, prenom: true, nom: true, typeMandat: true, totalParticipations: true },
     }),
     // Latest debt/GDP indicator
     prisma.indicateur.findFirst({
@@ -68,7 +69,7 @@ async function getHomeData() {
 
   return {
     deputes, elus, scrutins, monuments,
-    recentScrutins, topDeclarations,
+    recentScrutins, topConflicts,
     detteVal: latestDetteObs?.observations[0]?.valeur ?? null,
     ipcVal: latestIpcObs?.observations[0]?.valeur ?? null,
     chomageVal: latestChomageObs?.observations[0]?.valeur ?? null,
@@ -253,7 +254,7 @@ export default async function HomePage() {
       </section>
 
       {/* ── Alertes transparence ── */}
-      {data.topDeclarations.length > 0 && (
+      {data.topConflicts.length > 0 && (
         <section className="mx-auto max-w-7xl px-6 py-12">
           <div className="flex items-end justify-between mb-6">
             <div>
@@ -261,7 +262,7 @@ export default async function HomePage() {
                 Alertes transparence
               </h2>
               <p className="mt-1 text-sm text-bureau-500">
-                Élus avec les participations financières déclarées les plus élevées — source HATVP
+                Élus ayant voté sur des textes dans des domaines où ils ont des participations financières déclarées
               </p>
             </div>
             <Link href="/dossiers/confiance-democratique" className="text-xs uppercase tracking-widest text-amber hover:underline shrink-0">
@@ -269,34 +270,19 @@ export default async function HomePage() {
             </Link>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-3">
-            {data.topDeclarations.map((d) => (
-              <div
-                key={d.id}
-                className="rounded-xl border border-amber/15 bg-amber/5 p-5"
-              >
-                <div className="flex items-center gap-2 mb-3">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-bureau-700/50 text-xs font-medium text-bureau-300">
-                    {d.prenom[0]}{d.nom[0]}
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-bureau-100">
-                      {d.prenom} {d.nom}
-                    </p>
-                    <p className="text-xs text-bureau-500">{d.typeMandat}</p>
-                  </div>
-                </div>
-                <div className="rounded-lg bg-bureau-800/40 px-3 py-2">
-                  <p className="text-[10px] uppercase tracking-widest text-bureau-500">Participations déclarées</p>
-                  <p className="text-lg font-bold text-amber">{fmtEuro(d.totalParticipations)}</p>
-                </div>
-                <Link
-                  href={`/gouvernance/declarations/${d.id}`}
-                  className="mt-3 block text-[10px] uppercase tracking-widest text-amber/60 hover:text-amber transition-colors"
-                >
-                  Voir la déclaration →
-                </Link>
-              </div>
+          <div className="space-y-3">
+            {data.topConflicts.map((signal) => (
+              <ConflictAlert
+                key={signal.id}
+                deputyName={`${signal.prenom} ${signal.nom}`}
+                sector={signal.secteurDeclaration}
+                participationTotal={signal.totalMontant ?? 0}
+                relatedVoteCount={signal.voteCount}
+                votePour={signal.votePour}
+                voteContre={signal.voteContre}
+                typeMandat={signal.typeMandat}
+                href={signal.deputeId ? `/representants/deputes/${signal.deputeId}?tab=transparence` : undefined}
+              />
             ))}
           </div>
         </section>

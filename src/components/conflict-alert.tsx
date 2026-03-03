@@ -6,8 +6,14 @@ interface ConflictAlertProps {
   sector: string;
   participationTotal: number;
   relatedVoteCount: number;
-  declarationId: string;
+  /** Direct link target — takes precedence over declarationId */
+  href?: string;
+  /** HATVP declaration UUID — used if href is not provided */
+  declarationId?: string;
   typeMandat?: string;
+  /** Optional vote breakdown for richer display */
+  votePour?: number;
+  voteContre?: number;
 }
 
 export function ConflictAlert({
@@ -15,9 +21,13 @@ export function ConflictAlert({
   sector,
   participationTotal,
   relatedVoteCount,
+  href,
   declarationId,
   typeMandat,
+  votePour,
+  voteContre,
 }: ConflictAlertProps) {
+  const linkHref = href ?? (declarationId ? `/gouvernance/declarations/${declarationId}` : null);
   return (
     <div className="rounded-xl border border-amber/20 bg-amber/5 p-5">
       <div className="flex items-start gap-3">
@@ -36,17 +46,29 @@ export function ConflictAlert({
           <p className="mt-1 text-xs text-bureau-400">
             A déclaré{" "}
             <span className="text-amber font-medium">{fmtEuro(participationTotal)}</span>{" "}
-            de participations financières dans le secteur <strong className="text-bureau-200">{sector}</strong>.
-            A voté sur{" "}
-            <span className="text-bureau-100 font-medium">{relatedVoteCount}</span> texte{relatedVoteCount > 1 ? "s" : ""}{" "}
-            lié{relatedVoteCount > 1 ? "s" : ""} à ce domaine.
+            de participations financières dans <strong className="text-bureau-200">{sector}</strong>.
+            {relatedVoteCount > 0 && (
+              <>
+                {" "}A voté sur{" "}
+                <span className="text-bureau-100 font-medium">{relatedVoteCount}</span>{" "}
+                texte{relatedVoteCount > 1 ? "s" : ""} lié{relatedVoteCount > 1 ? "s" : ""} à ce domaine
+                {(votePour !== undefined && voteContre !== undefined) && (
+                  <span className="text-bureau-500">
+                    {" "}({votePour} pour · {voteContre} contre)
+                  </span>
+                )}
+                .
+              </>
+            )}
           </p>
-          <Link
-            href={`/gouvernance/declarations/${declarationId}`}
-            className="mt-2 inline-flex items-center gap-1 text-[10px] uppercase tracking-widest text-amber/70 hover:text-amber transition-colors"
-          >
-            Voir la déclaration →
-          </Link>
+          {linkHref && (
+            <Link
+              href={linkHref}
+              className="mt-2 inline-flex items-center gap-1 text-[10px] uppercase tracking-widest text-amber/70 hover:text-amber transition-colors"
+            >
+              Voir la déclaration →
+            </Link>
+          )}
         </div>
       </div>
     </div>

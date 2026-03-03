@@ -1,6 +1,6 @@
 # Database Schema Reference
 
-> Last updated: Mar 2, 2026 (Session 14)
+> Last updated: Mar 3, 2026 (Session 18)
 
 Complete reference for all Prisma models, fields, relations, indexes, and ingestion sources.
 
@@ -27,9 +27,9 @@ Complete reference for all Prisma models, fields, relations, indexes, and ingest
 | Elections & RNE | Elu, ElectionLegislative, CandidatLegislatif, PartiPolitique | ~601,514 |
 | System | IngestionLog | grows over time |
 
-**Total models**: 29 + IngestionLog
+**Total models**: 30 + IngestionLog
 
-> Phase 1–5 additions: `StatLocale`, `BudgetLocal`, `ScrutinTag`, `StatCriminalite`, `DensiteMedicale`. Full counts and descriptions below under their respective layers.
+> Phase 1–5 additions: `StatLocale`, `BudgetLocal`, `ScrutinTag`, `StatCriminalite`, `DensiteMedicale`. Phase 7C addition: `ConflictSignal`. Full counts and descriptions below under their respective layers.
 
 ---
 
@@ -803,6 +803,63 @@ Tracks every ingestion run with timing, row counts, status, and metadata.
 
 ---
 
+## ConflictSignal (Phase 7C — Session 15)
+
+Pre-computed cross-reference results: deputy financial participations × vote records by policy domain. Populated by `pnpm compute:conflicts` (not by the main ingest orchestrator — run separately after Wave 5c).
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | String PK | cuid() |
+| `nom` | String | Deputy family name |
+| `prenom` | String | Deputy given name |
+| `typeMandat` | String | `"Député"` |
+| `deputeId` | String? | Nullable FK to `Depute.id` (PA* format) |
+| `secteurDeclaration` | String | Company name from `ParticipationFinanciere.nomSociete` |
+| `tag` | String | Matched `ScrutinTag.tag` value |
+| `voteCount` | Int | Number of vote records for this deputy on this tag |
+| `participationValue` | Float? | `ParticipationFinanciere.evaluation` if available |
+| `createdAt` | DateTime | Auto |
+| `updatedAt` | DateTime | Auto |
+
+**Unique constraint**: `(nom, prenom, typeMandat, secteurDeclaration, tag)`
+
+**Populated by**: `scripts/compute-conflicts.ts` → `pnpm compute:conflicts`
+
+**Algorithm**: `DeclarationInteret` × `ParticipationFinanciere.nomSociete` → `scripts/lib/sector-tag-map.ts` (15 RegExp patterns) → `VoteRecord` count per (deputeId, tag).
+
+**Row count**: populated after running `pnpm compute:conflicts`
+
+---
+
+## search_index (PostgreSQL Materialized View — Session 15 / 7B)
+
+Not a Prisma model — a PostgreSQL materialized view created by migration `20260302000000_add_search_index`. Backs the `globalSearch()` function in `src/lib/search.ts`.
+
+**Migration file**: `prisma/migrations/20260302000000_add_search_index/migration.sql`
+
+**Refresh**: `REFRESH MATERIALIZED VIEW search_index` — run via `pnpm refresh:search` after full ingest.
+
+**Columns**: `entity_type`, `entity_id`, `title`, `subtitle`, `url`, `search_vector` (tsvector)
+
+**Indexed entities**:
+
+| entity_type | Source table | title | subtitle | url |
+|-------------|-------------|-------|----------|-----|
+| `depute` | Depute | `nom + prenom` | `Député · groupe` | `/representants/deputes/[id]` |
+| `senateur` | Senateur | `nom + prenom` | `Sénateur · groupe` | `/representants/senateurs/[id]` |
+| `lobbyiste` | Lobbyiste | `nom` | `Lobbyiste · categorieActivite` | `/representants/lobbyistes/[id]` |
+| `scrutin` | Scrutin | `titre` | `Adopté/Rejeté · date` | `/gouvernance/scrutins/[id]` |
+| `commune` | Commune (`typecom=COM`) | `libelle` | `Commune · deptCode` | `/territoire/commune/[code]` |
+| `parti` | PartiPolitique | `nom` | `Parti politique` | `/representants/partis/[id]` |
+
+**Indexes**: GIN index on `search_vector` (fast full-text), B-tree on `entity_type` (filter).
+
+**Language**: `french` stemming via `to_tsvector('french', ...)` and `plainto_tsquery('french', ...)`.
+
+**Static injection**: `src/lib/search.ts` also injects a hardcoded "Emmanuel Macron / Président de la République → /president" result when the query matches `macron`, `manu`, `president`, `elysee` (client-side, no DB row).
+
+---
+
 ## Ingestion Order
 
 Dependencies must run in this order (earlier layers are FK targets):
@@ -816,10 +873,12 @@ Wave 4:   ingestDeclarations()                             # Large HATVP XML
 Wave 5a:  ingestOrganes()                                  # Must precede scrutins
 Wave 5b:  Promise.all([ingestScrutins(), ingestDeports()])
 Wave 5c:  tagScrutins()                                    # ScrutinTag — run after scrutins
+Wave 5d:  computeConflicts()                               # ConflictSignal — run after 5c
 Wave 6:   ingestPhotos()                                   # Enriches Depute/Senateur photoUrl
 Wave 7:   Promise.all([ingestElus(), ingestElections(), ingestPartis()])
 Wave 8:   Promise.all([ingestInseeLocal(), ingestBudgets()])   # StatLocale, BudgetLocal
 Wave 9:   Promise.all([ingestCriminalite(), ingestMedecins()]) # StatCriminalite, DensiteMedicale
+Wave 10:  REFRESH MATERIALIZED VIEW search_index           # Final step — pnpm refresh:search
 ```
 
 ---

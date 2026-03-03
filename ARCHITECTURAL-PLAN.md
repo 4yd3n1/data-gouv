@@ -4,7 +4,7 @@
 > into France's most powerful citizen-facing transparency platform.
 >
 > Created: March 1, 2026
-> **Last updated: March 1, 2026 — All 5 phases COMPLETE ✅**
+> **Last updated: March 3, 2026 — Phases 1–5 + Phase 7 (Power Features) COMPLETE ✅**
 
 ---
 
@@ -59,7 +59,7 @@ Who has conflicts of interest (Declarations) → Who got elected anyway (Electio
 
 ### What We Have (Working)
 
-> **Updated March 1, 2026** — All phases complete. 29 models, 50 routes, 24 components.
+> **Updated March 3, 2026** — All phases complete. 30 models, 57 routes + 3 OG endpoints, 25 components.
 
 | Layer | Models | Rows | Status |
 |-------|--------|------|--------|
@@ -71,12 +71,14 @@ Who has conflicts of interest (Declarations) → Who got elected anyway (Electio
 | Culture | Musee, FrequentationMusee, Monument | ~60,071 | Complete |
 | Parliament Votes | Organe, Scrutin, GroupeVote, VoteRecord, Deport | varies | Complete |
 | Elections & RNE | Elu, ElectionLegislative, CandidatLegislatif, PartiPolitique | ~601,514 | Complete |
-| Local Stats (INSEE) | StatLocale | 1,186 | Complete — Mélodi API ✅ |
-| Local Budgets (DGFIP) | BudgetLocal | 0 (ingestion pending) | Model created ✅ |
+| Local Stats (INSEE) | StatLocale | 1,408 | Complete — Mélodi API ✅ |
+| Local Budgets (DGFIP) | BudgetLocal | 69,023 | Complete — OFGL Opendatasoft ✅ |
 | Vote Tags | ScrutinTag | 3,170 | Complete ✅ |
 | Security | StatCriminalite | varies | Complete — SSMSI ✅ |
 | Healthcare | DensiteMedicale | varies | Complete — DREES ✅ |
-| **Total** | **29 models** | **~800,000+** | |
+| Conflict Signals | ConflictSignal | varies | Complete — Phase 7C ✅ |
+| Search Index | search_index (PG view) | all entities | Complete — Phase 7B ✅ |
+| **Total** | **30 models** | **~800,000+** | |
 
 ### What's Missing (original gaps — now resolved)
 
@@ -85,41 +87,68 @@ Who has conflicts of interest (Declarations) → Who got elected anyway (Electio
 | ~~No localized economic data~~ | **DONE** — StatLocale: income, poverty, pop, employment per dept (INSEE Mélodi) |
 | ~~No cross-references~~ | **DONE** — Dossier pages cross-reference all layers; ConflictAlert on deputy profiles |
 | ~~No issue-centric navigation~~ | **DONE** — 8 dossier pages + hub at `/dossiers` |
-| ~~No conflict-of-interest detection~~ | **DONE** — Deputy "Transparence" tab with declarations × votes cross-reference |
-| ~~No local finance data~~ | **PARTIAL** — BudgetLocal model created, DGFIP ingestion not yet run |
+| ~~No conflict-of-interest detection~~ | **DONE** — Pre-computed `ConflictSignal` table (7C); deputy Transparence tab; homepage alerts |
+| ~~No local finance data~~ | **DONE** — 69,023 rows (380 depts + 68,643 communes), OFGL Opendatasoft (Session 12) ✅ |
 | ~~No demographic context~~ | **DONE** — Territoire dept dashboard shows age/income/employment/poverty |
 | **Deputies ↔ Declarations matched by name only** | Still string-match — no FK added (acceptable for now) |
 | ~~No vote-topic classification~~ | **DONE** — 3,170 ScrutinTag records; `/votes/par-sujet/[tag]` pages |
+| ~~No global search~~ | **DONE** — Materialized view `search_index` + `/recherche` + NavSearch (7B) |
+| ~~No postal code civic dashboard~~ | **DONE** — `/mon-territoire?cp=` full dashboard (7A) |
+| ~~No comparison mode~~ | **DONE** — `/comparer/territoires` + `/comparer/deputes` (7D) |
+| ~~No social sharing cards~~ | **DONE** — OG images for deputy, département, scrutin (7E) |
+| ~~No party alignment visualization~~ | **DONE** — `/votes/alignements` heat map (7F) |
 
 ### Remaining Work
 
 | Item | Priority | Notes |
 |------|----------|-------|
-| Run `pnpm ingest:budgets` | HIGH | BudgetLocal model exists but table is empty |
 | Run `pnpm ingest:criminalite` | MEDIUM | Model exists; SSMSI ingestion script ready |
 | Run `pnpm ingest:medecins` | MEDIUM | Model exists; DREES ingestion script ready |
 | Run `pnpm ingest:insee-local` again for DEP 36 | LOW | Hit rate-limit; only 8/12 stats for Indre |
 | Deputy ↔ Declaration FK | LOW | Still name-matched; fragile but functional |
-| BudgetLocal in dossier pages | LOW | `/dossiers/dette-publique` would show local debt once BudgetLocal populated |
 
-### Current Route Structure (50 routes — as of Phase 5 completion)
+### Current Route Structure (57 routes + 3 OG endpoints — as of Phase 7 completion)
 
 ```
-/                          → Homepage (hero + stat cards)
-/gouvernance               → Hub (6 section cards)
-  /deputes                 → List + /[id] profile
+/                          → Homepage (dynamic hero + dossier cards + conflict alerts + DeptLookup)
+/president                 → Macron profile (static, 4 tabs, cross-referenced)
+/dossiers                  → Hub (8 issue cards)
+  /pouvoir-dachat          → Purchasing power dossier
+  /confiance-democratique  → Democratic trust dossier (with ConflictSignal)
+  /dette-publique          → Public debt dossier
+  /emploi-jeunesse         → Youth employment dossier
+  /logement                → Housing dossier
+  /sante                   → Health / medical deserts dossier
+  /transition-ecologique   → Ecology dossier
+  /retraites               → Pensions dossier
+/representants             → Hub (with president card)
+  /deputes                 → List + /[id] profile (4 tabs, conflict signals, compare link)
+                             /[id]/opengraph-image (OG card)
   /senateurs               → List + /[id] profile
   /elus                    → Local officials list
   /lobbyistes              → List + /[id] detail
   /scrutins                → Vote list + /[id] detail
+                             (gouvernance/scrutins/[id]/opengraph-image — OG card)
   /partis                  → Party finances + /[id] detail
-/elections                 → Hub
-  /legislatives-2024       → Results
-/economie                  → 4 indicators dashboard
-/territoire                → Region browser + /[departementCode]
+/votes                     → Hub (tag grid + recent scrutins)
+  /par-sujet/[tag]         → Tag-filtered scrutins with pagination
+  /mon-depute              → 3-state deputy vote lookup
+  /alignements             → Party alignment heat map (N×N matrix)
+/comparer                  → (no hub)
+  /territoires             → Side-by-side département comparison
+  /deputes                 → Side-by-side deputy comparison
+/recherche                 → Global full-text search (/recherche?q=&type=)
+/mon-territoire            → Postal code → full civic dashboard
+/economie                  → 15+ indicators dashboard
+/territoire                → Region browser
+  /[departementCode]       → Rich département dashboard (compare link)
+                             /[departementCode]/opengraph-image (OG card)
+  /commune/[communeCode]   → Commune card
 /patrimoine                → Hub
   /musees                  → List + /[id] detail
   /monuments               → List + /[id] detail
+/elections                 → Hub
+  /legislatives-2024       → Results
 ```
 
 ---
@@ -233,7 +262,7 @@ This platform exists to give citizens the data tools to verify, not just trust.
 | `DS_RP_POPULATION_PRINC` | GEO-POP | Population by age bracket | ✅ Ingested (2022) |
 | `DS_RP_EMPLOI_LR_PRINC` | GEO-EMP | Employment, unemployment, activity rates | ✅ Ingested (2022) |
 
-> **Note**: GEO-LOG (housing), GEO-DIP (education), GEO-ETR (nationality), GEO-ENT (enterprises) not yet ingested — datasets exist in Mélodi but scripts not written.
+> **Note**: GEO-LOG (housing) ✅ ingested (Session 18/19) — `DS_RP_LOGEMENT_PRINC`, indicators: `HOUSING_TOTAL`, `HOUSING_VACANCY_RATE`, `HOUSING_SECONDARY_RATE`. GEO-DIP (education), GEO-ETR (nationality), GEO-ENT (enterprises) not yet ingested — datasets exist in Mélodi but scripts not written.
 
 **Cubes to ingest**:
 
@@ -928,6 +957,33 @@ Wave 8:   Promise.all([                          // NEW WAVE
 | Build `DeptMap` SVG component | P2 | `src/components/dept-map.tsx` |
 | Build `TimelineChart` component | P2 | `src/components/timeline-chart.tsx` |
 
+### Phase 7: Power Features — ✅ COMPLETE (March 2–3, 2026)
+
+**Goal**: Transform the complete transparency platform into one that's searchable, personalizable, comparative, and shareable. All sub-phases independent — 5 sessions total.
+
+| Sub-phase | Feature | Session | Routes |
+|-----------|---------|---------|--------|
+| **7A** | `/mon-territoire` — postal code → full civic dashboard | 14 | +1 |
+| **7B** | Global search — `search_index` materialized view + `/recherche` + NavSearch | 15 | +1 |
+| **7C** | `ConflictSignal` — pre-computed conflict detection (30th model) | 15 | 0 |
+| **7D** | Comparison mode — `/comparer/territoires` + `/comparer/deputes` | 16 | +2 |
+| **7E** | OG image templates — deputy, département, scrutin (1200×630) | 17 | +3 OG |
+| **7F** | Party alignment matrix — `/votes/alignements` heat map | 17 | +1 |
+
+**Key technical notes**:
+- `search_index` is a PostgreSQL materialized view (not a Prisma model) — GIN index, `french` stemming, 6 entity types
+- President static result injected in `globalSearch()` — `/president` is static, not DB-backed
+- `ConflictSignal.deputeId` is `String?` — Depute.id uses PA* format, not integer
+- OG images: never use remote `<img>` in satori — use initials monogram to avoid network failures
+- NavSearch: always `flex` (not `hidden md:flex`), no `<form>` wrapper, pure `useRef`+`onKeyDown`
+- Full detail: `arch-plan2.md`
+
+**New npm scripts added**:
+- `pnpm compute:conflicts` — populates ConflictSignal (Wave 5d)
+- `pnpm refresh:search` — refreshes search_index materialized view (Wave 10)
+
+---
+
 ### Phase 5: Polish + Additional Data — ✅ COMPLETE (March 1, 2026)
 
 **Goal**: Additional data sources, performance, accessibility.
@@ -1233,17 +1289,21 @@ data-gouv/
 
 ## Appendix C: Estimated Final Scale
 
-| Metric | Current | Target |
-|--------|---------|--------|
-| Prisma models | 22 + IngestionLog | 26-28 + IngestionLog |
-| Total rows | ~800K | ~1.5-2M |
-| Routes | 22 | ~40 |
-| Components | 12 | ~22 |
-| Ingestion scripts | 16 | 20-22 |
-| Data sources | 7 (data.gouv, INSEE BDM, Sénat, HATVP, AN, DGCL, CNCCFP) | 10+ (+ INSEE Local, DGFIP, SSMSI, DREES) |
-| Nav sections | 6 | 7 |
-| Dossiers | 0 | 8 |
-| Cross-references | 0 | 5 systemic |
+| Metric | Original baseline | Target (plan) | **Actual (Phase 7 complete)** |
+|--------|------------------|---------------|-------------------------------|
+| Prisma models | 22 + IngestionLog | 26-28 + IngestionLog | **30 + IngestionLog** |
+| Total rows | ~800K | ~1.5-2M | **~800K+ (ingestion scripts ready for more)** |
+| Routes | 22 | ~40 | **57 + 3 OG endpoints** |
+| Components | 12 | ~22 | **25** |
+| Ingestion scripts | 16 | 20-22 | **20** |
+| Data sources | 7 | 10+ | **10 (+ INSEE Local, DGFIP, SSMSI, DREES)** |
+| Nav sections | 6 | 7 | **7** |
+| Dossiers | 0 | 8 | **8** |
+| Cross-references | 0 | 5 systemic | **5+ (ConflictSignal pre-computed, alignment matrix, lobbying × votes)** |
+| Search | None | Not in original plan | **Global full-text search (materialized view + GIN index)** |
+| Comparison | None | Not in original plan | **Territoire + deputy side-by-side comparison** |
+| Social sharing | None | Not in original plan | **OG images for 3 entity types** |
+| Civic dashboard | None | Not in original plan | **`/mon-territoire` postal code dashboard** |
 
 ---
 

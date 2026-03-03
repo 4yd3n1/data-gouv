@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { DM_Sans, Instrument_Serif } from "next/font/google";
 import Link from "next/link";
+import { NavSearch } from "@/components/nav-search";
 import "./globals.css";
 
 const body = DM_Sans({ subsets: ["latin"], variable: "--font-body" });
@@ -37,16 +38,19 @@ function Navbar() {
             L&apos;Observatoire
           </span>
         </Link>
-        <div className="flex items-center gap-1">
-          {NAV.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="rounded-md px-3 py-1.5 text-sm text-bureau-300 transition-colors hover:bg-bureau-800 hover:text-bureau-100"
-            >
-              {item.label}
-            </Link>
-          ))}
+        <div className="flex items-center gap-3">
+          <NavSearch />
+          <div className="flex items-center gap-1">
+            {NAV.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="rounded-md px-3 py-1.5 text-sm text-bureau-300 transition-colors hover:bg-bureau-800 hover:text-bureau-100"
+              >
+                {item.label}
+              </Link>
+            ))}
+          </div>
         </div>
       </nav>
     </header>

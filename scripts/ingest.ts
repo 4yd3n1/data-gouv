@@ -29,6 +29,7 @@ import { ingestOrganes } from "./ingest-organes";
 import { ingestScrutins } from "./ingest-scrutins";
 import { ingestDeports } from "./ingest-deports";
 import { tagScrutins } from "./tag-scrutins";
+import { computeConflicts } from "./compute-conflicts";
 import { ingestPhotos } from "./ingest-photos";
 import { ingestElus } from "./ingest-elus";
 import { ingestElections } from "./ingest-elections";
@@ -83,6 +84,10 @@ async function main() {
   console.log("\n── Wave 5c: Tag Scrutins ──");
   await tagScrutins();
 
+  // Wave 5d: Compute conflict signals (must run after tag-scrutins + declarations)
+  console.log("\n── Wave 5d: Conflict Signals ──");
+  await computeConflicts();
+
   // Wave 6: Photo enrichment
   console.log("\n── Wave 6: Photos ──");
   await ingestPhotos();
@@ -108,6 +113,11 @@ async function main() {
     ingestCriminalite(),
     ingestMedecins(),
   ]);
+
+  // Wave 10: Refresh full-text search index
+  console.log("\n── Wave 10: Actualisation de l'index de recherche ──");
+  await prisma.$executeRaw`REFRESH MATERIALIZED VIEW search_index`;
+  console.log("✓ Index de recherche actualisé");
 
   const duration = ((Date.now() - start) / 1000).toFixed(1);
 

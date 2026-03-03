@@ -1,6 +1,6 @@
 # Handoff — data-gouv Civic Intelligence Platform
 
-> Updated: Mar 2, 2026 (Session 14). For the next agent picking up this project.
+> Updated: Mar 3, 2026 (Session 18/19). For the next agent picking up this project.
 
 ---
 
@@ -26,17 +26,17 @@ The project is fully functional as of this handoff. Dev server runs, all data is
 | Parliament | Organe, Scrutin, GroupeVote, VoteRecord, Deport | varies |
 | Elections & RNE | Elu, ElectionLegislative, CandidatLegislatif, PartiPolitique | ~601,514 |
 
-**~800,000+ rows across 29 models** (incl. StatLocale, BudgetLocal, ScrutinTag, StatCriminalite, DensiteMedicale added in Phases 1 + 5).
+**~800,000+ rows across 30 models** (incl. StatLocale, BudgetLocal, ScrutinTag, StatCriminalite, DensiteMedicale added in Phases 1 + 5; `ConflictSignal` added in Phase 7C).
 
 ### UI Status (all pages render correctly)
 
-53 routes across 10 sections (build verified Mar 2, 2026, Session 14):
+57 routes + 3 OG image endpoints across 12 sections (build verified Mar 2, 2026, Session 17):
 
 | Section | Routes |
 |---------|--------|
-| `/` | Homepage — dynamic headline, dossiers grid, recent votes, conflict alerts, DeptLookup + postal code CTA |
+| `/` | Homepage — dynamic headline, dossiers grid, recent votes, top conflict signals (ConflictSignal), DeptLookup + postal code CTA |
 | `/dossiers` | Hub + 8 thematic issue pages (pouvoir-dachat, confiance-democratique, dette-publique, emploi-jeunesse, logement, sante, transition-ecologique, retraites) |
-| `/representants` | Hub + Députés list/detail (4 tabs incl. Transparence) + Sénateurs list/detail + Lobbyistes list/detail + Élus locaux + Partis list/detail |
+| `/representants` | Hub + Députés list/detail (4 tabs incl. Transparence with ConflictSignal) + Sénateurs list/detail + Lobbyistes list/detail + Élus locaux + Partis list/detail |
 | `/gouvernance` | Redirects to `/representants` (HTTP 308) — Scrutins list/detail stay here |
 | `/votes` | Hub + par-sujet/[tag] (13 thèmes) + mon-depute lookup |
 | `/elections` | Hub + Législatives 2024 results |
@@ -45,6 +45,10 @@ The project is fully functional as of this handoff. Dev server runs, all data is
 | `/patrimoine` | Hub + Musées list/detail + Monuments list/detail |
 | `/president` | Macron profile — 4 tabs: Promesses (20 curated), Bilan Économique, Lobbying & Agenda, Déclarations HATVP |
 | `/mon-territoire` | Civic dashboard by postal code — 3-state: empty prompt / disambiguation / full dashboard (représentants, budget, santé, votes, patrimoine) |
+| `/recherche` | Full-text search — `search_index` materialized view (GIN, `french` stemming), entity type pills, color-coded result cards. Navbar `NavSearch` on desktop. |
+| `/comparer` | Comparison mode (Phase 7D) — `/comparer/territoires?a=75&b=93` side-by-side département comparison (3 states: empty picker / partial / full); `/comparer/deputes?a=PA*&b=PA*` deputy comparison (4 states incl. name-based search flow). `DeltaBadge` component. "Comparer →" links on `/territoire/[dept]` breadcrumb and `/representants/deputes/[id]` utility bar. |
+| OG images (Phase 7E) | `opengraph-image.tsx` in 3 routes: `/representants/deputes/[id]` (photo + stats), `/territoire/[departementCode]` (income/poverty/unemployment), `/gouvernance/scrutins/[id]` (vote bar + result badge). All use `runtime = "nodejs"` + `{ prisma }` named import. `1200×630` bureau-950 background with teal/rose accents. |
+| `/votes/alignements` | Party alignment matrix (Phase 7F) — `src/lib/alignment.ts` computes pairwise alignment rates via `$queryRaw` self-join on `GroupeVote`. Page shows: overview stats, color-coded heat map (teal=alliance, rose=opposition), top 5 allies, top 5 opponents, methodology note. Linked from `/votes` hub ("Matrice d'alignement →"). `revalidate = 86400`. |
 
 ---
 
@@ -70,12 +74,18 @@ pnpm ingest:elus         # 593K rows — uses 8GB heap via NODE_OPTIONS
 | File | Purpose |
 |------|---------|
 | [`ARCHITECTURAL-PLAN.md`](../ARCHITECTURAL-PLAN.md) | **Master blueprint** — citizen-centric redesign, dossier system, cross-reference engine, 5-phase implementation plan |
-| [`prisma/schema.prisma`](../prisma/schema.prisma) | 29 models — source of truth for DB structure |
+| [`arch-plan2.md`](../arch-plan2.md) | **Phase 7 plan** — 6 sub-phases (7A✅ 7B✅ 7C✅ 7D 7E 7F): search, conflict signals, comparison, OG images, alignment matrix |
+| [`prisma/schema.prisma`](../prisma/schema.prisma) | 30 models — source of truth for DB structure |
 | [`src/lib/db.ts`](../src/lib/db.ts) | Prisma singleton with `@prisma/adapter-pg` |
 | [`src/lib/dossier-config.ts`](../src/lib/dossier-config.ts) | 8 thematic dossier definitions (slug, label, tags, lobbyDomains, color, priority) |
 | [`src/lib/nuance-colors.ts`](../src/lib/nuance-colors.ts) | Political nuance code → CSS color/label mapping |
 | [`src/lib/format.ts`](../src/lib/format.ts) | French number/date formatting (7 functions) |
-| [`scripts/ingest.ts`](../scripts/ingest.ts) | Master ingestion orchestrator, 9 waves (Wave 5c: tag-scrutins, Wave 8: insee-local + budgets, Wave 9: criminalite + medecins) |
+| [`scripts/ingest.ts`](../scripts/ingest.ts) | Master ingestion orchestrator, 10 waves (Wave 5c: tag-scrutins, Wave 5d: compute-conflicts, Wave 8: insee-local + budgets, Wave 9: criminalite + medecins, Wave 10: refresh search_index) |
+| [`scripts/compute-conflicts.ts`](../scripts/compute-conflicts.ts) | Pre-computes `ConflictSignal` table — run after tag-scrutins. `pnpm compute:conflicts`. Exported `computeConflicts()` also called by orchestrator (Wave 5d). |
+| [`scripts/lib/sector-tag-map.ts`](../scripts/lib/sector-tag-map.ts) | 15 RegExp patterns mapping company names → ScrutinTag arrays. Used by `compute-conflicts.ts`. |
+| [`scripts/refresh-search.ts`](../scripts/refresh-search.ts) | Standalone `REFRESH MATERIALIZED VIEW search_index`. `pnpm refresh:search`. |
+| [`src/lib/search.ts`](../src/lib/search.ts) | `globalSearch()` — full-text search via `search_index` materialized view. `entityType` validated against allowlist before SQL interpolation. |
+| [`src/components/nav-search.tsx`](../src/components/nav-search.tsx) | Client component — compact navbar search form (`hidden md:flex`), navigates to `/recherche?q=...`. |
 | [`next.config.ts`](../next.config.ts) | HTTP 308 redirects: `/gouvernance/*` → `/representants/*` |
 | [`src/app/globals.css`](../src/app/globals.css) | Design tokens — bureau palette, teal/amber/rose accents |
 | [`src/app/layout.tsx`](../src/app/layout.tsx) | Root layout — navbar (7 links incl. Dossiers, Votes, Représentants), footer |
@@ -85,8 +95,8 @@ pnpm ingest:elus         # 593K rows — uses 8GB heap via NODE_OPTIONS
 | [`src/data/postal-codes.json`](../src/data/postal-codes.json) | Static map: 6,328 postal codes → INSEE commune code list (La Poste Hexasmal, 347KB) |
 | [`src/lib/postal-resolver.ts`](../src/lib/postal-resolver.ts) | Resolves postal code → `ResolvedTerritory[]` with ARM→COM parent resolution and deduplication |
 | [`src/app/mon-territoire/page.tsx`](../src/app/mon-territoire/page.tsx) | 3-state civic dashboard: empty prompt / disambiguation picker / full civic dashboard |
-| [`documentation/frontend.md`](frontend.md) | Full UI reference: all 53 routes, 22 components, design system |
-| [`documentation/schema.md`](schema.md) | Full DB reference: all 29 models with fields, indexes, row counts |
+| [`documentation/frontend.md`](frontend.md) | Full UI reference: all 54 routes, 23 components, design system |
+| [`documentation/schema.md`](schema.md) | Full DB reference: all 30 models with fields, indexes, row counts |
 | [`CLAUDE.md`](../CLAUDE.md) | Project rules and quick reference for Claude |
 
 ---
@@ -103,7 +113,7 @@ PostgreSQL 14 — database: datagouv
 
 No API routes used for UI — all pages are server components that call Prisma directly at render time. Zero client-side data fetching.
 
-**5 client components** (need `"use client"`): `SearchInput`, `Avatar`, `DeclarationSection`, `ProfileTabs`, `DeptLookup`.
+**6 client components** (need `"use client"`): `SearchInput`, `Avatar`, `DeclarationSection`, `ProfileTabs`, `DeptLookup`, `NavSearch`.
 
 **2 static data files** (no DB, curated by hand): `src/data/lobbyists-curated.ts` (10 orgs), `src/data/president-macron.ts` (20 promises + bio).
 
@@ -170,7 +180,7 @@ The platform has been fully redesigned from a **data-source browser** into a **c
 
 | Source | API | What It Adds |
 |--------|-----|-------------|
-| **INSEE Mélodi** | CSV (anonymous, no key needed) | Population, income, poverty, employment per département — replaces deprecated DDL API |
+| **INSEE Mélodi** | CSV (anonymous, no key needed) | Population, income, poverty, employment, **housing tenure** per département — replaces deprecated DDL API |
 | **INSEE BDM expansion** | SDMX (existing infra) | Inflation, wages, housing permits, debt trajectory (15+ series) |
 | **DGFIP Finances Locales** | CSV on data.gouv.fr | Commune/dept budgets since 2000 |
 | **SSMSI** | CSV on data.gouv.fr | Crime stats by département |
@@ -188,12 +198,12 @@ The platform has been fully redesigned from a **data-source browser** into a **c
 
 | Metric | Original | Achieved |
 |--------|---------|--------|
-| Models | 22 | **29** |
-| Total rows | ~800K | **~800K+** (BudgetLocal not yet ingested) |
-| Routes | 22 | **53** |
-| Components | 12 | **24** |
+| Models | 22 | **30** (incl. `ConflictSignal` — 7C) |
+| Total rows | ~800K | **~800K+** |
+| Routes | 22 | **57** (incl. `/recherche` 7B, `/comparer` 7D, `/votes/alignements` 7F) |
+| Components | 12 | **23** (incl. `NavSearch` — 7B) |
 | Data sources | 7 | **12** (added INSEE Mélodi, SSMSI, DREES, DGFIP) |
-| Cross-references | 0 | **5 systemic** (conflict, lobbying→votes, party finances, territory, deputy accountability) |
+| Cross-references | 0 | **5 systemic + 1 pre-computed** (conflict, lobbying→votes, party finances, territory, deputy accountability + `ConflictSignal` materialised table) |
 
 ### Remaining Work (low priority)
 
@@ -203,10 +213,14 @@ The platform has been fully redesigned from a **data-source browser** into a **c
 | Crime stats | `pnpm ingest:criminalite` | MEDIUM — StatCriminalite empty |
 | Medical density | `pnpm ingest:medecins` | MEDIUM — DensiteMedicale empty |
 | DEP 36 (Indre) retry | `pnpm ingest:insee-local` | LOW — lost to rate limit, 11/12 stats present |
-| Deputy profile enrichment | Edit `/representants/deputes/[id]/page.tsx` | MEDIUM — 3 items: (1) Activité tab: "Domaines d'activité" bar (ScrutinTag groupBy), (2) Transparence tab: lobby cross-reference (matchDomainToTag), (3) Déclarations tab: ConflictAlert when totalParticipations > 0 |
-| Senator profile enrichment | Edit `/representants/senateurs/[id]/page.tsx` | MEDIUM — 2 items: (1) New "Transparence" tab with DeclarationInteret × lobby cross-ref, (2) Déclarations tab: ConflictAlert |
+| Deputy profile enrichment | Edit `/representants/deputes/[id]/page.tsx` | MEDIUM — 2 remaining: (1) Activité tab: "Domaines d'activité" bar (ScrutinTag groupBy), (2) Transparence tab: lobby cross-reference (matchDomainToTag). Item 3 (ConflictAlert from `ConflictSignal`) ✅ DONE in 7C |
+| Senator profile enrichment | Edit `/representants/senateurs/[id]/page.tsx` | MEDIUM — 2 items: (1) New "Transparence" tab with DeclarationInteret × lobby cross-ref, (2) Déclarations tab: ConflictAlert using `ConflictSignal` |
+| Phase 7D — Comparison mode | `src/app/comparer/territoires/page.tsx` + `comparer/deputes/page.tsx` | ✅ DONE — side-by-side département or député comparison, `DeltaBadge` highlighting |
+| Phase 7E — OG images | `opengraph-image.tsx` in 3 dynamic routes | ✅ DONE — deputies, depts, scrutins (Session 17) |
+| Phase 7F — Alignment matrix | `src/app/votes/alignements/page.tsx` | ✅ DONE — heat map + `src/lib/alignment.ts` (Session 17) |
+| Run `pnpm compute:conflicts` | Post-ingestion | REQUIRED — `ConflictSignal` table is empty until this runs after `tag:scrutins`. Run once after full ingest. |
 
-**Full plan**: [`ARCHITECTURAL-PLAN.md`](../ARCHITECTURAL-PLAN.md)
+**Full plans**: [`ARCHITECTURAL-PLAN.md`](../ARCHITECTURAL-PLAN.md) (Phases 1–6) · [`arch-plan2.md`](../arch-plan2.md) (Phase 7)
 
 ---
 
@@ -215,13 +229,27 @@ The platform has been fully redesigned from a **data-source browser** into a **c
 ### Route duality: /gouvernance and /representants both exist
 Both directories serve content. `/gouvernance` has the original files (kept for scrutins at `/gouvernance/scrutins/*`). `/representants` is the canonical new path for deputes/senateurs/elus/lobbyistes/partis. HTTP 308 redirects in `next.config.ts` handle old `/gouvernance/*` URLs. Do not remove `/gouvernance/scrutins` — it's still the active route, linked from many pages.
 
-### StatLocale is populated (1,186 rows); BudgetLocal is populated (69,023 rows)
-`StatLocale` was ingested via `pnpm ingest:insee-local` (Session 8). No API key required — uses Mélodi "libre" plan anonymously. DEP 36 (Indre) is missing population rows due to rate-limit exhaustion; Mayotte (976) has no Mélodi data at all.
+### StatLocale is populated (1,408 rows); BudgetLocal is populated (69,023 rows)
+`StatLocale` was ingested via `pnpm ingest:insee-local`. No API key required — uses Mélodi "libre" plan anonymously. Mayotte (976) has no Mélodi data at all. A handful of depts (08, 18, 27, 33, 42, 50, 58, 68, 77, 94) occasionally lose 1–2 datasets to rate-limit exhaustion on burst runs — safe to re-run idempotently.
+
+**Indicators**: FILOSOFI (income/poverty 2021), RP Population (2022), RP Employment (2022), **RP Housing (2022 — Session 18/19)**. New housing indicators: `HOUSING_TOTAL` (NB), `HOUSING_VACANCY_RATE` (%), `HOUSING_SECONDARY_RATE` (%). Dataset: `DS_RP_LOGEMENT_PRINC` (OCS column: `_T` = total, `DW_VAC` = vacant, `DW_SEC_DW_OCC` = secondary). Avg vacancy rate 8.7%, avg secondary rate 11.5% across 95 depts.
+
+Housing data is now shown in:
+- `/dossiers/logement` — Section 3 "Parc immobilier par territoire" (two `RankingTable`s + 2 `IndicatorCard`s for national averages)
+- `/territoire/[departementCode]` — 2 new `StatCard`s in the Économie section (vacants + résidences secondaires)
 `BudgetLocal` was ingested via `pnpm ingest:budgets` (Session 12). Source: **OFGL Opendatasoft API** (original data.collectivites-locales.gouv.fr URLs were dead). 380 département records + 68,643 commune records (2022 + 2023 for ~34K communes). `/territoire/[dept]`, `/territoire/commune/[code]`, and `/dossiers/dette-publique` are now fully populated.
 
 ### ARM communes — postal code to commune resolution
 
 Paris (75001–75020), Lyon (1st–9th), and Marseille (1st–16th) are arrondissements in the COG with `typecom: "ARM"`. They have a `comparent` field pointing to the parent COM code (75056, 69123, 13055). When resolving postal codes (`src/lib/postal-resolver.ts`), ARM communes must be detected and replaced with their parent COM — otherwise you get arrondissement INSEE codes that don't represent the actual city. `src/data/postal-codes.json` maps postal codes to the raw INSEE codes from La Poste (which include ARM codes); the resolver does the parent substitution.
+
+### `search_index` materialized view — field name gotchas
+
+The migration SQL uses `Depute."groupe"` (not `groupePolitique`) and `Lobbyiste."categorieActivite"` (not `categorie`). Wrong field names in the view SQL cause silent empty strings (no error), not a build failure. The `globalSearch()` function in `src/lib/search.ts` uses an `entityType` allowlist — **never** interpolate raw user input into the SQL query. `REFRESH MATERIALIZED VIEW search_index` must be run after re-ingestion (`pnpm refresh:search` or automatically via Wave 10 in `pnpm ingest`).
+
+### `ConflictSignal` is empty until `compute:conflicts` runs
+
+After a fresh ingestion or after running `pnpm ingest:declarations` + `pnpm tag:scrutins`, you must run `pnpm compute:conflicts` to populate the `ConflictSignal` table. Until then, the homepage, `/dossiers/confiance-democratique`, and deputy Transparence tabs show empty states (graceful degradation, no errors). This is by design — the fallback to live `DeclarationInteret` queries is intentional.
 
 ### `{ prisma }` is a named export
 
@@ -239,6 +267,106 @@ The `Scrutin` model has `votes VoteRecord[]` — always use `votes` in Prisma wh
 ---
 
 ## Work History
+
+### Session 17 (Mar 2, 2026) — Sub-phases 7E + 7F: OG Images + Alignment Matrix
+
+**7E — Dynamic OG Image Templates** (+3 image endpoints, same route count):
+
+1. **`src/app/representants/deputes/[id]/opengraph-image.tsx`** (NEW) — 1200×630. Left: avatar (photoUrl or initials circle) + name + party + département. Right: 3 stat cards (participation %, vote count, conflict count — rose if >0). Bottom: branding bar.
+
+2. **`src/app/territoire/[departementCode]/opengraph-image.tsx`** (NEW) — 1200×630. Header: dept code + name + region. Stats row: revenu médian (teal), taux de pauvreté (rose if >20%), chômage (amber if >12%). Footer: deputeCount + senateurCount + eluCount. Fixed: `Departement` has no `regionNom` — uses `region: { select: { libelle: true } }` relation.
+
+3. **`src/app/gouvernance/scrutins/[id]/opengraph-image.tsx`** (NEW) — 1200×630. Badge: ADOPTÉ (teal) / REJETÉ (rose). Title truncated to 120 chars. Proportional pour/contre bar (800px total). Vote counts with percentages. Top accent line color matches result.
+
+All three: `export const runtime = "nodejs"` (Prisma needs Node runtime), `{ prisma }` named import, `export const size = { width: 1200, height: 630 }`, `export const contentType = "image/png"`, `params: Promise<...>` (Next.js 16 async params).
+
+**7F — Party Alignment Matrix** (+1 route → 57 total):
+
+4. **`src/lib/alignment.ts`** (NEW) — Exports `computeAlignment(minShared = 5)`. Uses `prisma.$queryRaw` with a CTE self-join on `GroupeVote` filtered to `Organe.codeType = 'GP'`. Dominant position = whichever of `pour`/`contre` is strictly higher; groups with `abstentions` as highest are excluded from that scrutin's pair count. Returns `{ pairs: AlignmentPair[], groups: GroupInfo[] }` with groups ordered by total vote volume (size proxy).
+
+5. **`src/app/votes/alignements/page.tsx`** (NEW, ~270 lines) — `revalidate = 86400`. Calls `computeAlignment()`. Renders: overview stat cards (groups, pairs, avg alignment, max shared scrutins), color legend, N×N heat map table (diagonal = 100% in teal, no-data = "—", data cells colored by rate with `title` tooltip showing raw counts), top 5 allies list (teal), top 5 opponents list (rose), methodology note. Empty state if no data (with `pnpm ingest:scrutins` hint). Color scale: ≥88% deep teal → ≥74% light teal → ≥56% neutral → ≥38% light rose → <38% deep rose.
+
+6. **`src/app/votes/page.tsx`** (MODIFIED) — Added "Matrice d'alignement →" link alongside existing "Trouver mon député →" in the tag grid header.
+
+**Build**: 57 routes (+ 3 OG image endpoints in build output), zero TypeScript errors.
+
+---
+
+### Session 16 (Mar 2, 2026) — Sub-phase 7D: Comparison Mode
+
+**7D — Comparison Mode** (+2 routes → 56 total):
+
+1. **`src/components/delta-badge.tsx`** (NEW) — `DeltaBadge` component. Shows percentage difference (`+N.N %` / `-N.N %`) in teal. Always shown on the "winning" side; caller decides which side that is. Props: `value` and `reference` (both nullable).
+
+2. **`src/app/comparer/territoires/page.tsx`** (NEW, ~380 lines) — 3-state département comparison:
+   - **State 1** (no params): picker form with two dept code inputs + 4 suggested comparisons.
+   - **State 2** (`?a=XX` only): left shows dept A summary card with key stats; right shows input form for dept B (form has `<input type="hidden" name="a">` so GET preserves both).
+   - **State 3** (`?a=XX&b=YY`): full comparison — split hero with both names, then `CompareSection` + `MetricRow` layout for Identité, Population, Économie, Budget, Santé, Représentation, Patrimoine. `DeltaBadge` shown on the better side; background `bg-teal/5` highlights the winning cell. `higherIsBetter=false` for poverty/debt/unemployment.
+
+3. **`src/app/comparer/deputes/page.tsx`** (NEW, ~420 lines) — 4-state deputy comparison:
+   - **State 1** (no params): search form for deputy A (`?qa=name`).
+   - **State `?qa=name`**: list of matching deputies to pick as A.
+   - **State `?a=PA*`**: shows deputy A card + search form for B (`?a=PA*&qb=name`).
+   - **State `?a=PA*&qb=name`**: shows deputy A + matching list for B.
+   - **State `?a=PA*&b=PA*`**: full comparison — scores, votes-by-tag side-by-side bars, transparence metrics, last 10 shared scrutins with accord/désaccord indicator. Deputy B values highlighted in amber (vs teal for deputy A) for visual distinction.
+
+4. **`src/app/territoire/[departementCode]/page.tsx`** (MODIFIED) — Added `Comparer →` link on right side of breadcrumb nav (`ml-auto`), pointing to `/comparer/territoires?a={code}`.
+
+5. **`src/app/representants/deputes/[id]/page.tsx`** (MODIFIED) — Added slim utility bar between `ProfileHero` and tab content with "Comparer avec un autre député →" link pointing to `/comparer/deputes?a={id}`.
+
+**Build**: 56 routes (55 in build output + `/_not-found`), zero TypeScript errors.
+
+---
+
+### Session 15 (Mar 2, 2026) — Sub-phases 7B + 7C: Global Search + ConflictSignal
+
+**7B — Global Search** (54 routes, +1 `/recherche`):
+
+1. **`prisma/migrations/20260302000000_add_search_index/migration.sql`** (NEW) — PostgreSQL `MATERIALIZED VIEW search_index` with GIN index (`french` text search). 6 entity types: `depute`, `senateur`, `lobbyiste`, `scrutin`, `commune` (COM only), `parti`. Critical field names: `Depute.groupe` (NOT `groupePolitique`), `Lobbyiste.categorieActivite` (NOT `categorie`).
+
+2. **`src/lib/search.ts`** (NEW) — `globalSearch(query, limit, entityType?)`. `entityType` validated against `VALID_ENTITY_TYPES` allowlist before SQL string interpolation — injection-safe. Returns `{ entityType, entityId, title, subtitle, url, rank }[]`.
+
+3. **`src/components/nav-search.tsx`** (NEW, client component) — Compact search form inserted in navbar. `hidden md:flex` — intentionally desktop-only (narrow-viewport "not visible" is expected behavior). Controlled input + `useRouter().push()` on submit (2-char min).
+
+4. **`src/app/recherche/page.tsx`** (NEW) — Results page: entity type pills (`?type=` param), color-coded cards per entity type, empty state (no `q`) + no-results state, `generateMetadata` with query in title.
+
+5. **`src/app/layout.tsx`** (MODIFIED) — `<NavSearch />` inserted between logo and nav links.
+
+6. **`scripts/ingest.ts`** (MODIFIED) — Wave 10 added (final step): `REFRESH MATERIALIZED VIEW search_index`.
+
+7. **`scripts/refresh-search.ts`** + `pnpm refresh:search` script added.
+
+**Key bug**: `Depute.groupePolitique` and `Lobbyiste.categorie` don't exist — correct fields are `groupe` and `categorieActivite`. Build fails silently in the migration SQL if wrong (view just returns empty subtitle string), but TypeScript would error in query code.
+
+---
+
+**7C — ConflictSignal** (no new routes):
+
+1. **`prisma/schema.prisma`** (MODIFIED) — New `ConflictSignal` model (30th model). Unique constraint: `(nom, prenom, typeMandat, secteurDeclaration, tag)`. `deputeId` is `String?` — `Depute.id` is `PA*` format, not integer.
+
+2. **`prisma/migrations/20260302120000_add_conflict_signal/migration.sql`** (NEW) — table + 4 indexes (typeMandat, tag, deputeId, participationCount DESC).
+
+3. **`scripts/lib/sector-tag-map.ts`** (NEW) — 15 RegExp patterns mapping company names from `ParticipationFinanciere.nomSociete` → ScrutinTag tag arrays (e.g., `/énergie|pétrole|nucléaire.../` → `["ecologie", "budget"]`).
+
+4. **`scripts/compute-conflicts.ts`** (NEW) — Exported `computeConflicts()`. Algorithm: load all `DeclarationInteret` with `totalParticipations > 0` + include `participations` → group by `nomSociete` → `matchSectorToTags()` → for each (deputeId, tag) count `VoteRecord` → upsert `ConflictSignal`. Also has `require.main === module` standalone entrypoint for `pnpm compute:conflicts`.
+
+5. **`scripts/ingest.ts`** (MODIFIED) — Wave 5d between tag-scrutins and ingestPhotos: `await computeConflicts()`.
+
+6. **`src/components/conflict-alert.tsx`** (MODIFIED) — Added `href` prop (takes precedence over `declarationId` for link), `votePour`/`voteContre` optional display props.
+
+7. **`src/app/page.tsx`** (MODIFIED) — Homepage "Alertes Transparence" now reads from `prisma.conflictSignal.findMany({ where: { voteCount: { gt: 0 } }, orderBy: { participationCount: "desc" }, take: 3 })` instead of live `declarationInteret` join.
+
+8. **`src/app/dossiers/confiance-democratique/page.tsx`** (MODIFIED) — New "Section 2 — Participations financières × votes" using `topConflictSignals` from `conflictSignal.findMany({ where: { voteCount: { gt: 0 } }, orderBy: { voteCount: "desc" }, take: 10 })`.
+
+9. **`src/app/representants/deputes/[id]/page.tsx`** (MODIFIED) — Transparence tab uses `conflictSignals` from `conflictSignal.findMany({ where: { deputeId: id } })` when populated; graceful fallback to live `DeclarationInteret` loop when table is empty.
+
+**Critical**: `pnpm db:generate` required after migration before `pnpm build` — regenerates Prisma client types. Build fails with `Property 'conflictSignal' does not exist on type 'PrismaClient'` otherwise.
+
+**Note**: `ConflictSignal` table is empty until `pnpm compute:conflicts` runs post-ingestion. All integration points have graceful empty-state fallbacks.
+
+**Build**: 54 routes, zero TypeScript errors.
+
+---
 
 ### Session 14 (Mar 2, 2026) — Sub-phase 7A: `/mon-territoire` — Civic Dashboard by Postal Code
 

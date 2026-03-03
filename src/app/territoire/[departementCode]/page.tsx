@@ -147,7 +147,8 @@ export default async function DepartementPage({
   const crimeStats = Array.from(crimeLatest.values()).slice(0, 4);
 
   const hasEconomie =
-    !!(statMap["MEDIAN_INCOME"] || statMap["POVERTY_RATE"] || statMap["UNEMPLOYMENT_RATE_LOCAL"]);
+    !!(statMap["MEDIAN_INCOME"] || statMap["POVERTY_RATE"] || statMap["UNEMPLOYMENT_RATE_LOCAL"] ||
+       statMap["HOUSING_VACANCY_RATE"] || statMap["HOUSING_SECONDARY_RATE"]);
   const hasSante = !!(mgDensite || crimeStats.length > 0);
 
   return (
@@ -162,6 +163,12 @@ export default async function DepartementPage({
             <Link href="/territoire" className="transition-colors hover:text-teal">Territoire</Link>
             <span className="text-bureau-700">/</span>
             <span className="text-bureau-300">{dept.libelle}</span>
+            <Link
+              href={`/comparer/territoires?a=${departementCode}`}
+              className="ml-auto text-teal/60 transition-colors hover:text-teal"
+            >
+              Comparer &rarr;
+            </Link>
           </nav>
 
           <div className="flex items-start justify-between gap-10">
@@ -248,6 +255,22 @@ export default async function DepartementPage({
                   value={fmtPct(statMap["UNEMPLOYMENT_RATE_LOCAL"].valeur)}
                   meta={`${statMap["UNEMPLOYMENT_RATE_LOCAL"].annee} · ${statMap["UNEMPLOYMENT_RATE_LOCAL"].source}`}
                   color="text-amber"
+                />
+              )}
+              {statMap["HOUSING_VACANCY_RATE"] && (
+                <StatCard
+                  label="Logements vacants"
+                  value={fmtPct(statMap["HOUSING_VACANCY_RATE"].valeur)}
+                  meta={`${statMap["HOUSING_VACANCY_RATE"].annee} · RP`}
+                  color="text-bureau-200"
+                />
+              )}
+              {statMap["HOUSING_SECONDARY_RATE"] && (
+                <StatCard
+                  label="Rés. secondaires"
+                  value={fmtPct(statMap["HOUSING_SECONDARY_RATE"].valeur)}
+                  meta={`${statMap["HOUSING_SECONDARY_RATE"].annee} · RP`}
+                  color="text-bureau-200"
                 />
               )}
             </div>

@@ -1,6 +1,6 @@
 # Frontend Implementation
 
-> Last updated: Mar 2, 2026 — Phase 6 + Session 14 (7A). 53 routes, 22 components.
+> Last updated: Mar 3, 2026 — Session 18 (7A–7F complete + QA). 57 routes + 3 OG image routes, 25 components.
 
 Complete reference for all UI pages, components, styling, and patterns.
 
@@ -11,7 +11,7 @@ Complete reference for all UI pages, components, styling, and patterns.
 - **Next.js 16** App Router — all pages are React Server Components by default
 - **Tailwind CSS 4** with custom theme tokens defined in `globals.css`
 - **No client-side data fetching** — every page queries Prisma directly at render time
-- **5 client components**: `SearchInput`, `Avatar`, `DeclarationSection`, `ProfileTabs`, `DeptLookup` (all use `"use client"`)
+- **7 client components**: `SearchInput`, `Avatar`, `DeclarationSection`, `ProfileTabs`, `DeptLookup`, `NavSearch`, `SearchBox` (all use `"use client"`)
 - **1 shared lib**: `nuance-colors.ts` — political party color mapping used by elections pages
 - **French localization** throughout: `<html lang="fr">`, `fr-FR` locale for numbers/dates
 - **ISR** (`export const revalidate = N`): homepage + votes = 3600s; dossiers + representants hub + economie + patrimoine + territoire hub = 86400s; profiles = dynamic (no revalidate)
@@ -79,7 +79,7 @@ Applied with: `font-[family-name:var(--font-display)]` for headings.
 
 [layout.tsx](../src/app/layout.tsx) provides the shell:
 
-- **Navbar**: Sticky top, backdrop-blur, SVG logo + "L'Observatoire" brand + **7 nav links** (Accueil, Dossiers, Représentants, Votes, Économie, Territoire, Patrimoine)
+- **Navbar**: Sticky top, backdrop-blur, SVG logo + "L'Observatoire" brand + **`NavSearch`** (always-visible search form — `flex`, not `hidden md:flex`) + **7 nav links** (Accueil, Dossiers, Représentants, Votes, Économie, Territoire, Patrimoine)
 - **Main**: `flex-1` content area
 - **Footer**: Data source attribution ("data.gouv.fr, INSEE, Senat, HATVP") + "L'Observatoire Citoyen 2025"
 - **Container**: `max-w-7xl px-6` on list pages; `max-w-4xl px-6` on profile detail pages (focused editorial width)
@@ -88,7 +88,7 @@ Applied with: `font-[family-name:var(--font-display)]` for headings.
 
 ---
 
-## Route Map (53 routes)
+## Route Map (57 routes + 3 OG image routes)
 
 ### Static (prerendered at build time)
 | Route | Purpose |
@@ -101,6 +101,7 @@ Applied with: `font-[family-name:var(--font-display)]` for headings.
 | `/territoire` | Browser — regions with department cards |
 | `/patrimoine` | Hub — top 10 museums + monument domains |
 | `/votes` | Votes hub — 13 topic grid + recent scrutins |
+| `/votes/alignements` | Alignment matrix — N×N group co-vote heatmap, top 5 allies/opponents per group (ISR 86400) |
 | `/president` | Macron profile — 4 tabs: Promesses (20 curated), Bilan Économique, Lobbying & Agenda, Déclarations HATVP |
 
 ### Dossiers (8 dynamic pages)
@@ -140,22 +141,45 @@ Applied with: `font-[family-name:var(--font-display)]` for headings.
 | `/votes` | Tag grid (13 topics), stats, recent scrutins |
 | `/votes/par-sujet/[tag]` | Tag-filtered scrutins, pagination, vote bars, related tags |
 | `/votes/mon-depute` | 3-state deputy lookup: empty → list → detail with tag breakdown |
+| `/votes/alignements` | N×N group alignment heatmap. Backed by `src/lib/alignment.ts` (`computeAlignment()`). Top 5 allies (teal) and opponents (rose) per group. ISR 86400. |
+
+### Comparaisons (Phase 7D)
+| Route | Key Features |
+|-------|-------------|
+| `/comparer/territoires` | 3-state dept comparison. State 1: two code inputs + suggestions. State 2 (`?a=XX`): dept A shown + B form. State 3 (`?a=XX&b=YY`): full comparison — `MetricRow` layout, `DeltaBadge` on winning side. |
+| `/comparer/deputes` | 4-state deputy comparison. State 1: name search `?qa=`. State 2 (`?a=PA*`): A shown + B search. State 3 (`?a=PA*&b=PA*`): comparison with scores, tag bars, transparence, shared scrutins (accord/désaccord). Deputy B values in amber. |
 
 ### Mon Territoire
 | Route | Key Features |
 |-------|-------------|
 | `/mon-territoire` | 3-state civic dashboard: empty prompt (postal input) → disambiguation picker → full dashboard (représentants, économie, budget, santé & sécurité, votes, patrimoine, explorer plus) |
 
+### Recherche (Session 15/18 — 7B)
+| Route | Key Features |
+|-------|-------------|
+| `/recherche` | Full-text search across 800K+ rows — entity type pills (Tous / Députés / Sénateurs / Lobbyistes / Scrutins / Communes / Partis), color-coded result cards. URL-driven: `?q=` + `?type=`. Backed by `search_index` materialized view (GIN, `french` stemming). Static injection: "Emmanuel Macron → /president" for queries matching `macron`/`president`/`elysee`/`manu`. |
+
 ### Territory & Economy
 | Route | Key Features |
 |-------|-------------|
-| `/territoire/[departementCode]` | Full département dashboard: demographics, economy, budget, representatives, culture, security/health |
+| `/territoire/[departementCode]` | Full département dashboard: demographics, economy, budget, representatives, culture, security/health. Has "Comparer →" link in breadcrumb. |
 | `/territoire/commune/[communeCode]` | Commune card: elu list, budget, patrimoine |
 | `/elections/legislatives-2024` | Tour switcher, dept filter, nuance bars, candidate list |
 | `/patrimoine/musees` | Search, pagination |
 | `/patrimoine/musees/[id]` | SVG bar chart, attendance table |
 | `/patrimoine/monuments` | Search, protection type filter, pagination |
 | `/patrimoine/monuments/[id]` | Info panel, GPS link, description/historique |
+
+### OG Image Routes (Phase 7E)
+Next.js `opengraph-image.tsx` files — `runtime = "nodejs"`, 1200×630, inline styles only (no Tailwind).
+
+| Route | Key Data |
+|-------|----------|
+| `/representants/deputes/[id]/opengraph-image` | Initials monogram + name + groupe + participation % + vote count + conflict count |
+| `/territoire/[departementCode]/opengraph-image` | Dept + region name + 3 INSEE indicators (MEDIAN_INCOME, POVERTY_RATE, UNEMPLOYMENT_RATE) + counts (deputés, sénateurs, élus) |
+| `/gouvernance/scrutins/[id]/opengraph-image` | Result badge (ADOPTÉ green / REJETÉ red) + truncated title + pour/contre bar + vote counts |
+
+**Critical rule**: never use remote `<img src>` in satori/ImageResponse — network failures crash the route with `chrome-error://chromewebdata/`. Always use initials or inline SVG.
 
 ---
 
@@ -441,6 +465,30 @@ Ranked bar visualization for département data. Renders a vertical bar chart (no
 
 ---
 
+#### `NavSearch` — Client Component (Session 15/18 — 7B)
+
+**File**: [nav-search.tsx](../src/components/nav-search.tsx)
+
+```typescript
+// No props — self-contained
+```
+
+Compact search input in the navbar. Always `flex` (not `hidden md:flex`). Uses `useRef` to read DOM value + `onKeyDown` on the input (Enter) + `type="button"` `onClick` on the magnifier icon — no `<form>` wrapper. Navigates to `/recherche?q=<value>` via `useRouter`. Min 2-char enforced. Styled: `w-44 border-bureau-700/50 bg-bureau-800/60 focus:border-teal-500/60`.
+
+---
+
+#### `SearchBox` — Client Component (Session 18 — 7B fix)
+
+**File**: [search-box.tsx](../src/components/search-box.tsx)
+
+```typescript
+{ defaultValue?: string }
+```
+
+Full-width search input for the `/recherche` page. Same pattern as `NavSearch`: `useRef` + `onKeyDown` + `type="button"` `onClick`, no `<form>`. Accepts `defaultValue` for pre-filled queries. Used with `key={q}` on the parent to force remount when query changes (ensures `defaultValue` resets). Styled: `w-full rounded-xl py-2.5 pl-10 pr-4`.
+
+---
+
 #### `TimelineChart` — Server Component
 
 **File**: [timeline-chart.tsx](../src/components/timeline-chart.tsx)
@@ -450,6 +498,18 @@ Ranked bar visualization for département data. Renders a vertical bar chart (no
 ```
 
 SVG polyline chart for time-series data. Gradient fill below line. `showEvery` controls x-axis label density. Server-rendered (no interactivity needed). Used on `/votes/mon-depute` and dossier pages.
+
+---
+
+#### `DeltaBadge` — Server Component (Phase 7D)
+
+**File**: [delta-badge.tsx](../src/components/delta-badge.tsx)
+
+```typescript
+{ value: number | null; reference: number | null }
+```
+
+Shows a % difference between `value` and `reference`. Always teal (call only for the winning/better side). Returns null if either input is null or reference is 0. Used in `/comparer/territoires` `MetricRow` layout.
 
 ---
 
@@ -725,65 +785,72 @@ List pages: `max-w-7xl px-6`. Profile detail pages: `max-w-4xl px-6` (focused ed
 
 ---
 
-## Build Output (Session 14 — 53 routes)
+## Build Output (Session 18 — 57 routes + 3 OG)
 
 ```
-Route (app)                                         Type
-┌ ○ /                                               Static (ISR 3600)
-├ ○ /dossiers                                       Static (ISR 86400)
-├ ƒ /dossiers/confiance-democratique                Dynamic
-├ ƒ /dossiers/dette-publique                        Dynamic
-├ ƒ /dossiers/emploi-jeunesse                       Dynamic
-├ ƒ /dossiers/logement                              Dynamic
-├ ƒ /dossiers/pouvoir-dachat                        Dynamic
-├ ƒ /dossiers/retraites                             Dynamic
-├ ƒ /dossiers/sante                                 Dynamic
-├ ƒ /dossiers/transition-ecologique                 Dynamic
-├ ○ /representants                                  Static (ISR 86400)
-├ ƒ /representants/deputes                          Dynamic
-├ ƒ /representants/deputes/[id]                     Dynamic
-├ ƒ /representants/elus                             Dynamic
-├ ƒ /representants/elus/maires                      Dynamic
-├ ƒ /representants/lobbyistes                       Dynamic
-├ ƒ /representants/lobbyistes/[id]                  Dynamic
-├ ƒ /representants/partis                           Dynamic
-├ ƒ /representants/partis/[id]                      Dynamic
-├ ƒ /representants/scrutins                         Dynamic
-├ ƒ /representants/scrutins/[id]                    Dynamic
-├ ƒ /representants/senateurs                        Dynamic
-├ ƒ /representants/senateurs/[id]                   Dynamic
-├ ○ /gouvernance                                    Static (legacy)
-├ ƒ /gouvernance/deputes                            Dynamic (legacy)
-├ ƒ /gouvernance/deputes/[id]                       Dynamic (legacy)
-├ ƒ /gouvernance/elus                               Dynamic (legacy)
-├ ƒ /gouvernance/elus/maires                        Dynamic (legacy)
-├ ƒ /gouvernance/lobbyistes                         Dynamic (legacy)
-├ ƒ /gouvernance/lobbyistes/[id]                    Dynamic (legacy)
-├ ƒ /gouvernance/partis                             Dynamic (legacy)
-├ ƒ /gouvernance/partis/[id]                        Dynamic (legacy)
-├ ƒ /gouvernance/scrutins                           Dynamic (legacy, still active)
-├ ƒ /gouvernance/scrutins/[id]                      Dynamic (legacy, still active)
-├ ƒ /gouvernance/senateurs                          Dynamic (legacy)
-├ ƒ /gouvernance/senateurs/[id]                     Dynamic (legacy)
-├ ○ /votes                                          Static (ISR 3600)
-├ ƒ /votes/mon-depute                               Dynamic
-├ ƒ /votes/par-sujet/[tag]                          Dynamic
-├ ○ /elections                                      Static
-├ ƒ /elections/legislatives-2024                    Dynamic
-├ ○ /economie                                       Static (ISR 86400)
-├ ○ /territoire                                     Static (ISR 86400)
-├ ƒ /territoire/[departementCode]                   Dynamic
-├ ƒ /territoire/commune/[communeCode]               Dynamic
-├ ○ /patrimoine                                     Static (ISR 86400)
-├ ƒ /patrimoine/monuments                           Dynamic
-├ ƒ /patrimoine/monuments/[id]                      Dynamic
-├ ƒ /patrimoine/musees                              Dynamic
-├ ƒ /patrimoine/musees/[id]                         Dynamic
-├ ○ /president                                      Static (Phase 6)
-└ ƒ /mon-territoire                                 Dynamic (Session 14)
+Route (app)                                                   Type
+┌ ○ /                                                         Static (ISR 3600)
+├ ○ /dossiers                                                 Static (ISR 86400)
+├ ƒ /dossiers/confiance-democratique                          Dynamic
+├ ƒ /dossiers/dette-publique                                  Dynamic
+├ ƒ /dossiers/emploi-jeunesse                                 Dynamic
+├ ƒ /dossiers/logement                                        Dynamic
+├ ƒ /dossiers/pouvoir-dachat                                  Dynamic
+├ ƒ /dossiers/retraites                                       Dynamic
+├ ƒ /dossiers/sante                                           Dynamic
+├ ƒ /dossiers/transition-ecologique                           Dynamic
+├ ○ /representants                                            Static (ISR 86400)
+├ ƒ /representants/deputes                                    Dynamic
+├ ƒ /representants/deputes/[id]                               Dynamic
+├ ƒ /representants/deputes/[id]/opengraph-image               Dynamic (OG — 7E)
+├ ƒ /representants/elus                                       Dynamic
+├ ƒ /representants/elus/maires                                Dynamic
+├ ƒ /representants/lobbyistes                                 Dynamic
+├ ƒ /representants/lobbyistes/[id]                            Dynamic
+├ ƒ /representants/partis                                     Dynamic
+├ ƒ /representants/partis/[id]                                Dynamic
+├ ƒ /representants/scrutins                                   Dynamic
+├ ƒ /representants/scrutins/[id]                              Dynamic
+├ ƒ /representants/senateurs                                  Dynamic
+├ ƒ /representants/senateurs/[id]                             Dynamic
+├ ○ /gouvernance                                              Static (legacy)
+├ ƒ /gouvernance/deputes                                      Dynamic (legacy)
+├ ƒ /gouvernance/deputes/[id]                                 Dynamic (legacy)
+├ ƒ /gouvernance/elus                                         Dynamic (legacy)
+├ ƒ /gouvernance/elus/maires                                  Dynamic (legacy)
+├ ƒ /gouvernance/lobbyistes                                   Dynamic (legacy)
+├ ƒ /gouvernance/lobbyistes/[id]                              Dynamic (legacy)
+├ ƒ /gouvernance/partis                                       Dynamic (legacy)
+├ ƒ /gouvernance/partis/[id]                                  Dynamic (legacy)
+├ ƒ /gouvernance/scrutins                                     Dynamic (legacy, still active)
+├ ƒ /gouvernance/scrutins/[id]                                Dynamic (legacy, still active)
+├ ƒ /gouvernance/scrutins/[id]/opengraph-image                Dynamic (OG — 7E)
+├ ƒ /gouvernance/senateurs                                    Dynamic (legacy)
+├ ƒ /gouvernance/senateurs/[id]                               Dynamic (legacy)
+├ ƒ /recherche                                                Dynamic (7B + Session 18)
+├ ○ /votes                                                    Static (ISR 3600)
+├ ○ /votes/alignements                                        Static (ISR 86400 — 7F)
+├ ƒ /votes/mon-depute                                         Dynamic
+├ ƒ /votes/par-sujet/[tag]                                    Dynamic
+├ ƒ /comparer/territoires                                     Dynamic (7D)
+├ ƒ /comparer/deputes                                         Dynamic (7D)
+├ ○ /elections                                                Static
+├ ƒ /elections/legislatives-2024                              Dynamic
+├ ○ /economie                                                 Static (ISR 86400)
+├ ○ /territoire                                               Static (ISR 86400)
+├ ƒ /territoire/[departementCode]                             Dynamic
+├ ƒ /territoire/[departementCode]/opengraph-image             Dynamic (OG — 7E)
+├ ƒ /territoire/commune/[communeCode]                         Dynamic
+├ ○ /patrimoine                                               Static (ISR 86400)
+├ ƒ /patrimoine/monuments                                     Dynamic
+├ ƒ /patrimoine/monuments/[id]                                Dynamic
+├ ƒ /patrimoine/musees                                        Dynamic
+├ ƒ /patrimoine/musees/[id]                                   Dynamic
+├ ○ /president                                                Static (Phase 6)
+└ ƒ /mon-territoire                                           Dynamic (7A)
 ```
 
-9 static + 44 dynamic = 53 routes.
+10 static + 47 dynamic = 57 routes. Plus 3 OG image routes = 60 total in build output.
 
 ---
 
@@ -809,7 +876,9 @@ src/
 │   │   ├── page.tsx             # Hub (ISR 86400)
 │   │   ├── deputes/
 │   │   │   ├── page.tsx         # List + group/dept filters
-│   │   │   └── [id]/page.tsx    # Hero + tabs (activite/declarations/transparence/infos)
+│   │   │   └── [id]/
+│   │   │       ├── page.tsx             # Hero + tabs (activite/declarations/transparence/infos)
+│   │   │       └── opengraph-image.tsx  # OG 1200×630: initials + name + stats (7E)
 │   │   ├── senateurs/
 │   │   │   ├── page.tsx
 │   │   │   └── [id]/page.tsx
@@ -833,11 +902,18 @@ src/
 │   │   ├── partis/[id]/page.tsx
 │   │   └── scrutins/
 │   │       ├── page.tsx
-│   │       └── [id]/page.tsx
+│   │       ├── [id]/page.tsx
+│   │       └── [id]/opengraph-image.tsx  # OG 1200×630: result badge + title + vote bar (7E)
+│   ├── recherche/
+│   │   └── page.tsx             # Full-text search + president static injection (7B + Session 18)
 │   ├── votes/
 │   │   ├── page.tsx             # Hub (ISR 3600)
+│   │   ├── alignements/page.tsx # N×N alignment heatmap (ISR 86400 — 7F)
 │   │   ├── par-sujet/[tag]/page.tsx
 │   │   └── mon-depute/page.tsx
+│   ├── comparer/
+│   │   ├── territoires/page.tsx # 3-state dept comparison (7D)
+│   │   └── deputes/page.tsx     # 4-state deputy comparison (7D)
 │   ├── elections/
 │   │   ├── page.tsx
 │   │   └── legislatives-2024/page.tsx
@@ -845,7 +921,9 @@ src/
 │   │   └── page.tsx             # ISR 86400
 │   ├── territoire/
 │   │   ├── page.tsx             # ISR 86400
-│   │   ├── [departementCode]/page.tsx  # Full dashboard
+│   │   ├── [departementCode]/
+│   │   │   ├── page.tsx                # Full dashboard + "Comparer →" link
+│   │   │   └── opengraph-image.tsx     # OG 1200×630: dept + region + 3 INSEE indicators (7E)
 │   │   └── commune/[communeCode]/page.tsx
 │   ├── president/
 │   │   └── page.tsx             # Macron profile — 4 tabs (Phase 6)
@@ -865,7 +943,10 @@ src/
 │   ├── indicator-card.tsx       # Server: KPI tile with trend arrow
 │   ├── topic-vote-list.tsx      # Server: scrutins filtered by tag
 │   ├── lobbying-density.tsx     # Server: domain-filtered lobbying summary
-│   ├── conflict-alert.tsx       # Server: cross-reference finding alert
+│   ├── conflict-alert.tsx       # Server: cross-reference finding alert (href + votePour/voteContre — 7C)
+│   ├── delta-badge.tsx          # Server: % difference badge, always teal (7D)
+│   ├── nav-search.tsx           # Client: navbar search, always flex, useRef+onKeyDown (7B/Session 18)
+│   ├── search-box.tsx           # Client: /recherche page search input (Session 18)
 │   ├── ranking-table.tsx        # Server: département ranking by indicator
 │   ├── dept-lookup.tsx          # Client: dept search → territoire redirect
 │   ├── dept-map.tsx             # Server: ranked bar visualization for dept data
@@ -891,6 +972,8 @@ src/
     ├── dossier-config.ts        # Dossier metadata (slug, label, tags, lobbyDomains)
     ├── format.ts                # French number/date formatting (7 functions)
     ├── nuance-colors.ts         # Political nuance code → { color, bg, label } mapping
+    ├── alignment.ts             # computeAlignment(): $queryRaw CTE self-join on GroupeVote (7F)
     ├── postal-resolver.ts       # resolvePostalCode(): CP → ResolvedTerritory[] (Session 14)
-    └── president-utils.ts       # getBaselineObservation() + computeDelta() (Phase 6)
+    ├── president-utils.ts       # getBaselineObservation() + computeDelta() (Phase 6)
+    └── search.ts                # globalSearch(): search_index view + president static injection (7B/Session 18)
 ```

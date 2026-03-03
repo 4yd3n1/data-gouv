@@ -21,6 +21,7 @@ import {
   fetchFilosofiDep,
   fetchPopulationDep,
   fetchEmploiDep,
+  fetchLogementDep,
   type InseeLocalValue,
 } from "./lib/insee-client";
 
@@ -69,14 +70,15 @@ export async function ingestInseeLocal() {
       const label = dept.libelle;
       processed++;
 
-      // Fetch all 3 datasets for this département (rate-limited internally)
-      const [filosofiValues, popValues, emploiValues] = await Promise.all([
+      // Fetch all 4 datasets for this département (rate-limited internally)
+      const [filosofiValues, popValues, emploiValues, logementValues] = await Promise.all([
         fetchFilosofiDep(code),
         fetchPopulationDep(code),
         fetchEmploiDep(code),
+        fetchLogementDep(code),
       ]);
 
-      const allValues = [...filosofiValues, ...popValues, ...emploiValues];
+      const allValues = [...filosofiValues, ...popValues, ...emploiValues, ...logementValues];
       const upserted = await upsertStatLocale(allValues);
       totalRows += upserted;
 
@@ -96,6 +98,7 @@ export async function ingestInseeLocal() {
         filosofiDataset: "DS_FILOSOFI_CC",
         populationDataset: "DS_RP_POPULATION_PRINC",
         emploiDataset: "DS_RP_EMPLOI_LR_PRINC",
+        logementDataset: "DS_RP_LOGEMENT_PRINC",
       },
     };
   });

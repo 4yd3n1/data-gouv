@@ -190,6 +190,66 @@ export async function fetchPopulationDep(
   }
 }
 
+// ─── Housing stock per département ───
+// Dataset: DS_RP_LOGEMENT_PRINC (Recensement 2022)
+// OCS codes: _T=total | DW_MAIN=main residences | DW_VAC=vacant | DW_SEC_DW_OCC=secondary
+// Computes vacancy rate and secondary homes rate from dwelling counts.
+
+export async function fetchLogementDep(
+  depCode: string
+): Promise<InseeLocalValue[]> {
+  const url = `${INSEE_BASE}/data/DS_RP_LOGEMENT_PRINC/to-csv?GEO=DEP-${depCode}&TIME_PERIOD=2022&L_STAY=_T&TDW=_T&NRG_SRC=_T&CARS=_T&CARPARK=_T&NOR=_T&TSH=_T&BUILD_END=_T&RP_MEASURE=DWELLINGS`;
+
+  try {
+    const text = await fetchWithRetry(url);
+    const rows = parseCsv(text);
+
+    let total = 0;
+    let vacant = 0;
+    let secondary = 0;
+    let annee = 2022;
+
+    for (const row of rows) {
+      if (row["GEO_OBJECT"] !== "DEP") continue;
+      if (row["RP_MEASURE"] !== "DWELLINGS") continue;
+      const val = parseFloat(row["OBS_VALUE"]?.replace(",", ".") ?? "");
+      if (isNaN(val)) continue;
+      annee = parseInt(row["TIME_PERIOD"], 10) || 2022;
+
+      switch (row["OCS"]) {
+        case "_T":           total     = val; break;
+        case "DW_VAC":       vacant    = val; break;
+        case "DW_SEC_DW_OCC": secondary = val; break;
+      }
+    }
+
+    const results: InseeLocalValue[] = [];
+    const geoCode = depCode;
+
+    if (total > 0) {
+      results.push({
+        geoType: "DEP", geoCode, indicateur: "HOUSING_TOTAL",
+        annee, valeur: Math.round(total), unite: "NB", source: "RP",
+      });
+      results.push({
+        geoType: "DEP", geoCode, indicateur: "HOUSING_VACANCY_RATE",
+        annee, valeur: Math.round((vacant / total) * 1000) / 10,
+        unite: "%", source: "RP",
+      });
+      results.push({
+        geoType: "DEP", geoCode, indicateur: "HOUSING_SECONDARY_RATE",
+        annee, valeur: Math.round((secondary / total) * 1000) / 10,
+        unite: "%", source: "RP",
+      });
+    }
+
+    return results;
+  } catch (err) {
+    console.warn(`  [INSEE] Logement fetch failed for DEP ${depCode}: ${err}`);
+    return [];
+  }
+}
+
 // ─── Employment rates per département ───
 // Dataset: DS_RP_EMPLOI_LR_PRINC (Recensement 2022)
 // Computes unemployment, activity, and employment rates from EMPSTA_ENQ counts.

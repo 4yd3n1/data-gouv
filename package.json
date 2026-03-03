@@ -32,7 +32,9 @@
     "ingest:insee-local": "tsx scripts/ingest-insee-local.ts",
     "ingest:budgets": "tsx scripts/ingest-budgets.ts",
     "ingest:criminalite": "tsx scripts/ingest-criminalite.ts",
-    "ingest:medecins": "tsx scripts/ingest-medecins.ts"
+    "ingest:medecins": "tsx scripts/ingest-medecins.ts",
+    "compute:conflicts": "tsx scripts/compute-conflicts.ts",
+    "refresh:search": "tsx scripts/refresh-search.ts"
   },
   "keywords": [],
   "author": "",

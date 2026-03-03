@@ -14,6 +14,7 @@ export default async function ConfianceDemocratiqueePage() {
 
   const [
     topDeclarations,
+    topConflictSignals,
     declarationCount,
     totalLobbyActions,
     totalLobbyOrgs,
@@ -39,6 +40,12 @@ export default async function ConfianceDemocratiqueePage() {
         totalParticipations: true,
         organe: true,
       },
+    }),
+    // Top 10 conflict signals — sorted by vote count to highlight the most active cases
+    prisma.conflictSignal.findMany({
+      where: { voteCount: { gt: 0 } },
+      orderBy: { voteCount: "desc" },
+      take: 10,
     }),
     // Count of declarations with participations > 0
     prisma.declarationInteret.count({
@@ -219,7 +226,40 @@ export default async function ConfianceDemocratiqueePage() {
           )}
         </section>
 
-        {/* Section 2 — Activité lobbying */}
+        {/* Section 2 — Croisement participations × votes */}
+        {topConflictSignals.length > 0 && (
+          <section>
+            <div className="mb-6">
+              <h2 className="font-[family-name:var(--font-display)] text-2xl text-bureau-100">
+                Participations financières × votes
+              </h2>
+              <p className="mt-1 text-sm text-bureau-500">
+                Élus ayant voté sur des textes législatifs dans des domaines où ils ont des intérêts financiers déclarés — croisement HATVP × AN
+              </p>
+            </div>
+            <div className="space-y-3">
+              {topConflictSignals.map((signal) => (
+                <ConflictAlert
+                  key={signal.id}
+                  deputyName={`${signal.prenom} ${signal.nom}`}
+                  sector={signal.secteurDeclaration}
+                  participationTotal={signal.totalMontant ?? 0}
+                  relatedVoteCount={signal.voteCount}
+                  votePour={signal.votePour}
+                  voteContre={signal.voteContre}
+                  typeMandat={signal.typeMandat}
+                  href={
+                    signal.deputeId
+                      ? `/representants/deputes/${signal.deputeId}?tab=transparence`
+                      : undefined
+                  }
+                />
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Section 3 — Activité lobbying */}
         <section>
           <div className="mb-6">
             <h2 className="font-[family-name:var(--font-display)] text-2xl text-bureau-100">
@@ -256,7 +296,7 @@ export default async function ConfianceDemocratiqueePage() {
           </div>
         </section>
 
-        {/* Section 3 — Financement des partis */}
+        {/* Section 4 — Financement des partis */}
         <section>
           <div className="mb-6">
             <h2 className="font-[family-name:var(--font-display)] text-2xl text-bureau-100">
@@ -314,7 +354,7 @@ export default async function ConfianceDemocratiqueePage() {
           )}
         </section>
 
-        {/* Section 4 — Article 49.3 et motions de censure */}
+        {/* Section 5 — Article 49.3 et motions de censure */}
         <section>
           <div className="mb-6">
             <h2 className="font-[family-name:var(--font-display)] text-2xl text-bureau-100">

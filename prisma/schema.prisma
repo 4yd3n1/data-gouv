@@ -746,6 +746,32 @@ model DensiteMedicale {
   @@index([annee])
 }
 
+// ─── Conflict Signals (pre-computed cross-reference: declarations × votes) ───
+
+model ConflictSignal {
+  id                 String    @id @default(cuid())
+  nom                String
+  prenom             String
+  typeMandat         String    // "Député", "Sénateur"
+  deputeId           String?   // Depute.id (PA* format) when typeMandat == "Député"
+  secteurDeclaration String    // company name from ParticipationFinanciere.nomSociete
+  participationCount Int
+  totalMontant       Float?
+  tag                String    // ScrutinTag tag value
+  voteCount          Int
+  votePour           Int
+  voteContre         Int
+  voteAbstention     Int
+  lastScrutinDate    DateTime?
+  computedAt         DateTime  @default(now())
+
+  @@unique([nom, prenom, typeMandat, secteurDeclaration, tag])
+  @@index([typeMandat])
+  @@index([tag])
+  @@index([deputeId])
+  @@index([participationCount(sort: Desc)])
+}
+
 // ─── System ───
 
 model IngestionLog {

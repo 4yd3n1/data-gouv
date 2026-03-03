@@ -104,12 +104,20 @@ export default async function VotesPage() {
             <h2 className="text-xs font-semibold uppercase tracking-[0.15em] text-bureau-500">
               Par thème législatif
             </h2>
-            <Link
-              href="/votes/mon-depute"
-              className="rounded-lg border border-teal/30 bg-teal/5 px-3 py-1.5 text-xs text-teal transition-colors hover:bg-teal/10"
-            >
-              Trouver mon député &rarr;
-            </Link>
+            <div className="flex items-center gap-3">
+              <Link
+                href="/votes/alignements"
+                className="rounded-lg border border-bureau-600/30 bg-bureau-800/20 px-3 py-1.5 text-xs text-bureau-300 transition-colors hover:bg-bureau-800/40"
+              >
+                Matrice d'alignement &rarr;
+              </Link>
+              <Link
+                href="/votes/mon-depute"
+                className="rounded-lg border border-teal/30 bg-teal/5 px-3 py-1.5 text-xs text-teal transition-colors hover:bg-teal/10"
+              >
+                Trouver mon député &rarr;
+              </Link>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">

@@ -60,7 +60,7 @@ export default async function DeputeDetailPage({
   });
   if (!d) notFound();
 
-  const [votes, deports, declarations, scrutinTagCounts, taggedVoteCount] = await Promise.all([
+  const [votes, deports, declarations, scrutinTagCounts, taggedVoteCount, conflictSignals] = await Promise.all([
     prisma.voteRecord.findMany({
       where: { deputeId: id },
       include: { scrutin: true },
@@ -84,6 +84,10 @@ export default async function DeputeDetailPage({
     }),
     prisma.voteRecord.count({
       where: { deputeId: id, scrutin: { tags: { some: {} } } },
+    }),
+    prisma.conflictSignal.findMany({
+      where: { deputeId: id },
+      orderBy: { voteCount: "desc" },
     }),
   ]);
 
@@ -140,6 +144,18 @@ export default async function DeputeDetailPage({
           />
         </Suspense>
       </ProfileHero>
+
+      {/* Utility bar */}
+      <div className="border-b border-bureau-700/20 bg-bureau-900/30">
+        <div className="mx-auto max-w-4xl px-6 py-2 flex justify-end">
+          <Link
+            href={`/comparer/deputes?a=${d.id}`}
+            className="text-xs text-bureau-500 transition-colors hover:text-teal"
+          >
+            Comparer avec un autre d&eacute;put&eacute; &rarr;
+          </Link>
+        </div>
+      </div>
 
       {/* Tab content */}
       <div className="mx-auto max-w-4xl px-6 py-8">
@@ -258,26 +274,38 @@ export default async function DeputeDetailPage({
                     </div>
                   </div>
                   <div className="space-y-3">
-                    {conflictDeclarations.map((decl) => {
-                      const sector =
-                        decl.participations.length > 0
-                          ? decl.participations
-                              .map((p) => p.nomSociete)
-                              .slice(0, 2)
-                              .join(", ")
-                          : (decl.organe ?? decl.typeMandat);
-                      return (
-                        <ConflictAlert
-                          key={decl.id}
-                          declarationId={decl.id}
-                          deputyName={`${d.prenom} ${d.nom}`}
-                          sector={sector}
-                          participationTotal={decl.totalParticipations ?? 0}
-                          relatedVoteCount={taggedVoteCount}
-                          typeMandat={decl.typeMandat}
-                        />
-                      );
-                    })}
+                    {conflictSignals.length > 0
+                      ? conflictSignals.map((signal) => (
+                          <ConflictAlert
+                            key={signal.id}
+                            deputyName={`${d.prenom} ${d.nom}`}
+                            sector={signal.secteurDeclaration}
+                            participationTotal={signal.totalMontant ?? 0}
+                            relatedVoteCount={signal.voteCount}
+                            votePour={signal.votePour}
+                            voteContre={signal.voteContre}
+                          />
+                        ))
+                      : conflictDeclarations.map((decl) => {
+                          const sector =
+                            decl.participations.length > 0
+                              ? decl.participations
+                                  .map((p) => p.nomSociete)
+                                  .slice(0, 2)
+                                  .join(", ")
+                              : (decl.organe ?? decl.typeMandat);
+                          return (
+                            <ConflictAlert
+                              key={decl.id}
+                              declarationId={decl.id}
+                              deputyName={`${d.prenom} ${d.nom}`}
+                              sector={sector}
+                              participationTotal={decl.totalParticipations ?? 0}
+                              relatedVoteCount={taggedVoteCount}
+                              typeMandat={decl.typeMandat}
+                            />
+                          );
+                        })}
                   </div>
                 </>
               ) : (
