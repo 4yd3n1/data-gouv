@@ -10,11 +10,9 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
-  const codeCNCC = parseInt(id, 10);
-  const p = await prisma.partiPolitique.findFirst({
-    where: { codeCNCC },
+  const p = await prisma.partiPolitique.findUnique({
+    where: { id },
     select: { nom: true },
-    orderBy: { exercice: "desc" },
   });
   if (!p) return { title: "Parti introuvable — L'Observatoire Citoyen" };
   return {
