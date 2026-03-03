@@ -1,6 +1,6 @@
 # Database Schema Reference
 
-> Last updated: Mar 3, 2026 (Session 18)
+> Last updated: Mar 3, 2026 (Session 18/19)
 
 Complete reference for all Prisma models, fields, relations, indexes, and ingestion sources.
 
@@ -25,11 +25,13 @@ Complete reference for all Prisma models, fields, relations, indexes, and ingest
 | Declarations | DeclarationInteret, ParticipationFinanciere, RevenuDeclaration | ~varies |
 | Parliament | Organe, Scrutin, GroupeVote, VoteRecord, Deport | ~varies |
 | Elections & RNE | Elu, ElectionLegislative, CandidatLegislatif, PartiPolitique | ~601,514 |
+| Local Data (Phase 1) | StatLocale, BudgetLocal | ~70,431 (1,408 + 69,023) |
+| Vote Tags (Phase 1) | ScrutinTag | ~3,170 |
+| Safety & Health (Phase 5) | StatCriminalite, DensiteMedicale | varies |
+| Cross-reference (Phase 7C) | ConflictSignal | populated by `pnpm compute:conflicts` |
 | System | IngestionLog | grows over time |
 
 **Total models**: 30 + IngestionLog
-
-> Phase 1–5 additions: `StatLocale`, `BudgetLocal`, `ScrutinTag`, `StatCriminalite`, `DensiteMedicale`. Phase 7C addition: `ConflictSignal`. Full counts and descriptions below under their respective layers.
 
 ---
 
@@ -800,6 +802,165 @@ Tracks every ingestion run with timing, row counts, status, and metadata.
 | `createdAt` | DateTime | Auto |
 
 **Usage**: Written by `scripts/lib/ingestion-log.ts` wrapper function. Displayed in ingestion summary at end of `pnpm ingest`.
+
+---
+
+## Local Data Layer (Phase 1 additions)
+
+Source: INSEE Mélodi API (anonymous, no API key) + OFGL Opendatasoft. Ingested by `scripts/ingest-insee-local.ts` + `scripts/ingest-budgets.ts`.
+
+### `StatLocale`
+
+Generic per-department/commune statistical indicators. All rows are upserted on `(source, indicateur, annee, geoType, geoCode)`.
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | String PK | cuid() |
+| `source` | String | `"FILOSOFI"`, `"RP"` |
+| `indicateur` | String | Indicator key — see table below |
+| `annee` | Int | Reference year |
+| `geoType` | String | `"DEP"` (only type currently ingested) |
+| `geoCode` | String | INSEE dept code: `"75"`, `"93"`, `"974"` |
+| `valeur` | Float | The indicator value |
+| `unite` | String | `"EUR"`, `"%"`, `"NB"` |
+| `metadata` | String? | JSON for additional breakdowns (unused currently) |
+| `createdAt` | DateTime | Auto |
+
+**Unique constraint**: `(source, indicateur, annee, geoType, geoCode)`
+
+**Indexes**: `(indicateur, geoType)`, `(geoCode, geoType)`, `annee`, `(indicateur, geoCode)`
+
+**Row count**: 1,408 (95–101 depts per indicator)
+
+**Known indicators by dataset**:
+
+| Indicator | Source | Annee | Unite | Description |
+|-----------|--------|-------|-------|-------------|
+| `MEDIAN_INCOME` | FILOSOFI | 2021 | EUR | Médian des revenus disponibles par UC |
+| `POVERTY_RATE` | FILOSOFI | 2021 | % | Taux de pauvreté au seuil de 60 % |
+| `D1_INCOME` | FILOSOFI | 2021 | EUR | 1er décile des revenus disponibles |
+| `D9_INCOME` | FILOSOFI | 2021 | EUR | 9e décile des revenus disponibles |
+| `INTERDECILE_RATIO` | FILOSOFI | 2021 | — | Rapport interdécile D9/D1 |
+| `POP_TOTAL` | RP | 2022 | NB | Population totale |
+| `POP_65PLUS` | RP | 2022 | NB | Population 65 ans et plus |
+| `POP_0019` | RP | 2022 | NB | Population 0–19 ans |
+| `EMPLOYMENT_RATE` | RP | 2022 | % | Taux d'emploi |
+| `UNEMPLOYMENT_RATE_LOCAL` | RP | 2022 | % | Taux de chômage local (recensement) |
+| `ACTIVITY_RATE` | RP | 2022 | % | Taux d'activité |
+| `HOUSING_TOTAL` | RP | 2022 | NB | Total résidences principales (Session 18/19) |
+| `HOUSING_VACANCY_RATE` | RP | 2022 | % | Part des logements vacants (avg 8.7 %) |
+| `HOUSING_SECONDARY_RATE` | RP | 2022 | % | Part des résidences secondaires (avg 11.5 %) |
+
+Housing indicators use dataset `DS_RP_LOGEMENT_PRINC` (Mélodi), OCS column: `_T` = total, `DW_VAC` = vacant, `DW_SEC_DW_OCC` = secondary. Rates computed as `(count / total) * 100`. See `scripts/lib/insee-client.ts` → `fetchLogementDep()`.
+
+---
+
+### `BudgetLocal`
+
+Local government financial accounts per commune or département, from OFGL Opendatasoft (not data.collectivites-locales.gouv.fr — those URLs are dead).
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | String PK | cuid() |
+| `geoType` | String | `"COM"` or `"DEP"` |
+| `geoCode` | String | INSEE commune/dept code |
+| `geoLibelle` | String | Name of the collectivité |
+| `annee` | Int | Budget year |
+| `population` | Int? | Reference population |
+| `totalRecettes` | Float? | Total revenue (€) |
+| `recettesFonct` | Float? | Operating revenue (€) |
+| `recettesInvest` | Float? | Investment revenue (€) |
+| `impotsTaxes` | Float? | Tax receipts (€) |
+| `dotationsSubv` | Float? | Dotations & subventions (€) |
+| `totalDepenses` | Float? | Total expenditure (€) |
+| `depensesFonct` | Float? | Operating expenditure (€) |
+| `depensesInvest` | Float? | Investment expenditure (€) |
+| `chargesPersonnel` | Float? | Staff costs (€) |
+| `encoursDette` | Float? | Outstanding debt (€) |
+| `annuiteDette` | Float? | Annual debt service (€) |
+| `resultatComptable` | Float? | Accounting result (€) |
+| `depenseParHab` | Float? | Expenditure per inhabitant (€/hab) |
+| `detteParHab` | Float? | Debt per inhabitant (€/hab) |
+| `createdAt` | DateTime | Auto |
+
+**Unique constraint**: `(geoType, geoCode, annee)`
+
+**Indexes**: `(geoType, geoCode)`, `annee`, `(geoType, annee)`
+
+**Row count**: 69,023 (380 depts × 2 years + ~68,643 communes for 2022/2023)
+
+---
+
+### `ScrutinTag`
+
+Topic classification of parliamentary votes. Each scrutin can have multiple tags. Populated by `pnpm tag:scrutins` (`scripts/tag-scrutins.ts`) — must run after `ingestScrutins`.
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | String PK | cuid() |
+| `scrutinId` | String FK | References `Scrutin.id` (cascade delete) |
+| `tag` | String | Policy topic: `"budget"`, `"fiscalite"`, `"sante"`, `"logement"`, `"emploi"`, `"education"`, `"retraites"`, `"ecologie"`, `"immigration"`, `"defense"`, `"institutionnel"`, `"europeen"`, `"culture"` |
+| `confidence` | Float | 0–1: `1.0` for multi-word keyword match, `0.7` for single keyword match |
+
+**Unique constraint**: `(scrutinId, tag)`
+
+**Indexes**: `tag`, `scrutinId`
+
+**Row count**: ~3,170
+
+**Tags** (13 values): `budget`, `fiscalite`, `sante`, `logement`, `emploi`, `education`, `retraites`, `ecologie`, `immigration`, `defense`, `institutionnel`, `europeen`, `culture`
+
+---
+
+## Safety & Health Layer (Phase 5 additions)
+
+Source: SSMSI + DREES. Ingested by `scripts/ingest-criminalite.ts` + `scripts/ingest-medecins.ts`.
+
+### `StatCriminalite`
+
+Crime statistics by département and indicator. Source: SSMSI (Service Statistique Ministériel de la Sécurité Intérieure) static CSV on data.gouv.fr.
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | String PK | cuid() |
+| `departementCode` | String FK | References `Departement.code` |
+| `indicateur` | String | Crime category key — see below |
+| `annee` | Int | Reference year |
+| `total` | Int? | Raw count (number of offences recorded) |
+| `tauxPour1000` | Float? | Rate per 1,000 inhabitants |
+| `variationPct` | Float? | Year-over-year % change (null for first year) |
+| `createdAt` | DateTime | Auto |
+
+**Unique constraint**: `(departementCode, indicateur, annee)`
+
+**Indexes**: `departementCode`, `indicateur`, `annee`
+
+**Known indicators** (8): `coups_blessures`, `vols_sans_violence`, `cambriolages`, `violences_sexuelles`, `escroqueries`, `destructions`, `homicides`, `vols_avec_violence`
+
+---
+
+### `DensiteMedicale`
+
+Healthcare professional density per département. Source: DREES (Direction de la Recherche, des Études, de l'Évaluation et des Statistiques) Opendatasoft API.
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | String PK | cuid() |
+| `departementCode` | String FK | References `Departement.code` |
+| `specialite` | String | Profession type — see below |
+| `annee` | Int | Reference year |
+| `nombreMedecins` | Int | Headcount (raw) |
+| `pour10k` | Float? | Practitioners per 10,000 inhabitants |
+| `population` | Int? | Reference population for density calculation |
+| `createdAt` | DateTime | Auto |
+
+**Unique constraint**: `(departementCode, specialite, annee)`
+
+**Indexes**: `departementCode`, `specialite`, `annee`
+
+**Known `specialite` values** (6): `MG` (médecin généraliste), `SPEC` (spécialiste), `INFIRMIER`, `KINESITHERAPEUTE`, `DENTISTE`, `PHARMACIEN`
+
+**UI**: `/dossiers/sante` shows `MG` density as a `DeptMap`. `/territoire/[dept]` shows `MG` density + `StatCriminalite` top categories in Santé & Sécurité section.
 
 ---
 
