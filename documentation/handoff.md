@@ -1,6 +1,6 @@
 # Handoff — data-gouv Civic Intelligence Platform
 
-> Updated: Mar 3, 2026 (Session 18/19). For the next agent picking up this project.
+> Updated: Mar 3, 2026 (Session 20). For the next agent picking up this project.
 
 ---
 
@@ -30,7 +30,7 @@ The project is fully functional as of this handoff. Dev server runs, all data is
 
 ### UI Status (all pages render correctly)
 
-57 routes + 3 OG image endpoints across 12 sections (build verified Mar 2, 2026, Session 17):
+57 routes + 5 OG image routes across 12 sections (build verified Mar 3, 2026, Session 20):
 
 | Section | Routes |
 |---------|--------|
@@ -47,7 +47,7 @@ The project is fully functional as of this handoff. Dev server runs, all data is
 | `/mon-territoire` | Civic dashboard by postal code — 3-state: empty prompt / disambiguation / full dashboard (représentants, budget, santé, votes, patrimoine) |
 | `/recherche` | Full-text search — `search_index` materialized view (GIN, `french` stemming), entity type pills, color-coded result cards. Navbar `NavSearch` on desktop. |
 | `/comparer` | Comparison mode (Phase 7D) — `/comparer/territoires?a=75&b=93` side-by-side département comparison (3 states: empty picker / partial / full); `/comparer/deputes?a=PA*&b=PA*` deputy comparison (4 states incl. name-based search flow). `DeltaBadge` component. "Comparer →" links on `/territoire/[dept]` breadcrumb and `/representants/deputes/[id]` utility bar. |
-| OG images (Phase 7E) | `opengraph-image.tsx` in 3 routes: `/representants/deputes/[id]` (photo + stats), `/territoire/[departementCode]` (income/poverty/unemployment), `/gouvernance/scrutins/[id]` (vote bar + result badge). All use `runtime = "nodejs"` + `{ prisma }` named import. `1200×630` bureau-950 background with teal/rose accents. |
+| OG images (Phase 7E + fixes) | `opengraph-image.tsx` in 5 routes: `/` (homepage — static, 8 dossier chips, 3 stat cards), `/dossiers/logement` (live housing stats from StatLocale + vote count), `/representants/deputes/[id]` (initials + name + stats), `/territoire/[departementCode]` (income/poverty/unemployment), `/gouvernance/scrutins/[id]` (vote bar + result badge). All use `runtime = "nodejs"` + `{ prisma }` named import. `1200×630` bureau-950 background with teal/rose accents. |
 | `/votes/alignements` | Party alignment matrix (Phase 7F) — `src/lib/alignment.ts` computes pairwise alignment rates via `$queryRaw` self-join on `GroupeVote`. Page shows: overview stats, color-coded heat map (teal=alliance, rose=opposition), top 5 allies, top 5 opponents, methodology note. Linked from `/votes` hub ("Matrice d'alignement →"). `revalidate = 86400`. |
 
 ---
@@ -216,7 +216,7 @@ The platform has been fully redesigned from a **data-source browser** into a **c
 | Deputy profile enrichment | Edit `/representants/deputes/[id]/page.tsx` | MEDIUM — 2 remaining: (1) Activité tab: "Domaines d'activité" bar (ScrutinTag groupBy), (2) Transparence tab: lobby cross-reference (matchDomainToTag). Item 3 (ConflictAlert from `ConflictSignal`) ✅ DONE in 7C |
 | Senator profile enrichment | Edit `/representants/senateurs/[id]/page.tsx` | MEDIUM — 2 items: (1) New "Transparence" tab with DeclarationInteret × lobby cross-ref, (2) Déclarations tab: ConflictAlert using `ConflictSignal` |
 | Phase 7D — Comparison mode | `src/app/comparer/territoires/page.tsx` + `comparer/deputes/page.tsx` | ✅ DONE — side-by-side département or député comparison, `DeltaBadge` highlighting |
-| Phase 7E — OG images | `opengraph-image.tsx` in 3 dynamic routes | ✅ DONE — deputies, depts, scrutins (Session 17) |
+| Phase 7E — OG images | `opengraph-image.tsx` in 5 routes | ✅ DONE — deputies, depts, scrutins (Session 17) + homepage + logement (Session 18/19) |
 | Phase 7F — Alignment matrix | `src/app/votes/alignements/page.tsx` | ✅ DONE — heat map + `src/lib/alignment.ts` (Session 17) |
 | Run `pnpm compute:conflicts` | Post-ingestion | REQUIRED — `ConflictSignal` table is empty until this runs after `tag:scrutins`. Run once after full ingest. |
 
@@ -289,6 +289,36 @@ All three: `export const runtime = "nodejs"` (Prisma needs Node runtime), `{ pri
 6. **`src/app/votes/page.tsx`** (MODIFIED) — Added "Matrice d'alignement →" link alongside existing "Trouver mon député →" in the tag grid header.
 
 **Build**: 57 routes (+ 3 OG image endpoints in build output), zero TypeScript errors.
+
+---
+
+### Session 20 (Mar 3, 2026) — QA fixes: party page crash + homepage OG
+
+**Bug fix — `/representants/partis/[id]`**: `generateMetadata` was calling `parseInt(id, 10)` on a CUID string (e.g. `cmm7lp62w0057qkvp6kg0ahhl`), producing `NaN`, which Prisma rejected as an invalid `Int` for the `codeCNCC` field → server exception visible in browser. Fixed by replacing `findFirst({ where: { codeCNCC: parseInt(id) } })` with `findUnique({ where: { id } })`, consistent with the page component itself. File: `src/app/representants/partis/[id]/page.tsx`.
+
+**New OG image — `/opengraph-image`**: Static homepage OG image (`src/app/opengraph-image.tsx`) was missing — route returned 404. Created 1200×630 static image: platform brand ("L'Observatoire Citoyen"), tagline, 8 dossier chips grid, 3 stat cards (800K+ données, 57 tableaux, 8 dossiers). No DB query.
+
+(Note: `/dossiers/logement/opengraph-image` was committed in Session 18/19 and was already present — the 404 in the original QA sweep was a dev-server cache artifact.)
+
+**Build**: 57 routes + 5 OG image routes, zero TypeScript errors.
+
+---
+
+### Sessions 18/19 (Mar 3, 2026) — GEO-LOG housing data + OG image fixes + documentation
+
+**INSEE RP Housing ingest** — `DS_RP_LOGEMENT_PRINC` via Mélodi API. Added `fetchLogementDep()` to `scripts/lib/insee-client.ts`. OCS column: `_T` = total, `DW_VAC` = vacant, `DW_SEC_DW_OCC` = secondary residence (no tenure/owner data in this dataset). New `StatLocale` indicators: `HOUSING_TOTAL` (NB), `HOUSING_VACANCY_RATE` (%), `HOUSING_SECONDARY_RATE` (%). 222 new rows (95 depts × up to 3 indicators — some lost to rate-limit). National averages: vacancy 8.7%, secondary 11.5%.
+
+**UI additions**:
+- `/dossiers/logement` — Section 3 "Parc immobilier par territoire": two `RankingTable`s (vacancy top-10, secondary top-10) + 2 `IndicatorCard`s for national averages.
+- `/territoire/[departementCode]` — 2 `StatCard`s in Économie section (logements vacants, résidences secondaires). `hasEconomie` guard expanded to include housing indicators.
+
+**OG images**:
+- `src/app/opengraph-image.tsx` (NEW) — static homepage brand image, 8 dossier chips, 3 stat cards.
+- `src/app/dossiers/logement/opengraph-image.tsx` (NEW) — async, queries `StatLocale` avg vacancy/secondary rates + `ScrutinTag` vote count.
+
+**Documentation pass**: `ARCHITECTURAL-PLAN.md`, `documentation/handoff.md`, `documentation/frontend.md`, `documentation/schema.md` all updated to reflect StatLocale 1,408 rows, 5 OG routes, and 5 previously undocumented models (StatLocale, BudgetLocal, ScrutinTag, StatCriminalite, DensiteMedicale).
+
+**Build**: 57 routes + 5 OG image routes, zero TypeScript errors.
 
 ---
 

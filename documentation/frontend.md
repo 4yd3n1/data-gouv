@@ -1,6 +1,6 @@
 # Frontend Implementation
 
-> Last updated: Mar 3, 2026 — Session 18/19 (7A–7F complete + QA + OG fixes). 57 routes + 5 OG image routes, 25 components.
+> Last updated: Mar 3, 2026 — Session 20 (party crash fix + QA verified). 57 routes + 5 OG image routes, 25 components.
 
 Complete reference for all UI pages, components, styling, and patterns.
 
@@ -772,6 +772,8 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 ```
 
 Applied to: deputés/[id], sénateurs/[id], lobbyistes/[id], partis/[id], territoire/[dept], territoire/commune/[code], scrutins/[id] (×2 routes), musées/[id], monuments/[id].
+
+**Gotcha — `partis/[id]`**: The URL `id` parameter is a CUID string. `generateMetadata` must use `findUnique({ where: { id } })`. An earlier version incorrectly called `parseInt(id, 10)` to look up by `codeCNCC` (an Int) — this produced `NaN`, which Prisma rejected as an invalid `Int`, causing a server exception on every party detail page load. Fixed in Session 20.
 
 ---
 
