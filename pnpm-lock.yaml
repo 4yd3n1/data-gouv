@@ -14,6 +14,9 @@ importers:
       '@prisma/client':
         specifier: ^7.4.1
         version: 7.4.1(prisma@7.4.1(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(typescript@5.9.3))(typescript@5.9.3)
+      '@svg-maps/france.departments':
+        specifier: ^2.0.0
+        version: 2.0.0
       dotenv:
         specifier: ^17.3.1
         version: 17.3.1
@@ -685,6 +688,9 @@ packages:
 
   '@standard-schema/spec@1.1.0':
     resolution: {integrity: sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w==}
+
+  '@svg-maps/france.departments@2.0.0':
+    resolution: {integrity: sha512-EdVIiFw7SEBS29406GSJngm5fX2zTTiCjZLiqRODwv2R4s/btHt9dMe0qOIpbjhFR9MrTgRTpFPa4xqr1h0xwg==}
 
   '@swc/helpers@0.5.15':
     resolution: {integrity: sha512-JQ5TuMi45Owi4/BIMAJBoSQoOJu12oOk/gADqlcUL9JEdHB8vyjUSsxqeNXnmXHjYKMi2WcYtezGEEhqUI/E2g==}
@@ -2984,6 +2990,8 @@ snapshots:
   '@rtsao/scc@1.1.0': {}
 
   '@standard-schema/spec@1.1.0': {}
+
+  '@svg-maps/france.departments@2.0.0': {}
 
   '@swc/helpers@0.5.15':
     dependencies:

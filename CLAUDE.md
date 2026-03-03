@@ -49,3 +49,17 @@ Detailed ingest scripts, wave ordering, and API URLs: `.claude/rules/ingestion.m
 - Dark theme (slate bg, teal accents) — "Intelligence Bureau" aesthetic
 - No emojis in UI; French UI copy: direct, natural, Le Monde register
 - Node.js 20.19.2+ required; run `pnpm db:generate` after every migration
+
+## Rules Files (auto-loaded by Claude Code)
+
+- `.claude/rules/ingestion.md` — wave order, API URLs, idempotency rules (loads when editing `scripts/**`)
+- `.claude/rules/schema.md` — critical field names, DB config, Prisma gotchas (loads when editing `prisma/**`, `src/lib/db.ts`, `scripts/lib/**`)
+- `.claude/rules/frontend.md` — component patterns, theme, route structure, search rules (loads when editing `src/app/**`, `src/components/**`, `src/lib/**`)
+
+## Compact Instructions
+
+When compacting, always preserve:
+- All files modified in the current session and what changed
+- Critical schema field names (wrong names = TypeScript build errors)
+- Current phase / feature being built and decisions made
+- Any test results or build errors encountered
