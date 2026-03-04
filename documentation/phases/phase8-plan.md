@@ -281,23 +281,23 @@ function interpolateColor(t: number, palette: string[]): string {
 
 ### Acceptance criteria (8A)
 
-- [ ] `france-geo.ts` imports 96 metropolitan paths from `@svg-maps/france.departments`
-- [ ] `indicators.ts` contains 6 indicator configs with 7-color palettes
-- [ ] Map renders at 3 sizes (sm/md/lg) with viewBox `0 0 613 585`
-- [ ] 6 indicator selector pills switch choropleth coloring dynamically
-- [ ] 7-stop palette interpolation produces smooth gradients (not `color-mix`)
-- [ ] Hover tooltip shows département name, code, value, and rank
-- [ ] Click selects département → bento detail panel shows 6 metrics
-- [ ] Trend arrows show ↑/↓ vs national average with % deviation
-- [ ] Top 5 / Bottom 5 ranking sidebar updates on indicator switch
-- [ ] Ranking items cross-link to map (hover highlights, click selects)
-- [ ] Empty state (no dept selected): dashed border + MapPin icon prompt
-- [ ] Active indicator gets accent-colored border in detail panel
-- [ ] Overseas départements render as inset boxes (bottom-left)
-- [ ] Legend displays vertical gradient bar + min/max labels
-- [ ] Mobile: map scales to container width, detail panel stacks below
-- [ ] Only npm dependency: `@svg-maps/france.departments` (already installed)
-- [ ] Build passes with zero TypeScript errors
+- [x] `france-geo.ts` imports 96 metropolitan paths from `@svg-maps/france.departments`
+- [x] `indicators.ts` contains 6 indicator configs with 7-color palettes
+- [x] Map renders at 3 sizes (sm/md/lg) with viewBox `0 0 613 585`
+- [x] 6 indicator selector pills switch choropleth coloring dynamically
+- [x] 7-stop palette interpolation produces smooth gradients (not `color-mix`)
+- [x] Hover tooltip shows département name, code, value, and rank
+- [x] Click selects département → bento detail panel shows 6 metrics
+- [x] Trend arrows show ↑/↓ vs national average with % deviation
+- [x] Top 5 / Bottom 5 ranking sidebar updates on indicator switch
+- [x] Ranking items cross-link to map (hover highlights, click selects)
+- [x] Empty state (no dept selected): dashed border + MapPin icon prompt
+- [x] Active indicator gets accent-colored border in detail panel
+- [x] Overseas départements render as inset boxes (bottom-left)
+- [x] Legend displays vertical gradient bar + min/max labels
+- [ ] Mobile: map scales to container width, detail panel stacks below — verify in 8D
+- [x] Only npm dependency: `@svg-maps/france.departments` (already installed)
+- [x] Build passes with zero TypeScript errors — verified Session 21
 
 ---
 
@@ -402,14 +402,25 @@ const mapData = incomeByDept.map(s => ({
 />
 ```
 
+### FranceMap changes shipped in 8B
+
+- Added `showPills?: boolean` prop (default `true`) — enables pill-free mini-map embeds
+- "Voir le tableau de bord" button in bento panel hardcoded to `/territoire/[code]`, decoupled from `linkBase`
+- Mini-maps use `data={{}}` + `selectedCode` — all paths grey, selected dept highlighted with white stroke
+
+### Post-review fix (Session 22 review)
+
+`revalidate = 86400` was missing from `pouvoir-dachat`, `emploi-jeunesse`, and `dette-publique` after adding `getFranceMapData()`. Without it Prisma data is fetched at build time and never regenerated. Fixed — all 3 pages now match `sante` (which had it).
+
 ### Acceptance criteria (8B)
 
-- [ ] `/territoire` hub shows interactive choropleth with indicator selector
-- [ ] At least 4 dossier pages have choropleth maps
-- [ ] `/territoire/[dept]` shows mini-map with selected département highlighted
-- [ ] `/mon-territoire` shows mini-map with user's département highlighted
-- [ ] All maps link to département dashboards on click
-- [ ] Build passes with zero TypeScript errors
+- [x] `/territoire` hub shows interactive choropleth with indicator selector
+- [x] At least 4 dossier pages have choropleth maps (pouvoir-dachat, sante, emploi-jeunesse, dette-publique)
+- [x] `/territoire/[dept]` shows mini-map with selected département highlighted
+- [x] `/mon-territoire` shows mini-map with user's département highlighted
+- [x] All maps link to département dashboards on click
+- [x] `revalidate = 86400` set on all dossier pages that use `getFranceMapData()`
+- [x] Build passes with zero TypeScript errors — verified Session 22
 
 ---
 

@@ -50,11 +50,21 @@ Detailed ingest scripts, wave ordering, and API URLs: `.claude/rules/ingestion.m
 - No emojis in UI; French UI copy: direct, natural, Le Monde register
 - Node.js 20.19.2+ required; run `pnpm db:generate` after every migration
 
+## Phase 9 — Government Profiles
+
+Currently building. Reference docs (load on demand, not always):
+- Plan: `@documentation/phases/phase9-plan.md`
+- Checklists: `@documentation/phases/PHASE-9-CHECKLISTS.md`
+- Workflow: `@documentation/phases/PHASE-9-WORKFLOW.md`
+
+**Component rule**: New `/gouvernement` profile sections must be self-contained components (`<InteretsSection />`, `<LobbySection />`, `<CareerTimeline />`, etc.) imported into `page.tsx`. Never inline section logic directly in `page.tsx`.
+
 ## Rules Files (auto-loaded by Claude Code)
 
 - `.claude/rules/ingestion.md` — wave order, API URLs, idempotency rules (loads when editing `scripts/**`)
 - `.claude/rules/schema.md` — critical field names, DB config, Prisma gotchas (loads when editing `prisma/**`, `src/lib/db.ts`, `scripts/lib/**`)
 - `.claude/rules/frontend.md` — component patterns, theme, route structure, search rules (loads when editing `src/app/**`, `src/components/**`, `src/lib/**`)
+- `.claude/rules/gouvernement.md` — Phase 9 model field names, HATVP/AGORA gotchas (loads when editing `src/app/gouvernement/**`, `scripts/**gouvernement*`, `scripts/**hatvp*`, `scripts/**agora*`)
 
 ## Compact Instructions
 

@@ -22,6 +22,7 @@ import {
   fetchPopulationDep,
   fetchEmploiDep,
   fetchLogementDep,
+  fetchEducationDep,
   type InseeLocalValue,
 } from "./lib/insee-client";
 
@@ -70,15 +71,16 @@ export async function ingestInseeLocal() {
       const label = dept.libelle;
       processed++;
 
-      // Fetch all 4 datasets for this département (rate-limited internally)
-      const [filosofiValues, popValues, emploiValues, logementValues] = await Promise.all([
+      // Fetch all 5 datasets for this département (rate-limited internally)
+      const [filosofiValues, popValues, emploiValues, logementValues, educValues] = await Promise.all([
         fetchFilosofiDep(code),
         fetchPopulationDep(code),
         fetchEmploiDep(code),
         fetchLogementDep(code),
+        fetchEducationDep(code),
       ]);
 
-      const allValues = [...filosofiValues, ...popValues, ...emploiValues, ...logementValues];
+      const allValues = [...filosofiValues, ...popValues, ...emploiValues, ...logementValues, ...educValues];
       const upserted = await upsertStatLocale(allValues);
       totalRows += upserted;
 
@@ -99,6 +101,7 @@ export async function ingestInseeLocal() {
         populationDataset: "DS_RP_POPULATION_PRINC",
         emploiDataset: "DS_RP_EMPLOI_LR_PRINC",
         logementDataset: "DS_RP_LOGEMENT_PRINC",
+        educationDataset: "DS_RP_DIPLOMES_PRINC",
       },
     };
   });

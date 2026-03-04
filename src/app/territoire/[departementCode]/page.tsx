@@ -3,6 +3,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { fmt, fmtEuro, fmtPct, fmtDate } from "@/lib/format";
+import { FranceMap } from "@/components/france-map";
+
+export const revalidate = 3600; // ISR: territory data is stable, revalidate hourly
 
 const SVG_W = 560;
 const SVG_H = 90;
@@ -49,6 +52,7 @@ export default async function DepartementPage({
   });
   if (!dept) notFound();
 
+  // Phase 1 — parallel queries that don't depend on each other
   const [
     deputes,
     senateurs,
@@ -59,17 +63,18 @@ export default async function DepartementPage({
     statLocale,
     budgetDept,
     budgetYears,
-    recentScrutins,
     mgDensite,
     criminalite,
   ] = await Promise.all([
     prisma.depute.findMany({
       where: { departementRefCode: departementCode },
       orderBy: { nom: "asc" },
+      select: { id: true, nom: true, prenom: true, groupeAbrev: true, actif: true },
     }),
     prisma.senateur.findMany({
       where: { departementCode },
       orderBy: { nom: "asc" },
+      select: { id: true, nom: true, prenom: true, groupe: true, actif: true },
     }),
     prisma.elu.count({ where: { codeDepartement: departementCode } }),
     prisma.commune.count({ where: { departementCode, typecom: "COM" } }),
@@ -88,12 +93,6 @@ export default async function DepartementPage({
       orderBy: { annee: "asc" },
       take: 5,
     }),
-    prisma.scrutin.findMany({
-      where: { votes: { some: { depute: { departementRefCode: departementCode } } } },
-      orderBy: { dateScrutin: "desc" },
-      take: 8,
-      select: { id: true, titre: true, dateScrutin: true, sortCode: true },
-    }),
     prisma.densiteMedicale.findFirst({
       where: { departementCode, specialite: "MG" },
       orderBy: { annee: "desc" },
@@ -104,6 +103,17 @@ export default async function DepartementPage({
       take: 20,
     }),
   ]);
+
+  // Phase 2 — uses deputy IDs from phase 1 for a flat IN filter (avoids 3-level correlated subquery)
+  const deputeIds = deputes.map((d) => d.id);
+  const recentScrutins = deputeIds.length > 0
+    ? await prisma.scrutin.findMany({
+        where: { votes: { some: { deputeId: { in: deputeIds } } } },
+        orderBy: { dateScrutin: "desc" },
+        take: 8,
+        select: { id: true, titre: true, dateScrutin: true, sortCode: true },
+      })
+    : [];
 
   const statMap = Object.fromEntries(statLocale.map((s) => [s.indicateur, s]));
 
@@ -148,7 +158,8 @@ export default async function DepartementPage({
 
   const hasEconomie =
     !!(statMap["MEDIAN_INCOME"] || statMap["POVERTY_RATE"] || statMap["UNEMPLOYMENT_RATE_LOCAL"] ||
-       statMap["HOUSING_VACANCY_RATE"] || statMap["HOUSING_SECONDARY_RATE"]);
+       statMap["HOUSING_VACANCY_RATE"] || statMap["HOUSING_SECONDARY_RATE"] ||
+       statMap["EDUC_NO_DIPLOMA"] || statMap["EDUC_BAC_PLUS"]);
   const hasSante = !!(mgDensite || crimeStats.length > 0);
 
   return (
@@ -215,11 +226,17 @@ export default async function DepartementPage({
               </div>
             </div>
 
-            {/* Decorative dept code */}
-            <div className="hidden lg:block shrink-0 select-none pointer-events-none">
-              <p className="font-[family-name:var(--font-display)] leading-none text-[10rem] font-bold text-bureau-700/25">
-                {dept.code}
-              </p>
+            {/* Mini-map — position on France */}
+            <div className="hidden lg:block shrink-0 w-48">
+              <FranceMap
+                data={{}}
+                selectedCode={departementCode}
+                linkBase="/territoire/"
+                size="sm"
+                showPills={false}
+                showRanking={false}
+                showDetail={false}
+              />
             </div>
           </div>
         </div>
@@ -271,6 +288,22 @@ export default async function DepartementPage({
                   value={fmtPct(statMap["HOUSING_SECONDARY_RATE"].valeur)}
                   meta={`${statMap["HOUSING_SECONDARY_RATE"].annee} · RP`}
                   color="text-bureau-200"
+                />
+              )}
+              {statMap["EDUC_NO_DIPLOMA"] && (
+                <StatCard
+                  label="Sans diplôme"
+                  value={fmtPct(statMap["EDUC_NO_DIPLOMA"].valeur)}
+                  meta={`${statMap["EDUC_NO_DIPLOMA"].annee} · RP · pop. 15+`}
+                  color="text-rose"
+                />
+              )}
+              {statMap["EDUC_BAC_PLUS"] && (
+                <StatCard
+                  label="Bac ou supérieur"
+                  value={fmtPct(statMap["EDUC_BAC_PLUS"].valeur)}
+                  meta={`${statMap["EDUC_BAC_PLUS"].annee} · RP · pop. 15+`}
+                  color="text-teal"
                 />
               )}
             </div>

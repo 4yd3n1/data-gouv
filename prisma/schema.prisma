@@ -111,9 +111,10 @@ model Depute {
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
 
-  departement Departement? @relation(fields: [departementRefCode], references: [code])
-  votes       VoteRecord[]
-  deports     Deport[]
+  departement   Departement? @relation(fields: [departementRefCode], references: [code])
+  votes         VoteRecord[]
+  deports       Deport[]
+  personnalites PersonnalitePublique[]
 
   @@index([nom, prenom])
   @@index([groupeAbrev])
@@ -144,6 +145,7 @@ model Senateur {
   departementRef Departement? @relation(fields: [departementCode], references: [code])
   mandats        MandatSenateur[]
   commissions    CommissionSenateur[]
+  personnalites  PersonnalitePublique[]
 
   @@index([nom, prenom])
   @@index([groupe])
@@ -784,4 +786,201 @@ model IngestionLog {
   error        String?
   metadata     String? // JSON string for source-specific info
   createdAt    DateTime @default(now())
+}
+
+// ─── Government Profiles (Phase 9) ───
+
+enum TypeMandat {
+  PRESIDENT
+  PREMIER_MINISTRE
+  MINISTRE
+  MINISTRE_DELEGUE
+  SECRETAIRE_ETAT
+}
+
+enum CategorieCarriere {
+  FORMATION
+  CARRIERE_PRIVEE
+  FONCTION_PUBLIQUE
+  MANDAT_ELECTIF
+  MANDAT_GOUVERNEMENTAL
+  ORGANISME
+  AUTRE
+}
+
+enum SourceCarriere {
+  HATVP
+  ASSEMBLEE
+  PRESSE
+  MANUELLE
+}
+
+enum RubriqueInteret {
+  ACTIVITE_ANTERIEURE
+  MANDAT_ELECTIF
+  PARTICIPATION
+  ACTIVITE_CONJOINT
+  ACTIVITE_BENEVOLE
+  REVENU
+  DON_AVANTAGE
+}
+
+enum TypeEvenement {
+  ENQUETE_PRELIMINAIRE
+  MISE_EN_EXAMEN
+  RENVOI_CORRECTIONNELLE
+  CONDAMNATION
+  RELAXE
+  CLASSEMENT_SANS_SUITE
+  NON_LIEU
+  APPEL
+  GARDE_A_VUE
+  COUR_JUSTICE_REPUBLIQUE
+}
+
+enum StatutEvenement {
+  EN_COURS
+  CLOS
+  APPEL_EN_COURS
+}
+
+enum SourceRecherche {
+  HATVP_ONLY
+  HATVP_PLUS_PRESSE
+  VERIFIE_MANUELLEMENT
+}
+
+model PersonnalitePublique {
+  id              String          @id @default(cuid())
+  nom             String
+  prenom          String
+  civilite        String? // "M.", "Mme"
+  dateNaissance   DateTime?
+  lieuNaissance   String?
+  slug            String          @unique // e.g. "francois-bayrou"
+  photoUrl        String?
+  bioCourte       String?
+  formation       String?
+  deputeId        String? // FK to Depute.id (PA* format)
+  senateurId      String? // FK to Senateur.id
+  hatvpDossierId  String? // HATVP declaration URL
+  sourceRecherche SourceRecherche @default(HATVP_ONLY)
+  derniereMaj     DateTime        @default(now()) @updatedAt
+  createdAt       DateTime        @default(now())
+
+  depute   Depute?   @relation(fields: [deputeId], references: [id])
+  senateur Senateur? @relation(fields: [senateurId], references: [id])
+
+  mandats    MandatGouvernemental[]
+  carriere   EntreeCarriere[]
+  interets   InteretDeclare[]
+  evenements EvenementJudiciaire[]
+
+  @@index([nom, prenom])
+  @@index([deputeId])
+  @@index([senateurId])
+}
+
+model MandatGouvernemental {
+  id              String     @id @default(cuid())
+  personnaliteId  String
+  titre           String // Full official title
+  titreCourt      String // Display title
+  gouvernement    String // "Gouvernement François Bayrou"
+  premierMinistre String?
+  president       String?
+  dateDebut       DateTime
+  dateFin         DateTime? // null = currently in office
+  rang            Int // Protocol order
+  type            TypeMandat
+  portefeuille    String? // Text description of responsibilities
+  ministereCode   String? // Normalized code for AGORA lobby matching
+
+  personnalite PersonnalitePublique @relation(fields: [personnaliteId], references: [id], onDelete: Cascade)
+
+  @@index([personnaliteId])
+  @@index([ministereCode])
+  @@index([type])
+  @@index([gouvernement])
+}
+
+model EntreeCarriere {
+  id             String            @id @default(cuid())
+  personnaliteId String
+  dateDebut      DateTime?
+  dateFin        DateTime?
+  categorie      CategorieCarriere
+  titre          String
+  organisation   String?
+  description    String?
+  source         SourceCarriere
+  sourceUrl      String?
+  sourceDate     DateTime?
+  ordre          Int               @default(0)
+
+  personnalite PersonnalitePublique @relation(fields: [personnaliteId], references: [id], onDelete: Cascade)
+
+  @@index([personnaliteId])
+  @@index([categorie])
+}
+
+model InteretDeclare {
+  id                 String          @id @default(cuid())
+  personnaliteId     String
+  declarationRef     String // HATVP declaration identifier
+  dateDeclaration    DateTime?
+  rubrique           RubriqueInteret
+  contenu            String
+  organisation       String?
+  montant            Float?
+  dateDebut          DateTime?
+  dateFin            DateTime?
+  alerteConflit      Boolean         @default(false)
+  commentaireConflit String?
+
+  personnalite PersonnalitePublique @relation(fields: [personnaliteId], references: [id], onDelete: Cascade)
+
+  @@index([personnaliteId])
+  @@index([declarationRef])
+  @@index([rubrique])
+  @@index([alerteConflit])
+}
+
+model EvenementJudiciaire {
+  id               String          @id @default(cuid())
+  personnaliteId   String
+  date             DateTime?
+  type             TypeEvenement
+  nature           String? // e.g. "abus de confiance"
+  juridiction      String?
+  statut           StatutEvenement
+  resume           String // 1–2 sentence factual summary
+  sourcePrincipale String // Outlet name
+  sourceUrl        String?
+  sourceDate       DateTime?
+  verifie          Boolean         @default(false) // NEVER display unless true
+
+  personnalite PersonnalitePublique @relation(fields: [personnaliteId], references: [id], onDelete: Cascade)
+
+  @@index([personnaliteId])
+  @@index([verifie])
+  @@index([type])
+}
+
+model ActionLobby {
+  id                    String   @id @default(cuid())
+  representantNom       String
+  representantCategorie String?
+  ministereCode         String // Link via MandatGouvernemental.ministereCode (no direct FK to PersonnalitePublique)
+  domaine               String?
+  typeAction            String?
+  exercice              String? // e.g. "2023"
+  depensesTranche       String? // e.g. "10 000 € à 19 999 €"
+  sourceUrl             String?
+  createdAt             DateTime @default(now())
+
+  @@index([ministereCode])
+  @@index([representantNom])
+  @@index([exercice])
+  @@index([domaine])
 }

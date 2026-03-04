@@ -2,30 +2,51 @@ import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { fmt } from "@/lib/format";
 import { PageHeader } from "@/components/page-header";
+import { FranceMap } from "@/components/france-map";
+import { getFranceMapData } from "@/lib/france-map-data";
 
 export const revalidate = 86400; // Territory data changes only on ingestion
 
 export default async function TerritoirePage() {
-  const regions = await prisma.region.findMany({
-    orderBy: { libelle: "asc" },
-    include: {
-      departements: {
-        orderBy: { code: "asc" },
-        include: {
-          _count: { select: { communes: true, deputes: true, senateurs: true, musees: true, monuments: true } },
+  const [regions, mapData] = await Promise.all([
+    prisma.region.findMany({
+      orderBy: { libelle: "asc" },
+      include: {
+        departements: {
+          orderBy: { code: "asc" },
+          include: {
+            _count: { select: { communes: true, deputes: true, senateurs: true, musees: true, monuments: true } },
+          },
         },
       },
-    },
-  });
+    }),
+    getFranceMapData(),
+  ]);
 
   return (
     <>
       <PageHeader
         title="Territoire"
-        subtitle="Maillage administratif — régions, départements, communes"
+        subtitle="Explorer la France par les données"
         breadcrumbs={[{ label: "Accueil", href: "/" }, { label: "Territoire" }]}
       />
       <div className="mx-auto max-w-7xl px-6 py-10">
+        {/* Hero — interactive choropleth map */}
+        <section className="mb-14">
+          <FranceMap
+            data={mapData}
+            linkBase="/territoire/"
+            showDetail={false}
+            size="lg"
+          />
+        </section>
+
+        <div className="mb-4 flex items-center gap-3">
+          <div className="h-px flex-1 bg-bureau-800" />
+          <p className="text-xs uppercase tracking-widest text-bureau-600">Régions &amp; départements</p>
+          <div className="h-px flex-1 bg-bureau-800" />
+        </div>
+
         <div className="space-y-8">
           {regions.map((r) => (
             <div key={r.code}>

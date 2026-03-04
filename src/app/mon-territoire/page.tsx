@@ -5,6 +5,7 @@ import { prisma } from "@/lib/db";
 import { fmt, fmtEuro, fmtPct, fmtDate } from "@/lib/format";
 import { SearchInput } from "@/components/search-input";
 import { resolvePostalCode } from "@/lib/postal-resolver";
+import { FranceMap } from "@/components/france-map";
 
 export const metadata: Metadata = {
   title: "Mon Territoire — L'Observatoire Citoyen",
@@ -211,12 +212,18 @@ async function Dashboard({ communeCode, deptCode, cp }: { communeCode: string; d
               </div>
             </div>
 
-            {/* Decorative dept code */}
+            {/* Mini-map — position on France */}
             {dept && (
-              <div className="hidden lg:block shrink-0 select-none pointer-events-none">
-                <p className="font-[family-name:var(--font-display)] leading-none text-[10rem] font-bold text-bureau-700/25">
-                  {dept.code}
-                </p>
+              <div className="hidden lg:block shrink-0 w-48">
+                <FranceMap
+                  data={{}}
+                  selectedCode={dept.code}
+                  linkBase="/territoire/"
+                  size="sm"
+                  showPills={false}
+                  showRanking={false}
+                  showDetail={false}
+                />
               </div>
             )}
           </div>

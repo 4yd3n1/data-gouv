@@ -1,6 +1,6 @@
 # Database Schema Reference
 
-> Last updated: Mar 3, 2026 (Session 18/19)
+> Last updated: Mar 4, 2026 (Session 26)
 
 Complete reference for all Prisma models, fields, relations, indexes, and ingestion sources.
 
@@ -22,16 +22,17 @@ Complete reference for all Prisma models, fields, relations, indexes, and ingest
 | Governance | Depute, Senateur, MandatSenateur, CommissionSenateur, Lobbyiste, ActionLobbyiste | ~106,500 |
 | Economy | Indicateur, Observation | ~358 |
 | Culture | Musee, FrequentationMusee, Monument | ~60,071 |
-| Declarations | DeclarationInteret, ParticipationFinanciere, RevenuDeclaration | ~varies |
-| Parliament | Organe, Scrutin, GroupeVote, VoteRecord, Deport | ~varies |
+| Declarations | DeclarationInteret, ParticipationFinanciere, RevenuDeclaration | varies |
+| Parliament | Organe, Scrutin, GroupeVote, VoteRecord, Deport | varies |
 | Elections & RNE | Elu, ElectionLegislative, CandidatLegislatif, PartiPolitique | ~601,514 |
-| Local Data (Phase 1) | StatLocale, BudgetLocal | ~70,431 (1,408 + 69,023) |
-| Vote Tags (Phase 1) | ScrutinTag | ~3,170 |
-| Safety & Health (Phase 5) | StatCriminalite, DensiteMedicale | varies |
-| Cross-reference (Phase 7C) | ConflictSignal | populated by `pnpm compute:conflicts` |
+| Local Data | StatLocale, BudgetLocal | ~70,667 (~1,644 + 69,023) |
+| Vote Tags | ScrutinTag | ~3,170 |
+| Safety & Health | StatCriminalite, DensiteMedicale | varies |
+| Cross-reference | ConflictSignal | populated by `pnpm compute:conflicts` |
+| Government Profiles (Phase 9) | PersonnalitePublique, MandatGouvernemental, EntreeCarriere, InteretDeclare, EvenementJudiciaire, ActionLobby | ~35 persons, 184+ interests |
 | System | IngestionLog | grows over time |
 
-**Total models**: 30 + IngestionLog
+**Total models**: 36 + IngestionLog
 
 ---
 
@@ -166,6 +167,7 @@ Members of the Assemblée Nationale. Source: Datan dataset via data.gouv.fr Tabu
 - `departement Departement?` (via `departementRefCode`)
 - `votes VoteRecord[]`
 - `deports Deport[]`
+- `personnalites PersonnalitePublique[]` — Phase 9 cross-reference
 
 **Indexes**: `nom+prenom`, `groupeAbrev`, `departementCode`, `departementRefCode`, `actif`
 
@@ -199,6 +201,7 @@ Members of the French Senate. Source: official Sénat open data CSVs (ISO-8859-1
 - `departementRef Departement?` (via `departementCode`)
 - `mandats MandatSenateur[]`
 - `commissions CommissionSenateur[]`
+- `personnalites PersonnalitePublique[]` — Phase 9 cross-reference
 
 **Indexes**: `nom+prenom`, `groupe`, `departementCode`, `actif`
 
@@ -830,7 +833,7 @@ Generic per-department/commune statistical indicators. All rows are upserted on 
 
 **Indexes**: `(indicateur, geoType)`, `(geoCode, geoType)`, `annee`, `(indicateur, geoCode)`
 
-**Row count**: 1,408 (95–101 depts per indicator)
+**Row count**: ~1,644 (95–101 depts × 14 indicators; some depts partial due to Mélodi rate-limiting — re-run is safe)
 
 **Known indicators by dataset**:
 
@@ -847,11 +850,16 @@ Generic per-department/commune statistical indicators. All rows are upserted on 
 | `EMPLOYMENT_RATE` | RP | 2022 | % | Taux d'emploi |
 | `UNEMPLOYMENT_RATE_LOCAL` | RP | 2022 | % | Taux de chômage local (recensement) |
 | `ACTIVITY_RATE` | RP | 2022 | % | Taux d'activité |
-| `HOUSING_TOTAL` | RP | 2022 | NB | Total résidences principales (Session 18/19) |
+| `HOUSING_TOTAL` | RP | 2022 | NB | Total résidences principales |
 | `HOUSING_VACANCY_RATE` | RP | 2022 | % | Part des logements vacants (avg 8.7 %) |
 | `HOUSING_SECONDARY_RATE` | RP | 2022 | % | Part des résidences secondaires (avg 11.5 %) |
+| `EDUC_NO_DIPLOMA` | RP | 2022 | % | Part sans diplôme (Dataset: `DS_RP_DIPLOMES_PRINC`, EDUC code `001T100_RP`) |
+| `EDUC_BAC_PLUS` | RP | 2022 | % | Part avec baccalauréat (EDUC code `350T351_RP`) |
+| `EDUC_HIGHER_EDUC` | RP | 2022 | % | Part avec enseignement supérieur (EDUC codes `500_RP`+`600_RP`+`700_RP`) |
 
 Housing indicators use dataset `DS_RP_LOGEMENT_PRINC` (Mélodi), OCS column: `_T` = total, `DW_VAC` = vacant, `DW_SEC_DW_OCC` = secondary. Rates computed as `(count / total) * 100`. See `scripts/lib/insee-client.ts` → `fetchLogementDep()`.
+
+Education indicators use dataset `DS_RP_DIPLOMES_PRINC` (Mélodi), dimension `EDUC` (NOT `DIPL_GEN`). Rates computed per population 15 ans et plus. See `scripts/lib/insee-client.ts` → `fetchEducationDep()`.
 
 ---
 
@@ -976,11 +984,15 @@ Pre-computed cross-reference results: deputy financial participations × vote re
 | `typeMandat` | String | `"Député"` |
 | `deputeId` | String? | Nullable FK to `Depute.id` (PA* format) |
 | `secteurDeclaration` | String | Company name from `ParticipationFinanciere.nomSociete` |
+| `participationCount` | Int | Number of financial participations declared in this sector |
+| `totalMontant` | Float? | Sum of `ParticipationFinanciere.evaluation` in EUR |
 | `tag` | String | Matched `ScrutinTag.tag` value |
 | `voteCount` | Int | Number of vote records for this deputy on this tag |
-| `participationValue` | Float? | `ParticipationFinanciere.evaluation` if available |
-| `createdAt` | DateTime | Auto |
-| `updatedAt` | DateTime | Auto |
+| `votePour` | Int | Votes cast for on tagged scrutins |
+| `voteContre` | Int | Votes cast against on tagged scrutins |
+| `voteAbstention` | Int | Abstentions on tagged scrutins |
+| `lastScrutinDate` | DateTime? | Date of most recent matching scrutin |
+| `computedAt` | DateTime | Timestamp of last computation run |
 
 **Unique constraint**: `(nom, prenom, typeMandat, secteurDeclaration, tag)`
 
@@ -1040,6 +1052,8 @@ Wave 7:   Promise.all([ingestElus(), ingestElections(), ingestPartis()])
 Wave 8:   Promise.all([ingestInseeLocal(), ingestBudgets()])   # StatLocale, BudgetLocal
 Wave 9:   Promise.all([ingestCriminalite(), ingestMedecins()]) # StatCriminalite, DensiteMedicale
 Wave 10:  REFRESH MATERIALIZED VIEW search_index           # Final step — pnpm refresh:search
+# Phase 9 (separate — run after 9A seed):
+Phase9:   npx tsx scripts/ingest-hatvp.ts                  # InteretDeclare (re-run safe)
 ```
 
 ---
@@ -1067,3 +1081,185 @@ Stored as `String?` rather than `Json` to avoid Prisma adapter type issues. Pars
 `src/data/postal-codes.json` — 6,328 entries, La Poste Hexasmal dataset. Maps French postal codes to lists of INSEE commune codes: `{ "75011": ["75111"], "01000": ["01053", "01344"], ... }`. Used by `src/lib/postal-resolver.ts` to resolve a postal code to département + région context for the `/mon-territoire` page. ARM commune codes (Paris 75001–75020 → 75111, etc.) are resolved to their parent COM via `Commune.comparent`.
 
 Source: `https://www.data.gouv.fr/api/1/datasets/r/008a2dda-2c60-4b63-b910-998f6f818089` (CSV, ISO-8859-1, semicolon-delimited, fields: `Code_commune_INSEE;Nom_de_la_commune;Code_postal;...`).
+
+---
+
+## Government Profiles Layer (Phase 9)
+
+Source: HATVP open data XML + seed script (`scripts/seed-gouvernement.ts`). Route: `/gouvernement` (index) + `/gouvernement/[slug]` (profile). Ingestion: `scripts/ingest-hatvp.ts`.
+
+### Enums
+
+| Enum | Values |
+|------|--------|
+| `TypeMandat` | `PRESIDENT`, `PREMIER_MINISTRE`, `MINISTRE`, `MINISTRE_DELEGUE`, `SECRETAIRE_ETAT` |
+| `CategorieCarriere` | `FORMATION`, `CARRIERE_PRIVEE`, `FONCTION_PUBLIQUE`, `MANDAT_ELECTIF`, `MANDAT_GOUVERNEMENTAL`, `ORGANISME`, `AUTRE` |
+| `SourceCarriere` | `HATVP`, `ASSEMBLEE`, `PRESSE`, `MANUELLE` |
+| `RubriqueInteret` | `ACTIVITE_ANTERIEURE`, `MANDAT_ELECTIF`, `PARTICIPATION`, `ACTIVITE_CONJOINT`, `ACTIVITE_BENEVOLE`, `REVENU`, `DON_AVANTAGE` |
+| `TypeEvenement` | `ENQUETE_PRELIMINAIRE`, `MISE_EN_EXAMEN`, `RENVOI_CORRECTIONNELLE`, `CONDAMNATION`, `RELAXE`, `CLASSEMENT_SANS_SUITE`, `NON_LIEU`, `APPEL`, `GARDE_A_VUE`, `COUR_JUSTICE_REPUBLIQUE` |
+| `StatutEvenement` | `EN_COURS`, `CLOS`, `APPEL_EN_COURS` |
+| `SourceRecherche` | `HATVP_ONLY`, `HATVP_PLUS_PRESSE`, `VERIFIE_MANUELLEMENT` |
+
+---
+
+### `PersonnalitePublique`
+
+Core profile record for each government official. One row per person (not per mandate).
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | String PK | cuid() |
+| `nom` | String | Family name |
+| `prenom` | String | Given name |
+| `civilite` | String? | `"M."` / `"Mme"` |
+| `dateNaissance` | DateTime? | Date of birth |
+| `lieuNaissance` | String? | City of birth |
+| `slug` | String UNIQUE | URL identifier: `"francois-bayrou"` |
+| `photoUrl` | String? | Portrait URL |
+| `bioCourte` | String? | 1–2 sentence biography |
+| `formation` | String? | Academic background |
+| `deputeId` | String? FK | References `Depute.id` — set when minister is also a current/former deputy |
+| `senateurId` | String? FK | References `Senateur.id` — set when minister is also a senator |
+| `hatvpDossierId` | String? | HATVP declaration URL path (e.g. `/open-data/xml/...`) |
+| `sourceRecherche` | SourceRecherche | Research completeness: `HATVP_ONLY` / `HATVP_PLUS_PRESSE` / `VERIFIE_MANUELLEMENT` |
+| `derniereMaj` | DateTime | Last updated (auto `@updatedAt`) |
+| `createdAt` | DateTime | Auto |
+
+**Relations**: `depute Depute?`, `senateur Senateur?`, `mandats MandatGouvernemental[]`, `carriere EntreeCarriere[]`, `interets InteretDeclare[]`, `evenements EvenementJudiciaire[]`
+
+**Indexes**: `nom+prenom`, `deputeId`, `senateurId`
+
+**Row count**: ~35 (current Bayrou government seeded)
+
+---
+
+### `MandatGouvernemental`
+
+One row per government role held. A person who served in multiple governments has multiple rows.
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | String PK | cuid() |
+| `personnaliteId` | String FK | References `PersonnalitePublique.id` (cascade delete) |
+| `titre` | String | Full official title |
+| `titreCourt` | String | Display title (used in UI cards) |
+| `gouvernement` | String | e.g. `"Gouvernement François Bayrou"` |
+| `premierMinistre` | String? | PM name (redundant but useful for display) |
+| `president` | String? | President name |
+| `dateDebut` | DateTime | Start date |
+| `dateFin` | DateTime? | End date — **null = currently in office** |
+| `rang` | Int | Protocol order (used for sorting) |
+| `type` | TypeMandat | Enum: `PRESIDENT` / `PREMIER_MINISTRE` / `MINISTRE` / `MINISTRE_DELEGUE` / `SECRETAIRE_ETAT` |
+| `portefeuille` | String? | Free-text description of responsibilities |
+| `ministereCode` | String? | Normalized ministry code — join key to `ActionLobby.ministereCode` |
+
+**Indexes**: `personnaliteId`, `ministereCode`, `type`, `gouvernement`
+
+---
+
+### `EntreeCarriere`
+
+Career timeline entries. Populated from HATVP XML (section 2–3) and manual seeding.
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | String PK | cuid() |
+| `personnaliteId` | String FK | References `PersonnalitePublique.id` (cascade delete) |
+| `dateDebut` | DateTime? | Start date |
+| `dateFin` | DateTime? | End date (null = ongoing) |
+| `categorie` | CategorieCarriere | Career category enum |
+| `titre` | String | Role title |
+| `organisation` | String? | Employer or institution |
+| `description` | String? | Additional detail |
+| `source` | SourceCarriere | `HATVP` / `ASSEMBLEE` / `PRESSE` / `MANUELLE` |
+| `sourceUrl` | String? | Source URL |
+| `sourceDate` | DateTime? | Date the source was accessed |
+| `ordre` | Int | Manual sort order (default 0) |
+
+**Indexes**: `personnaliteId`, `categorie`
+
+---
+
+### `InteretDeclare`
+
+Interest declaration items parsed from HATVP XML. One row per item per declaration per rubrique.
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | String PK | cuid() |
+| `personnaliteId` | String FK | References `PersonnalitePublique.id` (cascade delete) |
+| `declarationRef` | String | HATVP declaration identifier (groups items into a declaration) |
+| `dateDeclaration` | DateTime? | Filing date of the declaration |
+| `rubrique` | RubriqueInteret | Section type enum |
+| `contenu` | String | Main text content of the interest entry |
+| `organisation` | String? | Related organization name |
+| `montant` | Float? | Monetary amount in EUR (for revenues/participations) |
+| `dateDebut` | DateTime? | Start date |
+| `dateFin` | DateTime? | End date |
+| `alerteConflit` | Boolean | Set to true when a potential conflict was detected |
+| `commentaireConflit` | String? | Explanation of the conflict |
+
+**Indexes**: `personnaliteId`, `declarationRef`, `rubrique`, `alerteConflit`
+
+**Row count**: 184 (Bayrou, Oct 2025 declaration). Other ministers' XML not yet published by HATVP — re-running `npx tsx scripts/ingest-hatvp.ts` picks them up automatically.
+
+**HATVP XML → `rubrique` mapping**:
+
+| XML Section | rubrique |
+|-------------|----------|
+| Mandats électifs (Section 1) | `MANDAT_ELECTIF` |
+| Activités pro 5 dernières années (Section 2) | `ACTIVITE_ANTERIEURE` |
+| Activités de consultant (Section 3) | `ACTIVITE_ANTERIEURE` |
+| Participations financières (Section 4) | `PARTICIPATION` |
+| Activités du conjoint (Section 5) | `ACTIVITE_CONJOINT` |
+| Fonctions bénévoles (Section 6) | `ACTIVITE_BENEVOLE` |
+| Revenus (Section 7) | `REVENU` |
+| Dons et avantages (Section 8) | `DON_AVANTAGE` |
+
+---
+
+### `EvenementJudiciaire`
+
+Judicial proceedings linked to a public figure.
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | String PK | cuid() |
+| `personnaliteId` | String FK | References `PersonnalitePublique.id` (cascade delete) |
+| `date` | DateTime? | Date of the event |
+| `type` | TypeEvenement | Proceeding type enum |
+| `nature` | String? | Free text: `"abus de confiance"`, `"favoritisme"` |
+| `juridiction` | String? | Court or jurisdiction name |
+| `statut` | StatutEvenement | `EN_COURS` / `CLOS` / `APPEL_EN_COURS` |
+| `resume` | String | 1–2 sentence factual summary (no editorializing) |
+| `sourcePrincipale` | String | Outlet name: `"AFP"`, `"Le Monde"` |
+| `sourceUrl` | String? | Source URL |
+| `sourceDate` | DateTime? | Date the source was published |
+| `verifie` | Boolean | **CRITICAL: only display on public profiles when `true`** |
+
+**Indexes**: `personnaliteId`, `verifie`, `type`
+
+**Legal rule**: `mise en examen` ≠ `condamnation`. Never imply guilt. Always state the proceeding type exactly.
+
+---
+
+### `ActionLobby`
+
+Lobby actions from the AGORA registry targeting a specific ministry. **No direct FK to `PersonnalitePublique`** — the link is indirect: `MandatGouvernemental.ministereCode` → `ActionLobby.ministereCode`.
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | String PK | cuid() |
+| `representantNom` | String | Lobbying organization or representative name |
+| `representantCategorie` | String? | Category (entreprise, association, etc.) |
+| `ministereCode` | String | Target ministry code — join key to `MandatGouvernemental.ministereCode` |
+| `domaine` | String? | Policy domain |
+| `typeAction` | String? | Action type |
+| `exercice` | String? | Reporting year: `"2023"`, `"2024"` |
+| `depensesTranche` | String? | Declared spend range: `"10 000 € à 19 999 €"` |
+| `sourceUrl` | String? | AGORA registry URL |
+| `createdAt` | DateTime | Auto |
+
+**Indexes**: `ministereCode`, `representantNom`, `exercice`, `domaine`
+
+**Join pattern**: `PersonnalitePublique` → `MandatGouvernemental` (where `dateFin IS NULL`) → `ActionLobby` (on `ministereCode`). Never join `ActionLobby` directly to `PersonnalitePublique`.

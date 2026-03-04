@@ -183,7 +183,6 @@ export default async function ConfianceDemocratiqueePage() {
               {topDeclarations.slice(0, 5).map((d) => (
                 <ConflictAlert
                   key={d.id}
-                  declarationId={d.id}
                   deputyName={`${d.prenom} ${d.nom}`}
                   sector={d.organe ?? d.typeMandat}
                   participationTotal={d.totalParticipations ?? 0}

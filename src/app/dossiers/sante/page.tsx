@@ -8,6 +8,8 @@ import { TopicVoteList } from "@/components/topic-vote-list";
 import { LobbyingDensity } from "@/components/lobbying-density";
 import { DeptMap } from "@/components/dept-map";
 import { fmt } from "@/lib/format";
+import { FranceMap } from "@/components/france-map";
+import { getFranceMapData } from "@/lib/france-map-data";
 
 export const revalidate = 86400;
 
@@ -22,6 +24,7 @@ export default async function SantePage() {
     topOrgsRaw,
     declarationsCount,
     mgDensiteRaw,
+    mapData,
   ] = await Promise.all([
     prisma.scrutin.findMany({
       where: {
@@ -93,6 +96,7 @@ export default async function SantePage() {
       include: { departement: { select: { libelle: true } } },
       take: 200, // All depts, all years — we'll keep only latest per dept
     }),
+    getFranceMapData(),
   ]);
 
   const topOrgs = topOrgsRaw.map((o) => ({
@@ -210,6 +214,17 @@ export default async function SantePage() {
                 Médecins généralistes pour 10 000 habitants par département — source DREES
               </p>
             </div>
+
+            {Object.keys(mapData).length > 0 && (
+              <div className="mb-6 rounded-xl border border-bureau-700/20 bg-bureau-800/10 p-4">
+                <FranceMap
+                  data={mapData}
+                  defaultIndicator="med"
+                  size="lg"
+                />
+              </div>
+            )}
+
             <div className="overflow-hidden rounded-xl border border-bureau-700/20">
               <DeptMap
                 data={mgDensiteMap}

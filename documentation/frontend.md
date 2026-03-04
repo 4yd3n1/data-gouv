@@ -1,6 +1,6 @@
 # Frontend Implementation
 
-> Last updated: Mar 3, 2026 — Session 20 (party crash fix + QA verified). 57 routes + 5 OG image routes, 25 components.
+> Last updated: Mar 4, 2026 — Session 26. 59 routes + 5 OG image routes, 31 components.
 
 Complete reference for all UI pages, components, styling, and patterns.
 
@@ -11,7 +11,7 @@ Complete reference for all UI pages, components, styling, and patterns.
 - **Next.js 16** App Router — all pages are React Server Components by default
 - **Tailwind CSS 4** with custom theme tokens defined in `globals.css`
 - **No client-side data fetching** — every page queries Prisma directly at render time
-- **7 client components**: `SearchInput`, `Avatar`, `DeclarationSection`, `ProfileTabs`, `DeptLookup`, `NavSearch`, `SearchBox` (all use `"use client"`)
+- **9 client components**: `SearchInput`, `Avatar`, `DeclarationSection`, `ProfileTabs`, `DeptLookup`, `NavSearch`, `SearchBox`, `FranceMap`, `DeltaBadge` (all use `"use client"`)
 - **1 shared lib**: `nuance-colors.ts` — political party color mapping used by elections pages
 - **French localization** throughout: `<html lang="fr">`, `fr-FR` locale for numbers/dates
 - **ISR** (`export const revalidate = N`): homepage + votes = 3600s; dossiers + representants hub + economie + patrimoine + territoire hub = 86400s; profiles = dynamic (no revalidate)
@@ -88,7 +88,7 @@ Applied with: `font-[family-name:var(--font-display)]` for headings.
 
 ---
 
-## Route Map (57 routes + 5 OG image routes)
+## Route Map (59 routes + 5 OG image routes)
 
 ### Static (prerendered at build time)
 | Route | Purpose |
@@ -98,7 +98,8 @@ Applied with: `font-[family-name:var(--font-display)]` for headings.
 | `/representants` | Représentants hub — 6 section cards with counts + president card |
 | `/elections` | Hub — Législatives 2024 card + national summary stats |
 | `/economie` | Dashboard — SVG MiniChart per indicator (15+ series) |
-| `/territoire` | Browser — regions with department cards |
+| `/territoire` | Browser — regions with department cards + `FranceMap` (Phase 8A/8B, 6 indicators, dept click → `/territoire/[code]`) |
+| `/gouvernement` | Government index — members grouped by type (President → PM → Ministres → Délégués → Secrétaires), avatar grid, links to profiles (Phase 9A) |
 | `/patrimoine` | Hub — top 10 museums + monument domains |
 | `/votes` | Votes hub — 13 topic grid + recent scrutins |
 | `/votes/alignements` | Alignment matrix — N×N group co-vote heatmap, top 5 allies/opponents per group (ISR 86400) |
@@ -107,12 +108,12 @@ Applied with: `font-[family-name:var(--font-display)]` for headings.
 ### Dossiers (8 dynamic pages)
 | Route | Topic |
 |-------|-------|
-| `/dossiers/pouvoir-dachat` | Purchasing power — income map, inflation, votes, lobbying |
+| `/dossiers/pouvoir-dachat` | Purchasing power — `FranceMap` (rev/income), inflation, votes, lobbying (Phase 8B) |
 | `/dossiers/confiance-democratique` | Democratic trust — declarations, party money, 49.3 |
-| `/dossiers/dette-publique` | Public debt — KPIs, budget votes, local debt |
-| `/dossiers/emploi-jeunesse` | Employment & youth — dept map, education stats |
+| `/dossiers/dette-publique` | Public debt — `FranceMap` (det/debt), budget votes, local debt (Phase 8B) |
+| `/dossiers/emploi-jeunesse` | Employment & youth — `FranceMap` (cho/unemployment), education stats EDUC_NO_DIPLOMA + EDUC_BAC_PLUS + EDUC_HIGHER_EDUC (Phase 8B/8C) |
 | `/dossiers/logement` | Housing — permits, vacancy, votes, lobbying |
-| `/dossiers/sante` | Healthcare — GP density map, PLFSS votes |
+| `/dossiers/sante` | Healthcare — `FranceMap` (med/GP density), PLFSS votes (Phase 8B) |
 | `/dossiers/transition-ecologique` | Ecology — votes, lobbying, declared energy interests |
 | `/dossiers/retraites` | Pensions — 49.3 votes, group positions, individual votes |
 
@@ -131,6 +132,12 @@ Applied with: `font-[family-name:var(--font-display)]` for headings.
 | `/representants/scrutins/[id]` | Result summary, group bars, individual votes |
 | `/representants/partis` | Year selector, sort options, aggregate stats |
 | `/representants/partis/[id]` | Revenue/expense breakdown bars, multi-year table |
+
+### Gouvernement (Phase 9)
+| Route | Key Features |
+|-------|-------------|
+| `/gouvernement` | Index grid — all current members sorted by protocol `rang`, grouped by `TypeMandat` (ISR 3600) |
+| `/gouvernement/[slug]` | Profile page — `ProfileHero` + `ProfileTabs` (3 tabs: Intérêts déclarés / Mandats / Parcours). Sections: `InteretsSection` (HATVP, progressive disclosure per rubrique, `<details>` expander), `MandatsSection` (timeline), `LobbySection`, `JudiciaireSection`, `CareerSection`. Conflict alert banner when `alerteConflit` entries exist. (Phase 9A + 9E) |
 
 ### Gouvernance (legacy — HTTP 308 redirects to /representants)
 `/gouvernance/*` routes remain active (still served; linked from older bookmarks and deputy profiles). Redirects configured in `next.config.ts`.
@@ -152,7 +159,7 @@ Applied with: `font-[family-name:var(--font-display)]` for headings.
 ### Mon Territoire
 | Route | Key Features |
 |-------|-------------|
-| `/mon-territoire` | 3-state civic dashboard: empty prompt (postal input) → disambiguation picker → full dashboard (représentants, économie, budget, santé & sécurité, votes, patrimoine, explorer plus) |
+| `/mon-territoire` | 3-state civic dashboard: empty prompt (postal input) → disambiguation picker → full dashboard (représentants, économie, budget, santé & sécurité, votes, patrimoine, explorer plus). Mini `FranceMap` highlights selected dept (Phase 8B). |
 
 ### Recherche (Session 15/18 — 7B)
 | Route | Key Features |
@@ -162,7 +169,7 @@ Applied with: `font-[family-name:var(--font-display)]` for headings.
 ### Territory & Economy
 | Route | Key Features |
 |-------|-------------|
-| `/territoire/[departementCode]` | Full département dashboard: demographics, economy, budget, representatives, culture, security/health. Has "Comparer →" link in breadcrumb. |
+| `/territoire/[departementCode]` | Full département dashboard: demographics, economy, budget, representatives, culture, security/health. Mini `FranceMap` in hero (highlights selected dept). Has "Comparer →" link in breadcrumb. Education stats (EDUC_NO_DIPLOMA, EDUC_BAC_PLUS, EDUC_HIGHER_EDUC) in Éducation section (Phase 8B/8C). |
 | `/territoire/commune/[communeCode]` | Commune card: elu list, budget, patrimoine |
 | `/elections/legislatives-2024` | Tour switcher, dept filter, nuance bars, candidate list |
 | `/patrimoine/musees` | Search, pagination |
@@ -515,6 +522,49 @@ Shows a % difference between `value` and `reference`. Always teal (call only for
 
 ---
 
+#### `FranceMap` — Client Component (Phase 8A)
+
+**File**: [france-map.tsx](../src/components/france-map.tsx)
+
+```typescript
+{
+  data: Record<string, DeptData>       // from getFranceMapData() in src/lib/france-map-data.ts
+  defaultIndicator?: IndicatorKey      // "rev" | "cho" | "det" | "med" | "edu" | "pop"
+  selectedCode?: string                // highlight a dept (mini mode)
+  onSelect?: (code: string) => void    // click handler (overrides linkBase)
+  linkBase?: string                    // e.g. "/territoire" → clicks go to /territoire/[code]
+  size?: "full" | "mini"              // full = legend + pills; mini = compact highlight badge
+  showRanking?: boolean               // bottom-5 ranking list
+  showDetail?: boolean                // hover tooltip panel
+  showPills?: boolean                 // indicator selector pills
+}
+```
+
+Interactive SVG choropleth of French departments (96 metro + 5 overseas insets). Hex-lerp color scale across 7-stop palette (not CSS `color-mix`). Tooltip follows cursor via `getBoundingClientRect`. "Voir le tableau de bord" button always links to `/territoire/[code]`, decoupled from `linkBase`.
+
+**Data files**:
+- `src/data/france-geo.ts` — SVG paths from `@svg-maps/france.departments`, `viewBox 0 0 613 585`, `DEPT_PATHS`, `OVERSEAS_INSETS`
+- `src/data/indicators.ts` — 6 `IndicatorConfig` objects, `INDICATORS[]`, `INDICATOR_MAP`, `DeptData`, `IndicatorKey`, `format: "euro"|"pct"|"compact"|"number"`
+- `src/lib/france-map-data.ts` — `getFranceMapData()` server async function, 4 parallel Prisma queries, `distinct + orderBy: { annee: "desc" }` for latest year per dept
+
+**Integrated on** (Phase 8B): `/territoire` (full, rev), `/dossiers/pouvoir-dachat` (full, rev), `/dossiers/sante` (full, med), `/dossiers/emploi-jeunesse` (full, cho), `/dossiers/dette-publique` (full, det), `/territoire/[dept]` (mini), `/mon-territoire` (mini).
+
+---
+
+### New in Phase 9 — Gouvernement Section Components
+
+Five server components in `src/components/gouvernement/`. Each is a self-contained async server component — never inline section logic directly in `gouvernement/[slug]/page.tsx`.
+
+| Component | File | Purpose |
+|-----------|------|---------|
+| `InteretsSection` | [gouvernement/interets-section.tsx](../src/components/gouvernement/interets-section.tsx) | HATVP declared interests grouped by `rubrique`, progressive disclosure (first 5 inline, rest in native `<details><summary>`), `InteretItem` sub-component, conflict alert per item |
+| `MandatsSection` | [gouvernement/mandats-section.tsx](../src/components/gouvernement/mandats-section.tsx) | Timeline of government mandates (`border-l` vertical line, dot per mandate, active = teal dot) |
+| `CareerSection` | [gouvernement/career-section.tsx](../src/components/gouvernement/career-section.tsx) | Career timeline placeholder (9D not yet ingested) |
+| `LobbySection` | [gouvernement/lobby-section.tsx](../src/components/gouvernement/lobby-section.tsx) | `ActionLobby` count for current `ministereCode` (9C not yet ingested) |
+| `JudiciaireSection` | [gouvernement/judiciaire-section.tsx](../src/components/gouvernement/judiciaire-section.tsx) | Verified judicial events only (`verifie = true`); renders `null` when count = 0 |
+
+---
+
 ### Original Components (12, unchanged)
 
 #### `PageHeader` — Server Component
@@ -789,7 +839,7 @@ List pages: `max-w-7xl px-6`. Profile detail pages: `max-w-4xl px-6` (focused ed
 
 ---
 
-## Build Output (Session 18/19 — 57 routes + 5 OG)
+## Build Output (Session 26 — 59 routes + 5 OG)
 
 ```
 Route (app)                                                   Type
@@ -856,7 +906,9 @@ Route (app)                                                   Type
 └ ƒ /mon-territoire                                           Dynamic (7A)
 ```
 
-10 static + 47 dynamic = 57 routes. Plus 5 OG image routes = 62 total in build output.
+11 static + 48 dynamic = 59 routes. Plus 5 OG image routes = 64 total in build output.
+
+New since Session 20: `/gouvernement` (static ISR 3600), `/gouvernement/[slug]` (dynamic, Phase 9A+9E).
 
 ---
 
@@ -936,8 +988,12 @@ src/
 │   │   └── commune/[communeCode]/page.tsx
 │   ├── president/
 │   │   └── page.tsx             # Macron profile — 4 tabs (Phase 6)
+│   ├── gouvernement/
+│   │   ├── page.tsx             # Government index — grouped by TypeMandat, ISR 3600 (Phase 9A)
+│   │   └── [slug]/
+│   │       └── page.tsx         # Profile — ProfileHero + ProfileTabs (3 tabs) (Phase 9A+9E)
 │   ├── mon-territoire/
-│   │   └── page.tsx             # 3-state civic dashboard by postal code (Session 14)
+│   │   └── page.tsx             # 3-state civic dashboard by postal code (Session 14) + mini FranceMap (8B)
 │   └── patrimoine/
 │       ├── page.tsx             # ISR 86400
 │       ├── musees/
@@ -953,7 +1009,8 @@ src/
 │   ├── topic-vote-list.tsx      # Server: scrutins filtered by tag
 │   ├── lobbying-density.tsx     # Server: domain-filtered lobbying summary
 │   ├── conflict-alert.tsx       # Server: cross-reference finding alert (href + votePour/voteContre — 7C)
-│   ├── delta-badge.tsx          # Server: % difference badge, always teal (7D)
+│   ├── delta-badge.tsx          # Client: % difference badge, always teal (7D)
+│   ├── france-map.tsx           # Client: SVG choropleth of French depts, 6 indicators (Phase 8A)
 │   ├── nav-search.tsx           # Client: navbar search, always flex, useRef+onKeyDown (7B/Session 18)
 │   ├── search-box.tsx           # Client: /recherche page search input (Session 18)
 │   ├── ranking-table.tsx        # Server: département ranking by indicator
@@ -971,11 +1028,19 @@ src/
 │   ├── scrutin-result-badge.tsx # Server: Adopté/Rejeté badge
 │   ├── search-input.tsx         # Client: URL-based search with spinner
 │   ├── stat-card.tsx            # Server: number + label card
-│   └── vote-badge.tsx           # Server: Pour/Contre/Abstention/Non-votant
+│   ├── vote-badge.tsx           # Server: Pour/Contre/Abstention/Non-votant
+│   └── gouvernement/            # Phase 9 section components (all async server components)
+│       ├── interets-section.tsx # Server: HATVP interests grouped by rubrique, <details> expander
+│       ├── mandats-section.tsx  # Server: government mandate timeline (border-l + dots)
+│       ├── career-section.tsx   # Server: career timeline placeholder (9D pending)
+│       ├── lobby-section.tsx    # Server: ActionLobby count by ministereCode (9C pending)
+│       └── judiciaire-section.tsx # Server: verified judicial events (verifie=true only; null if none)
 ├── data/
 │   ├── lobbyists-curated.ts     # Static curated lobbyist profiles (10 orgs, Phase 6)
 │   ├── president-macron.ts      # Static Macron data — BIO + 20 promises (Phase 6)
-│   └── postal-codes.json        # La Poste Hexasmal: 6,328 postal codes → INSEE lists (Session 14)
+│   ├── postal-codes.json        # La Poste Hexasmal: 6,328 postal codes → INSEE lists (Session 14)
+│   ├── france-geo.ts            # SVG paths for French depts (@svg-maps/france.departments) (Phase 8A)
+│   └── indicators.ts            # IndicatorConfig[], INDICATOR_MAP, DeptData, IndicatorKey (Phase 8A)
 └── lib/
     ├── db.ts                    # Prisma client (pg adapter, singleton) — named export `{ prisma }`
     ├── dossier-config.ts        # Dossier metadata (slug, label, tags, lobbyDomains)
@@ -984,5 +1049,6 @@ src/
     ├── alignment.ts             # computeAlignment(): $queryRaw CTE self-join on GroupeVote (7F)
     ├── postal-resolver.ts       # resolvePostalCode(): CP → ResolvedTerritory[] (Session 14)
     ├── president-utils.ts       # getBaselineObservation() + computeDelta() (Phase 6)
+    ├── france-map-data.ts       # getFranceMapData(): 4 parallel Prisma queries → Record<string, DeptData> (Phase 8A)
     └── search.ts                # globalSearch(): search_index view + president static injection (7B/Session 18)
 ```

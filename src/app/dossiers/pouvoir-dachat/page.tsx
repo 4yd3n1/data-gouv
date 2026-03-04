@@ -7,6 +7,10 @@ import { IndicatorCard } from "@/components/indicator-card";
 import { TopicVoteList } from "@/components/topic-vote-list";
 import { LobbyingDensity } from "@/components/lobbying-density";
 import { RankingTable } from "@/components/ranking-table";
+import { FranceMap } from "@/components/france-map";
+import { getFranceMapData } from "@/lib/france-map-data";
+
+export const revalidate = 86400;
 
 export default async function PouvoirDachatPage() {
   const dossier = getDossier("pouvoir-dachat");
@@ -23,6 +27,7 @@ export default async function PouvoirDachatPage() {
     topOrgsRaw,
     medianIncomeRows,
     depts,
+    mapData,
   ] = await Promise.all([
     prisma.indicateur.findFirst({
       where: { code: "PIB_ANNUEL" },
@@ -76,6 +81,7 @@ export default async function PouvoirDachatPage() {
     prisma.departement.findMany({
       select: { code: true, libelle: true },
     }),
+    getFranceMapData(),
   ]);
 
   const topOrgs = topOrgsRaw.map((o) => ({
@@ -194,9 +200,19 @@ export default async function PouvoirDachatPage() {
               Revenus par département
             </h2>
             <p className="mt-1 text-sm text-bureau-500">
-              Revenu médian disponible par unité de consommation — top 10 départements (INSEE Filosofi)
+              Revenu médian disponible par unité de consommation — INSEE Filosofi
             </p>
           </div>
+
+          {Object.keys(mapData).length > 0 && (
+            <div className="mb-8 rounded-xl border border-bureau-700/20 bg-bureau-800/10 p-4">
+              <FranceMap
+                data={mapData}
+                defaultIndicator="rev"
+                size="lg"
+              />
+            </div>
+          )}
 
           {rankingRows.length > 0 ? (
             <RankingTable

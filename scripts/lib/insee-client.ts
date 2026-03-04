@@ -250,6 +250,111 @@ export async function fetchLogementDep(
   }
 }
 
+// ─── Education levels per département ───
+// Dataset: DS_RP_DIPLOMES_PRINC (Recensement 2022)
+// Population 15+ broken down by highest diploma level.
+// EDUC dimension codes (RP nomenclature):
+//   _T          = total (all levels)
+//   001T100_RP  = no diploma / CEP (Certificat d'études primaires)
+//   200_RP      = BEPC/Brevet (lower secondary)
+//   300_RP      = CAP/BEP (vocational)
+//   350T351_RP  = baccalauréat (général, techno, professionnel)
+//   500_RP      = bac+2 (BTS, DUT, DEUG)
+//   600_RP      = bac+3 to bac+4 (licence, maîtrise)
+//   700_RP      = bac+5 and above (master, grande école, doctorat)
+
+export async function fetchEducationDep(
+  depCode: string
+): Promise<InseeLocalValue[]> {
+  // Dataset: DS_RP_DIPLOMES_PRINC (Recensement 2022)
+  // Dimension: EDUC — RP nomenclature codes (e.g. 001T100_RP, 350T351_RP, 500_RP…)
+  const url = `${INSEE_BASE}/data/DS_RP_DIPLOMES_PRINC/to-csv?GEO=DEP-${depCode}&SEX=_T&AGE=Y_GE15&TIME_PERIOD=2022`;
+
+  try {
+    const text = await fetchWithRetry(url);
+    const rows = parseCsv(text);
+
+    // Accumulate population counts by diploma level
+    const counts: Record<string, number> = {};
+    let annee = 2022;
+
+    for (const row of rows) {
+      if (row["GEO_OBJECT"] !== "DEP") continue;
+      if (row["RP_MEASURE"] && row["RP_MEASURE"] !== "POP") continue;
+      const val = parseFloat(row["OBS_VALUE"]?.replace(",", ".") ?? "");
+      if (isNaN(val)) continue;
+      annee = parseInt(row["TIME_PERIOD"], 10) || 2022;
+
+      const educLevel = row["EDUC"] ?? "";
+      counts[educLevel] = (counts[educLevel] ?? 0) + val;
+    }
+
+    const total = counts["_T"] ?? 0;
+    if (total === 0) {
+      const available = Object.keys(counts).filter((k) => k !== "").join(", ");
+      if (available) {
+        console.warn(
+          `  [INSEE] Education DEP ${depCode}: no _T total found. Available EDUC codes: [${available}]`
+        );
+      }
+      return [];
+    }
+
+    // No diploma: 001T100_RP (no diploma + CEP primary cert)
+    const noDiploma = counts["001T100_RP"] ?? 0;
+
+    // Bac or higher: 350T351_RP (bac) + 500_RP (bac+2) + 600_RP (bac+3/4) + 700_RP (bac+5+)
+    const bacOrHigher =
+      (counts["350T351_RP"] ?? 0) +
+      (counts["500_RP"] ?? 0) +
+      (counts["600_RP"] ?? 0) +
+      (counts["700_RP"] ?? 0);
+
+    // Higher education only: bac+2 and above
+    const higherEduc =
+      (counts["500_RP"] ?? 0) +
+      (counts["600_RP"] ?? 0) +
+      (counts["700_RP"] ?? 0);
+
+    const results: InseeLocalValue[] = [];
+    const geoCode = depCode;
+
+    if (noDiploma > 0) {
+      results.push({
+        geoType: "DEP", geoCode, indicateur: "EDUC_NO_DIPLOMA",
+        annee, valeur: Math.round((noDiploma / total) * 1000) / 10,
+        unite: "%", source: "RP",
+      });
+    }
+    if (bacOrHigher > 0) {
+      results.push({
+        geoType: "DEP", geoCode, indicateur: "EDUC_BAC_PLUS",
+        annee, valeur: Math.round((bacOrHigher / total) * 1000) / 10,
+        unite: "%", source: "RP",
+      });
+    }
+    if (higherEduc > 0) {
+      results.push({
+        geoType: "DEP", geoCode, indicateur: "EDUC_HIGHER_EDUC",
+        annee, valeur: Math.round((higherEduc / total) * 1000) / 10,
+        unite: "%", source: "RP",
+      });
+    }
+
+    if (results.length === 0 && total > 0) {
+      const available = Object.keys(counts).filter((k) => k !== "_T" && k !== "").join(", ");
+      console.warn(
+        `  [INSEE] Education DEP ${depCode}: total=${Math.round(total)}, but no expected EDUC codes matched. Available: [${available}]`
+      );
+    }
+
+    return results;
+  } catch (err) {
+    console.warn(`  [INSEE] Education fetch failed for DEP ${depCode}: ${err}`);
+    return [];
+  }
+}
+
 // ─── Employment rates per département ───
 // Dataset: DS_RP_EMPLOI_LR_PRINC (Recensement 2022)
 // Computes unemployment, activity, and employment rates from EMPSTA_ENQ counts.

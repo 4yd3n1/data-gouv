@@ -6,6 +6,10 @@ import { DossierNav } from "@/components/dossier-nav";
 import { IndicatorCard } from "@/components/indicator-card";
 import { TopicVoteList } from "@/components/topic-vote-list";
 import { RankingTable } from "@/components/ranking-table";
+import { FranceMap } from "@/components/france-map";
+import { getFranceMapData } from "@/lib/france-map-data";
+
+export const revalidate = 86400;
 
 export default async function EmploiJeunessePage() {
   const dossier = getDossier("emploi-jeunesse");
@@ -19,6 +23,9 @@ export default async function EmploiJeunessePage() {
     unemploymentRows,
     pop0019Rows,
     depts,
+    mapData,
+    educNoDiplomaRows,
+    educBacPlusRows,
   ] = await Promise.all([
     prisma.indicateur.findFirst({
       where: { code: "CHOMAGE_TAUX_TRIM" },
@@ -55,6 +62,18 @@ export default async function EmploiJeunessePage() {
     prisma.departement.findMany({
       select: { code: true, libelle: true },
     }),
+    getFranceMapData(),
+    // Education indicators by dept (from Mélodi DS_RP_DIPLOMES_FORM_PRINC)
+    prisma.statLocale.findMany({
+      where: { indicateur: "EDUC_NO_DIPLOMA", geoType: "DEP" },
+      orderBy: { valeur: "desc" },
+      take: 10,
+    }),
+    prisma.statLocale.findMany({
+      where: { indicateur: "EDUC_BAC_PLUS", geoType: "DEP" },
+      orderBy: { valeur: "desc" },
+      take: 10,
+    }),
   ]);
 
   const deptMap = new Map(depts.map((d) => [d.code, d.libelle]));
@@ -67,6 +86,20 @@ export default async function EmploiJeunessePage() {
   }));
 
   const pop0019RankingRows = pop0019Rows.map((s, i) => ({
+    code: s.geoCode,
+    libelle: deptMap.get(s.geoCode) ?? s.geoCode,
+    valeur: s.valeur,
+    rank: i + 1,
+  }));
+
+  const educNoDiplomaRankingRows = educNoDiplomaRows.map((s, i) => ({
+    code: s.geoCode,
+    libelle: deptMap.get(s.geoCode) ?? s.geoCode,
+    valeur: s.valeur,
+    rank: i + 1,
+  }));
+
+  const educBacPlusRankingRows = educBacPlusRows.map((s, i) => ({
     code: s.geoCode,
     libelle: deptMap.get(s.geoCode) ?? s.geoCode,
     valeur: s.valeur,
@@ -164,9 +197,19 @@ export default async function EmploiJeunessePage() {
               Chômage par département
             </h2>
             <p className="mt-1 text-sm text-bureau-500">
-              Taux de chômage local par département — top 10 (source INSEE)
+              Taux de chômage local par département — source INSEE
             </p>
           </div>
+
+          {Object.keys(mapData).length > 0 && (
+            <div className="mb-8 rounded-xl border border-bureau-700/20 bg-bureau-800/10 p-4">
+              <FranceMap
+                data={mapData}
+                defaultIndicator="cho"
+                size="lg"
+              />
+            </div>
+          )}
 
           <div className="grid gap-6 lg:grid-cols-2">
             <div>
@@ -208,7 +251,53 @@ export default async function EmploiJeunessePage() {
           </div>
         </section>
 
-        {/* Section 3 — Votes emploi & éducation */}
+        {/* Section 3 — Niveau d'éducation par département */}
+        {(educNoDiplomaRankingRows.length > 0 || educBacPlusRankingRows.length > 0) && (
+          <section>
+            <div className="mb-6">
+              <h2 className="font-[family-name:var(--font-display)] text-2xl text-bureau-100">
+                Niveau d&apos;éducation par département
+              </h2>
+              <p className="mt-1 text-sm text-bureau-500">
+                Population 15 ans et plus — source INSEE Recensement 2022
+              </p>
+            </div>
+
+            <div className="grid gap-6 lg:grid-cols-2">
+              {educNoDiplomaRankingRows.length > 0 ? (
+                <RankingTable
+                  rows={educNoDiplomaRankingRows}
+                  unit="%"
+                  label="Sans diplôme (pop. 15+)"
+                  territoireHref={(code) => `/territoire/${code}`}
+                />
+              ) : (
+                <div className="rounded-xl border border-bureau-700/30 bg-bureau-800/20 p-6">
+                  <p className="text-sm text-bureau-500">
+                    Données non disponibles — lancer <code className="text-teal">pnpm ingest:insee-local</code> pour les ingérer.
+                  </p>
+                </div>
+              )}
+
+              {educBacPlusRankingRows.length > 0 ? (
+                <RankingTable
+                  rows={educBacPlusRankingRows}
+                  unit="%"
+                  label="Baccalauréat ou supérieur (pop. 15+)"
+                  territoireHref={(code) => `/territoire/${code}`}
+                />
+              ) : (
+                <div className="rounded-xl border border-bureau-700/30 bg-bureau-800/20 p-6">
+                  <p className="text-sm text-bureau-500">
+                    Données non disponibles — lancer <code className="text-teal">pnpm ingest:insee-local</code> pour les ingérer.
+                  </p>
+                </div>
+              )}
+            </div>
+          </section>
+        )}
+
+        {/* Section 4 — Votes emploi & éducation */}
         <section>
           <div className="mb-6">
             <h2 className="font-[family-name:var(--font-display)] text-2xl text-bureau-100">

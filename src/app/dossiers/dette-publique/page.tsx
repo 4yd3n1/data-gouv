@@ -6,6 +6,10 @@ import { DossierNav } from "@/components/dossier-nav";
 import { IndicatorCard } from "@/components/indicator-card";
 import { TopicVoteList } from "@/components/topic-vote-list";
 import { RankingTable } from "@/components/ranking-table";
+import { FranceMap } from "@/components/france-map";
+import { getFranceMapData } from "@/lib/france-map-data";
+
+export const revalidate = 86400;
 
 export default async function DettePubliquePage() {
   const dossier = getDossier("dette-publique");
@@ -19,6 +23,7 @@ export default async function DettePubliquePage() {
     scrutins,
     budgetDetteRows,
     depts,
+    mapData,
   ] = await Promise.all([
     prisma.indicateur.findFirst({
       where: { code: "DETTE_PIB" },
@@ -56,6 +61,7 @@ export default async function DettePubliquePage() {
     prisma.departement.findMany({
       select: { code: true, libelle: true },
     }),
+    getFranceMapData(),
   ]);
 
   const deptMap = new Map(depts.map((d) => [d.code, d.libelle]));
@@ -168,6 +174,16 @@ export default async function DettePubliquePage() {
               Encours de dette par habitant des collectivités départementales — DGFIP comptes locaux
             </p>
           </div>
+
+          {Object.keys(mapData).length > 0 && (
+            <div className="mb-8 rounded-xl border border-bureau-700/20 bg-bureau-800/10 p-4">
+              <FranceMap
+                data={mapData}
+                defaultIndicator="det"
+                size="lg"
+              />
+            </div>
+          )}
 
           {detteRankingRows.length > 0 ? (
             <RankingTable
