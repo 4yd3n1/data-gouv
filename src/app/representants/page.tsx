@@ -6,7 +6,7 @@ import { PageHeader } from "@/components/page-header";
 export const revalidate = 86400; // Revalidate every 24h — representative data changes on ingestion only
 
 export default async function GouvernancePage() {
-  const [deputes, senateurs, lobbyistes, declarations, actions, scrutins, voteRecords, elus, partis] = await Promise.all([
+  const [deputes, senateurs, lobbyistes, declarations, actions, scrutins, voteRecords, elus, partis, gouvernementActifs] = await Promise.all([
     prisma.depute.count(),
     prisma.senateur.count(),
     prisma.lobbyiste.count(),
@@ -16,6 +16,7 @@ export default async function GouvernancePage() {
     prisma.voteRecord.count(),
     prisma.elu.count(),
     prisma.partiPolitique.count({ where: { exercice: 2024 } }),
+    prisma.mandatGouvernemental.count({ where: { dateFin: null } }),
   ]);
 
   const deputesActifs = await prisma.depute.count({ where: { actif: true } });
@@ -30,6 +31,14 @@ export default async function GouvernancePage() {
       sub: "Emmanuel Macron · en fonction depuis 2017",
       desc: "Promesses vs réalité, bilan économique, lobbying, déclarations HATVP — le dossier phare",
       accent: "amber" as const,
+    },
+    {
+      href: "/gouvernement",
+      title: "Gouvernement",
+      stat: gouvernementActifs,
+      sub: "membres en exercice",
+      desc: "Parcours, déclarations HATVP, mandats et activité parlementaire de chaque ministre",
+      accent: "rose" as const,
     },
     {
       href: "/representants/deputes",

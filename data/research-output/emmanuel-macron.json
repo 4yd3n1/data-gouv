@@ -1,0 +1,127 @@
+{
+  "slug": "emmanuel-macron",
+  "nom": "Macron",
+  "prenom": "Emmanuel",
+  "researched_at": "2026-03-04",
+  "sources_used": [
+    "France Info",
+    "France Bleu",
+    "France 24",
+    "Public Sénat",
+    "Europe 1"
+  ],
+  "notes": "Parcours complet de l'enfance à la présidence. Affaire McKinsey documentée en Tier 1-2 (France Info, France Bleu, Public Sénat). Macron n'est pas personnellement mis en examen — immunité présidentielle (Art. 67 Constitution) en cours de mandat. Les enquêtes du PNF ciblent principalement la société McKinsey ; Macron est potentiellement concerné en tant que bénéficiaire de services dans le cadre de ses campagnes 2017 et 2022.",
+  "career_entries": [
+    {
+      "dateDebut": "1999-09-01",
+      "dateFin": "2001-06-30",
+      "categorie": "FORMATION",
+      "titre": "Master Affaires publiques, Sciences Po Paris",
+      "organisation": "Sciences Po Paris",
+      "description": "Diplômé de Sciences Po Paris en affaires publiques (promotion 2001), après une licence de philosophie à l'Université Paris Nanterre. Sciences Po a confirmé son appartenance à la promotion 2001.",
+      "sourceUrl": "https://www.francebleu.fr/infos/politique/retour-en-six-dates-sur-l-ascension-fulgurante-d-emmanuel-macron-plus-jeune-president-de-la-veme-republique-1493912160",
+      "sourcePrincipale": "France Bleu",
+      "sourceDate": "2017-05-04",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2002-09-01",
+      "dateFin": "2004-06-30",
+      "categorie": "FORMATION",
+      "titre": "École nationale d'administration (ENA) — promotion Léopold Sédar Senghor",
+      "organisation": "ENA, Strasbourg",
+      "description": "Classé 5e de la promotion Léopold Sédar Senghor (2002-2004). Stage en ambassade au Nigeria et à la préfecture de l'Oise. L'ENA a été supprimée en 2022 et remplacée par l'INSP.",
+      "sourceUrl": "https://www.francebleu.fr/infos/politique/retour-en-six-dates-sur-l-ascension-fulgurante-d-emmanuel-macron-plus-jeune-president-de-la-veme-republique-1493912160",
+      "sourcePrincipale": "France Bleu",
+      "sourceDate": "2017-05-04",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2004-07-01",
+      "dateFin": "2008-09-01",
+      "categorie": "FONCTION_PUBLIQUE",
+      "titre": "Inspecteur des finances",
+      "organisation": "Inspection générale des finances (IGF), Ministère de l'Économie",
+      "description": "Nommé inspecteur des finances à sa sortie de l'ENA. Corps de l'élite administrative française. A travaillé sous la tutelle de Jean-Pierre Jouyet. A versé 50 000 euros pour racheter son contrat de fonctionnaire en 2008 afin de rejoindre Rothschild.",
+      "sourceUrl": "https://www.franceinfo.fr/elections/presidentielle/quand-emmanuel-macron-etait-banquier-d-affaires-un-element-prometteur-mais-sans-plus_2171646.html",
+      "sourcePrincipale": "France Info",
+      "sourceDate": "2017-04-14",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2008-09-01",
+      "dateFin": "2012-05-01",
+      "categorie": "CARRIERE_PRIVEE",
+      "titre": "Associé-gérant",
+      "organisation": "Rothschild & Cie Banque",
+      "description": "Rejoint Rothschild & Cie comme banquier d'affaires en 2008. Devient associé-gérant en décembre 2010, à 32 ans — le plus jeune associé de l'histoire de la banque. A conseillé Nestlé lors du rachat de la division nutrition infantile de Pfizer pour 9 milliards d'euros en 2012, l'une des plus grandes transactions de Rothschild, qui lui a rapporté environ un million d'euros.",
+      "sourceUrl": "https://www.franceinfo.fr/elections/presidentielle/quand-emmanuel-macron-etait-banquier-d-affaires-un-element-prometteur-mais-sans-plus_2171646.html",
+      "sourcePrincipale": "France Info",
+      "sourceDate": "2017-04-14",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2012-05-15",
+      "dateFin": "2014-08-26",
+      "categorie": "FONCTION_PUBLIQUE",
+      "titre": "Secrétaire général adjoint de la Présidence de la République",
+      "organisation": "Élysée, cabinet de François Hollande",
+      "description": "Nommé secrétaire général adjoint de l'Élysée le 15 mai 2012, chargé des questions économiques et financières. Collaborateur direct de François Hollande, en qui il gagnait la confiance via Jean-Pierre Jouyet rencontré en 2006.",
+      "sourceUrl": "https://www.francebleu.fr/infos/politique/retour-en-six-dates-sur-l-ascension-fulgurante-d-emmanuel-macron-plus-jeune-president-de-la-veme-republique-1493912160",
+      "sourcePrincipale": "France Bleu",
+      "sourceDate": "2017-05-04",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2014-08-26",
+      "dateFin": "2016-08-30",
+      "categorie": "MANDAT_GOUVERNEMENTAL",
+      "titre": "Ministre de l'Économie, de l'Industrie et du Numérique",
+      "organisation": "Gouvernements Valls II et III",
+      "description": "Nommé ministre de l'Économie le 26 août 2014 dans le gouvernement Valls II. Porte la loi dite « loi Macron » (croissance, activité et égalité des chances économiques). Démissionne le 30 août 2016 pour se consacrer au mouvement En Marche! qu'il a fondé en avril 2016.",
+      "sourceUrl": "https://www.france24.com/fr/20160830-emmanuel-macron-demission-bercy-sapin-bilan-economie-presidentielle",
+      "sourcePrincipale": "France 24",
+      "sourceDate": "2016-08-30",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2016-04-06",
+      "dateFin": "2017-05-07",
+      "categorie": "ORGANISME",
+      "titre": "Fondateur du mouvement En Marche!",
+      "organisation": "En Marche! (devenu La République En Marche, puis Renaissance)",
+      "description": "Fonde le mouvement politique « En Marche! » le 6 avril 2016, présenté comme transpartisan. Démissionne du gouvernement Valls en août 2016 pour s'y consacrer à plein temps. Remporte l'élection présidentielle le 7 mai 2017 au second tour face à Marine Le Pen (66,1 %).",
+      "sourceUrl": "https://www.france24.com/fr/20160830-emmanuel-macron-demission-bercy-sapin-bilan-economie-presidentielle",
+      "sourcePrincipale": "France 24",
+      "sourceDate": "2016-08-30",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": [
+    {
+      "date": "2022-11-24",
+      "type": "ENQUETE_PRELIMINAIRE",
+      "nature": "financement illégal de campagne présidentielle, favoritisme dans l'attribution de marchés publics — affaire McKinsey",
+      "juridiction": "Parquet national financier (PNF), Paris — juge d'instruction Serge Tournaire",
+      "statut": "EN_COURS",
+      "resume": "Le Parquet national financier a ouvert plusieurs informations judiciaires à partir de 2022 dans le cadre de l'affaire McKinsey, révélée par un rapport du Sénat en mars 2022. Trois axes : (1) fraude fiscale aggravée de McKinsey, absent de l'IS en France entre 2011 et 2020 malgré un CA annuel de plus de 300 M€ ; (2) financement illégal de campagne pour 2017 et 2022, les enquêteurs cherchant à établir si des prestations de conseil ont été fournies gratuitement à Macron candidat ; (3) favoritisme dans l'attribution de marchés publics (36 commandes pour 24 M€ entre 2021 et 2022). Emmanuel Macron n'est pas personnellement mis en examen et bénéficie de l'immunité présidentielle prévue à l'article 67 de la Constitution pendant la durée de son mandat. Une nouvelle perquisition des locaux de McKinsey a été menée en novembre 2025.",
+      "sourcePrincipale": "France Info",
+      "sourceUrl": "https://www.franceinfo.fr/politique/emmanuel-macron/affaire-mckinsey-sur-quoi-portent-les-trois-enquetes-ouvertes-par-le-parquet-national-financier_5500854.html",
+      "sourceDate": "2022-11-24",
+      "corroborated_by": [
+        "France Bleu",
+        "Public Sénat",
+        "Europe 1"
+      ],
+      "_ingested": true
+    }
+  ],
+  "conflict_flags": []
+}

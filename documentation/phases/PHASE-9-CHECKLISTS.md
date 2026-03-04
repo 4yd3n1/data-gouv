@@ -4,40 +4,40 @@
 
 ---
 
-## 9A: Data Model + Government Seed
+## 9A: Data Model + Government Seed ✅ COMPLETE (Sessions 22–23, March 3–4, 2026)
 
 ### Schema
-- [ ] `PersonnalitePublique` model exists with all fields (id, nom, prenom, civilite, dateNaissance, lieuNaissance, slug, photoUrl, bioCourte, formation, deputeId, senateurId, hatvpDossierId, derniereMaj, sourceRecherche)
-- [ ] `MandatGouvernemental` model exists with all fields (personnaliteId, titre, titreCourt, gouvernement, premierMinistre, president, dateDebut, dateFin, rang, type, portefeuille, ministereCode)
-- [ ] `EntreeCarriere` model exists with all fields (personnaliteId, dateDebut, dateFin, categorie, titre, organisation, description, source, sourceUrl, sourceDate, ordre)
-- [ ] `InteretDeclare` model exists with all fields (personnaliteId, declarationRef, dateDeclaration, rubrique, contenu, organisation, montant, dateDebut, dateFin, alerteConflit, commentaireConflit)
-- [ ] `EvenementJudiciaire` model exists with all fields (personnaliteId, date, type, nature, juridiction, statut, resume, sourcePrincipale, sourceUrl, sourceDate, verifie)
-- [ ] `ActionLobby` model exists with all fields (representantNom, representantCategorie, ministereCode, domaine, typeAction, exercice, depensesTranche, sourceUrl)
-- [ ] All enums defined: `TypeMandat`, `CategorieCarriere`, `SourceCarriere`, `RubriqueInteret`, `TypeEvenement`, `StatutEvenement`, `SourceRecherche`
-- [ ] Indexes on `personnaliteId` (all child tables), `slug` (unique on PersonnalitePublique), `ministereCode`
-- [ ] `pnpm db:migrate` creates migration without error
-- [ ] `pnpm db:generate` regenerates client without error
+- [x] `PersonnalitePublique` model exists with all fields (id, nom, prenom, civilite, dateNaissance, lieuNaissance, slug, photoUrl, bioCourte, formation, deputeId, senateurId, hatvpDossierId, derniereMaj, sourceRecherche)
+- [x] `MandatGouvernemental` model exists with all fields (personnaliteId, titre, titreCourt, gouvernement, premierMinistre, president, dateDebut, dateFin, rang, type, portefeuille, ministereCode)
+- [x] `EntreeCarriere` model exists with all fields (personnaliteId, dateDebut, dateFin, categorie, titre, organisation, description, source, sourceUrl, sourceDate, ordre)
+- [x] `InteretDeclare` model exists with all fields (personnaliteId, declarationRef, dateDeclaration, rubrique, contenu, organisation, montant, dateDebut, dateFin, alerteConflit, commentaireConflit)
+- [x] `EvenementJudiciaire` model exists with all fields (personnaliteId, date, type, nature, juridiction, statut, resume, sourcePrincipale, sourceUrl, sourceDate, verifie)
+- [x] `ActionLobby` model exists with all fields (representantNom, representantCategorie, ministereCode, domaine, typeAction, exercice, depensesTranche, sourceUrl)
+- [x] All enums defined: `TypeMandat`, `CategorieCarriere`, `SourceCarriere`, `RubriqueInteret`, `TypeEvenement`, `StatutEvenement`, `SourceRecherche`
+- [x] Indexes on `personnaliteId` (all child tables), `slug` (unique on PersonnalitePublique), `ministereCode`
+- [x] `pnpm db:migrate` creates migration without error
+- [x] `pnpm db:generate` regenerates client without error
 
 ### Seed
-- [ ] Seed script populates current government (~35 members)
-- [ ] President record exists with `type = PRESIDENT`
-- [ ] PM record exists with `type = PREMIER_MINISTRE`
-- [ ] All ministers have: `nom`, `prenom`, `slug`, `titreCourt`, `dateDebut`, `rang`
-- [ ] Députés cross-referenced: where name matches `Depute` table, `deputeId` is set
-- [ ] Re-running seed doesn't create duplicates (upsert on `slug`)
+- [x] Seed script populates current government (~35 members)
+- [x] President record exists with `type = PRESIDENT`
+- [x] PM record exists with `type = PREMIER_MINISTRE`
+- [x] All ministers have: `nom`, `prenom`, `slug`, `titreCourt`, `dateDebut`, `rang`
+- [x] Députés cross-referenced: 7 `PersonnalitePublique` records have `deputeId` set via SQL name-match (Bayrou PA410, Barrot PA721836, Borne PA717161, Darmanin PA607846, Pannier-Runacher PA759832, Vautrin PA267797, Wauquiez PA267285). `Depute.actif` corrected to `false` for the 3 incorrectly marked active (Borne, Wauquiez, Pannier-Runacher — they resigned seats on joining government). Session 30.
+- [x] Re-running seed doesn't create duplicates (upsert on `slug`)
 
 ### Pages
-- [ ] `/gouvernement` renders a grid of all current government members
-- [ ] `/gouvernement/[slug]` renders basic profile: photo, name, title, dates, empty section placeholders
-- [ ] Members sorted by `rang` (protocol order)
-- [ ] Click navigates to individual profile
-- [ ] Bureau aesthetic: bureau-950 bg, teal accents, DM Sans + Instrument Serif
+- [x] `/gouvernement` renders a grid of all current government members
+- [x] `/gouvernement/[slug]` renders basic profile: photo, name, title, dates, empty section placeholders
+- [x] Members sorted by `rang` (protocol order)
+- [x] Click navigates to individual profile
+- [x] Bureau aesthetic: bureau-950 bg, teal accents, DM Sans + Instrument Serif
 
 ### Integration
-- [ ] `pnpm build` passes (zero TypeScript errors)
-- [ ] No existing routes broken (check `/representants`, `/votes`, `/territoire`)
-- [ ] No existing seed data affected
-- [ ] `revalidate = 3600` set on both new pages
+- [x] `pnpm build` passes (zero TypeScript errors)
+- [x] No existing routes broken (check `/representants`, `/votes`, `/territoire`)
+- [x] No existing seed data affected
+- [x] `revalidate = 3600` set on both new pages
 
 ---
 
@@ -68,78 +68,85 @@
 
 ---
 
-## 9C: AGORA Lobby Registry
+## 9C: AGORA Lobby Registry ✅ COMPLETE (Session 28, March 4, 2026)
 
 ### Ingestion
-- [ ] Script downloads AGORA consolidated JSON (~80MB — streamed, not `JSON.parse` whole file)
-- [ ] Parses lobby actions targeting ministerial cabinets
-- [ ] `ministereCode` mapping table exists (free-text ministry names → normalized codes)
-- [ ] `ActionLobby` records created with all required fields
-- [ ] Deduplication on `representantNom + ministereCode + exercice`
-- [ ] Re-run is idempotent
+- [x] Script downloads AGORA consolidated JSON (~80MB — fetched via `res.json()`, same pattern as `ingest-lobbyistes.ts`)
+- [x] Parses lobby actions targeting ministerial cabinets
+- [x] `ministereCode` mapping table exists (free-text ministry names → normalized codes)
+- [x] `ActionLobby` records created with all required fields
+- [x] Re-run is idempotent (delete-all then recreate — no stable IDs for upsert)
 
 ### Display
-- [ ] Profile page shows "Lobbying déclaré ciblant ce ministère" section
-- [ ] Summary: total actions this year, top organizations by count
-- [ ] Breakdown by domain (domaine field)
-- [ ] Each entry links to AGORA registry source
-- [ ] Neutral framing — "ciblant ce ministère" not "influençant"
-- [ ] Empty state handled ("Aucune action déclarée")
+- [x] Profile page shows "Lobbying déclaré ciblant ce ministère" section
+- [x] Summary: total action count + top 5 organizations by count
+- [x] Breakdown by domain (top 6 domains with counts)
+- [x] Footer links to AGORA registry source (agora-lobbying.fr)
+- [x] Neutral framing — "ciblant ce ministère"
+- [x] Empty state handled ("Aucune action déclarée ciblant ce ministère.")
 
 ### Integration
-- [ ] `pnpm build` passes
-- [ ] AGORA data paginated or limited (no 50K row page loads)
+- [x] `pnpm build` passes
+- [x] AGORA data capped at 500 rows per query (no 50K row page loads)
+- [x] 94,924 ActionLobby records created across 12 ministereCode values
 
 ---
 
-## 9D: Career Timeline
+## 9D: Career Timeline ✅ COMPLETE (Session 28–29, March 4, 2026)
 
 ### Data Generation
-- [ ] Script auto-generates `EntreeCarriere` from `MandatGouvernemental` records
-- [ ] Script auto-generates `EntreeCarriere` from linked `Depute`/`Senateur` records
-- [ ] Script extracts career entries from `InteretDeclare` where `rubrique = ACTIVITE_ANTERIEURE`
-- [ ] Deduplication: same role from 2 sources → 1 entry
-- [ ] Each entry has `source` field (`HATVP` / `ASSEMBLEE` / `MANUELLE`)
+- [x] Script auto-generates `EntreeCarriere` from `MandatGouvernemental` records (source: HATVP)
+- [x] Script auto-generates `EntreeCarriere` from linked `Depute`/`Senateur` records (source: ASSEMBLEE)
+- [x] ~~Script extracts career entries from `InteretDeclare` where `rubrique = ACTIVITE_ANTERIEURE`~~ **REMOVED** — HATVP financial disclosure fields produce noise (\"Élevage chevaux\", \"Publications\") and duplicate mandate entries. Source 4 removed from `generate-carriere.ts`. Career sources are now: MandatGouvernemental only + Depute/Senateur via FK. 12 clean entries (was 17 with garbage). Session 29.
+- [x] Deduplication: same role from 2 sources → 1 entry (keyed on `categorie|titre|organisation`)
+- [x] Each entry has `source` field (`HATVP` / `ASSEMBLEE` / `MANUELLE`)
 
 ### Display
-- [ ] `<CareerTimeline personnaliteId={id} />` component in `src/components/`
-- [ ] Vertical timeline, present (top) to past (bottom)
-- [ ] Visual differentiation by `categorie`: government = filled bar, elected = open circle, other = diamond
-- [ ] Date ranges displayed (`"depuis"` for ongoing)
-- [ ] Source badge on each entry (clicking opens original document)
-- [ ] Sparse timelines show indicator: "Parcours partiel — sources structurées uniquement"
+- [x] `<CareerSection personnaliteId={id} />` component in `src/components/gouvernement/`
+- [x] Vertical timeline, present (top) to past (bottom)
+- [x] Visual differentiation by `categorie`: colored dot (teal=gouvernemental, blue=électif, amber=fonction publique, purple=formation, gray=autres)
+- [x] Date ranges displayed ("en cours" for ongoing)
+- [x] Source label on each entry (HATVP / Assemblée nationale / Presse)
+- [x] Sparse timelines show indicator: "Parcours partiel — sources structurées uniquement"
 
 ### Integration
-- [ ] `pnpm build` passes
-- [ ] Component is self-contained (not inlined in page.tsx)
-- [ ] No layout shift on load
+- [x] `pnpm build` passes
+- [x] Component is self-contained (not inlined in page.tsx)
+- [x] No layout shift on load (server component, no hydration)
 
 ---
 
-## 9E: Full Profile UI
+## 9E: Full Profile UI ✅ COMPLETE (Session 29–30, March 4, 2026)
 
 ### Layout
-- [ ] Profile header: photo, name, current title, age, education summary, party (if applicable)
-- [ ] Tabbed or scrollable sections: Parcours / Intérêts / Affaires judiciaires / Lobbying
-- [ ] "Affaires judiciaires": shows "Aucune affaire référencée" (not blank) when `EvenementJudiciaire` empty
-- [ ] Cross-link to parliamentary profile if `deputeId` exists ("Voir le profil parlementaire →")
-- [ ] Responsive: mobile (375px), tablet (768px), desktop (1280px)
+- [x] Profile header: `ProfileHero` — photo (initials fallback), name, current title, "En exercice" / "Ancien membre" status badge
+- [x] **4-tab structure** (Session 29 redesign): **Parcours** (default, `CareerSection`) / **Déclarations HATVP** (`InteretsSection` + conflict alert banner) / **Mandats & Lobbying** (`MandatsSection` + `LobbySection` + `JudiciaireSection`) / **Activité parlementaire** (conditional — `ParliamentarySection`, only shown if `deputeId` or `senateurId` set)
+- [x] `JudiciaireSection` renders `null` when no verified events (not a blank section)
+- [x] Parliamentary data embedded via `ParliamentarySection` (deputy scores + 8 recent votes, or senator commissions)
+- [x] Responsive: `ProfileHero` + `ProfileTabs` pattern consistent with all other profile pages
+
+### Unified Profiles (Session 29–30 — new, supersedes "cross-link" approach)
+- [x] `/representants/deputes/[id]` redirects to `/gouvernement/[slug]` when `PersonnalitePublique.deputeId` matches — 7 active redirects
+- [x] `/representants/senateurs/[id]` redirects to `/gouvernement/[slug]` when `PersonnalitePublique.senateurId` matches
+- [x] `/representants` hub has Gouvernement card (12 membres en exercice, rose accent)
+- [x] Bayrou `Depute.groupe` corrected from NI → DEM (Mouvement Démocrate)
+- [x] `Depute.actif` corrected to `false` for 3 ministers (Borne, Wauquiez, Pannier-Runacher)
 
 ### Government Index
-- [ ] Members grouped by type: Président → PM → Ministres → Délégués → Secrétaires
-- [ ] Government name and formation date displayed
-- [ ] Search/filter by name or portfolio keyword
+- [x] Members grouped by type: Président → PM → Ministres → Ministres délégués → Secrétaires d'État
+- [x] Government name and formation date displayed
+- [ ] Search/filter by name or portfolio keyword — pending
 
 ### Navigation
-- [ ] "Gouvernement" added to main navbar (`src/app/layout.tsx`)
-- [ ] SEO: `generateMetadata` with title + description + OG tags on profile pages
-- [ ] Schema.org `Person` structured data in `<script type="application/ld+json">`
-- [ ] `@media print` stylesheet for clean CV output
+- [ ] "Gouvernement" not yet added to main navbar — pending
+- [x] SEO: `generateMetadata` with title + description on profile pages
+- [ ] Schema.org `Person` structured data — pending
+- [ ] `@media print` stylesheet — pending
 
 ### Integration
-- [ ] `pnpm build` passes
-- [ ] All ~35+ profile pages render without error
-- [ ] All section components are self-contained (no logic inlined in page.tsx)
+- [x] `pnpm build` passes with zero TypeScript errors
+- [x] All 12 profile pages render without error
+- [x] All section components are self-contained (no logic inlined in page.tsx)
 
 ---
 

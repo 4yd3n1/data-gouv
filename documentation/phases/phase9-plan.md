@@ -578,15 +578,18 @@ This editorial discipline is what makes the platform trustworthy. Let the data s
 
 ## Session Planning
 
-| Session | Sub-phase | What ships |
-|---------|-----------|-----------|
-| **22** | 9A | Data model, government seed, basic profile page shell, government index |
-| **23** | 9B | HATVP interest declarations ingested + displayed on profiles |
-| **24** | 9C | AGORA lobby data ingested + displayed on profiles |
-| **25** | 9D | Career timeline auto-generated from structured sources |
-| **26** | 9E | Full profile page UI, navigation integration, SEO, print |
-| **27–28** | 9F | Research agent, career enrichment, judicial history, review workflow |
-| **29** | 9G | President expanded profile, historical governments archive |
+| Session | Sub-phase | What shipped |
+|---------|-----------|-------------|
+| **22** | 9A | ✅ Data model (6 Prisma models + 7 enums), government seed (~35 members), basic profile shell, government index |
+| **23** | 9B | ✅ HATVP interest declarations ingested (184 items for Bayrou), displayed grouped by rubrique with collapsible `<details>` |
+| **24** | 9C | ✅ AGORA lobby data ingested (94,924 ActionLobby across 12 ministereCode values), lobby section on profiles |
+| **25** | 9D | ✅ Career timeline auto-generated from MandatGouvernemental + Depute/Senateur sources |
+| **26** | 9E (partial) | ✅ Initial profile UI |
+| **27–28** | 9B/9D fix | ✅ `generate-carriere.ts` fixed: HATVP ACTIVITE_ANTERIEURE removed as career source (produced garbage entries); 12 clean EntreeCarriere records |
+| **29** | 9E (final) | ✅ 4-tab redesign (Parcours default / Déclarations HATVP / Mandats & Lobbying / Activité parlementaire conditional), `ParliamentarySection` component, unified profiles (deputy/senator pages redirect to govt profile) |
+| **30** | 9A cross-ref | ✅ `PersonnalitePublique.deputeId` populated for 7 ministers via SQL name-match; Gouvernement card on /representants; Bayrou groupe + Depute.actif corrections |
+| **next** | 9F | Research agent — career enrichment + judicial history (Claude API + web search, review workflow) |
+| **next** | 9G | President expanded profile, historical governments archive, navbar "Gouvernement" link |
 
 ---
 

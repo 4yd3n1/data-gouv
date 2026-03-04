@@ -1,6 +1,6 @@
 # Frontend Implementation
 
-> Last updated: Mar 4, 2026 — Session 26. 59 routes + 5 OG image routes, 31 components.
+> Last updated: Mar 4, 2026 — Session 32. 59 routes + 5 OG image routes, 36 components.
 
 Complete reference for all UI pages, components, styling, and patterns.
 
@@ -95,7 +95,7 @@ Applied with: `font-[family-name:var(--font-display)]` for headings.
 |-------|---------|
 | `/` | Homepage — dynamic headline, dossier cards, recent votes, conflict alerts, dept lookup, postal code CTA |
 | `/dossiers` | Dossier hub — 8 issue cards |
-| `/representants` | Représentants hub — 6 section cards with counts + president card |
+| `/representants` | Représentants hub — 8 section cards: Président · Gouvernement (12 membres, rose) · Députés · Sénateurs · Élus locaux · Représentants d'intérêts · Scrutins · Partis politiques |
 | `/elections` | Hub — Législatives 2024 card + national summary stats |
 | `/economie` | Dashboard — SVG MiniChart per indicator (15+ series) |
 | `/territoire` | Browser — regions with department cards + `FranceMap` (Phase 8A/8B, 6 indicators, dept click → `/territoire/[code]`) |
@@ -103,7 +103,7 @@ Applied with: `font-[family-name:var(--font-display)]` for headings.
 | `/patrimoine` | Hub — top 10 museums + monument domains |
 | `/votes` | Votes hub — 13 topic grid + recent scrutins |
 | `/votes/alignements` | Alignment matrix — N×N group co-vote heatmap, top 5 allies/opponents per group (ISR 86400) |
-| `/president` | Macron profile — 4 tabs: Promesses (20 curated), Bilan Économique, Lobbying & Agenda, Déclarations HATVP |
+| `/president` | **HTTP 308 permanent redirect → `/gouvernement/emmanuel-macron`** |
 
 ### Dossiers (8 dynamic pages)
 | Route | Topic |
@@ -121,9 +121,9 @@ Applied with: `font-[family-name:var(--font-display)]` for headings.
 | Route | Key Features |
 |-------|-------------|
 | `/representants/deputes` | Search, groupe filter, dept filter, pagination |
-| `/representants/deputes/[id]` | Hero profile + tabs (Activité / Déclarations / **Transparence** / Informations) |
+| `/representants/deputes/[id]` | **Redirects to `/gouvernement/[slug]`** if `PersonnalitePublique.deputeId` matches (7 active redirects: Bayrou, Barrot, Borne, Darmanin, Pannier-Runacher, Vautrin, Wauquiez). Otherwise: Hero profile + tabs (Activité / Déclarations / **Transparence** / Informations) |
 | `/representants/senateurs` | Search, pagination |
-| `/representants/senateurs/[id]` | Hero profile + tabs (Mandats & Commissions / Déclarations / Informations) |
+| `/representants/senateurs/[id]` | **Redirects to `/gouvernement/[slug]`** if `PersonnalitePublique.senateurId` matches. Otherwise: Hero profile + tabs (Mandats & Commissions / Déclarations / Informations) |
 | `/representants/elus` | Local officials list — 593K rows, paginated |
 | `/representants/elus/maires` | Mayors subset |
 | `/representants/lobbyistes` | Search, pagination |
@@ -137,7 +137,7 @@ Applied with: `font-[family-name:var(--font-display)]` for headings.
 | Route | Key Features |
 |-------|-------------|
 | `/gouvernement` | Index grid — all current members sorted by protocol `rang`, grouped by `TypeMandat` (ISR 3600) |
-| `/gouvernement/[slug]` | Profile page — `ProfileHero` + `ProfileTabs` (3 tabs: Intérêts déclarés / Mandats / Parcours). Sections: `InteretsSection` (HATVP, progressive disclosure per rubrique, `<details>` expander), `MandatsSection` (timeline), `LobbySection`, `JudiciaireSection`, `CareerSection`. Conflict alert banner when `alerteConflit` entries exist. (Phase 9A + 9E) |
+| `/gouvernement/[slug]` | Profile page — `ProfileHero` + `ProfileTabs`. **Redirects** from `/representants/deputes/[id]` and `/senateurs/[id]` when `PersonnalitePublique.deputeId`/`senateurId` matches. **Two tab layouts** based on `isPresident` detection (`mandats.some(m => m.type === "PRESIDENT")`): **President (6 tabs, default: Promesses)**: Parcours / Promesses / Bilan économique / Lobbying & Agenda / Déclarations HATVP / Affaires judiciaires — plus `ProfileHero` scores (election %, promise score, HATVP count) + contact (Élysée, Twitter). **Standard ministers (4–5 tabs, default: Parcours)**: Parcours / Déclarations HATVP / Mandats & Lobbying / Affaires judiciaires (conditional — only if `judiciaireCount > 0`) / Activité parlementaire (conditional — if `deputeId`/`senateurId` set). (Phase 9A + 9E + Sessions 29–32) |
 
 ### Gouvernance (legacy — HTTP 308 redirects to /representants)
 `/gouvernance/*` routes remain active (still served; linked from older bookmarks and deputy profiles). Redirects configured in `next.config.ts`.
@@ -164,7 +164,7 @@ Applied with: `font-[family-name:var(--font-display)]` for headings.
 ### Recherche (Session 15/18 — 7B)
 | Route | Key Features |
 |-------|-------------|
-| `/recherche` | Full-text search across 800K+ rows — entity type pills (Tous / Députés / Sénateurs / Lobbyistes / Scrutins / Communes / Partis), color-coded result cards. URL-driven: `?q=` + `?type=`. Backed by `search_index` materialized view (GIN, `french` stemming). Static injection: "Emmanuel Macron → /president" for queries matching `macron`/`president`/`elysee`/`manu`. |
+| `/recherche` | Full-text search across 800K+ rows — entity type pills (Tous / Députés / Sénateurs / Lobbyistes / Scrutins / Communes / Partis), color-coded result cards. URL-driven: `?q=` + `?type=`. Backed by `search_index` materialized view (GIN, `french` stemming). Static injection: "Emmanuel Macron → `/gouvernement/emmanuel-macron`" for queries matching `macron`/`president`/`elysee`/`manu`. |
 
 ### Territory & Economy
 | Route | Key Features |
@@ -553,15 +553,20 @@ Interactive SVG choropleth of French departments (96 metro + 5 overseas insets).
 
 ### New in Phase 9 — Gouvernement Section Components
 
-Five server components in `src/components/gouvernement/`. Each is a self-contained async server component — never inline section logic directly in `gouvernement/[slug]/page.tsx`.
+Ten server components in `src/components/gouvernement/`. Each is a self-contained async server component — never inline section logic directly in `gouvernement/[slug]/page.tsx`.
 
 | Component | File | Purpose |
 |-----------|------|---------|
 | `InteretsSection` | [gouvernement/interets-section.tsx](../src/components/gouvernement/interets-section.tsx) | HATVP declared interests grouped by `rubrique`, progressive disclosure (first 5 inline, rest in native `<details><summary>`), `InteretItem` sub-component, conflict alert per item |
 | `MandatsSection` | [gouvernement/mandats-section.tsx](../src/components/gouvernement/mandats-section.tsx) | Timeline of government mandates (`border-l` vertical line, dot per mandate, active = teal dot) |
-| `CareerSection` | [gouvernement/career-section.tsx](../src/components/gouvernement/career-section.tsx) | Career timeline placeholder (9D not yet ingested) |
-| `LobbySection` | [gouvernement/lobby-section.tsx](../src/components/gouvernement/lobby-section.tsx) | `ActionLobby` count for current `ministereCode` (9C not yet ingested) |
+| `CareerSection` | [gouvernement/career-section.tsx](../src/components/gouvernement/career-section.tsx) | Vertical career timeline from `EntreeCarriere`. Dot color by `categorie` (teal=gouvernemental, blue=électif, amber=fonction publique, purple=formation). "Parcours partiel" notice when no PRESSE source. |
+| `LobbySection` | [gouvernement/lobby-section.tsx](../src/components/gouvernement/lobby-section.tsx) | `ActionLobby` data for current `ministereCode`: total count, top 5 orgs by count, top 6 domains, year range. Source link to AGORA registry. |
 | `JudiciaireSection` | [gouvernement/judiciaire-section.tsx](../src/components/gouvernement/judiciaire-section.tsx) | Verified judicial events only (`verifie = true`); renders `null` when count = 0 |
+| `ParliamentarySection` | [gouvernement/parliamentary-section.tsx](../src/components/gouvernement/parliamentary-section.tsx) | Conditional — renders `null` if neither `deputeId` nor `senateurId` set. Deputies: 4 score bars, group/department, 8 recent vote links with `VoteBadge`, contact pills. Senators: group/department, active commissions (top 3), date of office. |
+| `PresidentBilanSection` | [gouvernement/president-bilan-section.tsx](../src/components/gouvernement/president-bilan-section.tsx) | **President-only.** KPI grid (chômage, PIB, dette, SMIC from `Indicateur`), chômage timeline (`TimelineChart`), electoral results from `BIO.elections`, brief bio note. Baseline computed via `getBaselineObservation` at `ELECTION_DATES[2017]`. |
+| `PresidentPromessesSection` | [gouvernement/president-promesses-section.tsx](../src/components/gouvernement/president-promesses-section.tsx) | **President-only.** Props: `electionYear: 2017 \| 2022`. Election selector links (to `?tab=promesses&election=YEAR`), summary bar, promise cards with INSEE evidence blocks and parliament vote links. Data: `Indicateur` + `ScrutinTag` counts. |
+| `PresidentLobbyingSection` | [gouvernement/president-lobbying-section.tsx](../src/components/gouvernement/president-lobbying-section.tsx) | **President-only.** Overview stats, power lobbyist cards, consulting firm grid, domain cross-reference. Data: `ActionLobbyiste` group-by domain + curated SIREN action counts + `ScrutinTag` counts. |
+| `PresidentDeclarationsSection` | [gouvernement/president-declarations-section.tsx](../src/components/gouvernement/president-declarations-section.tsx) | **President-only.** Fetches `DeclarationInteret` by name "Macron" (different model from `InteretDeclare`). Summary stats, `ConflictAlert` for declarations with participations, `DeclarationSection` full list. |
 
 ---
 
@@ -1032,9 +1037,10 @@ src/
 │   └── gouvernement/            # Phase 9 section components (all async server components)
 │       ├── interets-section.tsx # Server: HATVP interests grouped by rubrique, <details> expander
 │       ├── mandats-section.tsx  # Server: government mandate timeline (border-l + dots)
-│       ├── career-section.tsx   # Server: career timeline placeholder (9D pending)
-│       ├── lobby-section.tsx    # Server: ActionLobby count by ministereCode (9C pending)
-│       └── judiciaire-section.tsx # Server: verified judicial events (verifie=true only; null if none)
+│       ├── career-section.tsx   # Server: career timeline (MandatGouvernemental + Depute/Senateur entries)
+│       ├── lobby-section.tsx    # Server: ActionLobby by ministereCode — top orgs/domains, year range
+│       ├── judiciaire-section.tsx # Server: verified judicial events (verifie=true only; null if none)
+│       └── parliamentary-section.tsx # Server: vote scores + recent votes (deputy) or commissions (senator)
 ├── data/
 │   ├── lobbyists-curated.ts     # Static curated lobbyist profiles (10 orgs, Phase 6)
 │   ├── president-macron.ts      # Static Macron data — BIO + 20 promises (Phase 6)

@@ -1,0 +1,148 @@
+{
+  "slug": "francois-bayrou",
+  "nom": "Bayrou",
+  "prenom": "François",
+  "researched_at": "2026-03-04",
+  "sources_used": [
+    "France Bleu",
+    "Public Sénat",
+    "France 24",
+    "Europe 1",
+    "France Info"
+  ],
+  "notes": "Parcours pré-parlementaire et mandats gouvernementaux des années 1990 absents du DB (seul le mandat PM 2025 est seedé). Affaire MoDem bien documentée en Tier 1-2.",
+  "career_entries": [
+    {
+      "dateDebut": "1974-01-01",
+      "dateFin": "1974-12-31",
+      "categorie": "FORMATION",
+      "titre": "Agrégation de lettres classiques",
+      "organisation": "Université",
+      "description": "Reçu à l'agrégation de lettres classiques à 23 ans, thèse de maîtrise sur Charles Péguy.",
+      "sourceUrl": "https://www.francebleu.fr/infos/politique/francois-bayrou-nomme-premier-ministre-les-huit-moments-cles-de-sa-carriere-8113955",
+      "sourcePrincipale": "France Bleu",
+      "sourceDate": "2024-12-13",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "1974-09-01",
+      "dateFin": "1979-06-30",
+      "categorie": "FONCTION_PUBLIQUE",
+      "titre": "Professeur de lettres classiques",
+      "organisation": "Lycée Louis-Barthou, Pau",
+      "description": "Enseigne les lettres classiques au lycée de Pau après son agrégation, jusqu'à son entrée en politique.",
+      "sourceUrl": "https://www.francebleu.fr/infos/politique/francois-bayrou-nomme-premier-ministre-les-huit-moments-cles-de-sa-carriere-8113955",
+      "sourcePrincipale": "France Bleu",
+      "sourceDate": "2024-12-13",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "1982-01-01",
+      "dateFin": null,
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Conseiller général",
+      "organisation": "Conseil général des Pyrénées-Atlantiques, canton Pau-Sud",
+      "description": "Élu conseiller général en 1982 dans le canton de Pau-Sud, première élection locale.",
+      "sourceUrl": "https://www.francebleu.fr/infos/politique/francois-bayrou-nomme-premier-ministre-les-huit-moments-cles-de-sa-carriere-8113955",
+      "sourcePrincipale": "France Bleu",
+      "sourceDate": "2024-12-13",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "1993-03-29",
+      "dateFin": "1997-06-02",
+      "categorie": "MANDAT_GOUVERNEMENTAL",
+      "titre": "Ministre de l'Éducation nationale",
+      "organisation": "Gouvernements Balladur, Juppé I et Juppé II",
+      "description": "Ministre de l'Éducation nationale dans trois gouvernements successifs (Balladur 1993-1995, Juppé I 1995, Juppé II 1995-1997).",
+      "sourceUrl": "https://www.francebleu.fr/infos/politique/francois-bayrou-nomme-premier-ministre-les-huit-moments-cles-de-sa-carriere-8113955",
+      "sourcePrincipale": "France Bleu",
+      "sourceDate": "2024-12-13",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "1999-07-20",
+      "dateFin": "2002-07-01",
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Membre du Parlement européen",
+      "organisation": "Parlement européen",
+      "description": "Eurodéputé de 1999 à 2002 (groupe libérale ELDR). Période au cours de laquelle des fonds du PE auraient été utilisés pour rémunérer des assistants travaillant pour le MoDem en France — affaire ayant conduit à sa mise en examen en 2019.",
+      "sourceUrl": "https://www.francebleu.fr/infos/politique/francois-bayrou-nomme-premier-ministre-les-huit-moments-cles-de-sa-carriere-8113955",
+      "sourcePrincipale": "France Bleu",
+      "sourceDate": "2024-12-13",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2014-04-06",
+      "dateFin": null,
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Maire de Pau",
+      "organisation": "Ville de Pau",
+      "description": "Élu maire de Pau en avril 2014, réélu en 2020. Maintient son mandat municipal en parallèle de ses fonctions de Premier ministre.",
+      "sourceUrl": "https://www.francebleu.fr/infos/politique/francois-bayrou-nomme-premier-ministre-les-huit-moments-cles-de-sa-carriere-8113955",
+      "sourcePrincipale": "France Bleu",
+      "sourceDate": "2024-12-13",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": [
+    {
+      "date": "2019-12-06",
+      "type": "MISE_EN_EXAMEN",
+      "nature": "complicité de détournement de fonds publics",
+      "juridiction": "Parquet national financier (PNF), Paris",
+      "statut": "CLOS",
+      "resume": "Mis en examen le 6 décembre 2019 pour complicité de détournement de fonds publics dans l'affaire des assistants parlementaires du MoDem au Parlement européen, soupçonné d'être le décideur principal d'un système d'emplois fictifs utilisant des fonds européens pour financer son parti en France.",
+      "sourcePrincipale": "Public Sénat",
+      "sourceUrl": "https://www.publicsenat.fr/actualites/non-classe/bayrou-mis-en-examen-dans-l-affaire-des-assistants-d-eurodeputes-modem-148167",
+      "sourceDate": "2019-12-06",
+      "corroborated_by": [
+        "Europe 1",
+        "France Info",
+        "Le Temps"
+      ],
+      "_ingested": true
+    },
+    {
+      "date": "2024-02-05",
+      "type": "RELAXE",
+      "nature": "complicité de détournement de fonds publics — assistants MoDem PE",
+      "juridiction": "Tribunal correctionnel de Paris (11e chambre correctionnelle)",
+      "statut": "APPEL_EN_COURS",
+      "resume": "Relaxé le 5 février 2024 au bénéfice du doute par le tribunal correctionnel de Paris. Le jugement ne retient pas sa participation personnelle au système frauduleux. Cinq anciens eurodéputés MoDem ont été condamnés à des peines avec sursis.",
+      "sourcePrincipale": "France 24",
+      "sourceUrl": "https://www.france24.com/fr/france/20240205-affaire-assistants-eurod%C3%A9put%C3%A9s-fran%C3%A7ois-bayrou-relax%C3%A9-d%C3%A9tournement-fonds-publics",
+      "sourceDate": "2024-02-05",
+      "corroborated_by": [
+        "Touteleurope.eu",
+        "France Bleu",
+        "France Info"
+      ],
+      "_ingested": true
+    },
+    {
+      "date": "2024-02-08",
+      "type": "APPEL",
+      "nature": "appel du parquet de Paris de la décision de relaxe",
+      "juridiction": "Cour d'appel de Paris",
+      "statut": "EN_COURS",
+      "resume": "Le parquet de Paris a interjeté appel le 8 février 2024 de la décision de relaxe, estimant que les faits caractérisent les infractions reprochées. Aucune date d'audience n'avait été fixée lors de la nomination de Bayrou comme Premier ministre en décembre 2024.",
+      "sourcePrincipale": "France Bleu",
+      "sourceUrl": "https://www.francebleu.fr/infos/faits-divers-justice/assistants-parlementaires-du-modem-le-parquet-fait-appel-de-la-relaxe-de-francois-bayrou-8832781",
+      "sourceDate": "2024-02-08",
+      "corroborated_by": [
+        "France 24",
+        "Europe 1",
+        "France Info"
+      ],
+      "_ingested": true
+    }
+  ],
+  "conflict_flags": []
+}

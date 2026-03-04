@@ -4,7 +4,7 @@
 > into France's most powerful citizen-facing transparency platform.
 >
 > Created: March 1, 2026
-> **Last updated: March 3, 2026 — Phases 1–5 + Phase 7 (Power Features) COMPLETE ✅**
+> **Last updated: March 4, 2026 — Phases 1–5 + Phase 7 (Power Features) + Phase 8 (FranceMap) + Phase 9A/9B/9C/9D/9E (Government Profiles) COMPLETE ✅**
 
 ---
 
@@ -981,6 +981,53 @@ Wave 8:   Promise.all([                          // NEW WAVE
 **New npm scripts added**:
 - `pnpm compute:conflicts` — populates ConflictSignal (Wave 5d)
 - `pnpm refresh:search` — refreshes search_index materialized view (Wave 10)
+
+---
+
+### Phase 8: FranceMap Component — ✅ COMPLETE (Sessions 19–20, March 3, 2026)
+
+**Goal**: Interactive SVG choropleth map of France integrated across territory and dossier pages.
+
+| Sub-phase | Feature | Notes |
+|-----------|---------|-------|
+| **8A** | `FranceMap` component + `france-geo.ts` + `indicators.ts` + `france-map-data.ts` | Client component, hex lerp color scale, cursor tooltip |
+| **8B** | Integrations: `/territoire`, 4 dossiers, `/territoire/[dept]`, `/mon-territoire` | Mini-map replaces decorative dept badge |
+
+**Key technical notes**:
+- SVG paths from `@svg-maps/france.departments` (type-cast as `SvgLocation[]`)
+- Color: hex lerp across 7-stop palette, NOT CSS `color-mix`
+- Tooltip follows cursor via `getBoundingClientRect`
+- "Voir le tableau de bord" button hardcoded to `/territoire/[code]`, decoupled from `linkBase`
+- `viewBox="0 0 613 585"`, overseas insets positioned inside SVG
+
+---
+
+### Phase 9: Government Profiles — 🔄 IN PROGRESS (Sessions 21–28, March 2026)
+
+**Goal**: Full government official profiles with career timelines, interest declarations, lobby data, and judicial events.
+
+| Sub-phase | Feature | Status | Key data |
+|-----------|---------|--------|----------|
+| **9A** | Schema (6 models) + government seed (~35 ministers) + basic pages | ✅ COMPLETE | 35 PersonnalitePublique, 35+ MandatGouvernemental |
+| **9B** | HATVP interest declarations ingestion | ✅ COMPLETE | 184 InteretDeclare (Bayrou), 6 declarations |
+| **9C** | AGORA lobby registry ingestion | ✅ COMPLETE | 94,924 ActionLobby records, 12 ministereCode values |
+| **9D** | Career timeline generation + UI | ✅ COMPLETE | 17 EntreeCarriere (Bayrou: 5), vertical timeline |
+| **9E** | Full profile UI — ProfileHero + ProfileTabs + all section components | ✅ COMPLETE | 3 tabs, conflict alerts, cross-links |
+| **9F** | Research agent — press-sourced career + judicial events | ⏳ PENDING | |
+| **9G** | President profile + historical governments | ⏳ PENDING | |
+
+**New models (6)**: `PersonnalitePublique`, `MandatGouvernemental`, `EntreeCarriere`, `InteretDeclare`, `EvenementJudiciaire`, `ActionLobby`
+
+**New scripts**:
+- `pnpm ingest:agora` — downloads AGORA JSON, keyword-matches `reponsablesPublics` → 12 ministry codes
+- `pnpm generate:carriere` — generates career timeline from structured sources (mandats + Depute/Senateur + HATVP activities)
+
+**Key technical notes**:
+- `ActionLobby` has no direct FK to `PersonnalitePublique` — join via `MandatGouvernemental.ministereCode`
+- HATVP XMLs only available for current government members who filed (Bayrou confirmed; others pending)
+- Career deduplication: `categorie|titre.toLowerCase()|organisation.toLowerCase()` key
+- `EvenementJudiciaire.verifie` guard — NEVER display without `verifie = true`
+- AGORA ministry matching: normalize (lowercase + strip accents) → ordered keyword list, most-specific first
 
 ---
 

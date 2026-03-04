@@ -3,6 +3,7 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   async redirects() {
     return [
+      { source: "/president", destination: "/gouvernement/emmanuel-macron", permanent: true },
       { source: "/gouvernance", destination: "/representants", permanent: true },
       { source: "/gouvernance/deputes", destination: "/representants/deputes", permanent: true },
       { source: "/gouvernance/deputes/:id", destination: "/representants/deputes/:id", permanent: true },

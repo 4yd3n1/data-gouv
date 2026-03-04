@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { fmtDate } from "@/lib/format";
 
@@ -34,6 +34,13 @@ export default async function SenateurDetailPage({
 }) {
   const { id } = await params;
   const { tab = "mandats" } = await searchParams;
+
+  // Redirect to government profile if this senator is currently a government member
+  const govProfile = await prisma.personnalitePublique.findFirst({
+    where: { senateurId: id },
+    select: { slug: true },
+  });
+  if (govProfile) redirect(`/gouvernement/${govProfile.slug}`);
 
   const s = await prisma.senateur.findUnique({
     where: { id },

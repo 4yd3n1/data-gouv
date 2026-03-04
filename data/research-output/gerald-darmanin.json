@@ -1,0 +1,92 @@
+{
+  "slug": "gerald-darmanin",
+  "nom": "Darmanin",
+  "prenom": "Gérald",
+  "researched_at": "2026-03-04",
+  "sources_used": [
+    "France Info",
+    "France Bleu",
+    "Public Sénat",
+    "Europe 1",
+    "Mediapart"
+  ],
+  "notes": "Deux affaires distinctes documentées en Tier 1-2. Affaire Patterson close définitivement par la Cour de cassation (fév. 2024). Affaire PSG/Neymar en cours, Darmanin n'est pas personnellement mis en examen à la date de cette recherche. Mandats Comptes publics (2017) et Intérieur (2020-2024) absents du DB.",
+  "career_entries": [
+    {
+      "dateDebut": "2017-05-17",
+      "dateFin": "2020-07-06",
+      "categorie": "MANDAT_GOUVERNEMENTAL",
+      "titre": "Ministre de l'Action et des Comptes publics",
+      "organisation": "Gouvernements Philippe I et II",
+      "description": "Ministre de l'Action et des Comptes publics sous les gouvernements Édouard Philippe (mai 2017 – juillet 2020). C'est dans ce rôle qu'il aurait, selon Mediapart, accordé un avantage fiscal au PSG lors du transfert de Neymar en août 2017.",
+      "sourceUrl": "https://www.franceinfo.fr/politique/gerald-darmanin/transfert-de-neymar-au-psg-on-vous-explique-pourquoi-gerald-darmanin-est-soupconne-de-complicite-de-fraude-fiscale_6296634.html",
+      "sourcePrincipale": "France Info",
+      "sourceDate": "2024-09-09",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2020-07-06",
+      "dateFin": "2025-01-13",
+      "categorie": "MANDAT_GOUVERNEMENTAL",
+      "titre": "Ministre de l'Intérieur",
+      "organisation": "Gouvernements Castex, Borne, Attal, Barnier",
+      "description": "Ministre de l'Intérieur de juillet 2020 à janvier 2025, sous quatre gouvernements successifs (Castex, Borne, Attal, Barnier). L'un des ministres les plus durables sous la présidence Macron.",
+      "sourceUrl": "https://www.franceinfo.fr/politique/gerald-darmanin/transfert-de-neymar-au-psg-on-vous-explique-pourquoi-gerald-darmanin-est-soupconne-de-complicite-de-fraude-fiscale_6296634.html",
+      "sourcePrincipale": "France Info",
+      "sourceDate": "2024-09-09",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": [
+    {
+      "date": "2017-01-01",
+      "type": "ENQUETE_PRELIMINAIRE",
+      "nature": "viol, harcèlement sexuel, abus de confiance",
+      "juridiction": "Parquet de Paris",
+      "statut": "CLOS",
+      "resume": "Plainte déposée en 2017 par Sophie Patterson-Spatz pour viol, harcèlement sexuel et abus de confiance, faits remontant à 2009. La plaignante affirme que Darmanin aurait conditionné son aide dans une procédure judiciaire à une relation sexuelle. L'enquête a abouti à un classement sans suite par le parquet de Paris.",
+      "sourcePrincipale": "Public Sénat",
+      "sourceUrl": "https://www.publicsenat.fr/actualites/non-classe/plainte-pour-viol-la-justice-va-reexaminer-le-non-lieu-dont-a-beneficie-darmanin-0",
+      "sourceDate": "2024-01-01",
+      "corroborated_by": [
+        "Europe 1",
+        "France Info"
+      ],
+      "_ingested": true
+    },
+    {
+      "date": "2024-02-14",
+      "type": "NON_LIEU",
+      "nature": "viol — affaire Patterson-Spatz",
+      "juridiction": "Cour de cassation",
+      "statut": "CLOS",
+      "resume": "La Cour de cassation a confirmé le non-lieu prononcé en faveur de Gérald Darmanin dans l'affaire de viol initiée par Sophie Patterson-Spatz, clôturant définitivement la procédure pénale en France. La plaignante a ultérieurement saisi la Cour européenne des droits de l'homme.",
+      "sourcePrincipale": "France Bleu",
+      "sourceUrl": "https://www.francebleu.fr/infos/faits-divers-justice/accusation-de-viol-la-cour-de-cassation-valide-le-non-lieu-en-faveur-de-gerald-darmanin-8765800",
+      "sourceDate": "2024-02-14",
+      "corroborated_by": [
+        "Public Sénat"
+      ],
+      "_ingested": true
+    },
+    {
+      "date": "2024-02-01",
+      "type": "ENQUETE_PRELIMINAIRE",
+      "nature": "trafic d'influence, complicité de fraude fiscale — affaire PSG/Neymar",
+      "juridiction": "Tribunal judiciaire de Paris (information judiciaire)",
+      "statut": "EN_COURS",
+      "resume": "Une information judiciaire a été ouverte fin février 2024 pour des faits susceptibles de constituer un trafic d'influence actif et passif, dans le cadre du transfert de Neymar au PSG en 2017. Darmanin, alors ministre de l'Action et des Comptes publics, est soupçonné d'avoir aidé le PSG à obtenir des exonérations fiscales. Il n'était pas personnellement mis en examen à la date de cette recherche (mars 2026). Son ancien directeur de cabinet Jérôme Fournel est mis en cause. L'affaire a été révélée par Mediapart en janvier 2024.",
+      "sourcePrincipale": "France Info",
+      "sourceUrl": "https://www.franceinfo.fr/politique/gerald-darmanin/transfert-de-neymar-au-psg-on-vous-explique-pourquoi-gerald-darmanin-est-soupconne-de-complicite-de-fraude-fiscale_6296634.html",
+      "sourceDate": "2024-09-09",
+      "corroborated_by": [
+        "Mediapart",
+        "AA Agency"
+      ],
+      "_ingested": true
+    }
+  ],
+  "conflict_flags": []
+}

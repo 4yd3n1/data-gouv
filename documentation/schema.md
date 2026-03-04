@@ -1,6 +1,6 @@
 # Database Schema Reference
 
-> Last updated: Mar 4, 2026 (Session 26)
+> Last updated: Mar 4, 2026 (Session 29)
 
 Complete reference for all Prisma models, fields, relations, indexes, and ingestion sources.
 
@@ -29,7 +29,7 @@ Complete reference for all Prisma models, fields, relations, indexes, and ingest
 | Vote Tags | ScrutinTag | ~3,170 |
 | Safety & Health | StatCriminalite, DensiteMedicale | varies |
 | Cross-reference | ConflictSignal | populated by `pnpm compute:conflicts` |
-| Government Profiles (Phase 9) | PersonnalitePublique, MandatGouvernemental, EntreeCarriere, InteretDeclare, EvenementJudiciaire, ActionLobby | ~35 persons, 184+ interests |
+| Government Profiles (Phase 9) | PersonnalitePublique, MandatGouvernemental, EntreeCarriere, InteretDeclare, EvenementJudiciaire, ActionLobby | ~35 persons, 184+ interests, 94,924 ActionLobby, 12 EntreeCarriere |
 | System | IngestionLog | grows over time |
 
 **Total models**: 36 + IngestionLog
@@ -158,7 +158,7 @@ Members of the Assemblée Nationale. Source: Datan dataset via data.gouv.fr Tabu
 | `scoreLoyaute` | Float? | Loyalty score (votes aligned with group) |
 | `scoreMajorite` | Float? | Majority score |
 | `photoUrl` | String? | Official AN photo URL |
-| `actif` | Boolean | `true` if current legislature |
+| `actif` | Boolean | `true` if current legislature — **Note**: ministers who resigned their seat are set to `false` (Bayrou, Darmanin, Barrot, Vautrin, Borne, Wauquiez, Pannier-Runacher manually corrected) |
 | `dateMaj` | DateTime? | Last update from source |
 | `createdAt` | DateTime | Auto |
 | `updatedAt` | DateTime | Auto |
@@ -171,7 +171,7 @@ Members of the Assemblée Nationale. Source: Datan dataset via data.gouv.fr Tabu
 
 **Indexes**: `nom+prenom`, `groupeAbrev`, `departementCode`, `departementRefCode`, `actif`
 
-**Row count**: ~2,101 (577 active)
+**Row count**: ~2,101 (570 active — 7 corrected to `actif=false` after joining Bayrou government)
 
 ---
 
@@ -1029,7 +1029,7 @@ Not a Prisma model — a PostgreSQL materialized view created by migration `2026
 
 **Language**: `french` stemming via `to_tsvector('french', ...)` and `plainto_tsquery('french', ...)`.
 
-**Static injection**: `src/lib/search.ts` also injects a hardcoded "Emmanuel Macron / Président de la République → /president" result when the query matches `macron`, `manu`, `president`, `elysee` (client-side, no DB row).
+**Static injection**: `src/lib/search.ts` also injects a hardcoded "Emmanuel Macron / Président de la République → `/gouvernement/emmanuel-macron`" result when the query matches `macron`, `manu`, `president`, `elysee` (no DB row — `/president` 308-redirects to `/gouvernement/emmanuel-macron`).
 
 ---
 
@@ -1053,7 +1053,9 @@ Wave 8:   Promise.all([ingestInseeLocal(), ingestBudgets()])   # StatLocale, Bud
 Wave 9:   Promise.all([ingestCriminalite(), ingestMedecins()]) # StatCriminalite, DensiteMedicale
 Wave 10:  REFRESH MATERIALIZED VIEW search_index           # Final step — pnpm refresh:search
 # Phase 9 (separate — run after 9A seed):
-Phase9:   npx tsx scripts/ingest-hatvp.ts                  # InteretDeclare (re-run safe)
+Phase9a:  npx tsx scripts/ingest-hatvp.ts                  # InteretDeclare (re-run safe)
+Phase9c:  pnpm ingest:agora                                 # ActionLobby — 94,924 records (~32s)
+Phase9d:  pnpm generate:carriere                            # EntreeCarriere from MandatGouvernemental + Depute/Senateur (NOT HATVP ACTIVITE_ANTERIEURE)
 ```
 
 ---
@@ -1086,7 +1088,7 @@ Source: `https://www.data.gouv.fr/api/1/datasets/r/008a2dda-2c60-4b63-b910-998f6
 
 ## Government Profiles Layer (Phase 9)
 
-Source: HATVP open data XML + seed script (`scripts/seed-gouvernement.ts`). Route: `/gouvernement` (index) + `/gouvernement/[slug]` (profile). Ingestion: `scripts/ingest-hatvp.ts`.
+Source: HATVP open data XML + AGORA JSON + seed script (`scripts/seed-gouvernement.ts`). Routes: `/gouvernement` (index) + `/gouvernement/[slug]` (profile). Ingestion: `scripts/ingest-hatvp.ts` (interests), `scripts/ingest-agora.ts` (lobby actions), `scripts/generate-carriere.ts` (career timeline).
 
 ### Enums
 
@@ -1118,7 +1120,7 @@ Core profile record for each government official. One row per person (not per ma
 | `photoUrl` | String? | Portrait URL |
 | `bioCourte` | String? | 1–2 sentence biography |
 | `formation` | String? | Academic background |
-| `deputeId` | String? FK | References `Depute.id` — set when minister is also a current/former deputy |
+| `deputeId` | String? FK | References `Depute.id` — set when minister is also a current/former deputy. **7 records populated** via name-match: Bayrou (PA410), Barrot (PA721836), Borne (PA717161), Darmanin (PA607846), Pannier-Runacher (PA759832), Vautrin (PA267797), Wauquiez (PA267285). Enables redirect from `/representants/deputes/[id]` → `/gouvernement/[slug]`. |
 | `senateurId` | String? FK | References `Senateur.id` — set when minister is also a senator |
 | `hatvpDossierId` | String? | HATVP declaration URL path (e.g. `/open-data/xml/...`) |
 | `sourceRecherche` | SourceRecherche | Research completeness: `HATVP_ONLY` / `HATVP_PLUS_PRESSE` / `VERIFIE_MANUELLEMENT` |
@@ -1159,7 +1161,7 @@ One row per government role held. A person who served in multiple governments ha
 
 ### `EntreeCarriere`
 
-Career timeline entries. Populated from HATVP XML (section 2–3) and manual seeding.
+Career timeline entries. Auto-generated from structured sources by `scripts/generate-carriere.ts` (idempotent — deletes and recreates on each run). Sources: `MandatGouvernemental` (source: `HATVP`) + `Depute` linked via `deputeId` (source: `ASSEMBLEE`) + `Senateur` linked via `senateurId` (source: `ASSEMBLEE`). **HATVP `ACTIVITE_ANTERIEURE` is NOT a source** — financial disclosure fields produce noise, not structured career entries.
 
 | Field | Type | Description |
 |-------|------|-------------|

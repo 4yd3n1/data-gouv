@@ -1,6 +1,6 @@
 # Handoff — data-gouv Civic Intelligence Platform
 
-> Updated: Mar 4, 2026 (Session 26). Current phase: **Phase 9 — Government Profiles**.
+> Updated: Mar 4, 2026 (Session 32). Current phase: **Phase 9 — Government Profiles**.
 
 ---
 
@@ -12,9 +12,9 @@ Full blueprint: [`ARCHITECTURAL-PLAN.md`](../ARCHITECTURAL-PLAN.md)
 
 ---
 
-## Current State — Phases 1–8 Complete
+## Current State — Phases 1–8 Complete + Phase 9 In Progress
 
-~800K rows across 30 Prisma models. 57 routes + 5 OG image routes. `pnpm build` verified zero TS errors (Session 24).
+~800K rows across 36 Prisma models. 59 routes + 5 OG image routes. `pnpm build` verified zero TS errors (Session 26).
 
 | Layer | Models | Rows |
 |-------|--------|------|
@@ -25,8 +25,9 @@ Full blueprint: [`ARCHITECTURAL-PLAN.md`](../ARCHITECTURAL-PLAN.md)
 | Culture | Musee, FrequentationMusee, Monument | ~60,071 |
 | Elections | Elu, ElectionLegislative, CandidatLegislatif, PartiPolitique | ~601,514 |
 | Declarations | DeclarationInteret, ParticipationFinanciere, RevenuDeclaration | varies |
+| Gov. Profiles *(Phase 9)* | PersonnalitePublique, MandatGouvernemental, EntreeCarriere, InteretDeclare, EvenementJudiciaire, ActionLobby | seed data + 184 HATVP interests (Bayrou) |
 
-**Client components** (8): `SearchInput`, `Avatar`, `DeclarationSection`, `ProfileTabs`, `DeptLookup`, `NavSearch`, `FranceMap`, `DeltaBadge`.
+**Client components** (8): `SearchInput`, `SearchBox`, `Avatar`, `DeclarationSection`, `ProfileTabs`, `DeptLookup`, `NavSearch`, `FranceMap`.
 
 ---
 
@@ -41,6 +42,10 @@ pnpm ingest           # Full ingestion (all waves, ~10 min, idempotent)
 pnpm ingest:insee-local  # INSEE Mélodi (5 datasets × 101 depts — re-run safe)
 pnpm compute:conflicts   # Populate ConflictSignal (run after tag-scrutins)
 pnpm refresh:search      # Refresh search_index materialized view
+
+# Phase 9 (run manually — not yet in pnpm ingest)
+npx tsx scripts/seed-gouvernement.ts   # Seed current government ministers
+npx tsx scripts/ingest-hatvp.ts        # Ingest HATVP XML declarations (re-run safe)
 ```
 
 ---
@@ -75,7 +80,15 @@ pnpm refresh:search      # Refresh search_index materialized view
 
 6 new Prisma models: `PersonnalitePublique`, `MandatGouvernemental`, `EntreeCarriere`, `InteretDeclare`, `EvenementJudiciaire`, `ActionLobby`. New routes: `/gouvernement` + `/gouvernement/[slug]`. Rules file: `.claude/rules/gouvernement.md`.
 
-Sub-phases: **9A** (schema+seed+basic pages) → **9B** (HATVP) → **9C** (AGORA) → **9D** (career timeline) → **9E** (full UI) → **9F** (research agent) → **9G** (president + history).
+Sub-phases:
+- ✅ **9A** — schema + migration + seed (Bayrou government, ~25 ministers)
+- ✅ **9B** — HATVP XML ingestion (184 interests, 6 declarations for Bayrou)
+- ✅ **9E** — Profile UI (`ProfileHero` + `ProfileTabs`, separate Affaires judiciaires tab, all section components)
+- ✅ **9C** — AGORA lobby ingestion → 94,924 `ActionLobby` records; keyword-matched `reponsablesPublics` → `ministereCode`; `LobbySection` shows top orgs + domain breakdown
+- ✅ **9D** — Career timeline → `generate-carriere.ts` populates `EntreeCarriere` from mandats + Depute/Senateur data; `CareerSection` shows vertical timeline with colored dots
+- ✅ **9F** — Research agent: `EvenementJudiciaire` for Bayrou + Darmanin (Tier 1-2 press sources, `verifie` workflow with `scripts/review-agent-output.ts`); Macron judicial event (McKinsey/PSG) + 7 career entries ingested
+- ✅ **9G (partial)** — President profile fully migrated: `/president` 308-redirects to `/gouvernement/emmanuel-macron`; 4 president-specific section components (`PresidentBilanSection`, `PresidentPromessesSection`, `PresidentLobbyingSection`, `PresidentDeclarationsSection`); 6-tab layout with hero scores + contact for president detection. Search static injection updated to `/gouvernement/emmanuel-macron`.
+- ⬜ **9G (remaining)** — Historical governments (Borne, Attal, Barnier…); more ministers' judicial/career research
 
 ---
 
@@ -83,6 +96,11 @@ Sub-phases: **9A** (schema+seed+basic pages) → **9B** (HATVP) → **9C** (AGOR
 
 | Session | What Was Built |
 |---------|----------------|
+| **32** (Mar 4) | President profile migration: `/president` 308-redirect → `/gouvernement/emmanuel-macron`. 4 president-specific section components (`PresidentBilanSection`, `PresidentPromessesSection`, `PresidentLobbyingSection`, `PresidentDeclarationsSection`). Gouvernement page detects `isPresident` → 6-tab layout with hero scores/contact. Search static injection URL updated. Docs updated. |
+| **31** (Mar 4) | Phase 9F: `data/research-output/` JSON workflow + `review-agent-output.ts` interactive CLI. Bayrou + Darmanin judicial research (Tier 1-2 press). `JudiciaireSection` rebuilt (event cards, severity dots, statut badges). Macron research: 7 career entries + McKinsey affaire ingested. Tab badge shows judiciaireCount. |
+| **29–30** (Mar 4) | Unified profiles: 7 ministers got `deputeId` populated via name-match → redirect from `/representants/deputes/[id]`. 4-tab redesign. Gouvernement card on `/representants` hub. `Affaires judiciaires` separated into own conditional tab. |
+| **28** (Mar 4) | Phase 9C: `ingest-agora.ts` (94,924 ActionLobby, keyword ministry matching); upgraded `LobbySection`. Phase 9D: `generate-carriere.ts` (EntreeCarriere from mandats + Depute/Senateur); vertical timeline `CareerSection`. Build clean. |
+| **27** (Mar 4) | Commit + push Sessions 21–26 work; updated handoff.md, schema.md, frontend.md to reflect Phases 8 + 9A/9B/9E |
 | **26** (Mar 4) | Phase 9E UI fix: `/gouvernement/[slug]` now uses `ProfileHero` + `ProfileTabs` (3 tabs: Intérêts · Mandats · Parcours); all section components aligned to project design language |
 | **25** (Mar 3) | Phase 9E UI: two-column layout, progressive disclosure in `interets-section.tsx`, contrast fixes across all section components |
 | **24** (Mar 3) | Phase 8C fix: correct Mélodi dataset `DS_RP_DIPLOMES_PRINC`; ingested `EDUC_NO_DIPLOMA`, `EDUC_BAC_PLUS`, `EDUC_HIGHER_EDUC` |
