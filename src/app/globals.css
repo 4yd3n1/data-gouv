@@ -88,3 +88,331 @@ body::after {
 /* Hide scrollbar for tab navigation */
 .scrollbar-hide::-webkit-scrollbar { display: none; }
 .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ===== DESIGN OVERHAUL — medias dossier ===== */
+
+/* Stat cards top accent */
+.stat-card {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--color-teal), transparent);
+  opacity: 0.3;
+}
+.stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px -12px rgba(0,0,0,0.4);
+  border-color: rgba(45,212,191,0.12);
+}
+
+/* Gradient stat numbers */
+.stat-number-rose {
+  background: linear-gradient(135deg, var(--color-rose), #ff6b8a);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.stat-number-amber {
+  background: linear-gradient(135deg, var(--color-amber), #f97316);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.stat-number-teal {
+  background: linear-gradient(135deg, var(--color-teal), #14b8a6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Owner card hover */
+.owner-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: linear-gradient(145deg, rgba(17,24,39,0.5), rgba(8,12,20,0.6));
+}
+.owner-card:hover {
+  border-color: rgba(45,212,191,0.12);
+  background: linear-gradient(145deg, rgba(17,24,39,0.65), rgba(12,16,24,0.7));
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px -8px rgba(0,0,0,0.4), 0 0 0 1px rgba(45,212,191,0.05);
+}
+
+/* Bar segment hover */
+.bar-segment {
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+.bar-segment:hover {
+  opacity: 1 !important;
+  filter: brightness(1.15);
+}
+
+/* Filter pill active */
+.filter-active {
+  background: linear-gradient(135deg, #2dd4bf, #14b8a6);
+  color: #080c14;
+  box-shadow: 0 2px 12px -3px rgba(45,212,191,0.4);
+}
+
+/* Description block accent */
+.desc-block {
+  position: relative;
+  overflow: hidden;
+}
+.desc-block::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 3px; height: 100%;
+  background: linear-gradient(180deg, var(--color-rose), transparent);
+  opacity: 0.6;
+}
+
+/* Section divider */
+.section-divider::before {
+  content: '';
+  display: block;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(45,212,191,0.08), transparent);
+  margin-bottom: 32px;
+}
+
+/* Lobby stat gradient */
+.lobby-stat {
+  background: linear-gradient(135deg, var(--color-amber), #f97316);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Mobile hamburger menu */
+.mobile-menu-btn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 40px; height: 40px;
+  border: 1px solid rgba(26,34,54,0.5);
+  border-radius: 10px;
+  background: rgba(17,24,39,0.5);
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.mobile-menu-btn:hover {
+  background: rgba(17,24,39,0.8);
+  color: #e2e8f0;
+  border-color: rgba(45,212,191,0.15);
+}
+@media (max-width: 768px) {
+  .nav-links { display: none !important; }
+  .mobile-menu-btn { display: flex !important; }
+}
+@media (min-width: 769px) {
+  .mobile-menu-btn { display: none !important; }
+  .mobile-nav-overlay { display: none !important; }
+}
+.mobile-nav-overlay {
+  position: fixed;
+  top: 56px; left: 0; right: 0; bottom: 0;
+  background: rgba(8,12,20,0.97);
+  backdrop-filter: blur(20px);
+  z-index: 100;
+  display: none;
+  flex-direction: column;
+  padding: 20px 24px;
+  gap: 4px;
+}
+.mobile-nav-overlay.open { display: flex; animation: slideDown 0.25s ease; }
+.mobile-nav-overlay a {
+  display: flex;
+  align-items: center;
+  padding: 14px 16px;
+  color: #cbd5e1;
+  font-size: 16px;
+  border-radius: 10px;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+.mobile-nav-overlay a:hover {
+  background: rgba(45,212,191,0.06);
+  color: #e2e8f0;
+  border-color: rgba(45,212,191,0.1);
+}
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== SIGINT CONSOLE EFFECTS ===== */
+
+/* Scan line — subtle CRT sweep across sections */
+@keyframes scanline {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+.sigint-section {
+  position: relative;
+  overflow: hidden;
+}
+.sigint-section::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(45, 212, 191, 0.06) 20%,
+    rgba(45, 212, 191, 0.15) 50%,
+    rgba(45, 212, 191, 0.06) 80%,
+    transparent 100%
+  );
+  animation: scanline 8s linear infinite;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Frosted glass panel */
+.glass-panel {
+  background: rgba(12, 16, 24, 0.65);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(45, 212, 191, 0.08);
+  transform: translateZ(0);
+}
+
+/* Luminous border glow on hover — dossier card */
+.dossier-card {
+  position: relative;
+  background: linear-gradient(
+    165deg,
+    rgba(17, 24, 39, 0.7),
+    rgba(8, 12, 20, 0.85)
+  );
+  border: 1px solid rgba(45, 212, 191, 0.06);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+.dossier-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    135deg,
+    rgba(45, 212, 191, 0.0) 0%,
+    rgba(45, 212, 191, 0.12) 50%,
+    rgba(45, 212, 191, 0.0) 100%
+  );
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+.dossier-card:hover::before { opacity: 1; }
+.dossier-card:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    0 0 0 1px rgba(45, 212, 191, 0.08),
+    0 20px 40px -15px rgba(0, 0, 0, 0.5),
+    0 0 60px -20px rgba(45, 212, 191, 0.08);
+}
+
+/* Active/expanded dossier */
+.dossier-card-active {
+  border-color: rgba(45, 212, 191, 0.15) !important;
+  box-shadow:
+    0 0 0 1px rgba(45, 212, 191, 0.1),
+    0 0 80px -20px rgba(45, 212, 191, 0.12);
+}
+
+/* Monospace data value treatment */
+.data-value {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+
+/* Pulsing dot for "live tracking" feel */
+@keyframes pulse-dot {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.3); }
+}
+.live-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--color-teal);
+  animation: pulse-dot 3s ease-in-out infinite;
+}
+
+/* Classification badge */
+.classification-badge {
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border: 1px solid rgba(45, 212, 191, 0.2);
+  border-radius: 2px;
+  color: var(--color-teal);
+  background: rgba(45, 212, 191, 0.05);
+}
+
+/* Threat level bar (horizontal, animated fill) */
+@keyframes threat-fill {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+.threat-bar {
+  height: 3px;
+  border-radius: 1.5px;
+  transform-origin: left;
+  animation: threat-fill 1.2s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+/* Better selection */
+::selection { background: rgba(45,212,191,0.2); color: #e2e8f0; }
+html { scroll-behavior: smooth; }
+
+/* Amber scan line — President section override */
+.sigint-amber::after {
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(245, 158, 11, 0.03) 20%,
+    rgba(245, 158, 11, 0.10) 50%,
+    rgba(245, 158, 11, 0.03) 80%,
+    transparent 100%
+  );
+}
+
+/* Gouvernement organigram hero card */
+.gov-hero-card {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.gov-hero-card:hover { transform: translateY(-2px); }
+.gov-hero-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='32' height='32' viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='1' cy='1' r='0.5' fill='rgba(255,255,255,0.018)'/%3E%3C/svg%3E");
+  background-size: 32px 32px;
+  pointer-events: none;
+}
+
+/* Live-dot amber variant */
+.live-dot-amber {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--color-amber);
+  animation: pulse-dot 3s ease-in-out infinite;
+}

@@ -99,6 +99,17 @@ export const DOSSIERS: Dossier[] = [
     lobbyDomains: ["retraite", "pension", "social", "assurance"],
     color: "amber",
   },
+  {
+    slug: "medias",
+    label: "Concentration des medias",
+    subtitle: "Propriete, influence et transparence des grands groupes mediatiques",
+    priority: 1,
+    stat: "9 milliardaires controlent plus de 80 % des medias prives en France",
+    statSource: "Reporters sans frontieres 2024",
+    tags: ["culture"],
+    lobbyDomains: ["audiovisuel", "presse", "telecommuni", "edition", "media"],
+    color: "rose",
+  },
 ];
 
 export function getDossier(slug: string): Dossier | undefined {

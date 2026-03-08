@@ -1,0 +1,162 @@
+{
+  "slug": "vincent-jeanbrun",
+  "nom": "Jeanbrun",
+  "prenom": "Vincent",
+  "researched_at": "2026-03-05",
+  "sources_used": [
+    "France Info",
+    "France Bleu",
+    "ecologie.gouv.fr",
+    "info.gouv.fr",
+    "Wikimonde",
+    "Assemblée nationale",
+    "Anticor",
+    "Le JDD",
+    "CNEWS"
+  ],
+  "notes": "Né le 5 mai 1984 à Paris. Fils d'un chauffeur-livreur et d'une mère italienne au foyer, a grandi en logement social à L'Haÿ-les-Roses. Le 2 juillet 2023, son domicile a été attaqué à la voiture-bélier pendant les émeutes suivant la mort de Nahel Merzouk ; son épouse et un de ses enfants ont été blessés en fuyant. Enquête préliminaire ouverte le 2 sept. 2024 par le parquet de Créteil pour prise illégale d'intérêts (attribution de logements SIVU à deux collaborateurs). Suspendu de LR après sa nomination au gouvernement Lecornu. A quitté l'Assemblée nationale le 12 nov. 2025. Avait quitté Les Républicains en juin 2019 pour rejoindre Soyons libres (mouvement Pécresse), puis président du groupe LRI au conseil régional IdF (juillet 2020).",
+  "career_entries": [
+    {
+      "dateDebut": null,
+      "dateFin": null,
+      "categorie": "FORMATION",
+      "titre": "École de commerce d'Évry",
+      "organisation": "École de commerce d'Évry",
+      "description": "Scolarité secondaire à Fresnes (École Lallier, Collège Chevreul, Lycée Frédéric-Mistral). Diplômé d'une école de commerce à Évry.",
+      "sourceUrl": "https://www.ecologie.gouv.fr/vincent-jeanbrun",
+      "sourcePrincipale": "ecologie.gouv.fr",
+      "sourceDate": "2025-10-12",
+      "confidence": "medium",
+      "_ingested": true
+    },
+    {
+      "dateDebut": null,
+      "dateFin": null,
+      "categorie": "CARRIERE_PRIVEE",
+      "titre": "Directeur d'une association d'insertion professionnelle",
+      "organisation": null,
+      "description": "Directeur d'une association d'insertion professionnelle, avant son entrée en politique élective.",
+      "sourceUrl": "https://plus.wikimonde.com/wiki/Vincent_Jeanbrun",
+      "sourcePrincipale": "Wikimonde",
+      "sourceDate": "2025-01-01",
+      "confidence": "medium",
+      "_ingested": true
+    },
+    {
+      "dateDebut": null,
+      "dateFin": null,
+      "categorie": "CARRIERE_PRIVEE",
+      "titre": "Consultant en cabinet de conseil aux collectivités territoriales",
+      "organisation": null,
+      "description": "Consultant dans un cabinet de conseil spécialisé dans l'accompagnement des collectivités territoriales.",
+      "sourceUrl": "https://plus.wikimonde.com/wiki/Vincent_Jeanbrun",
+      "sourcePrincipale": "Wikimonde",
+      "sourceDate": "2025-01-01",
+      "confidence": "medium",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2012-12-01",
+      "dateFin": "2014-03-30",
+      "categorie": "FONCTION_PUBLIQUE",
+      "titre": "Assistant parlementaire de Valérie Pécresse",
+      "organisation": "Assemblée nationale",
+      "description": "Collaborateur parlementaire de Valérie Pécresse, députée des Yvelines. Entrée en politique facilitée par Roger Karoutchi (adhésion à l'UMP en 2004).",
+      "sourceUrl": "https://www.ecologie.gouv.fr/vincent-jeanbrun",
+      "sourcePrincipale": "ecologie.gouv.fr",
+      "sourceDate": "2025-10-12",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2014-03-30",
+      "dateFin": "2024-07-07",
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Maire de L'Haÿ-les-Roses",
+      "organisation": "Ville de L'Haÿ-les-Roses (Val-de-Marne)",
+      "description": "Élu maire en mars 2014 à 29 ans, l'un des plus jeunes maires d'une commune de plus de 30 000 habitants en France. Réélu le 15 mars 2020. Le 2 juillet 2023, son domicile est attaqué à la voiture-bélier lors des émeutes suivant la mort de Nahel Merzouk ; sa femme et un enfant blessés en fuyant. Quitte la mairie en 2024 après son élection à l'Assemblée nationale.",
+      "sourceUrl": "https://www.ecologie.gouv.fr/vincent-jeanbrun",
+      "sourcePrincipale": "ecologie.gouv.fr",
+      "sourceDate": "2025-10-12",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2015-04-02",
+      "dateFin": "2015-12-18",
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Conseiller départemental du Val-de-Marne (canton L'Haÿ-les-Roses)",
+      "organisation": "Conseil départemental du Val-de-Marne",
+      "description": "Élu conseiller départemental le 2 avril 2015 pour le canton de L'Haÿ-les-Roses. Démissionne le 18 décembre 2015 après son élection au Conseil régional d'Île-de-France.",
+      "sourceUrl": "https://plus.wikimonde.com/wiki/Vincent_Jeanbrun",
+      "sourcePrincipale": "Wikimonde",
+      "sourceDate": "2025-01-01",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2015-12-13",
+      "dateFin": null,
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Conseiller régional d'Île-de-France",
+      "organisation": "Conseil régional d'Île-de-France",
+      "description": "Élu conseiller régional d'Île-de-France (section Val-de-Marne) en décembre 2015. Président du groupe Libres, Républicains et Indépendants au conseil régional depuis juillet 2020.",
+      "sourceUrl": "https://www.ecologie.gouv.fr/vincent-jeanbrun",
+      "sourcePrincipale": "ecologie.gouv.fr",
+      "sourceDate": "2025-10-12",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2024-07-07",
+      "dateFin": "2025-11-12",
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Député de la 7e circonscription du Val-de-Marne",
+      "organisation": "Assemblée nationale",
+      "description": "Élu député au second tour des législatives le 7 juillet 2024 avec 51% des suffrages (20 633 voix), battant la députée sortante Rachel Keke (LFI). Groupe Droite Républicaine. Quitte l'Assemblée le 12 novembre 2025 suite à sa nomination au gouvernement.",
+      "sourceUrl": "https://www.assemblee-nationale.fr/dyn/deputes/PA842117",
+      "sourcePrincipale": "Assemblée nationale",
+      "sourceDate": "2025-11-12",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2025-10-12",
+      "dateFin": null,
+      "categorie": "MANDAT_GOUVERNEMENTAL",
+      "titre": "Ministre de la Ville et du Logement",
+      "organisation": "Gouvernement Sébastien Lecornu",
+      "description": "Nommé ministre de la Ville et du Logement le 12 octobre 2025 dans le gouvernement Lecornu. Suspendu de Les Républicains suite à cette nomination (le parti avait refusé d'entrer au gouvernement).",
+      "sourceUrl": "https://www.ecologie.gouv.fr/vincent-jeanbrun",
+      "sourcePrincipale": "ecologie.gouv.fr",
+      "sourceDate": "2025-10-12",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": [
+    {
+      "date": "2024-09-02",
+      "type": "ENQUETE_PRELIMINAIRE",
+      "nature": "prise illégale d'intérêts, recel de prise illégale d'intérêts, extorsion, recel d'extorsion, détournement de biens publics",
+      "juridiction": "Parquet de Créteil",
+      "statut": "EN_COURS",
+      "resume": "Enquête préliminaire ouverte le 2 septembre 2024 par le parquet de Créteil, suite à un signalement de l'association anticorruption Anticor (mi-juillet 2024). Jeanbrun est soupçonné d'avoir attribué, en tant que président du syndicat intercommunal (SIVU) et maire, deux maisons de 150 m² situées à Chevilly-Larue à son directeur de cabinet (2017) et à sa directrice des ressources humaines (2021), à des loyers de 700 euros/mois, cinq fois inférieurs au marché. Les factures d'électricité des deux collaborateurs auraient été prises en charge par la commune pour environ 45 000 euros. Jeanbrun déclare vouloir démontrer « la légalité et la bonne foi » de ses actes.",
+      "sourcePrincipale": "France Info",
+      "sourceUrl": "https://www.franceinfo.fr/societe/justice/une-enquete-ouverte-contre-le-depute-maire-de-l-hay-les-roses-vincent-jeanbrun-pour-prise-illegale-d-interets_6803170.html",
+      "sourceDate": "2024-09-26",
+      "corroborated_by": [
+        "France Bleu",
+        "Anticor"
+      ],
+      "_ingested": true
+    }
+  ],
+  "conflict_flags": [
+    {
+      "description": "Attribution de logements SIVU à deux collaborateurs directs (directeur de cabinet et DRH) à des loyers cinq fois inférieurs au marché, avec prise en charge des factures d'électricité (~45 000 euros) par la commune. Jeanbrun a personnellement signé les baux en tant que président du syndicat et maire.",
+      "sourceUrl": "https://www.franceinfo.fr/societe/justice/une-enquete-ouverte-contre-le-depute-maire-de-l-hay-les-roses-vincent-jeanbrun-pour-prise-illegale-d-interets_6803170.html",
+      "_ingested": false
+    }
+  ]
+}

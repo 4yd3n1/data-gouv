@@ -1,0 +1,134 @@
+{
+  "slug": "maud-bregeon",
+  "nom": "Bregeon",
+  "prenom": "Maud",
+  "civilite": "Mme",
+  "dateNaissance": "1991-02-11",
+  "lieuNaissance": "Poitiers, Vienne",
+  "researched_at": "2026-03-05",
+  "_ingested": false,
+  "sources_used": [
+    "https://reporterre.net/La-pronucleaire-Maud-Bregeon-devient-ministre-deleguee-a-l-Energie",
+    "https://www.connaissancedesenergies.org/maud-bregeon-nommee-ministre-de-l-energie",
+    "https://www.usinenouvelle.com/elles-et-ils-font-l-industrie/dirigeants/nomination/une-ingenieure-passee-par-edf-qui-est-maud-bregeon-la-nouvelle-ministre-deleguee-chargee-de-lenergie.NXKMI5SNSNEX5A3HKGCJ7OEEQM.html",
+    "https://www.decideurs-magazine.com/politique-societe/63682-maud-bregeon-porte-parole-du-gouvernement-nommee-ministre-deleguee-chargee-de-l-energie.html",
+    "https://france3-regions.franceinfo.fr/nouvelle-aquitaine/vienne/poitiers/qui-est-maud-bregeon-la-poitevine-renommee-porte-parole-du-gouvernement-lecornu-2-3232571.html"
+  ],
+  "notes": "Ingenieure nucleaire de formation (Polytech Nantes, NOT Polytechnique). 8 ans chez EDF (2014-2022), specialisee gestion de crise post-Fukushima. Pronucleaire assumee. Porte-parole de LREM des 2020 aux cotes de Prisca Thevenot. Fille d'un professeur de sociologie et d'une secretaire ayant travaille 20 ans dans un centre d'accueil pour demandeurs d'asile. Aucune affaire judiciaire connue. Rapporteur de la loi d'acceleration nucleaire a l'Assemblee.",
+  "career_entries": [
+    {
+      "dateDebut": "2009",
+      "dateFin": "2011",
+      "categorie": "FORMATION",
+      "titre": "Cycle preparatoire integre reseau Polytech",
+      "organisation": "Universite Pierre et Marie Curie (Paris 6)",
+      "description": "Deux annees de preparation universitaire au sein du reseau Polytech.",
+      "sourceUrl": "https://www.usinenouvelle.com/elles-et-ils-font-l-industrie/dirigeants/nomination/une-ingenieure-passee-par-edf-qui-est-maud-bregeon-la-nouvelle-ministre-deleguee-chargee-de-lenergie.NXKMI5SNSNEX5A3HKGCJ7OEEQM.html",
+      "sourcePrincipale": "L'Usine Nouvelle",
+      "sourceDate": "2024-10",
+      "confidence": "medium",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2011",
+      "dateFin": "2014",
+      "categorie": "FORMATION",
+      "titre": "Diplome d'ingenieur en electronique et technologies numeriques",
+      "organisation": "Polytech Nantes (Ecole polytechnique universitaire de Nantes)",
+      "description": "Formation d'ingenieur specialisee en electronique et technologies numeriques. NB: Polytech Nantes, pas l'Ecole polytechnique (X).",
+      "sourceUrl": "https://www.usinenouvelle.com/elles-et-ils-font-l-industrie/dirigeants/nomination/une-ingenieure-passee-par-edf-qui-est-maud-bregeon-la-nouvelle-ministre-deleguee-chargee-de-lenergie.NXKMI5SNSNEX5A3HKGCJ7OEEQM.html",
+      "sourcePrincipale": "L'Usine Nouvelle",
+      "sourceDate": "2024-10",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2014",
+      "dateFin": "2022",
+      "categorie": "CARRIERE_PRIVEE",
+      "titre": "Ingenieure chez EDF",
+      "organisation": "EDF (Electricite de France)",
+      "description": "Integre EDF en 2014 dans une unite creee apres la catastrophe de Fukushima, chargee d'orchestrer les interventions en cas d'accidents graves sur les centrales nucleaires. Specialisee en contrats et gestion de crise. A demissionne d'EDF lors de son election pour garantir son independance.",
+      "sourceUrl": "https://reporterre.net/La-pronucleaire-Maud-Bregeon-devient-ministre-deleguee-a-l-Energie",
+      "sourcePrincipale": "Reporterre",
+      "sourceDate": "2024-10",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2020-11",
+      "dateFin": "2022-06",
+      "categorie": "AUTRE",
+      "titre": "Porte-parole de La Republique en marche (LREM)",
+      "organisation": "La Republique en marche / Renaissance",
+      "description": "Nommee porte-parole du parti presidentiel aux cotes de Prisca Thevenot en novembre 2020.",
+      "sourceUrl": "https://www.decideurs-magazine.com/politique-societe/63682-maud-bregeon-porte-parole-du-gouvernement-nommee-ministre-deleguee-chargee-de-l-energie.html",
+      "sourcePrincipale": "Decideurs Magazine",
+      "sourceDate": "2024-10",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2022-06",
+      "dateFin": null,
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Deputee des Hauts-de-Seine, 13e circonscription",
+      "organisation": "Assemblee nationale",
+      "description": "Elue deputee sous l'etiquette Ensemble (Renaissance) en juin 2022. Rapporteur de la loi d'acceleration nucleaire.",
+      "sourceUrl": "https://reporterre.net/La-pronucleaire-Maud-Bregeon-devient-ministre-deleguee-a-l-Energie",
+      "sourcePrincipale": "Reporterre",
+      "sourceDate": "2024-10",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2024-09-21",
+      "dateFin": "2024-12-13",
+      "categorie": "MANDAT_GOUVERNEMENTAL",
+      "titre": "Ministre deleguee, porte-parole du Gouvernement",
+      "organisation": "Gouvernement Michel Barnier",
+      "description": "Nommee porte-parole du gouvernement Barnier, succedant a Prisca Thevenot.",
+      "sourceUrl": "https://www.vie-publique.fr/discours/295467-maud-bregeon-24092024-rtl-prise-de-fonction-porte-parole-gouvernement",
+      "sourcePrincipale": "Vie Publique",
+      "sourceDate": "2024-09-24",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2025-10-12",
+      "dateFin": "2026-02-26",
+      "categorie": "MANDAT_GOUVERNEMENTAL",
+      "titre": "Ministre deleguee, porte-parole du Gouvernement",
+      "organisation": "Gouvernement Sebastien Lecornu",
+      "description": "Reconduite comme porte-parole du gouvernement dans le gouvernement Lecornu II.",
+      "sourceUrl": "https://france3-regions.franceinfo.fr/nouvelle-aquitaine/vienne/poitiers/qui-est-maud-bregeon-la-poitevine-renommee-porte-parole-du-gouvernement-lecornu-2-3232571.html",
+      "sourcePrincipale": "France 3 Nouvelle-Aquitaine",
+      "sourceDate": "2025-10-12",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2026-02-26",
+      "dateFin": null,
+      "categorie": "MANDAT_GOUVERNEMENTAL",
+      "titre": "Ministre deleguee chargee de l'Energie, porte-parole du Gouvernement",
+      "organisation": "Gouvernement Sebastien Lecornu",
+      "description": "Nommee ministre deleguee chargee de l'Energie aupres du ministre de l'Economie, des Finances et de la Souverainete industrielle, energetique et numerique. Conserve le role de porte-parole.",
+      "sourceUrl": "https://www.connaissancedesenergies.org/maud-bregeon-nommee-ministre-de-l-energie",
+      "sourcePrincipale": "Connaissance des Energies",
+      "sourceDate": "2026-02-26",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": [],
+  "conflict_flags": [
+    {
+      "type": "conflit_interet_potentiel",
+      "description": "Ancienne salariee d'EDF (2014-2022) nommee ministre de l'Energie. Qualifiee d'avocate d'EDF a l'Assemblee par des ecologistes.",
+      "sourceUrl": "https://reporterre.net/La-pronucleaire-Maud-Bregeon-devient-ministre-deleguee-a-l-Energie",
+      "sourcePrincipale": "Reporterre",
+      "severity": "medium"
+    }
+  ]
+}

@@ -58,19 +58,29 @@ function normalizeStr(s: string): string {
 
 // Ordered most-specific → least-specific to avoid false matches.
 // Each entry: [ministereCode, keywords_any_of_which_triggers_match]
+// Updated for Gouvernement Lecornu II (Oct 2025 – present, reshuffled Feb 2026).
 const MINISTERECODE_KEYWORDS: Array<[string, string[]]> = [
-  ["PRESIDENCE",            ["presidence de la republique", "president de la republique", "elysee"]],
-  ["MATIGNON",              ["premier ministre", "matignon", "services du premier"]],
-  ["AFFAIRES_ETRANGERES",   ["affaires etrangeres", "diplomati", "consulaire"]],
-  ["ARMEES",                ["armee", "defense nationale", "militaire", "anciens combattants"]],
-  ["INTERIEUR",             ["interieur", "police nationale", "gendarmerie nationale", "immigration", "securite interieure"]],
-  ["ECONOMIE_FINANCES",     ["economie", "finance", "budget", "tresor", "industrie", "numerique", "commerce exterieur", "souverainete industrielle"]],
-  ["JUSTICE",               ["justice", "garde des sceaux", "judiciaire", "penitentiaire", "probation"]],
-  ["EDUCATION_NATIONALE",   ["education nationale", "enseignement superieur", "enseignement scolaire", "universite", "recherche scientifique"]],
-  ["TRANSITION_ECOLOGIQUE", ["transition ecologique", "ecologi", "energie", "climat", "nucleaire", "biodiversite", "environnement", "prevention des risques"]],
-  ["TRAVAIL_SANTE",         ["travail", "emploi", "sante publique", "solidarite", "famille", "protection sociale"]],
-  ["EUROPE",                ["affaires europeennes", "union europeenne", "questions europeennes"]],
-  ["FONCTION_PUBLIQUE",     ["fonction publique", "transformation de l'etat", "service public"]],
+  ["PRESIDENCE",              ["presidence de la republique", "president de la republique", "elysee"]],
+  ["MATIGNON",                ["premier ministre", "matignon", "services du premier"]],
+  ["AFFAIRES_ETRANGERES",     ["affaires etrangeres", "diplomati", "consulaire", "francophonie"]],
+  ["ARMEES",                  ["armee", "defense nationale", "militaire", "anciens combattants"]],
+  ["INTERIEUR",               ["interieur", "police nationale", "gendarmerie nationale", "immigration", "securite interieure"]],
+  ["ECONOMIE_FINANCES",       ["economie", "finance", "budget", "tresor", "souverainete industrielle", "commerce exterieur"]],
+  ["JUSTICE",                 ["justice", "garde des sceaux", "judiciaire", "penitentiaire", "probation"]],
+  ["EDUCATION_NATIONALE",     ["education nationale", "enseignement scolaire"]],
+  ["ENSEIGNEMENT_SUPERIEUR",  ["enseignement superieur", "universite", "recherche scientifique", "recherche", "espace"]],
+  ["TRANSITION_ECOLOGIQUE",   ["transition ecologique", "ecologi", "energie", "climat", "nucleaire", "biodiversite", "environnement", "prevention des risques"]],
+  ["TRAVAIL_SOLIDARITES",     ["travail", "emploi", "droit du travail", "solidarite", "protection sociale"]],
+  ["SANTE_FAMILLE",           ["sante publique", "sante", "famille", "autonomie", "handicap", "personnes agees"]],
+  ["AGRICULTURE",             ["agriculture", "agroalimentaire", "souverainete alimentaire", "peche", "alimentation"]],
+  ["PME_COMMERCE",            ["pme", "commerce", "artisanat", "tourisme", "pouvoir d'achat"]],
+  ["CULTURE",                 ["culture", "patrimoine", "creation artistique", "audiovisuel", "livre"]],
+  ["OUTREMER",                ["outre-mer", "outremer", "ultramarins", "territoires d'outre"]],
+  ["AMENAGEMENT_TERRITOIRE",  ["amenagement du territoire", "decentralisation", "collectivites territoriales"]],
+  ["SPORTS_JEUNESSE",         ["sport", "jeunesse", "vie associative", "jeux olympiques"]],
+  ["TRANSPORTS",              ["transport", "mobilite", "rail", "infrastructure de transport", "aeroport"]],
+  ["VILLE_LOGEMENT",          ["logement", "ville", "politique de la ville", "habitat"]],
+  ["INDUSTRIE_NUMERIQUE",     ["industrie", "numerique", "intelligence artificielle"]],
 ];
 
 function matchMinistereCodes(reponsable: string): string[] {

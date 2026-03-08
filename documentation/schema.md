@@ -1,6 +1,6 @@
 # Database Schema Reference
 
-> Last updated: Mar 4, 2026 (Session 29)
+> Last updated: Mar 6, 2026 (Session 35)
 
 Complete reference for all Prisma models, fields, relations, indexes, and ingestion sources.
 
@@ -20,19 +20,21 @@ Complete reference for all Prisma models, fields, relations, indexes, and ingest
 |-------|--------|-------------|
 | Territory | Region, Departement, Commune | ~37,031 |
 | Governance | Depute, Senateur, MandatSenateur, CommissionSenateur, Lobbyiste, ActionLobbyiste | ~106,500 |
-| Economy | Indicateur, Observation | ~358 |
+| Economy | Indicateur, Observation | ~717 |
 | Culture | Musee, FrequentationMusee, Monument | ~60,071 |
 | Declarations | DeclarationInteret, ParticipationFinanciere, RevenuDeclaration | varies |
 | Parliament | Organe, Scrutin, GroupeVote, VoteRecord, Deport | varies |
+| Parliamentary Laws | LoiParlementaire, ScrutinLoi | 19 lois, 2,589 links |
 | Elections & RNE | Elu, ElectionLegislative, CandidatLegislatif, PartiPolitique | ~601,514 |
 | Local Data | StatLocale, BudgetLocal | ~70,667 (~1,644 + 69,023) |
 | Vote Tags | ScrutinTag | ~3,170 |
 | Safety & Health | StatCriminalite, DensiteMedicale | varies |
 | Cross-reference | ConflictSignal | populated by `pnpm compute:conflicts` |
-| Government Profiles (Phase 9) | PersonnalitePublique, MandatGouvernemental, EntreeCarriere, InteretDeclare, EvenementJudiciaire, ActionLobby | ~35 persons, 184+ interests, 94,924 ActionLobby, 12 EntreeCarriere |
+| Government Profiles (Phase 9) | PersonnalitePublique, MandatGouvernemental, EntreeCarriere, InteretDeclare, EvenementJudiciaire, ActionLobby | 44 persons, 49 mandats, 474 EntreeCarriere, **14 EvenementJudiciaire**, 184 InteretDeclare, 131,842 ActionLobby |
+| Media Ownership (Session 35) | GroupeMedia, MediaProprietaire, ParticipationMedia, Filiale | 10 groups, 10 owners, 10 participations, 72 filiales |
 | System | IngestionLog | grows over time |
 
-**Total models**: 36 + IngestionLog
+**Total models**: 42 + IngestionLog
 
 ---
 
@@ -306,7 +308,7 @@ Economic indicator definitions (4 series currently loaded).
 | Field | Type | Description |
 |-------|------|-------------|
 | `id` | String PK | cuid() |
-| `code` | String UNIQUE | Internal code: `"PIB_ANNUEL"`, `"CHOMAGE_TRIM_NATIONAL"`, `"CHOMEURS_TRIM_NATIONAL"`, `"CREATIONS_ENTREPRISES_MENSUEL"` |
+| `code` | String UNIQUE | Internal code: `"PIB_ANNUEL"`, `"CHOMAGE_NB_TRIM"`, `"CHOMAGE_TAUX_TRIM"`, `"CREA_ENT_MENSUEL"`, `"IPC_MENSUEL"`, `"IPC_ALIMENTAIRE"`, `"IPC_ENERGIE"`, `"SMIC_HORAIRE"`, `"DETTE_PIB"`, `"INTERETS_DETTE"`, `"DEPENSES_PUBLIQUES_PIB"` |
 | `idBank` | String? | INSEE BDM idBank reference |
 | `dataflow` | String? | INSEE BDM dataflow identifier |
 | `nom` | String | Display name: `"PIB annuel"` |
@@ -325,7 +327,7 @@ Economic indicator definitions (4 series currently loaded).
 
 **Indexes**: `domaine`
 
-**Row count**: 4
+**Row count**: 11
 
 ---
 
@@ -347,7 +349,7 @@ Individual data points for each indicator.
 
 **Indexes**: `indicateurId`, `periodeDebut`, `(indicateurId, periodeDebut)`
 
-**Row count**: ~354
+**Row count**: ~717
 
 ---
 
@@ -569,7 +571,7 @@ Parliamentary votes (solemn and public votes at AN).
 | `createdAt` | DateTime | Auto |
 | `updatedAt` | DateTime | Auto |
 
-**Relations**: `organe Organe?`, `votes VoteRecord[]`, `groupeVotes GroupeVote[]`
+**Relations**: `organe Organe?`, `votes VoteRecord[]`, `groupeVotes GroupeVote[]`, `lois ScrutinLoi[]`
 
 **Indexes**: `dateScrutin`, `legislature`, `sortCode`, `codeTypeVote`, `numero`
 
@@ -638,6 +640,64 @@ Recusal declarations (conflicts of interest) by deputies.
 | `createdAt` | DateTime | Auto |
 
 **Indexes**: `deputeId`, `legislature`
+
+---
+
+## Parliamentary Laws Layer (Session 33)
+
+Source: Seeded manually via `scripts/seed-lois.ts`. Links major laws to existing `Scrutin` records.
+
+### `LoiParlementaire`
+
+Major parliamentary laws and motions de censure — citizen-readable summaries of the 19th legislature's key votes.
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | String PK | cuid() |
+| `slug` | String UNIQUE | URL identifier: `"loi-narcotrafic-2025"`, `"motion-censure-barnier-2024"` |
+| `titre` | String | Full official title |
+| `titreCourt` | String | Short display title |
+| `resumeSimple` | String | Plain-language summary for citizens |
+| `type` | String | `"PLF"`, `"PLFSS"`, `"PROJET_LOI"`, `"PROPOSITION_LOI"`, `"MOTION_CENSURE"` |
+| `statut` | String | `"adopte"`, `"rejete"`, `"en_cours"` |
+| `legislature` | Int | Legislature number (default: 17) |
+| `dateVote` | DateTime? | Date of the final vote |
+| `referenceAN` | String? | Assemblée Nationale dossier reference |
+| `dossierUrl` | String? | Link to AN dossier page |
+| `tags` | String[] | Topic tags (e.g. `["sécurité", "justice"]`) |
+| `rang` | Int | Display order on hub page (lower = higher) |
+
+**Relations**: `scrutins ScrutinLoi[]`
+
+**Indexes**: `statut`, `legislature`
+
+**Row count**: 19
+
+**Ingestion**: `npx tsx scripts/seed-lois.ts` — idempotent upsert on `slug`.
+
+---
+
+### `ScrutinLoi`
+
+Junction table linking `LoiParlementaire` to `Scrutin` records, with a role classifier.
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | String PK | cuid() |
+| `loiId` | String FK | References `LoiParlementaire.id` |
+| `scrutinId` | String FK | References `Scrutin.id` |
+| `role` | String | `"VOTE_FINAL"`, `"AMENDEMENT"`, `"ARTICLE"`, `"MOTION"`, `"PROCEDURAL"` |
+| `ordre` | Int | Sort order within this law's scrutin list (default: 0) |
+
+**Unique constraint**: `[loiId, scrutinId]`
+
+**Relations**: `loi LoiParlementaire` (cascade delete), `scrutin Scrutin`
+
+**Indexes**: `loiId`
+
+**Row count**: 2,589
+
+**Critical**: The `role = "VOTE_FINAL"` record is used to render the group breakdown bar on hub and detail pages. Each law should have at most one `VOTE_FINAL`. When querying for group votes on a law, filter `ScrutinLoi` by `role = "VOTE_FINAL"` first, then fall back to `scrutins[0]` if absent.
 
 ---
 
@@ -1054,8 +1114,9 @@ Wave 9:   Promise.all([ingestCriminalite(), ingestMedecins()]) # StatCriminalite
 Wave 10:  REFRESH MATERIALIZED VIEW search_index           # Final step — pnpm refresh:search
 # Phase 9 (separate — run after 9A seed):
 Phase9a:  npx tsx scripts/ingest-hatvp.ts                  # InteretDeclare (re-run safe)
-Phase9c:  pnpm ingest:agora                                 # ActionLobby — 94,924 records (~32s)
+Phase9c:  pnpm ingest:agora                                 # ActionLobby — 131,842 records (20 ministry codes, ~32s)
 Phase9d:  pnpm generate:carriere                            # EntreeCarriere from MandatGouvernemental + Depute/Senateur (NOT HATVP ACTIVITE_ANTERIEURE)
+Phase9f:  npx tsx scripts/ingest-research-output.ts --all   # EntreeCarriere + EvenementJudiciaire from data/research-output/*.json
 ```
 
 ---
@@ -1088,7 +1149,7 @@ Source: `https://www.data.gouv.fr/api/1/datasets/r/008a2dda-2c60-4b63-b910-998f6
 
 ## Government Profiles Layer (Phase 9)
 
-Source: HATVP open data XML + AGORA JSON + seed script (`scripts/seed-gouvernement.ts`). Routes: `/gouvernement` (index) + `/gouvernement/[slug]` (profile). Ingestion: `scripts/ingest-hatvp.ts` (interests), `scripts/ingest-agora.ts` (lobby actions), `scripts/generate-carriere.ts` (career timeline).
+Source: HATVP open data XML + AGORA JSON + research output JSON + seed script (`scripts/seed-gouvernement.ts`). Routes: `/gouvernement` (index) + `/gouvernement/[slug]` (profile). Ingestion: `scripts/ingest-hatvp.ts` (interests), `scripts/ingest-agora.ts` (lobby actions), `scripts/generate-carriere.ts` (career timeline), `scripts/ingest-research-output.ts` (career + judicial from `data/research-output/*.json`). Currently seeded: **Lecornu II government** (37 members, Oct 2025 + Feb 2026 reshuffle). Bayrou mandates closed with `dateFin`.
 
 ### Enums
 
@@ -1120,7 +1181,7 @@ Core profile record for each government official. One row per person (not per ma
 | `photoUrl` | String? | Portrait URL |
 | `bioCourte` | String? | 1–2 sentence biography |
 | `formation` | String? | Academic background |
-| `deputeId` | String? FK | References `Depute.id` — set when minister is also a current/former deputy. **7 records populated** via name-match: Bayrou (PA410), Barrot (PA721836), Borne (PA717161), Darmanin (PA607846), Pannier-Runacher (PA759832), Vautrin (PA267797), Wauquiez (PA267285). Enables redirect from `/representants/deputes/[id]` → `/gouvernement/[slug]`. |
+| `deputeId` | String? FK | References `Depute.id` — auto-matched by name in `seed-gouvernement.ts`. Enables redirect from `/representants/deputes/[id]` → `/gouvernement/[slug]`. |
 | `senateurId` | String? FK | References `Senateur.id` — set when minister is also a senator |
 | `hatvpDossierId` | String? | HATVP declaration URL path (e.g. `/open-data/xml/...`) |
 | `sourceRecherche` | SourceRecherche | Research completeness: `HATVP_ONLY` / `HATVP_PLUS_PRESSE` / `VERIFIE_MANUELLEMENT` |
@@ -1131,7 +1192,7 @@ Core profile record for each government official. One row per person (not per ma
 
 **Indexes**: `nom+prenom`, `deputeId`, `senateurId`
 
-**Row count**: ~35 (current Bayrou government seeded)
+**Row count**: 44 (Lecornu II government — 37 current members + Macron + 6 former Bayrou-only members)
 
 ---
 
@@ -1145,7 +1206,7 @@ One row per government role held. A person who served in multiple governments ha
 | `personnaliteId` | String FK | References `PersonnalitePublique.id` (cascade delete) |
 | `titre` | String | Full official title |
 | `titreCourt` | String | Display title (used in UI cards) |
-| `gouvernement` | String | e.g. `"Gouvernement François Bayrou"` |
+| `gouvernement` | String | e.g. `"Gouvernement Sébastien Lecornu"`, `"Gouvernement François Bayrou"` |
 | `premierMinistre` | String? | PM name (redundant but useful for display) |
 | `president` | String? | President name |
 | `dateDebut` | DateTime | Start date |
@@ -1161,7 +1222,7 @@ One row per government role held. A person who served in multiple governments ha
 
 ### `EntreeCarriere`
 
-Career timeline entries. Auto-generated from structured sources by `scripts/generate-carriere.ts` (idempotent — deletes and recreates on each run). Sources: `MandatGouvernemental` (source: `HATVP`) + `Depute` linked via `deputeId` (source: `ASSEMBLEE`) + `Senateur` linked via `senateurId` (source: `ASSEMBLEE`). **HATVP `ACTIVITE_ANTERIEURE` is NOT a source** — financial disclosure fields produce noise, not structured career entries.
+Career timeline entries. Two sources: (1) Auto-generated by `scripts/generate-carriere.ts` (idempotent — deletes source `HATVP`/`ASSEMBLEE` and recreates): `MandatGouvernemental` (source: `HATVP`) + `Depute` linked via `deputeId` (source: `ASSEMBLEE`) + `Senateur` linked via `senateurId` (source: `ASSEMBLEE`). (2) Research-sourced entries (source: `PRESSE`) ingested by `scripts/ingest-research-output.ts` from `data/research-output/*.json` — prior government roles, private sector, formation. **HATVP `ACTIVITE_ANTERIEURE` is NOT a source** — financial disclosure fields produce noise, not structured career entries.
 
 | Field | Type | Description |
 |-------|------|-------------|
@@ -1203,7 +1264,7 @@ Interest declaration items parsed from HATVP XML. One row per item per declarati
 
 **Indexes**: `personnaliteId`, `declarationRef`, `rubrique`, `alerteConflit`
 
-**Row count**: 184 (Bayrou, Oct 2025 declaration). Other ministers' XML not yet published by HATVP — re-running `npx tsx scripts/ingest-hatvp.ts` picks them up automatically.
+**Row count**: 184 (Bayrou, Oct 2025 declaration). Lecornu II ministers' HATVP XML not yet published — re-running `npx tsx scripts/ingest-hatvp.ts` picks them up automatically when available.
 
 **HATVP XML → `rubrique` mapping**:
 
@@ -1243,6 +1304,13 @@ Judicial proceedings linked to a public figure.
 
 **Legal rule**: `mise en examen` ≠ `condamnation`. Never imply guilt. Always state the proceeding type exactly.
 
+**CRITICAL — no timestamp columns**: `EvenementJudiciaire` has no `createdAt`/`updatedAt`. Do NOT include in INSERT/UPDATE statements.
+
+**Session 36 DB corrections**:
+- **Bergé** (`aurore-berge`): `type` changed from `ENQUETE_PRELIMINAIRE` → `COUR_JUSTICE_REPUBLIQUE`. Date: `2025-01-31`. Juridiction: `Cour de justice de la République`. Nature: `faux témoignage`. Affair: crèches privées (Les Petits Chaperons Rouges).
+- **Jeanbrun entry 1** (`vincent-jeanbrun`): nature field corrected to `prise illégale d'intérêts, recel, concussion, soustraction et détournement de biens d'un dépôt public` (was incorrectly including "extorsion/recel d'extorsion").
+- **Jeanbrun entry 2** (NEW): `ENQUETE_PRELIMINAIRE`, PNF (Parquet National Financier), information judiciaire opened June 2022. Nature: `favoritisme, marchés publics`. Affair: CITALLIOS urban development contracts in L'Haÿ-les-Roses (Centre-Ville + Locarno). Anticor partie civile Jan 2022. `verifie = true`.
+
 ---
 
 ### `ActionLobby`
@@ -1265,3 +1333,93 @@ Lobby actions from the AGORA registry targeting a specific ministry. **No direct
 **Indexes**: `ministereCode`, `representantNom`, `exercice`, `domaine`
 
 **Join pattern**: `PersonnalitePublique` → `MandatGouvernemental` (where `dateFin IS NULL`) → `ActionLobby` (on `ministereCode`). Never join `ActionLobby` directly to `PersonnalitePublique`.
+
+---
+
+## Media Ownership (Session 35)
+
+4 models + 2 enums for media ownership concentration tracking. Seeded by `pnpm seed:medias` (10 groups, 10 owners, 72 subsidiaries).
+
+### Enums
+
+- **`TypeMedia`**: `PRESSE_QUOTIDIENNE | PRESSE_MAGAZINE | TELEVISION | RADIO | NUMERIQUE | AGENCE`
+- **`TypeControle`**: `MAJORITAIRE | MINORITAIRE | FONDATION | ETAT`
+
+### `GroupeMedia`
+
+A media conglomerate (e.g., Vivendi, Groupe Bouygues).
+
+| Field | Type | Notes |
+|-------|------|-------|
+| `id` | String | `@id @default(cuid())` |
+| `slug` | String | `@unique` — URL key (e.g., `vivendi`) |
+| `nom` | String | Full name |
+| `nomCourt` | String | Short display name |
+| `description` | String? | Group description |
+| `chiffreAffaires` | Float? | Revenue (optional) |
+| `rang` | Int | Display order |
+| `logoUrl` | String? | |
+| `siteUrl` | String? | |
+
+**Relations**: `filiales Filiale[]`, `participations ParticipationMedia[]`
+**Indexes**: `rang`, `nom`
+
+### `MediaProprietaire`
+
+An individual who owns or controls a media group.
+
+| Field | Type | Notes |
+|-------|------|-------|
+| `id` | String | `@id @default(cuid())` |
+| `slug` | String | `@unique` — URL key |
+| `nom` | String | |
+| `prenom` | String | |
+| `civilite` | String? | |
+| `photoUrl` | String? | |
+| `bioCourte` | String? | Short biography |
+| `formation` | String? | Education background |
+| `dateNaissance` | DateTime? | |
+| `lieuNaissance` | String? | |
+| `fortuneEstimee` | Float? | Estimated fortune (Md EUR) |
+| `sourceFortuneEstimee` | String? | Source (e.g., "Forbes 2024") |
+| `activitePrincipale` | String? | Primary business activity |
+| `personnaliteId` | String? | FK to `PersonnalitePublique` — cross-ref to government profile |
+
+**Relations**: `personnalite PersonnalitePublique?`, `participations ParticipationMedia[]`
+**Indexes**: `[nom, prenom]`, `personnaliteId`
+
+### `ParticipationMedia`
+
+Ownership stake linking a `MediaProprietaire` to a `GroupeMedia`.
+
+| Field | Type | Notes |
+|-------|------|-------|
+| `id` | String | `@id @default(cuid())` |
+| `proprietaireId` | String | FK to `MediaProprietaire` (onDelete: Cascade) |
+| `groupeId` | String | FK to `GroupeMedia` (onDelete: Cascade) |
+| `partCapital` | Float? | Ownership percentage |
+| `typeControle` | TypeControle | `MAJORITAIRE`, `MINORITAIRE`, `FONDATION`, or `ETAT` |
+| `dateAcquisition` | DateTime? | |
+| `description` | String? | |
+
+**Unique constraint**: `@@unique([proprietaireId, groupeId])`
+
+### `Filiale`
+
+A subsidiary media outlet (TV channel, newspaper, radio station, etc.) belonging to a `GroupeMedia`.
+
+| Field | Type | Notes |
+|-------|------|-------|
+| `id` | String | `@id @default(cuid())` |
+| `slug` | String | `@unique` |
+| `nom` | String | Outlet name (e.g., "TF1", "Le Figaro") |
+| `type` | TypeMedia | `TELEVISION`, `RADIO`, `PRESSE_QUOTIDIENNE`, etc. |
+| `groupeId` | String | FK to `GroupeMedia` (onDelete: Cascade) |
+| `description` | String? | |
+| `audienceEstimee` | String? | Free text audience estimate |
+| `siteUrl` | String? | |
+| `dateCreation` | Int? | Year founded |
+| `dateAcquisition` | Int? | Year acquired by group |
+| `rang` | Int | Display order within group |
+
+**Indexes**: `groupeId`, `type`, `nom`

@@ -1,0 +1,99 @@
+{
+  "slug": "eleonore-caroit",
+  "nom": "Caroit",
+  "prenom": "Eleonore",
+  "researched_at": "2026-03-05",
+  "sources_used": [
+    "https://en.wikipedia.org/wiki/%C3%89l%C3%A9onore_Caroit",
+    "https://www.diplomatie.gouv.fr/en/our-ministers/eleonore-caroit/biography/",
+    "https://www.assemblee-nationale.fr/dyn/deputes/PA795330",
+    "https://bastion-avocats.ch/eleonore-caroit/?lang=en",
+    "https://eleonore-caroit.fr/votre-deputee/",
+    "https://ufe.org/article-feed/eleonore-caroit-ministre-francais-de-letranger/",
+    "https://mcl-arbitration.com/team/eleonore-caroit/"
+  ],
+  "notes": "Born 8 Jul 1985 in Paris. French, Swiss and Dominican nationality. Speaks 5 languages (FR, ES, EN, PT, IT). Renaissance party. Schooled at Lycee francais de Saint-Domingue. Brief interruption in 2023 mandate when Conseil constitutionnel ordered re-election (she won the by-election). No judicial issues found.",
+  "_ingested": false,
+  "career_entries": [
+    {
+      "dateDebut": null,
+      "dateFin": null,
+      "categorie": "FORMATION",
+      "titre": "Lycee francais de Saint-Domingue",
+      "organisation": "Lycee francais de Saint-Domingue (Republique dominicaine)",
+      "description": "Scolarite au lycee francais de Saint-Domingue.",
+      "sourceUrl": "https://en.wikipedia.org/wiki/%C3%89l%C3%A9onore_Caroit",
+      "sourcePrincipale": "Wikipedia",
+      "sourceDate": "2026-03-05",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": null,
+      "dateFin": null,
+      "categorie": "FORMATION",
+      "titre": "Master en droit des affaires internationales",
+      "organisation": "Sciences Po Paris / Universite Paris I Pantheon-Sorbonne",
+      "description": "Master conjoint (joint degree) en Global Business Law entre Sciences Po Paris et l'Universite Paris I Pantheon-Sorbonne.",
+      "sourceUrl": "https://bastion-avocats.ch/eleonore-caroit/?lang=en",
+      "sourcePrincipale": "Bastion Avocats",
+      "sourceDate": "2026-03-05",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": null,
+      "dateFin": null,
+      "categorie": "FORMATION",
+      "titre": "LL.M. Columbia Law School",
+      "organisation": "Columbia University (New York)",
+      "description": "LL.M. a Columbia Law School. Harlan Fiske Stone Scholar. Parker School recognition in international and comparative law.",
+      "sourceUrl": "https://bastion-avocats.ch/eleonore-caroit/?lang=en",
+      "sourcePrincipale": "Bastion Avocats",
+      "sourceDate": "2026-03-05",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": null,
+      "dateFin": "2022-06",
+      "categorie": "CARRIERE_PRIVEE",
+      "titre": "Avocate en arbitrage international",
+      "organisation": "Barreaux de Paris et New York / Association du barreau de Geneve",
+      "description": "Plus de 12 ans comme avocate specialisee en arbitrage international et contentieux, principalement en Amerique latine. Membre des barreaux de Paris et New York, inscrite a l'Association du barreau de Geneve. Reconnue 'future leader' en arbitrage international (Who's Who Legal 2020).",
+      "sourceUrl": "https://bastion-avocats.ch/eleonore-caroit/?lang=en",
+      "sourcePrincipale": "Bastion Avocats",
+      "sourceDate": "2026-03-05",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2022-06-22",
+      "dateFin": "2025-10-12",
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Deputee des Francais de l'etranger (2e circonscription)",
+      "organisation": "Assemblee nationale",
+      "description": "Elue deputee de la 2e circonscription des Francais etablis hors de France (Amerique latine et Caraibes) en juin 2022. Breve interruption en 2023 (annulation par le Conseil constitutionnel, reelue lors de la partielle). Commission des Affaires etrangeres (2022-2025). Presidente du groupe d'amitie parlementaire franco-chilien (2022-2024). Membre de la delegation francaise a l'Union interparlementaire (2022-2024). Mandat interrompu par sa nomination au gouvernement.",
+      "sourceUrl": "https://www.assemblee-nationale.fr/dyn/deputes/PA795330",
+      "sourcePrincipale": "Assemblee nationale",
+      "sourceDate": "2026-03-05",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2025-10-12",
+      "dateFin": null,
+      "categorie": "MANDAT_GOUVERNEMENTAL",
+      "titre": "Ministre deleguee chargee de la Francophonie, des Partenariats internationaux et des Francais de l'etranger",
+      "organisation": "Gouvernement Lecornu II",
+      "description": "Ministre deleguee aupres du ministre de l'Europe et des Affaires etrangeres.",
+      "sourceUrl": "https://www.diplomatie.gouv.fr/en/our-ministers/eleonore-caroit/biography/",
+      "sourcePrincipale": "Diplomatie.gouv.fr",
+      "sourceDate": "2026-03-05",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": [],
+  "conflict_flags": []
+}

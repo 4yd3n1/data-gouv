@@ -1,0 +1,112 @@
+{
+  "slug": "camille-galliard-minier",
+  "nom": "Galliard-Minier",
+  "prenom": "Camille",
+  "researched_at": "2026-03-05",
+  "sources_used": [
+    "https://en.wikipedia.org/wiki/Camille_Galliard-Minier",
+    "https://solidarites.gouv.fr/biographie-de-camille-galliard-minier",
+    "https://www.assemblee-nationale.fr/dyn/deputes/PA719736",
+    "https://france3-regions.franceinfo.fr/auvergne-rhone-alpes/isere/remaniement-du-gouvernement-lecornu-qui-est-camille-galliard-minier-nouvelle-ministre-chargee-de-l-autonomie-et-des-personnes-handicapees-3306249.html",
+    "https://france3-regions.franceinfo.fr/auvergne-rhone-alpes/isere/grenoble/legislative-partielle-en-isere-ex-avocate-suppleante-d-olivier-veran-cinq-choses-a-savoir-sur-la-nouvelle-deputee-camille-galliard-minier-3093946.html",
+    "https://lcp.fr/actualites/legislative-partielle-en-isere-camille-galliard-minier-renaissance-elue-deputee-lfi-perd",
+    "https://informations.handicap.fr/a-nouvelle-ministre-du-handicap-qui-est-camille-galliard-min-38837.php"
+  ],
+  "notes": "Born 26 May 1975 at La Tronche (Isere), near Grenoble. Renaissance party. Nee Galliard. Family political roots: grandfather Louis Galliard was mayor of La Tronche 1971-1985, mother Pascale Galliard is conseillere municipale. User prompt says 'Deputee de Haute-Savoie' but all sources confirm Isere (1re circ). She was suppliante of Olivier Veran, sat March 2020 - June 2022 (when Veran was Health minister), then won partielle Jan 2025 after Hugo Prevost (LFI) resigned. Notable case: she represented victim's family in the Manuela Gonzalez ('black widow of Isere') case. No judicial issues found.",
+  "_ingested": false,
+  "career_entries": [
+    {
+      "dateDebut": null,
+      "dateFin": "2003",
+      "categorie": "FORMATION",
+      "titre": "These de droit sur l'adoption",
+      "organisation": "Universite de Grenoble",
+      "description": "DEA en droit de la famille et des personnes, puis these de doctorat sur l'adoption (soutenue en 2003, directeur Pierre Murat).",
+      "sourceUrl": "https://france3-regions.franceinfo.fr/auvergne-rhone-alpes/isere/grenoble/legislative-partielle-en-isere-ex-avocate-suppleante-d-olivier-veran-cinq-choses-a-savoir-sur-la-nouvelle-deputee-camille-galliard-minier-3093946.html",
+      "sourcePrincipale": "France 3",
+      "sourceDate": "2025-01",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2005-01",
+      "dateFin": "2017",
+      "categorie": "CARRIERE_PRIVEE",
+      "titre": "Avocate au barreau de Grenoble",
+      "organisation": "Barreau de Grenoble",
+      "description": "Avocate specialisee en droit de la famille et droit penal pendant 12 ans. A notamment represente la famille de la victime dans l'affaire Manuela Gonzalez (la 'veuve noire de l'Isere'). Obtention du CRFPA, Ecole des avocats de la region Rhone-Alpes.",
+      "sourceUrl": "https://en.wikipedia.org/wiki/Camille_Galliard-Minier",
+      "sourcePrincipale": "Wikipedia",
+      "sourceDate": "2026-03-05",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2017",
+      "dateFin": "2020-03",
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Suppleante du depute Olivier Veran (1re circ. Isere)",
+      "organisation": "Assemblee nationale",
+      "description": "Suppleante d'Olivier Veran sous les couleurs de La Republique en Marche (LREM). Premiers pas en politique en 2017.",
+      "sourceUrl": "https://france3-regions.franceinfo.fr/auvergne-rhone-alpes/isere/grenoble/legislative-partielle-en-isere-ex-avocate-suppleante-d-olivier-veran-cinq-choses-a-savoir-sur-la-nouvelle-deputee-camille-galliard-minier-3093946.html",
+      "sourcePrincipale": "France 3",
+      "sourceDate": "2025-01",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2020-03",
+      "dateFin": "2022-06",
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Deputee de l'Isere (1re circonscription)",
+      "organisation": "Assemblee nationale",
+      "description": "Devient deputee en mars 2020 suite a la nomination d'Olivier Veran comme ministre de la Sante, en pleine pandemie de Covid-19.",
+      "sourceUrl": "https://www.assemblee-nationale.fr/dyn/deputes/PA719736",
+      "sourcePrincipale": "Assemblee nationale",
+      "sourceDate": "2026-03-05",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2023",
+      "dateFin": null,
+      "categorie": "ORGANISME",
+      "titre": "Fondatrice et directrice du fonds de dotation Sesame",
+      "organisation": "Fonds de dotation Sesame (Grenoble)",
+      "description": "Fonds de dotation mettant en lien des entreprises du territoire grenoblois avec des associations de solidarite. Fondatrice en 2023.",
+      "sourceUrl": "https://france3-regions.franceinfo.fr/auvergne-rhone-alpes/isere/remaniement-du-gouvernement-lecornu-qui-est-camille-galliard-minier-nouvelle-ministre-chargee-de-l-autonomie-et-des-personnes-handicapees-3306249.html",
+      "sourcePrincipale": "France 3",
+      "sourceDate": "2026-02-26",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2025-01-19",
+      "dateFin": "2026-02-26",
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Deputee de l'Isere (1re circonscription)",
+      "organisation": "Assemblee nationale",
+      "description": "Elue lors de la legislative partielle du 19 janvier 2025 avec 64,3% des voix face a Lyes Louffok (LFI-NFP), apres la demission d'Hugo Prevost (LFI) suite a des accusations de violences sexuelles. Mandat interrompu par sa nomination au gouvernement.",
+      "sourceUrl": "https://lcp.fr/actualites/legislative-partielle-en-isere-camille-galliard-minier-renaissance-elue-deputee-lfi-perd",
+      "sourcePrincipale": "LCP",
+      "sourceDate": "2025-01-19",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2026-02-26",
+      "dateFin": null,
+      "categorie": "MANDAT_GOUVERNEMENTAL",
+      "titre": "Ministre deleguee chargee de l'Autonomie et des Personnes handicapees",
+      "organisation": "Gouvernement Lecornu II (remaniement)",
+      "description": "Ministre deleguee aupres de la ministre de la Sante, des Familles, de l'Autonomie et des Personnes handicapees. Remplace Charlotte Parmentier-Lecocq.",
+      "sourceUrl": "https://solidarites.gouv.fr/biographie-de-camille-galliard-minier",
+      "sourcePrincipale": "Solidarites.gouv.fr",
+      "sourceDate": "2026-02-26",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": [],
+  "conflict_flags": []
+}

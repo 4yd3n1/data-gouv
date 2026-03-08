@@ -170,16 +170,7 @@ const BDM_SERIES: BdmSeriesConfig[] = [
     frequence: "annuel",
     lastNObs: 40,
   },
-  {
-    code: "SALAIRE_MOYEN",
-    idBanks: "001587885",
-    nom: "Salaire moyen par tête (SMPT)",
-    description: "Salaire moyen par tête, ensemble des branches, brut, euros courants",
-    domaine: "salaires",
-    unite: "eur",
-    frequence: "trimestriel",
-    lastNObs: 60,
-  },
+  // SALAIRE_MOYEN: BDM series 001587885 returns 404 — series discontinued
 
   // ─── New series: Construction / Logement ───
   {
@@ -346,7 +337,11 @@ export async function ingestEconomie() {
 
     // Small delay between BDM requests (30 req/min limit)
     for (const config of BDM_SERIES) {
-      total += await ingestBdmSeries(config);
+      try {
+        total += await ingestBdmSeries(config);
+      } catch (err) {
+        console.warn(`  [BDM:${config.code}] Skipped — ${(err as Error).message}`);
+      }
       await new Promise((r) => setTimeout(r, 2100)); // ~28 req/min
     }
 

@@ -36,7 +36,8 @@
     "compute:conflicts": "tsx scripts/compute-conflicts.ts",
     "refresh:search": "tsx scripts/refresh-search.ts",
     "ingest:agora": "tsx scripts/ingest-agora.ts",
-    "generate:carriere": "tsx scripts/generate-carriere.ts"
+    "generate:carriere": "tsx scripts/generate-carriere.ts",
+    "seed:medias": "tsx scripts/seed-medias.ts"
   },
   "keywords": [],
   "author": "",

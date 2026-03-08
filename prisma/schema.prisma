@@ -445,6 +445,7 @@ model Scrutin {
   votes       VoteRecord[]
   groupeVotes GroupeVote[]
   tags        ScrutinTag[]
+  lois        ScrutinLoi[]
 
   @@index([dateScrutin])
   @@index([legislature])
@@ -774,6 +775,47 @@ model ConflictSignal {
   @@index([participationCount(sort: Desc)])
 }
 
+// ─── Parliamentary Laws (citizen-facing hierarchy: loi → scrutins) ───
+
+model LoiParlementaire {
+  id           String    @id @default(cuid())
+  slug         String    @unique  // "reforme-retraites-2023"
+  titre        String             // "Loi portant réforme des retraites"
+  titreCourt   String             // "Réforme des retraites"
+  resumeSimple String             // 2-3 sentence plain French explanation
+  type         String             // "PLF" | "PLFSS" | "PROJET_LOI" | "PROPOSITION_LOI" | "MOTION_CENSURE"
+  statut       String             // "adopte" | "rejete" | "en_cours"
+  legislature  Int      @default(17)
+  dateVote     DateTime?
+  referenceAN  String?            // Official law reference, e.g. "2023-270"
+  dossierUrl   String?            // Assemblée Nationale dossier URL
+  tags         String[]           // Reuses existing 13-tag vocabulary
+  rang         Int      @default(0) // Display priority (lower = first)
+  createdAt    DateTime @default(now())
+
+  scrutins     ScrutinLoi[]
+
+  @@index([statut])
+  @@index([legislature])
+  @@index([rang])
+}
+
+model ScrutinLoi {
+  id          String @id @default(cuid())
+  loiId       String
+  scrutinId   String
+  role        String @default("PROCEDURAL") // "VOTE_FINAL" | "AMENDEMENT" | "ARTICLE" | "MOTION" | "PROCEDURAL"
+  ordre       Int    @default(0)
+
+  loi         LoiParlementaire @relation(fields: [loiId], references: [id], onDelete: Cascade)
+  scrutin     Scrutin          @relation(fields: [scrutinId], references: [id])
+
+  @@unique([loiId, scrutinId])
+  @@index([loiId])
+  @@index([scrutinId])
+  @@index([role])
+}
+
 // ─── System ───
 
 model IngestionLog {
@@ -850,6 +892,42 @@ enum SourceRecherche {
   VERIFIE_MANUELLEMENT
 }
 
+enum TypeMedia {
+  PRESSE_QUOTIDIENNE
+  PRESSE_MAGAZINE
+  TELEVISION
+  RADIO
+  NUMERIQUE
+  AGENCE
+}
+
+enum TypeControle {
+  MAJORITAIRE
+  MINORITAIRE
+  FONDATION
+  ETAT
+}
+
+enum TypeSignalement {
+  MISE_EN_DEMEURE
+  SANCTION
+  RETRAIT_AUTORISATION
+  AVERTISSEMENT
+  AMENDE
+}
+
+enum OrientationEditoriale {
+  DROITE
+  CENTRE_DROIT
+  CENTRE
+  CENTRE_GAUCHE
+  GAUCHE
+  GENERALISTE
+  SERVICE_PUBLIC
+  DIVERTISSEMENT
+  THEMATIQUE
+}
+
 model PersonnalitePublique {
   id              String          @id @default(cuid())
   nom             String
@@ -871,10 +949,11 @@ model PersonnalitePublique {
   depute   Depute?   @relation(fields: [deputeId], references: [id])
   senateur Senateur? @relation(fields: [senateurId], references: [id])
 
-  mandats    MandatGouvernemental[]
-  carriere   EntreeCarriere[]
-  interets   InteretDeclare[]
-  evenements EvenementJudiciaire[]
+  mandats        MandatGouvernemental[]
+  carriere       EntreeCarriere[]
+  interets       InteretDeclare[]
+  evenements     EvenementJudiciaire[]
+  mediaOwnership MediaProprietaire[]
 
   @@index([nom, prenom])
   @@index([deputeId])
@@ -983,4 +1062,109 @@ model ActionLobby {
   @@index([representantNom])
   @@index([exercice])
   @@index([domaine])
+}
+
+// ── Media Ownership ─────────────────────────────────────────────────────────
+
+model GroupeMedia {
+  id              String   @id @default(cuid())
+  slug            String   @unique
+  nom             String
+  nomCourt        String
+  description     String?
+  chiffreAffaires Float?
+  rang            Int
+  logoUrl         String?
+  siteUrl         String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  filiales       Filiale[]
+  participations ParticipationMedia[]
+
+  @@index([rang])
+  @@index([nom])
+}
+
+model MediaProprietaire {
+  id                  String    @id @default(cuid())
+  slug                String    @unique
+  nom                 String
+  prenom              String
+  civilite            String?
+  photoUrl            String?
+  bioCourte           String?
+  formation           String?
+  dateNaissance       DateTime?
+  lieuNaissance       String?
+  fortuneEstimee      Float?
+  sourceFortuneEstimee String?
+  activitePrincipale        String?
+  contextePolitique         String?
+  sourceContextePolitique   String?
+  personnaliteId            String?
+
+  personnalite   PersonnalitePublique? @relation(fields: [personnaliteId], references: [id])
+  participations ParticipationMedia[]
+
+  @@index([nom, prenom])
+  @@index([personnaliteId])
+}
+
+model ParticipationMedia {
+  id              String       @id @default(cuid())
+  proprietaireId  String
+  groupeId        String
+  partCapital     Float?
+  typeControle    TypeControle
+  dateAcquisition DateTime?
+  description     String?
+
+  proprietaire MediaProprietaire @relation(fields: [proprietaireId], references: [id], onDelete: Cascade)
+  groupe       GroupeMedia       @relation(fields: [groupeId], references: [id], onDelete: Cascade)
+
+  @@unique([proprietaireId, groupeId])
+}
+
+model Filiale {
+  id              String                @id @default(cuid())
+  slug            String                @unique
+  nom             String
+  type            TypeMedia
+  groupeId        String
+  description     String?
+  audienceEstimee String?
+  siteUrl         String?
+  dateCreation    Int?
+  dateAcquisition Int?
+  rang            Int
+  orientation     OrientationEditoriale?
+  ligneEditoriale String?
+
+  groupe       GroupeMedia        @relation(fields: [groupeId], references: [id], onDelete: Cascade)
+  signalements SignalementArcom[]
+
+  @@index([groupeId])
+  @@index([type])
+  @@index([nom])
+  @@index([orientation])
+}
+
+model SignalementArcom {
+  id             String          @id @default(cuid())
+  filialeId      String
+  date           DateTime
+  type           TypeSignalement
+  motif          String
+  montant        Float?
+  referenceArcom String?
+  sourceUrl      String?
+  resume         String
+  createdAt      DateTime        @default(now())
+
+  filiale Filiale @relation(fields: [filialeId], references: [id], onDelete: Cascade)
+
+  @@index([filialeId])
+  @@index([type])
+  @@index([date])
 }

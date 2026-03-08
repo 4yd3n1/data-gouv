@@ -1,6 +1,6 @@
 # Frontend Implementation
 
-> Last updated: Mar 4, 2026 — Session 32. 59 routes + 5 OG image routes, 36 components.
+> Last updated: Mar 8, 2026 — Session 36. 62 routes + 5 OG image routes, 43 components, 14 client components.
 
 Complete reference for all UI pages, components, styling, and patterns.
 
@@ -11,7 +11,7 @@ Complete reference for all UI pages, components, styling, and patterns.
 - **Next.js 16** App Router — all pages are React Server Components by default
 - **Tailwind CSS 4** with custom theme tokens defined in `globals.css`
 - **No client-side data fetching** — every page queries Prisma directly at render time
-- **9 client components**: `SearchInput`, `Avatar`, `DeclarationSection`, `ProfileTabs`, `DeptLookup`, `NavSearch`, `SearchBox`, `FranceMap`, `DeltaBadge` (all use `"use client"`)
+- **14 client components**: `SearchInput`, `Avatar`, `DeclarationSection`, `ProfileTabs`, `DeptLookup`, `NavSearch`, `SearchBox`, `FranceMap`, `DeltaBadge`, `HeroSlider`, `GroupExpander`, `ScrutinAccordion`, `MediaBoard`, `MobileNav` (all use `"use client"`)
 - **1 shared lib**: `nuance-colors.ts` — political party color mapping used by elections pages
 - **French localization** throughout: `<html lang="fr">`, `fr-FR` locale for numbers/dates
 - **ISR** (`export const revalidate = N`): homepage + votes = 3600s; dossiers + representants hub + economie + patrimoine + territoire hub = 86400s; profiles = dynamic (no revalidate)
@@ -72,6 +72,28 @@ Applied with: `font-[family-name:var(--font-display)]` for headings.
 | Search glow | `.search-glow:focus` | Teal ring + blur on search input focus |
 | Scrollbar | `::-webkit-scrollbar` | 5px dark styled scrollbar |
 | Scrollbar hide | `.scrollbar-hide` | Hidden scrollbar for horizontal tab navigation |
+| Stat card | `.stat-card` | Hover lift (translateY -2px) + teal glow on stat number cards |
+| Stat gradients | `.stat-number-rose/amber/teal` | Gradient text (`background-clip: text`) for stat card numbers |
+| Owner card | `.owner-card` | Dark gradient bg + border-bureau-600 hover transition for media owner cards |
+| Bar segment | `.bar-segment` | Brightness hover (1.3) for stacked bar chart segments |
+| Filter active | `.filter-active` | Teal gradient bg + white text for active filter pills |
+| Section divider | `.section-divider` | Top border with gradient (transparent → bureau-600 → transparent) + 3rem top padding |
+| Desc block | `.desc-block` | Left 3px teal accent border for description paragraphs |
+| Lobby stat | `.lobby-stat` | Hover brightness (1.1) for lobbying stat cards |
+| Mobile menu btn | `.mobile-menu-btn` | Hidden on desktop (>768px), 36px teal-bordered circle button |
+| Mobile nav overlay | `.mobile-nav-overlay` | Full-screen slide-down overlay with slideDown keyframe, hidden on desktop |
+| Selection | `::selection` | Teal background selection highlight |
+| SIGINT section | `.sigint-section` | `position: relative; overflow: hidden` with animated scan-line (`::after` 1px teal gradient sweeping at 8s linear) |
+| SIGINT amber | `.sigint-amber::after` | Overrides scan-line gradient to amber — used on President/amber sections |
+| Glass panel | `.glass-panel` | Frosted glass: `rgba(12,16,24,0.65)` bg + `backdrop-filter: blur(12px)` + teal/8% border |
+| Dossier card | `.dossier-card` | Dark gradient card with hover luminous border (gradient mask technique) + `translateY(-3px)` lift |
+| Dossier card active | `.dossier-card-active` | Expanded/selected state: teal/15% border + 80px teal glow |
+| Data value | `.data-value` | Tabular nums, `letter-spacing: 0.02em` for monospace data displays |
+| Live dot | `.live-dot` | 6px teal pulsing circle, `pulse-dot` keyframe 3s infinite |
+| Live dot amber | `.live-dot-amber` | Same as live-dot but amber — used in President/classification bar |
+| Classification badge | `.classification-badge` | 9px uppercase, teal border, `letter-spacing: 0.2em` — `CLASSIFIÉ` / tier labels |
+| Threat bar | `.threat-bar` | 3px animated-fill bar at bottom edge of hero cards (`threat-fill` keyframe scaleX 0→1) |
+| Gov hero card | `.gov-hero-card` | `/gouvernement` President/PM hero cards: dot-matrix overlay, `translateY(-2px)` hover, sigint-section base |
 
 ---
 
@@ -79,33 +101,34 @@ Applied with: `font-[family-name:var(--font-display)]` for headings.
 
 [layout.tsx](../src/app/layout.tsx) provides the shell:
 
-- **Navbar**: Sticky top, backdrop-blur, SVG logo + "L'Observatoire" brand + **`NavSearch`** (always-visible search form — `flex`, not `hidden md:flex`) + **7 nav links** (Accueil, Dossiers, Représentants, Votes, Économie, Territoire, Patrimoine)
+- **Navbar**: Sticky top, backdrop-blur, SVG logo + "L'Observatoire" brand + **`NavSearch`** (always-visible search form — `flex`, not `hidden md:flex`) + **7 nav links** (Accueil, Dossiers, Représentants, Votes, Économie, Territoire, Patrimoine) wrapped in `.nav-links` div (hidden on mobile via CSS) + **`MobileNav`** hamburger menu (visible only on mobile <768px)
 - **Main**: `flex-1` content area
 - **Footer**: Data source attribution ("data.gouv.fr, INSEE, Senat, HATVP") + "L'Observatoire Citoyen 2025"
+- **Mobile nav**: `MobileNav` client component — hamburger button (`.mobile-menu-btn`) toggles full-screen overlay (`.mobile-nav-overlay`) with `slideDown` animation. Closes on link click.
 - **Container**: `max-w-7xl px-6` on list pages; `max-w-4xl px-6` on profile detail pages (focused editorial width)
 
 **Metadata**: `"L'Observatoire Citoyen — Intelligence civique française"`
 
 ---
 
-## Route Map (59 routes + 5 OG image routes)
+## Route Map (61 routes + 5 OG image routes)
 
 ### Static (prerendered at build time)
 | Route | Purpose |
 |-------|---------|
-| `/` | Homepage — dynamic headline, dossier cards, recent votes, conflict alerts, dept lookup, postal code CTA |
+| `/` | Homepage — `HeroSlider` cycling ~10 civic data points, dossier cards, recent votes, conflict alerts, dept lookup, postal code CTA |
 | `/dossiers` | Dossier hub — 8 issue cards |
-| `/representants` | Représentants hub — 8 section cards: Président · Gouvernement (12 membres, rose) · Députés · Sénateurs · Élus locaux · Représentants d'intérêts · Scrutins · Partis politiques |
+| `/representants` | Représentants hub — 8 section cards: Président · Gouvernement (37 membres, rose) · Députés · Sénateurs · Élus locaux · Représentants d'intérêts · Scrutins · Partis politiques |
 | `/elections` | Hub — Législatives 2024 card + national summary stats |
 | `/economie` | Dashboard — SVG MiniChart per indicator (15+ series) |
 | `/territoire` | Browser — regions with department cards + `FranceMap` (Phase 8A/8B, 6 indicators, dept click → `/territoire/[code]`) |
-| `/gouvernement` | Government index — members grouped by type (President → PM → Ministres → Délégués → Secrétaires), avatar grid, links to profiles (Phase 9A) |
+| `/gouvernement` | Government index — Lecornu II government (37 members), grouped by type (President → PM → Ministres → Délégués → Secrétaires), avatar grid, links to profiles (Phase 9A + Session 34) |
 | `/patrimoine` | Hub — top 10 museums + monument domains |
 | `/votes` | Votes hub — 13 topic grid + recent scrutins |
 | `/votes/alignements` | Alignment matrix — N×N group co-vote heatmap, top 5 allies/opponents per group (ISR 86400) |
 | `/president` | **HTTP 308 permanent redirect → `/gouvernement/emmanuel-macron`** |
 
-### Dossiers (8 dynamic pages)
+### Dossiers (9 dynamic pages)
 | Route | Topic |
 |-------|-------|
 | `/dossiers/pouvoir-dachat` | Purchasing power — `FranceMap` (rev/income), inflation, votes, lobbying (Phase 8B) |
@@ -113,6 +136,7 @@ Applied with: `font-[family-name:var(--font-display)]` for headings.
 | `/dossiers/dette-publique` | Public debt — `FranceMap` (det/debt), budget votes, local debt (Phase 8B) |
 | `/dossiers/emploi-jeunesse` | Employment & youth — `FranceMap` (cho/unemployment), education stats EDUC_NO_DIPLOMA + EDUC_BAC_PLUS + EDUC_HIGHER_EDUC (Phase 8B/8C) |
 | `/dossiers/logement` | Housing — permits, vacancy, votes, lobbying |
+| `/dossiers/medias` | **Media ownership concentration** — `MediaBoard` (interactive owner cards), `ConcentrationChart` (CSS stacked bars), `CamembertChart` (SVG donut), votes culture, lobbying audiovisuel/presse (Session 35) |
 | `/dossiers/sante` | Healthcare — `FranceMap` (med/GP density), PLFSS votes (Phase 8B) |
 | `/dossiers/transition-ecologique` | Ecology — votes, lobbying, declared energy interests |
 | `/dossiers/retraites` | Pensions — 49.3 votes, group positions, individual votes |
@@ -121,14 +145,14 @@ Applied with: `font-[family-name:var(--font-display)]` for headings.
 | Route | Key Features |
 |-------|-------------|
 | `/representants/deputes` | Search, groupe filter, dept filter, pagination |
-| `/representants/deputes/[id]` | **Redirects to `/gouvernement/[slug]`** if `PersonnalitePublique.deputeId` matches (7 active redirects: Bayrou, Barrot, Borne, Darmanin, Pannier-Runacher, Vautrin, Wauquiez). Otherwise: Hero profile + tabs (Activité / Déclarations / **Transparence** / Informations) |
+| `/representants/deputes/[id]` | **Redirects to `/gouvernement/[slug]`** if `PersonnalitePublique.deputeId` matches (auto-matched by name in seed script — covers current deputies who are ministers). Otherwise: Hero profile + tabs (Activité / Déclarations / **Transparence** / Informations) |
 | `/representants/senateurs` | Search, pagination |
 | `/representants/senateurs/[id]` | **Redirects to `/gouvernement/[slug]`** if `PersonnalitePublique.senateurId` matches. Otherwise: Hero profile + tabs (Mandats & Commissions / Déclarations / Informations) |
 | `/representants/elus` | Local officials list — 593K rows, paginated |
 | `/representants/elus/maires` | Mayors subset |
 | `/representants/lobbyistes` | Search, pagination |
 | `/representants/lobbyistes/[id]` | Info panel, actions list |
-| `/representants/scrutins` | Search, result filter, pagination |
+| `/representants/scrutins` | Search, result filter, **SPS/MOC type filter** (`?type=sps\|moc`), pagination |
 | `/representants/scrutins/[id]` | Result summary, group bars, individual votes |
 | `/representants/partis` | Year selector, sort options, aggregate stats |
 | `/representants/partis/[id]` | Revenue/expense breakdown bars, multi-year table |
@@ -136,8 +160,8 @@ Applied with: `font-[family-name:var(--font-display)]` for headings.
 ### Gouvernement (Phase 9)
 | Route | Key Features |
 |-------|-------------|
-| `/gouvernement` | Index grid — all current members sorted by protocol `rang`, grouped by `TypeMandat` (ISR 3600) |
-| `/gouvernement/[slug]` | Profile page — `ProfileHero` + `ProfileTabs`. **Redirects** from `/representants/deputes/[id]` and `/senateurs/[id]` when `PersonnalitePublique.deputeId`/`senateurId` matches. **Two tab layouts** based on `isPresident` detection (`mandats.some(m => m.type === "PRESIDENT")`): **President (6 tabs, default: Promesses)**: Parcours / Promesses / Bilan économique / Lobbying & Agenda / Déclarations HATVP / Affaires judiciaires — plus `ProfileHero` scores (election %, promise score, HATVP count) + contact (Élysée, Twitter). **Standard ministers (4–5 tabs, default: Parcours)**: Parcours / Déclarations HATVP / Mandats & Lobbying / Affaires judiciaires (conditional — only if `judiciaireCount > 0`) / Activité parlementaire (conditional — if `deputeId`/`senateurId` set). (Phase 9A + 9E + Sessions 29–32) |
+| `/gouvernement` | **SIGINT intelligence bureau organigram** (Session 36 redesign). Classified document aesthetic with amber classification bar, `GOV-FR-2026-044` doc ref, scan-line effects. 5-tier layout: `PresidentCard` (amber, `.gov-hero-card.sigint-amber`), `PremierMinistreCard` (teal), `StemNode` amber→teal relay connector, `SpreadConnector` horizontal branch, `MinistreCard` grid (blue, `.dossier-card`), `DelegueCard` grid (violet), `SecretaireCard` grid (rose). `TierLabel` section headers with `classification-badge`. `Brackets` component (4-corner targeting reticle using `border-current`). Tier stat pills in monospace. Legend footer with T1–T5 color codes. ISR 3600. |
+| `/gouvernement/[slug]` | Profile page — `ProfileHero` + `ProfileTabs`. **Redirects** from `/representants/deputes/[id]` and `/senateurs/[id]` when `PersonnalitePublique.deputeId`/`senateurId` matches. **Two tab layouts** based on `isPresident` detection (`mandats.some(m => m.type === "PRESIDENT")`): **President (6 tabs, default: Promesses)**: Parcours / Promesses / Bilan économique / Lobbying & Agenda / Déclarations HATVP / Affaires judiciaires — plus `ProfileHero` scores (election %, promise score, HATVP count) + contact (Élysée, Twitter). **Standard ministers (4–5 tabs, default: Parcours)**: Parcours / Déclarations HATVP / Mandats & Lobbying / Affaires judiciaires (conditional — only if `judiciaireCount > 0`) / Activité parlementaire (conditional — if `deputeId`/`senateurId` set). 44 profiles total (37 Lecornu II + Macron + 6 former Bayrou-only). (Phase 9A + 9E + Sessions 29–34) |
 
 ### Gouvernance (legacy — HTTP 308 redirects to /representants)
 `/gouvernance/*` routes remain active (still served; linked from older bookmarks and deputy profiles). Redirects configured in `next.config.ts`.
@@ -145,7 +169,9 @@ Applied with: `font-[family-name:var(--font-display)]` for headings.
 ### Votes (dedicated votes section)
 | Route | Key Features |
 |-------|-------------|
-| `/votes` | Tag grid (13 topics), stats, recent scrutins |
+| `/votes` | Tag grid (13 topics), stats, recent scrutins, **Grandes lois** section (top 4 laws by `rang` with inline GroupBar) |
+| `/votes/lois` | Parliamentary Laws hub — 19 major laws. Filters: statut (Tous/Adoptés/Rejetés), type (PLF/PROJET_LOI/etc), tag pills. `LoiCard` grid with inline GroupBar. `revalidate = 3600`. [Session 33] |
+| `/votes/lois/[slug]` | Law detail — hero stats (votants/pour/contre/abstentions), `GroupExpander` (party breakdown, expandable deputy list), `ScrutinAccordion` (all linked scrutins, VOTE_FINAL pinned top). `generateMetadata` for SEO. [Session 33] |
 | `/votes/par-sujet/[tag]` | Tag-filtered scrutins, pagination, vote bars, related tags |
 | `/votes/mon-depute` | 3-state deputy lookup: empty → list → detail with tag breakdown |
 | `/votes/alignements` | N×N group alignment heatmap. Backed by `src/lib/alignment.ts` (`computeAlignment()`). Top 5 allies (teal) and opponents (rose) per group. ISR 86400. |
@@ -198,10 +224,10 @@ Next.js `opengraph-image.tsx` files — `runtime = "nodejs"`, 1200×630, inline 
 
 **File**: [page.tsx](../src/app/page.tsx) | `revalidate = 3600`
 
-**Data**: Latest economic indicator value (dynamic headline), 8 dossier configs, 6 recent scrutins with group votes, 6 high-declaration officials (conflict alerts), all entity counts for the grid.
+**Data**: IPC_MENSUEL (13 months for YoY), CHOMAGE_TAUX_TRIM (latest), deport count, declarationInteret with participations count, 8 dossier configs, 5 recent scrutins with group votes, top 3 conflict signals, all entity counts for the grid.
 
 **Sections**:
-1. **Hero** — `.grid-bg` pattern, Instrument Serif headline from latest data (e.g. "La dette publique atteint 115,6% du PIB"), 4 hero stat tiles
+1. **Hero** — `.grid-bg` pattern, `HeroSlider` client component cycling ~10 civic data points (2 DB-driven, 5 hardcoded factual, 2 DB transparency). Pauses on hover. Dot indicators.
 2. **Dossiers Thématiques** — 8 issue cards with key stats, each linking to `/dossiers/[slug]`
 3. **Derniers Scrutins** — 6 most recent parliamentary votes with result badge + group breakdown
 4. **Alertes Transparence** — Officials with highest financial participations (amber alert cards)
@@ -236,6 +262,22 @@ All 8 follow the same layout pattern:
 | `sante` | DensiteMedicale by dept (GP density), Scrutins sante, ActionLobbyiste santé/pharma, `DeptMap` |
 | `transition-ecologique` | Scrutins ecologie, ActionLobbyiste énergi/environnement, DeclarationInteret energy sector |
 | `retraites` | Scrutins retraites (especially 49.3), GroupeVote breakdown, VoteRecord per-deputy on censure motions |
+| `medias` | GroupeMedia (with Filiale[], ParticipationMedia.proprietaire.personnalite), Filiale count, Scrutins culture tag, ActionLobbyiste audiovisuel/presse/media, top 5 lobbying orgs |
+
+### `/dossiers/medias` — Media Ownership Concentration (Session 35)
+
+**File**: [page.tsx](../src/app/dossiers/medias/page.tsx) | `revalidate = 86400`
+
+Unique dossier page with dedicated components for media ownership visualization. Does NOT follow the standard dossier template — uses `MediaBoard`, `ConcentrationChart`, and `CamembertChart` instead of `IndicatorCard`/`RankingTable`.
+
+**5 sections**:
+1. **Context cards** — 3 `stat-card` tiles (9 billionaires, RSF rank 25th, filiale count) + `desc-block` explainer
+2. **Intelligence Board** — `MediaBoard` client component in `<Suspense>`: 10 expandable owner cards with filter pills by media type, fortune display, government cross-ref links, subsidiary pills grouped by TypeMedia
+3. **Concentration par type** — 2-column grid: `ConcentrationChart` (CSS horizontal stacked bars) + `CamembertChart` (SVG donut) + 4 type mini-stat cards (TV, Radio, Presse, Numerique)
+4. **Votes au Parlement** — `TopicVoteList` filtered by culture tag
+5. **Lobbying audiovisuel et presse** — `LobbyingDensity` with audiovisuel/presse/media domain filter
+
+**Data**: `Promise.all` — 6 parallel queries (groupeMedia with nested includes, filiale count, scrutins, actionLobbyiste count, lobbyiste count, top 5 orgs).
 
 ---
 
@@ -257,12 +299,13 @@ All 8 follow the same layout pattern:
 
 **File**: [page.tsx](../src/app/votes/page.tsx) | `revalidate = 3600`
 
-**Data**: ScrutinTag counts per tag (13 topics), total scrutin count, 10 recent scrutins.
+**Data**: ScrutinTag counts per tag (13 topics), total scrutin count, 10 recent scrutins, top 4 `LoiParlementaire` by `rang` (with VOTE_FINAL scrutin and `groupeVotes` for inline GroupBar).
 
 **Sections**:
 1. Tag grid — 13 topic pills with vote counts, each linking to `/votes/par-sujet/[tag]`
 2. Stats row — total votes, total tagged, date range
-3. Recent scrutins — last 10 with result badge, title, date
+3. **Grandes lois** — 4 major law cards (SessionLinks to `/votes/lois/[slug]`, inline party-position GroupBar) + "Voir toutes les lois →" CTA
+4. Recent scrutins — last 10 with result badge, title, date
 
 ---
 
@@ -726,6 +769,54 @@ Expandable HATVP declaration cards. Collapsed: type badge + title + date + summa
 
 ---
 
+### New in Session 33 — Parliamentary Laws Components
+
+#### `LoiCard` — Server Component
+
+**File**: [loi-card.tsx](../src/components/loi-card.tsx)
+
+```typescript
+{
+  slug: string; titreCourt: string; resumeSimple: string
+  type: string; statut: string; dateVote?: Date | null; scrutinsCount: number
+  voteFinal?: { groupeVotes: { organeRef: string; positionMajoritaire: string; pour: number; contre: number; abstentions: number; nonVotants: number; organe?: { couleur?: string | null } | null }[] } | null
+}
+```
+
+Card for a single `LoiParlementaire`. Shows type badge, short title, plain-language summary, `ScrutinResultBadge` for statut, vote date, scrutin count, and an inline `GroupBar` (teal=pour/rose=contre/amber=abstention stacked bar per group). Links to `/votes/lois/[slug]`.
+
+---
+
+#### `GroupExpander` — Client Component
+
+**File**: [group-expander.tsx](../src/components/group-expander.tsx)
+
+```typescript
+{
+  groups: Group[]    // GroupeVote aggregates with organe color + libelleAbrege
+  deputies: Deputy[] // VoteRecord rows with position + groupeAbrev
+}
+```
+
+Expandable group-by-group vote breakdown for law detail pages. Each row: colored dot, group name, majority position badge, mini stacked bar (pour/contre/abstention), `N p · N c · N a` counts, chevron. Click expands deputy list filtered by `position` (`["pour", "contre", "abstention", "nonVotant"]`), grouped by position column, showing up to 30 deputies per position with links to `/representants/deputes/[id]`. Deputies matched by `groupeAbrev === g.libelleAbrege`. Inline `ChevronDown` SVG (not lucide-react).
+
+---
+
+#### `ScrutinAccordion` — Client Component
+
+**File**: [scrutin-accordion.tsx](../src/components/scrutin-accordion.tsx)
+
+```typescript
+{
+  scrutins: { id: string; titre: string; dateScrutin: Date; sortCode: string; pour: number; contre: number; abstentions: number; role: string }[]
+  voteFinalId?: string
+}
+```
+
+Collapsible list of scrutins linked to a law. The `VOTE_FINAL` scrutin is always pinned to the top regardless of expand state. Other scrutins show the first 5 by default; "N scrutins supplémentaires" button expands the rest. Each row: role badge (`VOTE_FINAL`/`AMENDEMENT`/`ARTICLE`/`MOTION`/`PROCEDURAL`), truncated title, mini stacked bar (hidden on mobile), `ScrutinResultBadge`, date. Links to `/representants/scrutins/[id]`. Inline `ChevronDown` SVG (not lucide-react).
+
+---
+
 ## Formatting Utilities
 
 **File**: [format.ts](../src/lib/format.ts)
@@ -844,7 +935,7 @@ List pages: `max-w-7xl px-6`. Profile detail pages: `max-w-4xl px-6` (focused ed
 
 ---
 
-## Build Output (Session 26 — 59 routes + 5 OG)
+## Build Output (Session 35 — 62 routes + 5 OG)
 
 ```
 Route (app)                                                   Type
@@ -856,6 +947,7 @@ Route (app)                                                   Type
 ├ ƒ /dossiers/emploi-jeunesse                                 Dynamic
 ├ ƒ /dossiers/logement                                        Dynamic
 ├ ƒ /dossiers/logement/opengraph-image                        Dynamic (OG — Session 18/19)
+├ ƒ /dossiers/medias                                          Dynamic (Session 35)
 ├ ƒ /dossiers/pouvoir-dachat                                  Dynamic
 ├ ƒ /dossiers/retraites                                       Dynamic
 ├ ƒ /dossiers/sante                                           Dynamic
@@ -891,6 +983,8 @@ Route (app)                                                   Type
 ├ ƒ /recherche                                                Dynamic (7B + Session 18)
 ├ ○ /votes                                                    Static (ISR 3600)
 ├ ○ /votes/alignements                                        Static (ISR 86400 — 7F)
+├ ○ /votes/lois                                               Static (ISR 3600 — Session 33)
+├ ƒ /votes/lois/[slug]                                        Dynamic (Session 33)
 ├ ƒ /votes/mon-depute                                         Dynamic
 ├ ƒ /votes/par-sujet/[tag]                                    Dynamic
 ├ ƒ /comparer/territoires                                     Dynamic (7D)
@@ -935,6 +1029,7 @@ src/
 │   │   ├── logement/
 │   │   │   ├── page.tsx
 │   │   │   └── opengraph-image.tsx  # OG 1200×630: housing stats (vacancy %, secondary %, vote count) (Session 18/19)
+│   │   ├── medias/page.tsx          # Media ownership concentration (Session 35)
 │   │   ├── sante/page.tsx
 │   │   ├── transition-ecologique/page.tsx
 │   │   └── retraites/page.tsx
@@ -975,6 +1070,9 @@ src/
 │   ├── votes/
 │   │   ├── page.tsx             # Hub (ISR 3600)
 │   │   ├── alignements/page.tsx # N×N alignment heatmap (ISR 86400 — 7F)
+│   │   ├── lois/
+│   │   │   ├── page.tsx         # Parliamentary Laws hub (ISR 3600 — Session 33)
+│   │   │   └── [slug]/page.tsx  # Law detail (Session 33)
 │   │   ├── par-sujet/[tag]/page.tsx
 │   │   └── mon-depute/page.tsx
 │   ├── comparer/
@@ -1034,6 +1132,14 @@ src/
 │   ├── search-input.tsx         # Client: URL-based search with spinner
 │   ├── stat-card.tsx            # Server: number + label card
 │   ├── vote-badge.tsx           # Server: Pour/Contre/Abstention/Non-votant
+│   ├── media-board.tsx          # Client: interactive media owner cards with filter pills (Session 35)
+│   ├── concentration-chart.tsx  # Server: CSS horizontal stacked bars by media type (Session 35)
+│   ├── camembert-chart.tsx      # Server: SVG donut chart for media group share (Session 35)
+│   ├── mobile-nav.tsx           # Client: hamburger menu + full-screen overlay (Session 35)
+│   ├── loi-card.tsx             # Server: law card with type badge + inline GroupBar (Session 33)
+│   ├── scrutin-accordion.tsx    # Client: expandable scrutin list for law detail (Session 33)
+│   ├── group-expander.tsx       # Client: expandable party vote breakdown (Session 33)
+│   ├── hero-slider.tsx          # Client: cycling civic data points on homepage (Session 33)
 │   └── gouvernement/            # Phase 9 section components (all async server components)
 │       ├── interets-section.tsx # Server: HATVP interests grouped by rubrique, <details> expander
 │       ├── mandats-section.tsx  # Server: government mandate timeline (border-l + dots)

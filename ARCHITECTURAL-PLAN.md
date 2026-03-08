@@ -4,7 +4,7 @@
 > into France's most powerful citizen-facing transparency platform.
 >
 > Created: March 1, 2026
-> **Last updated: March 4, 2026 — Phases 1–5 + Phase 7 (Power Features) + Phase 8 (FranceMap) + Phase 9A/9B/9C/9D/9E (Government Profiles) COMPLETE ✅**
+> **Last updated: March 4, 2026 — Phases 1–5 + Phase 7 (Power Features) + Phase 8 (FranceMap) + Phase 9A/9B/9C/9D/9E/9F/9G (Government Profiles) + Session 33 (Parliamentary Laws Hub) COMPLETE ✅**
 
 ---
 
@@ -59,7 +59,7 @@ Who has conflicts of interest (Declarations) → Who got elected anyway (Electio
 
 ### What We Have (Working)
 
-> **Updated March 3, 2026** — All phases complete. 30 models, 57 routes + 3 OG endpoints, 25 components.
+> **Updated March 4, 2026** — All phases complete through Session 33. 38 models, 61 routes + 5 OG endpoints, 39 components (12 client).
 
 | Layer | Models | Rows | Status |
 |-------|--------|------|--------|
@@ -107,11 +107,11 @@ Who has conflicts of interest (Declarations) → Who got elected anyway (Electio
 | Run `pnpm ingest:insee-local` again for DEP 36 | LOW | Hit rate-limit; only 8/12 stats for Indre |
 | Deputy ↔ Declaration FK | LOW | Still name-matched; fragile but functional |
 
-### Current Route Structure (57 routes + 3 OG endpoints — as of Phase 7 completion)
+### Current Route Structure (61 routes + 5 OG endpoints — as of Session 33)
 
 ```
 /                          → Homepage (dynamic hero + dossier cards + conflict alerts + DeptLookup)
-/president                 → Macron profile (static, 4 tabs, cross-referenced)
+/president                 → HTTP 308 redirect → /gouvernement/emmanuel-macron
 /dossiers                  → Hub (8 issue cards)
   /pouvoir-dachat          → Purchasing power dossier
   /confiance-democratique  → Democratic trust dossier (with ConflictSignal)
@@ -121,16 +121,20 @@ Who has conflicts of interest (Declarations) → Who got elected anyway (Electio
   /sante                   → Health / medical deserts dossier
   /transition-ecologique   → Ecology dossier
   /retraites               → Pensions dossier
+/gouvernement              → Index grid (Protocol-sorted, grouped by type) [Phase 9A]
+  /[slug]                  → Minister/president profile (Phase 9E/9G)
 /representants             → Hub (with president card)
   /deputes                 → List + /[id] profile (4 tabs, conflict signals, compare link)
                              /[id]/opengraph-image (OG card)
   /senateurs               → List + /[id] profile
   /elus                    → Local officials list
   /lobbyistes              → List + /[id] detail
-  /scrutins                → Vote list + /[id] detail
+  /scrutins                → Vote list (SPS/MOC type filter) + /[id] detail
                              (gouvernance/scrutins/[id]/opengraph-image — OG card)
   /partis                  → Party finances + /[id] detail
-/votes                     → Hub (tag grid + recent scrutins)
+/votes                     → Hub (tag grid + recent scrutins + Grandes lois section)
+  /lois                    → Parliamentary Laws hub — 19 major laws, filter by type/statut [Session 33]
+  /lois/[slug]             → Law detail — group positions, ScrutinAccordion [Session 33]
   /par-sujet/[tag]         → Tag-filtered scrutins with pagination
   /mon-depute              → 3-state deputy vote lookup
   /alignements             → Party alignment heat map (N×N matrix)
@@ -1338,10 +1342,10 @@ data-gouv/
 
 | Metric | Original baseline | Target (plan) | **Actual (Phase 7 complete)** |
 |--------|------------------|---------------|-------------------------------|
-| Prisma models | 22 + IngestionLog | 26-28 + IngestionLog | **30 + IngestionLog** |
+| Prisma models | 22 + IngestionLog | 26-28 + IngestionLog | **38 + IngestionLog** |
 | Total rows | ~800K | ~1.5-2M | **~800K+ (ingestion scripts ready for more)** |
-| Routes | 22 | ~40 | **57 + 3 OG endpoints** |
-| Components | 12 | ~22 | **25** |
+| Routes | 22 | ~40 | **61 + 5 OG endpoints** |
+| Components | 12 | ~22 | **39 (12 client components)** |
 | Ingestion scripts | 16 | 20-22 | **20** |
 | Data sources | 7 | 10+ | **10 (+ INSEE Local, DGFIP, SSMSI, DREES)** |
 | Nav sections | 6 | 7 | **7** |

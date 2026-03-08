@@ -1,0 +1,133 @@
+{
+  "slug": "philippe-tabarot",
+  "nom": "Tabarot",
+  "prenom": "Philippe",
+  "researched_at": "2026-03-05",
+  "sources_used": [
+    "France Info",
+    "France Bleu",
+    "ecologie.gouv.fr",
+    "senat.fr",
+    "Wikimonde",
+    "info.gouv.fr"
+  ],
+  "notes": "Né le 25 novembre 1970 à Cannes. Soeur : Michèle Tabarot, députée LR des Alpes-Maritimes et ex-maire du Cannet. Spécialiste transports depuis 2015 (VP Région PACA). Enquête PNF ouverte sept. 2021 (détournement fonds publics + prise illégale d'intérêts) — toujours au stade préliminaire en janvier 2025, pas encore auditionné. Parti : Les Républicains. Sénateur élu 27 sept. 2020, mandat terminé 23 janv. 2025 (entrée au gouvernement). Ministre délégué aux Transports 23 déc. 2024 (Bayrou), promu ministre des Transports 12 oct. 2025 (Lecornu).",
+  "career_entries": [
+    {
+      "dateDebut": "1988-01-01",
+      "dateFin": "2015-12-13",
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Conseiller municipal de Cannes",
+      "organisation": "Ville de Cannes",
+      "description": "Élu conseiller municipal à 18 ans sous l'étiquette UDF–Démocratie libérale. Délégué successivement à la jeunesse, au tourisme et aux affaires régionales. Candidat aux municipales en 2008 et 2014 sans succès. Quitte le conseil en 2015 pour se consacrer à la Région.",
+      "sourceUrl": "https://plus.wikimonde.com/wiki/Philippe_Tabarot",
+      "sourcePrincipale": "Wikimonde",
+      "sourceDate": "2025-01-01",
+      "confidence": "medium",
+      "_ingested": true
+    },
+    {
+      "dateDebut": null,
+      "dateFin": null,
+      "categorie": "FORMATION",
+      "titre": "Maîtrise de droit public",
+      "organisation": "Université de Nice",
+      "description": "Diplômé d'une maîtrise en droit public de l'Université de Nice. Scolarité secondaire au Lycée Carnot de Cannes.",
+      "sourceUrl": "https://www.ecologie.gouv.fr/philippe-tabarot",
+      "sourcePrincipale": "ecologie.gouv.fr",
+      "sourceDate": "2025-01-01",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2001-01-01",
+      "dateFin": "2015-01-01",
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Conseiller général des Alpes-Maritimes (canton Cannes-Centre)",
+      "organisation": "Conseil général des Alpes-Maritimes",
+      "description": "Élu en 2001, plus jeune membre de l'assemblée départementale des Alpes-Maritimes. Vice-président chargé des affaires sociales (protection de l'enfance, personnes âgées) de 2003 à 2011. Président du Foyer de l'enfance et vice-président de la MDPH.",
+      "sourceUrl": "https://plus.wikimonde.com/wiki/Philippe_Tabarot",
+      "sourcePrincipale": "Wikimonde",
+      "sourceDate": "2025-01-01",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2015-12-13",
+      "dateFin": "2021-01-01",
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Vice-président du Conseil régional Provence-Alpes-Côte d'Azur, chargé des transports",
+      "organisation": "Conseil régional PACA",
+      "description": "Vice-président en charge des transports, de l'intermodalité et de la sécurité. Également président de la régie régionale des transports. Travaille aux côtés de Christian Estrosi puis Renaud Muselier. Rapporteur du budget transports ferroviaires, collectifs et fluviaux au Sénat.",
+      "sourceUrl": "https://www.ecologie.gouv.fr/philippe-tabarot",
+      "sourcePrincipale": "ecologie.gouv.fr",
+      "sourceDate": "2025-01-01",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2020-09-27",
+      "dateFin": "2025-01-23",
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Sénateur des Alpes-Maritimes",
+      "organisation": "Sénat",
+      "description": "Élu sénateur le 27 septembre 2020 sous l'étiquette Les Républicains. Rapporteur pour avis du budget des transports ferroviaires, collectifs et fluviaux. Mandat terminé le 23 janvier 2025 suite à son entrée au gouvernement.",
+      "sourceUrl": "https://www.senat.fr/senateur/tabarot_philippe20136b.html",
+      "sourcePrincipale": "senat.fr",
+      "sourceDate": "2025-01-23",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2024-12-23",
+      "dateFin": "2025-10-12",
+      "categorie": "MANDAT_GOUVERNEMENTAL",
+      "titre": "Ministre délégué chargé des Transports",
+      "organisation": "Gouvernement François Bayrou",
+      "description": "Nommé ministre délégué aux Transports le 23 décembre 2024 dans le gouvernement Bayrou. Succède à François Durovray. Rattaché au ministère de l'Aménagement du territoire.",
+      "sourceUrl": "https://france3-regions.franceinfo.fr/provence-alpes-cote-d-azur/alpes-maritimes/cannes/gouvernement-bayrou-le-senateur-lr-des-alpes-maritimes-philippe-tabarot-nomme-ministre-delegue-aux-transports-3081541.html",
+      "sourcePrincipale": "France 3 Régions",
+      "sourceDate": "2024-12-23",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2025-10-12",
+      "dateFin": null,
+      "categorie": "MANDAT_GOUVERNEMENTAL",
+      "titre": "Ministre des Transports",
+      "organisation": "Gouvernement Sébastien Lecornu",
+      "description": "Promu ministre des Transports (de plein exercice) dans le gouvernement Lecornu formé le 12 octobre 2025.",
+      "sourceUrl": "https://www.ecologie.gouv.fr/philippe-tabarot",
+      "sourcePrincipale": "ecologie.gouv.fr",
+      "sourceDate": "2025-10-12",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": [
+    {
+      "date": "2021-09-01",
+      "type": "ENQUETE_PRELIMINAIRE",
+      "nature": "détournement de fonds publics, prise illégale d'intérêts, recel",
+      "juridiction": "Parquet national financier (PNF)",
+      "statut": "EN_COURS",
+      "resume": "Enquête préliminaire ouverte par le PNF en septembre 2021, sur signalement de la HATVP (juillet 2021). Porte sur des postes occupés par Tabarot au sein d'un GIP tourisme-culture et au service communication de la mairie du Cannet (Alpes-Maritimes) entre 2018 et 2020. Le GIP a été créé en 2017 par sa soeur Michèle Tabarot, alors maire du Cannet. En 2019, Tabarot a déclaré 137 872 euros de revenus cumulés : 82 473 euros en tant que directeur du GIP, 15 318 euros comme chargé de communication au Cannet, et 40 081 euros comme conseiller régional. Le PNF cherche à déterminer si ces postes correspondaient à des activités réelles. Tabarot déclare ne pas encore avoir été auditionné (janvier 2025).",
+      "sourcePrincipale": "France Info",
+      "sourceUrl": "https://www.franceinfo.fr/enquetes-franceinfo/le-ministre-des-transports-philippe-tabarot-vise-par-une-enquete-pour-detournement-de-fonds-publics-et-prise-illegale-d-interets_7011494.html",
+      "sourceDate": "2025-01-13",
+      "corroborated_by": [
+        "France Bleu",
+        "Le JDD"
+      ],
+      "_ingested": true
+    }
+  ],
+  "conflict_flags": [
+    {
+      "description": "Le GIP tourisme-culture au coeur de l'enquête PNF a été créé par sa soeur Michèle Tabarot, maire du Cannet. Cumul de rémunérations entre le GIP, la mairie du Cannet et le Conseil régional PACA en 2018-2020.",
+      "sourceUrl": "https://www.franceinfo.fr/enquetes-franceinfo/le-ministre-des-transports-philippe-tabarot-vise-par-une-enquete-pour-detournement-de-fonds-publics-et-prise-illegale-d-interets_7011494.html",
+      "_ingested": false
+    }
+  ]
+}

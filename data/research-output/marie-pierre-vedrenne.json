@@ -1,0 +1,100 @@
+{
+  "slug": "marie-pierre-vedrenne",
+  "nom": "Vedrenne",
+  "prenom": "Marie-Pierre",
+  "civilite": "Mme",
+  "dateNaissance": "1982-12-13",
+  "lieuNaissance": "Limoges (Haute-Vienne)",
+  "researched_at": "2026-03-05",
+  "sources_used": [
+    "https://www.interieur.gouv.fr/ministres/marie-pierre-vedrenne",
+    "https://www.mouvementdemocrate.fr/fiche/marie-pierre-vedrenne-7006",
+    "https://www.europarl.europa.eu/meps/fr/197502/MARIE-PIERRE_VEDRENNE/history/10",
+    "https://www.aefinfo.fr/depeche/739038-le-parcours-de-marie-pierre-vedrenne-nommee-ministre-deleguee-aupres-du-ministre-de-linterieur",
+    "https://www.reneweuropegroup.eu/who-we-are/marie-pierre-vedrenne"
+  ],
+  "notes": "MoDem politician, juriste de formation. Was a European Parliament member (Renew/L'Europe Ensemble) 2019-2024, not a national deputee or senator. No judicial events found in Tier 1/2 sources. Collaborator scandal (radicalization suspicion) involved a member of her cabinet, not Vedrenne herself. User brief says 'ancienne deputee europeenne (Renew)' — confirmed. Title since Feb 2026 remaniement changed to 'chargee de la Citoyennete' (previously 'Immigration et Integration').",
+  "_ingested": false,
+  "career_entries": [
+    {
+      "dateDebut": "2001",
+      "dateFin": "2006",
+      "categorie": "FORMATION",
+      "titre": "Master 2 en droit de l'Union europeenne et de l'OMC",
+      "organisation": "Universite de Rennes I",
+      "description": "Formation en droit public, specialisation en droit de l'Union europeenne et de l'Organisation mondiale du commerce",
+      "sourceUrl": "https://www.europarl.europa.eu/meps/fr/197502/MARIE-PIERRE_VEDRENNE/cv",
+      "sourcePrincipale": "Parlement europeen",
+      "sourceDate": "2024-06-01",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2007",
+      "dateFin": "2010",
+      "categorie": "ORGANISME",
+      "titre": "Presidente puis vice-presidente des Jeunes Europeens - France",
+      "organisation": "Jeunes Europeens - France",
+      "description": "Presidente de la section locale de Rennes en 2007, puis vice-presidente nationale de l'association pour la promotion de l'idee europeenne aupres des jeunes",
+      "sourceUrl": "https://www.mouvementdemocrate.fr/fiche/marie-pierre-vedrenne-7006",
+      "sourcePrincipale": "Mouvement Democrate",
+      "sourceDate": "2026-03-05",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2016",
+      "dateFin": "2019",
+      "categorie": "CARRIERE_PRIVEE",
+      "titre": "Directrice de la Maison de l'Europe de Rennes",
+      "organisation": "Maison de l'Europe de Rennes",
+      "description": "Direction de la structure d'animation de la culture europeenne locale a Rennes. Chargee de mission puis directrice.",
+      "sourceUrl": "https://www.aefinfo.fr/depeche/739038-le-parcours-de-marie-pierre-vedrenne-nommee-ministre-deleguee-aupres-du-ministre-de-linterieur",
+      "sourcePrincipale": "AEF Info",
+      "sourceDate": "2025-10-12",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2019-05-26",
+      "dateFin": "2024-07",
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Deputee europeenne",
+      "organisation": "Parlement europeen",
+      "description": "Elue sur la liste Renaissance. Presidente de la delegation francaise du groupe Renew (L'Europe Ensemble). Membre des commissions Commerce international (INTA) et Emploi et affaires sociales (EMPL). Vice-presidente de la commission EMPL. Rapporteure sur la directive relative aux salaires minimaux adequats.",
+      "sourceUrl": "https://www.europarl.europa.eu/meps/fr/197502/MARIE-PIERRE_VEDRENNE/history/10",
+      "sourcePrincipale": "Parlement europeen",
+      "sourceDate": "2024-07-01",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2022-07",
+      "dateFin": null,
+      "categorie": "AUTRE",
+      "titre": "Membre du Bureau executif du Mouvement Democrate",
+      "organisation": "Mouvement Democrate (MoDem)",
+      "description": "Rejoint le bureau executif du MoDem en juillet 2022",
+      "sourceUrl": "https://www.mouvementdemocrate.fr/fiche/marie-pierre-vedrenne-7006",
+      "sourcePrincipale": "Mouvement Democrate",
+      "sourceDate": "2026-03-05",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2025-10-12",
+      "dateFin": null,
+      "categorie": "MANDAT_GOUVERNEMENTAL",
+      "titre": "Ministre deleguee chargee de la Citoyennete",
+      "organisation": "Gouvernement Sebastien Lecornu",
+      "description": "Nommee ministre deleguee aupres du ministre de l'Interieur Laurent Nunez. Initialement chargee de l'Immigration et de l'Integration (oct. 2025), reattribution au portefeuille Citoyennete lors du remaniement de fevrier 2026.",
+      "sourceUrl": "https://www.interieur.gouv.fr/ministres/marie-pierre-vedrenne",
+      "sourcePrincipale": "Ministere de l'Interieur",
+      "sourceDate": "2026-02-26",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": [],
+  "conflict_flags": []
+}

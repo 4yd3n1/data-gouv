@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { DM_Sans, Instrument_Serif } from "next/font/google";
 import Link from "next/link";
 import { NavSearch } from "@/components/nav-search";
+import { MobileNav } from "@/components/mobile-nav";
 import "./globals.css";
 
 const body = DM_Sans({ subsets: ["latin"], variable: "--font-body" });
@@ -40,7 +41,7 @@ function Navbar() {
         </Link>
         <div className="flex items-center gap-3">
           <NavSearch />
-          <div className="flex items-center gap-1">
+          <div className="nav-links flex items-center gap-1">
             {NAV.map((item) => (
               <Link
                 key={item.href}
@@ -51,6 +52,7 @@ function Navbar() {
               </Link>
             ))}
           </div>
+          <MobileNav items={NAV} />
         </div>
       </nav>
     </header>

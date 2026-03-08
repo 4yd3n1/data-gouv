@@ -14,12 +14,16 @@ async function ScrutinsList({ searchParams }: { searchParams: Record<string, str
   const sort = searchParams.sort ?? "";
   const page = Math.max(1, parseInt(searchParams.page ?? "1", 10));
 
+  const type = searchParams.type ?? "";
+
   const where = {
     ...(q && {
       titre: { contains: q, mode: "insensitive" as const },
     }),
     ...(sort === "adopte" && { sortCode: { contains: "adopt", mode: "insensitive" as const } }),
     ...(sort === "rejete" && { sortCode: { contains: "rejet", mode: "insensitive" as const } }),
+    ...(type === "sps" && { codeTypeVote: "SPS" }),
+    ...(type === "moc" && { codeTypeVote: "MOC" }),
   };
 
   const [scrutins, total] = await Promise.all([
@@ -34,21 +38,53 @@ async function ScrutinsList({ searchParams }: { searchParams: Record<string, str
 
   return (
     <>
-      <div className="mb-6 flex flex-wrap items-center gap-2">
-        <span className="mr-2 text-xs text-bureau-500">Résultat :</span>
-        {[
-          { label: "Tous", value: "" },
-          { label: "Adoptés", value: "adopte" },
-          { label: "Rejetés", value: "rejete" },
-        ].map((f) => (
-          <Link
-            key={f.value}
-            href={`/gouvernance/scrutins${f.value ? `?sort=${f.value}` : ""}${q ? `${f.value ? "&" : "?"}q=${q}` : ""}`}
-            className={`rounded-md px-2.5 py-1 text-xs transition-colors ${sort === f.value ? "bg-teal/10 text-teal" : "text-bureau-400 hover:bg-bureau-800"}`}
-          >
-            {f.label}
-          </Link>
-        ))}
+      <div className="mb-6 space-y-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="mr-1 text-xs text-bureau-500">Résultat :</span>
+          {[
+            { label: "Tous", value: "" },
+            { label: "Adoptés", value: "adopte" },
+            { label: "Rejetés", value: "rejete" },
+          ].map((f) => {
+            const params = new URLSearchParams();
+            if (f.value) params.set("sort", f.value);
+            if (q) params.set("q", q);
+            if (type) params.set("type", type);
+            const qs = params.toString();
+            return (
+              <Link
+                key={f.value}
+                href={`/gouvernance/scrutins${qs ? `?${qs}` : ""}`}
+                className={`rounded-md px-2.5 py-1 text-xs transition-colors ${sort === f.value ? "bg-teal/10 text-teal" : "text-bureau-400 hover:bg-bureau-800"}`}
+              >
+                {f.label}
+              </Link>
+            );
+          })}
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="mr-1 text-xs text-bureau-500">Type :</span>
+          {[
+            { label: "Tous types", value: "" },
+            { label: "Votes solennels", value: "sps" },
+            { label: "Motions de censure", value: "moc" },
+          ].map((f) => {
+            const params = new URLSearchParams();
+            if (sort) params.set("sort", sort);
+            if (q) params.set("q", q);
+            if (f.value) params.set("type", f.value);
+            const qs = params.toString();
+            return (
+              <Link
+                key={f.value}
+                href={`/gouvernance/scrutins${qs ? `?${qs}` : ""}`}
+                className={`rounded-md px-2.5 py-1 text-xs transition-colors ${type === f.value ? "bg-bureau-700 text-bureau-100" : "text-bureau-400 hover:bg-bureau-800"}`}
+              >
+                {f.label}
+              </Link>
+            );
+          })}
+        </div>
       </div>
 
       <p className="mb-4 text-xs text-bureau-500">{fmt(total)} résultats</p>
@@ -66,6 +102,12 @@ async function ScrutinsList({ searchParams }: { searchParams: Record<string, str
                   <span className="text-xs font-medium text-bureau-400">n°{s.numero}</span>
                   <span className="text-xs text-bureau-500">{fmtDate(s.dateScrutin)}</span>
                   <ScrutinResultBadge sortCode={s.sortCode} />
+                  {s.codeTypeVote === "SPS" && (
+                    <span className="rounded bg-teal/10 px-1.5 py-0.5 text-[10px] text-teal">Vote solennel</span>
+                  )}
+                  {s.codeTypeVote === "MOC" && (
+                    <span className="rounded bg-amber/10 px-1.5 py-0.5 text-[10px] text-amber">Motion de censure</span>
+                  )}
                 </div>
                 <p className="mt-1 text-sm text-bureau-200 line-clamp-2 group-hover:text-bureau-100 transition-colors">
                   {s.titre}

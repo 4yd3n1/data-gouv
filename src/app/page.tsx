@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { prisma } from "@/lib/db";
-import { fmt, fmtEuro } from "@/lib/format";
+import { fmt, fmtPct } from "@/lib/format";
 import { DOSSIERS } from "@/lib/dossier-config";
 import { DeptLookup } from "@/components/dept-lookup";
 import { ConflictAlert } from "@/components/conflict-alert";
+import { HeroSlider, type HeroSlide } from "@/components/hero-slider";
 
 export const revalidate = 3600; // Homepage shows latest votes + conflict alerts — revalidate hourly
 
@@ -11,8 +12,9 @@ async function getHomeData() {
   const [
     deputes, elus, scrutins, monuments,
     recentScrutins, topConflicts,
-    latestDetteObs, latestIpcObs, latestChomageObs,
+    latestIpcObs, latestChomageObs,
     depts,
+    deportCount, declarationWithPartCount,
   ] = await Promise.all([
     prisma.depute.count(),
     prisma.elu.count(),
@@ -39,41 +41,45 @@ async function getHomeData() {
       orderBy: { participationCount: "desc" },
       take: 3,
     }),
-    // Latest debt/GDP indicator
-    prisma.indicateur.findFirst({
-      where: { code: "DETTE_PIB" },
-      include: {
-        observations: { orderBy: { periodeDebut: "desc" }, take: 1 },
-      },
-    }),
-    // Latest inflation
+    // Latest inflation index (13 months for YoY computation)
     prisma.indicateur.findFirst({
       where: { code: "IPC_MENSUEL" },
-      include: {
-        observations: { orderBy: { periodeDebut: "desc" }, take: 1 },
-      },
+      include: { observations: { orderBy: { periodeDebut: "desc" }, take: 13 } },
     }),
     // Latest unemployment
     prisma.indicateur.findFirst({
       where: { code: "CHOMAGE_TAUX_TRIM" },
-      include: {
-        observations: { orderBy: { periodeDebut: "desc" }, take: 1 },
-      },
+      include: { observations: { orderBy: { periodeDebut: "desc" }, take: 1 } },
     }),
     // Dept list for lookup
     prisma.departement.findMany({
       select: { code: true, libelle: true },
       orderBy: { code: "asc" },
     }),
+    // Transparency metrics
+    prisma.deport.count(),
+    prisma.declarationInteret.count({
+      where: { totalParticipations: { gt: 0 } },
+    }),
   ]);
 
   return {
     deputes, elus, scrutins, monuments,
     recentScrutins, topConflicts,
-    detteVal: latestDetteObs?.observations[0]?.valeur ?? null,
-    ipcVal: latestIpcObs?.observations[0]?.valeur ?? null,
     chomageVal: latestChomageObs?.observations[0]?.valeur ?? null,
+    // Compute IPC year-over-year from index (13 months apart)
+    ipcYoY: (() => {
+      const obs = latestIpcObs?.observations ?? [];
+      const current = obs[0]?.valeur;
+      const lastYear = obs[12]?.valeur;
+      if (current != null && lastYear != null && lastYear > 0) {
+        return ((current / lastYear) - 1) * 100;
+      }
+      return null;
+    })(),
     depts,
+    deportCount,
+    declarationWithPartCount,
   };
 }
 
@@ -86,16 +92,72 @@ const colorAccent = {
 
 export default async function HomePage() {
   const data = await getHomeData();
-  const { detteVal, ipcVal, chomageVal } = data;
+  const { chomageVal, ipcYoY } = data;
 
-  // Dynamic hero headline based on latest data
-  const heroStat = detteVal
-    ? { label: "dette publique", value: `${detteVal.toFixed(1)}%`, unit: "du PIB", color: "text-amber" }
-    : ipcVal
-      ? { label: "inflation", value: `+${ipcVal.toFixed(1)}%`, unit: "en glissement annuel", color: "text-rose" }
-      : chomageVal
-        ? { label: "taux de chômage", value: `${chomageVal.toFixed(1)}%`, unit: "France entière", color: "text-amber" }
-        : null;
+  const slides: HeroSlide[] = [
+    // Emploi (DB)
+    ...(chomageVal != null ? [{
+      before: "Le taux de chômage atteint",
+      value: fmtPct(chomageVal),
+      after: "des actifs en France",
+      color: "text-amber" as const,
+    }] : []),
+    // Pouvoir d'achat — IPC YoY computed from index (DB)
+    ...(ipcYoY != null ? [{
+      before: "L'inflation est à",
+      value: `+${fmtPct(ipcYoY)}`,
+      after: "sur un an",
+      color: "text-rose" as const,
+    }] : []),
+    // SMIC — valeur légale fixée par décret (jan. 2025)
+    {
+      before: "Le SMIC brut est à",
+      value: "11,88 €",
+      after: "de l'heure",
+      color: "text-teal",
+    },
+    // Dette — Banque de France, 2024
+    {
+      before: "La dette publique dépasse",
+      value: "3 300 Md €",
+      after: "soit plus de 113 % du PIB",
+      color: "text-amber",
+    },
+    // Santé — source: Assurance Maladie / CNAM
+    {
+      before: "",
+      value: "6 millions",
+      after: "de Français n'ont pas de médecin traitant",
+      color: "text-rose",
+    },
+    // Logement — source: Fondation Abbé Pierre 2024
+    {
+      before: "",
+      value: "4 millions",
+      after: "de mal-logés en France",
+      color: "text-rose",
+    },
+    // Retraites
+    {
+      before: "Retraite légale repoussée à",
+      value: "64 ans",
+      after: "depuis la réforme Borne de 2023",
+      color: "text-amber",
+    },
+    // Confiance démocratique
+    ...(data.declarationWithPartCount > 0 ? [{
+      before: "",
+      value: fmt(data.declarationWithPartCount),
+      after: "élus déclarent des participations financières à la HATVP",
+      color: "text-amber" as const,
+    }] : []),
+    ...(data.deportCount > 0 ? [{
+      before: "",
+      value: fmt(data.deportCount),
+      after: "déports parlementaires enregistrés à l'Assemblée",
+      color: "text-teal" as const,
+    }] : []),
+  ];
 
   return (
     <>
@@ -106,18 +168,9 @@ export default async function HomePage() {
             Intelligence civique
           </div>
 
-          {heroStat ? (
-            <h1 className="fade-up delay-1 font-[family-name:var(--font-display)] text-5xl leading-tight text-bureau-100 sm:text-6xl">
-              La {heroStat.label} atteint{" "}
-              <span className={`italic ${heroStat.color}`}>{heroStat.value}</span>{" "}
-              <span className="text-bureau-400 text-3xl sm:text-4xl">{heroStat.unit}</span>
-            </h1>
-          ) : (
-            <h1 className="fade-up delay-1 font-[family-name:var(--font-display)] text-5xl leading-tight text-bureau-100 sm:text-6xl">
-              L&apos;Observatoire{" "}
-              <span className="italic text-teal">Citoyen</span>
-            </h1>
-          )}
+          <div className="fade-up delay-1">
+            <HeroSlider slides={slides} />
+          </div>
 
           <p className="fade-up delay-2 mx-auto mt-4 max-w-xl text-bureau-400">
             Données publiques croisées — gouvernance, économie, territoire. La transparence, c&apos;est maintenant.

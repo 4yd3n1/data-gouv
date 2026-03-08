@@ -1,0 +1,132 @@
+{
+  "slug": "sabrina-agresti-roubache",
+  "nom": "Agresti-Roubache",
+  "prenom": "Sabrina",
+  "researched_at": "2026-03-05",
+  "sources_used": [
+    "https://en.wikipedia.org/wiki/Sabrina_Agresti-Roubache",
+    "https://wikimonde.com/article/Sabrina_Agresti-Roubache",
+    "https://www.assemblee-nationale.fr/dyn/deputes/PA793278",
+    "https://france3-regions.franceinfo.fr/provence-alpes-cote-d-azur/bouches-du-rhone/marseille/remaniement-5-choses-a-savoir-sabrina-agristi-roubache-la-deputee-marseillaise-qui-entre-au-gouvernement-2815235.html",
+    "https://france3-regions.franceinfo.fr/provence-alpes-cote-d-azur/bouches-du-rhone/marseille/on-vous-explique-pourquoi-la-declaration-d-interet-de-sabrina-agresti-roubache-fait-polemique-2896877.html",
+    "https://observatoire.anticor.org/2023/12/22/pres-de-100-000-euros-manquants-la-declaration-dinterets-sous-evaluee-de-la-ministre-sabrina-agresti-roubache/",
+    "https://marsactu.fr/bref/sabrina-agresti-roubache-pointee-pour-sa-declaration-dinterets/",
+    "https://france3-regions.franceinfo.fr/provence-alpes-cote-d-azur/bouches-du-rhone/marseille/remaniement-ministeriel-la-marseillaise-sabrina-agresti-roubache-de-retour-au-gouvernement-en-charge-de-l-enseignement-et-de-la-formation-professionnels-3306696.html"
+  ],
+  "notes": "Born 13 Oct 1976 in Marseille. Nee Roubache. Renaissance party. Grew up in cite Felix-Pyat (3e arr. Marseille), 3e de 6 enfants, famille d'origine algerienne. Married Jean-Philippe Agresti (2021). User prompt says 'deputee des Bouches-du-Rhone' (1re circ) -- correct. User prompt says 'ex-secretaire d'Etat a la Ville sous Borne' -- correct (Jul 2023). Also served under Attal. In 2024 snap election, came 3rd in 1st round, withdrew to support NFP candidate. Not currently deputee. HATVP controversy: ~91k EUR discrepancy in declared interests (Marianne investigation Dec 2023). HATVP also emitted reserves on post-government reconversion plans (Feb 2025).",
+  "_ingested": false,
+  "career_entries": [
+    {
+      "dateDebut": null,
+      "dateFin": null,
+      "categorie": "FORMATION",
+      "titre": "Baccalaureat litteraire",
+      "organisation": null,
+      "description": "Baccalaureat litteraire. A commence des etudes de droit mais ne les a pas terminees pour travailler dans la production audiovisuelle.",
+      "sourceUrl": "https://wikimonde.com/article/Sabrina_Agresti-Roubache",
+      "sourcePrincipale": "Wikimonde",
+      "sourceDate": "2026-03-05",
+      "confidence": "medium",
+      "_ingested": true
+    },
+    {
+      "dateDebut": null,
+      "dateFin": "2018",
+      "categorie": "CARRIERE_PRIVEE",
+      "titre": "Productrice audiovisuelle",
+      "organisation": "Secteur audiovisuel (Marseille)",
+      "description": "Carriere dans la production audiovisuelle. A travaille avec le groupe de rap IAM. A repris Seconde Vague Productions apres le deces de son fondateur Paul Saadoun en 2018.",
+      "sourceUrl": "https://wikimonde.com/article/Sabrina_Agresti-Roubache",
+      "sourcePrincipale": "Wikimonde",
+      "sourceDate": "2026-03-05",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2018",
+      "dateFin": null,
+      "categorie": "CARRIERE_PRIVEE",
+      "titre": "Dirigeante de Seconde Vague Productions",
+      "organisation": "Seconde Vague Productions",
+      "description": "Reprise de la societe de production audiovisuelle Seconde Vague Productions apres le deces de Paul Saadoun. Collaborations avec Netflix.",
+      "sourceUrl": "https://wikimonde.com/article/Sabrina_Agresti-Roubache",
+      "sourcePrincipale": "Wikimonde",
+      "sourceDate": "2026-03-05",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2021-07-02",
+      "dateFin": null,
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Conseillere regionale Provence-Alpes-Cote d'Azur",
+      "organisation": "Conseil regional PACA",
+      "description": "Elue sur la liste de Renaud Muselier (ex-LR). En charge des violences faites aux femmes et du harcelement scolaire.",
+      "sourceUrl": "https://wikimonde.com/article/Sabrina_Agresti-Roubache",
+      "sourcePrincipale": "Wikimonde",
+      "sourceDate": "2026-03-05",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2022-06-22",
+      "dateFin": "2023-07-20",
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Deputee des Bouches-du-Rhone (1re circonscription)",
+      "organisation": "Assemblee nationale",
+      "description": "Elue deputee avec 50,79% au second tour. Membre de la Commission des lois (2022-2023). Mandat interrompu par sa nomination au gouvernement.",
+      "sourceUrl": "https://www.assemblee-nationale.fr/dyn/deputes/PA793278",
+      "sourcePrincipale": "Assemblee nationale",
+      "sourceDate": "2026-03-05",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2023-07-20",
+      "dateFin": "2024-09-21",
+      "categorie": "MANDAT_GOUVERNEMENTAL",
+      "titre": "Secretaire d'Etat chargee de la Ville (puis Citoyennete et Ville)",
+      "organisation": "Gouvernements Borne puis Attal",
+      "description": "Nommee secretaire d'Etat chargee de la Ville le 20 juillet 2023 (gouvernement Borne). Le 10 octobre 2023, recupere le portefeuille de la Citoyennete (remplacement de Sonia Backes). Reconduite dans le gouvernement Attal (8 fevrier 2024). Quitte le gouvernement le 21 septembre 2024.",
+      "sourceUrl": "https://www.elysee.fr/emmanuel-macron/2023/10/10/nomination-de-sabrina-agresti-roubache-en-qualite-de-secretaire-detat-chargee-de-la-citoyennete-et-de-la-ville",
+      "sourcePrincipale": "Elysee.fr",
+      "sourceDate": "2023-10-10",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2026-02-26",
+      "dateFin": null,
+      "categorie": "MANDAT_GOUVERNEMENTAL",
+      "titre": "Ministre deleguee chargee de l'Enseignement et de la Formation professionnels",
+      "organisation": "Gouvernement Lecornu II (remaniement)",
+      "description": "Nommee ministre deleguee chargee de l'Enseignement et de la Formation professionnels lors du remaniement du 26 fevrier 2026. Note: le titre exact peut differer de 'Reussite educative' mentionne dans la demande initiale.",
+      "sourceUrl": "https://france3-regions.franceinfo.fr/provence-alpes-cote-d-azur/bouches-du-rhone/marseille/remaniement-ministeriel-la-marseillaise-sabrina-agresti-roubache-de-retour-au-gouvernement-en-charge-de-l-enseignement-et-de-la-formation-professionnels-3306696.html",
+      "sourcePrincipale": "France 3",
+      "sourceDate": "2026-02-26",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": [],
+  "conflict_flags": [
+    {
+      "type": "HATVP_DISCREPANCY",
+      "description": "En decembre 2023, le magazine Marianne revele un ecart d'environ 91 000 euros entre les revenus declares lors de son election comme deputee (aout et decembre 2022) et ceux declares lors de sa nomination comme secretaire d'Etat. Son entourage a invoque 'un oubli de declaration de droits d'auteur' et 'un report d'imposition de plus-values'.",
+      "sourceUrl": "https://france3-regions.franceinfo.fr/provence-alpes-cote-d-azur/bouches-du-rhone/marseille/on-vous-explique-pourquoi-la-declaration-d-interet-de-sabrina-agresti-roubache-fait-polemique-2896877.html",
+      "sourcePrincipale": "France 3 PACA / Marianne",
+      "sourceDate": "2023-12-22",
+      "confidence": "high",
+      "_ingested": false
+    },
+    {
+      "type": "HATVP_RESERVES",
+      "description": "En fevrier 2025, la HATVP a emis des reserves sur le projet de reconversion de Sabrina Agresti-Roubache apres sa sortie du gouvernement.",
+      "sourceUrl": "https://marsactu.fr/bref/la-haute-autorite-emet-des-reserves-sur-le-projet-de-reconversion-de-sabrina-roubache/",
+      "sourcePrincipale": "Marsactu",
+      "sourceDate": "2025-02",
+      "confidence": "high",
+      "_ingested": false
+    }
+  ]
+}

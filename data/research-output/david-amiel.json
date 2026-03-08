@@ -1,0 +1,160 @@
+{
+  "slug": "david-amiel",
+  "nom": "Amiel",
+  "prenom": "David",
+  "civilite": "M.",
+  "dateNaissance": "1992-11-28",
+  "lieuNaissance": "Paris",
+  "researched_at": "2026-03-05",
+  "_ingested": false,
+  "sources_used": [
+    "https://www.franceinfo.fr/politique/gouvernement-de-sebastien-lecornu/normalien-macroniste-historique-depute-a-29-ans-qui-est-david-amiel-le-nouveau-ministre-des-comptes-publics_7822934.html",
+    "https://www.france24.com/fr/info-en-continu/20260222-david-amiel-un-macroniste-historique-de-la-fonction-publique-au-budget",
+    "https://www.lagazettedescommunes.com/1025443/david-amiel-ministre-de-la-fonction-publique-prend-les-commandes-des-comptes-publics/",
+    "https://acteurspublics.fr/articles/david-amiel-promu-ministre-de-laction-et-des-comptes-publics/",
+    "https://mairie15.paris.fr/pages/david-amiel-13598"
+  ],
+  "notes": "Macroniste historique. Normalien, Princeton. Conseiller Elysee 2017-2019. Co-auteur 'Le progres ne tombe pas du ciel' avec Ismael Emelien. A l'origine de l'idee de suppression de la taxe d'habitation (2017). Depute Paris 13e circ (2022-2025). Ministre Fonction publique oct 2025, puis Comptes publics fev 2026. Anticor a note un 'pantouflage' en 2022 (passage secteur prive La Poste) mais pas d'affaire judiciaire.",
+  "career_entries": [
+    {
+      "dateDebut": "2008",
+      "dateFin": "2010",
+      "categorie": "FORMATION",
+      "titre": "Classes preparatoires (hypokhagne/khagne)",
+      "organisation": "Lycee Henri-IV, Paris",
+      "description": "Classes preparatoires litteraires apres le baccalaureat au Lycee Louis-le-Grand.",
+      "sourceUrl": "https://www.franceinfo.fr/politique/gouvernement-de-sebastien-lecornu/normalien-macroniste-historique-depute-a-29-ans-qui-est-david-amiel-le-nouveau-ministre-des-comptes-publics_7822934.html",
+      "sourcePrincipale": "France Info",
+      "sourceDate": "2026-02-22",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2011",
+      "dateFin": "2015",
+      "categorie": "FORMATION",
+      "titre": "Eleve de l'Ecole normale superieure (ENS)",
+      "organisation": "Ecole normale superieure, Paris",
+      "description": "Integre l'ENS en 2011. Formation en sciences sociales et economie.",
+      "sourceUrl": "https://www.franceinfo.fr/politique/gouvernement-de-sebastien-lecornu/normalien-macroniste-historique-depute-a-29-ans-qui-est-david-amiel-le-nouveau-ministre-des-comptes-publics_7822934.html",
+      "sourcePrincipale": "France Info",
+      "sourceDate": "2026-02-22",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2013",
+      "dateFin": "2014",
+      "categorie": "FORMATION",
+      "titre": "Etudiant a l'Universite de Princeton",
+      "organisation": "Princeton University, Etats-Unis",
+      "description": "Sejour d'etudes a Princeton dans le cadre de son cursus a l'ENS.",
+      "sourceUrl": "https://www.franceinfo.fr/politique/gouvernement-de-sebastien-lecornu/normalien-macroniste-historique-depute-a-29-ans-qui-est-david-amiel-le-nouveau-ministre-des-comptes-publics_7822934.html",
+      "sourcePrincipale": "France Info",
+      "sourceDate": "2026-02-22",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2015",
+      "dateFin": "2016",
+      "categorie": "FONCTION_PUBLIQUE",
+      "titre": "Stagiaire au ministere des Finances",
+      "organisation": "Ministere de l'Economie et des Finances (Bercy)",
+      "description": "Stage a Bercy lorsque Emmanuel Macron etait ministre de l'Economie.",
+      "sourceUrl": "https://www.france24.com/fr/info-en-continu/20260222-david-amiel-un-macroniste-historique-de-la-fonction-publique-au-budget",
+      "sourcePrincipale": "France 24",
+      "sourceDate": "2026-02-22",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2017-05",
+      "dateFin": "2019-03",
+      "categorie": "FONCTION_PUBLIQUE",
+      "titre": "Conseiller du President de la Republique",
+      "organisation": "Presidence de la Republique (Elysee)",
+      "description": "Conseiller d'Emmanuel Macron a l'Elysee, charge de la coordination entre conseillers techniques. A travaille aux cotes d'Alexis Kohler (secretaire general) et Ismael Emelien.",
+      "sourceUrl": "https://www.franceinfo.fr/politique/gouvernement-de-sebastien-lecornu/normalien-macroniste-historique-depute-a-29-ans-qui-est-david-amiel-le-nouveau-ministre-des-comptes-publics_7822934.html",
+      "sourcePrincipale": "France Info",
+      "sourceDate": "2026-02-22",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2020",
+      "dateFin": "2021",
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Conseiller d'arrondissement du 15e arrondissement de Paris",
+      "organisation": "Mairie du 15e arrondissement, Paris",
+      "description": "Elu conseiller d'arrondissement aux municipales de 2020, membre de l'opposition. Candidat aux cotes de Benjamin Griveaux.",
+      "sourceUrl": "https://mairie15.paris.fr/pages/david-amiel-13598",
+      "sourcePrincipale": "Mairie du 15e",
+      "sourceDate": "2024-05-21",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2021",
+      "dateFin": "2022",
+      "categorie": "CARRIERE_PRIVEE",
+      "titre": "Collaborateur au Groupe La Poste",
+      "organisation": "Groupe La Poste",
+      "description": "A travaille pour le Groupe La Poste avant de revenir dans le cercle macroniste pour piloter le programme presidentiel de 2022.",
+      "sourceUrl": "https://www.franceinfo.fr/politique/gouvernement-de-sebastien-lecornu/normalien-macroniste-historique-depute-a-29-ans-qui-est-david-amiel-le-nouveau-ministre-des-comptes-publics_7822934.html",
+      "sourcePrincipale": "France Info",
+      "sourceDate": "2026-02-22",
+      "confidence": "medium",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2022-06-19",
+      "dateFin": "2025-10",
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Depute de Paris, 13e circonscription",
+      "organisation": "Assemblee nationale",
+      "description": "Elu au second tour avec 59,86 % des voix sous l'etiquette Ensemble (Renaissance). Membre de la commission des Finances. Elu a 29 ans.",
+      "sourceUrl": "https://www.franceinfo.fr/politique/gouvernement-de-sebastien-lecornu/normalien-macroniste-historique-depute-a-29-ans-qui-est-david-amiel-le-nouveau-ministre-des-comptes-publics_7822934.html",
+      "sourcePrincipale": "France Info",
+      "sourceDate": "2026-02-22",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2025-10-12",
+      "dateFin": "2026-02-26",
+      "categorie": "MANDAT_GOUVERNEMENTAL",
+      "titre": "Ministre delegue charge de la Fonction publique et de la Reforme de l'Etat",
+      "organisation": "Gouvernement Sebastien Lecornu",
+      "description": "Nomme ministre delegue dans le gouvernement Lecornu II.",
+      "sourceUrl": "https://www.aefinfo.fr/depeche/738992-david-amiel-nomme-ministre-delegue-charge-de-la-fonction-publique-et-de-la-reforme-de-l-etat-dans-le-gouvernement-lecornu-ii",
+      "sourcePrincipale": "AEF Info",
+      "sourceDate": "2025-10-12",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2026-02-26",
+      "dateFin": null,
+      "categorie": "MANDAT_GOUVERNEMENTAL",
+      "titre": "Ministre delegue charge des Comptes publics",
+      "organisation": "Gouvernement Sebastien Lecornu",
+      "description": "Nomme aux Comptes publics en remplacement d'Amelie de Montchalin, nommee a la Cour des comptes.",
+      "sourceUrl": "https://www.franceinfo.fr/politique/gouvernement-de-sebastien-lecornu/le-ministre-de-la-fonction-publique-david-amiel-nomme-aux-comptes-publics-pour-remplacer-amelie-de-montchalin_7822778.html",
+      "sourcePrincipale": "France Info",
+      "sourceDate": "2026-02-22",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": [],
+  "conflict_flags": [
+    {
+      "type": "pantouflage",
+      "description": "Anticor a note en 2022 un passage entre le secteur public (Elysee) et le secteur prive (Groupe La Poste) pouvant constituer un cas de pantouflage.",
+      "sourceUrl": "https://www.anticor.org/2022/06/07/elections-legislatives-2022-anticor-75-analyse-des-candidatures-a-paris/",
+      "sourcePrincipale": "Anticor",
+      "severity": "low"
+    }
+  ]
+}

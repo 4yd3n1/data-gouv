@@ -1,0 +1,211 @@
+{
+  "slug": "sebastien-lecornu",
+  "nom": "Lecornu",
+  "prenom": "Sebastien",
+  "researched_at": "2026-03-05",
+  "sources_used": [
+    "France Info",
+    "France 3 Normandie",
+    "France Bleu",
+    "Le Monde",
+    "Mediapart",
+    "vie-publique.fr",
+    "defense.gouv.fr",
+    "info.gouv.fr"
+  ],
+  "notes": "Born 11 June 1986 in Vernon (Eure). Son of a medical secretary and aeronautics technician. Studied law at Universite Paris 2 Pantheon-Assas (obtained maitrise/master 1 in public law, did NOT complete master 2 — diploma controversy in Sept 2025). Joined UMP at age 16. Youngest assistant parlementaire under deputy Franck Gillard. Close to Bruno Le Maire early in career. Became youngest departmental council president in France (2015). Elected senator in 2020 but could not sit due to ministerial role. Never actually sat as depute either — elected in 2017 but immediately entered government. Member of gendarmerie operational reserve. Appointed PM on 9 Sept 2025 succeeding Bayrou. Lecornu I government formed 5 Oct 2025, resigned 6 Oct 2025 (shortest in 5th Republic history). Reappointed 10 Oct 2025, Lecornu II formed 12 Oct 2025. Subject to PNF enquete preliminaire since May 2023 for favoritisme and prise illegale d'interets (Jean-Claude Narcy exhibitions). Heard in audition libre 11 April 2025. Not mis en examen as of latest reports.",
+  "career_entries": [
+    {
+      "dateDebut": "2003-01-01",
+      "dateFin": "2009-01-01",
+      "categorie": "FONCTION_PUBLIQUE",
+      "titre": "Assistant parlementaire du depute Franck Gillard",
+      "organisation": "Assemblee nationale",
+      "description": "Plus jeune assistant parlementaire de la mandature, aupres du depute UMP de la 5e circonscription de l'Eure Franck Gillard. Debut de carriere politique au sein de l'UMP.",
+      "sourceUrl": "https://www.franceinfo.fr/politique/gouvernement-de-sebastien-lecornu/ministre-indeboulonnable-proche-de-macron-ancien-reserviste-on-vous-presente-sebastien-lecornu-successeur-de-francois-bayrou-comme-premier-ministre_7482922.html",
+      "sourcePrincipale": "France Info",
+      "sourceDate": "2025-09-09",
+      "confidence": "medium",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2009-01-01",
+      "dateFin": "2012-01-01",
+      "categorie": "FONCTION_PUBLIQUE",
+      "titre": "Conseiller aux affaires institutionnelles de Bruno Le Maire",
+      "organisation": "Ministere des Affaires europeennes / Ministere de l'Agriculture",
+      "description": "Accompagne Bruno Le Maire au Quai d'Orsay lors de sa nomination comme secretaire d'Etat aux Affaires europeennes (gouvernement Fillon), puis le suit au ministere de l'Agriculture.",
+      "sourceUrl": "https://www.franceinfo.fr/politique/gouvernement-de-sebastien-lecornu/ministre-indeboulonnable-proche-de-macron-ancien-reserviste-on-vous-presente-sebastien-lecornu-successeur-de-francois-bayrou-comme-premier-ministre_7482922.html",
+      "sourcePrincipale": "France Info",
+      "sourceDate": "2025-09-09",
+      "confidence": "medium",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2014-03-30",
+      "dateFin": "2015-12-04",
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Maire de Vernon",
+      "organisation": "Commune de Vernon (Eure)",
+      "description": "Elu maire de Vernon a 27 ans, l'un des plus jeunes maires d'une ville de cette taille. Demissionne le 4 decembre 2015 en raison de l'incompatibilite avec la presidence du conseil departemental.",
+      "sourceUrl": "https://france3-regions.franceinfo.fr/normandie/eure/vernon/eure-sebastien-lecornu-lr-n-est-plus-maire-vernon-866763.html",
+      "sourcePrincipale": "France 3 Normandie",
+      "sourceDate": "2015-12-04",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2015-04-02",
+      "dateFin": "2017-06-21",
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "President du Conseil departemental de l'Eure",
+      "organisation": "Conseil departemental de l'Eure",
+      "description": "Plus jeune president de conseil departemental de France a l'epoque. Elu conseiller departemental du canton de Vernon puis president. Quitte le poste lors de son entree au gouvernement en juin 2017.",
+      "sourceUrl": "https://france3-regions.franceinfo.fr/normandie/eure/sebastien-lecornu-nomme-premier-ministre-retour-sur-son-parcours-de-l-eure-a-matignon-2900858.html",
+      "sourcePrincipale": "France 3 Normandie",
+      "sourceDate": "2025-09-09",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2017-06-18",
+      "dateFin": "2017-06-21",
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Depute de la 4e circonscription de l'Eure",
+      "organisation": "Assemblee nationale",
+      "description": "Elu depute en juin 2017 mais renonce immediatement au mandat pour integrer le gouvernement Philippe comme secretaire d'Etat. N'a jamais siege.",
+      "sourceUrl": "https://www.francebleu.fr/infos/politique/sebastien-lecornu-nomme-premier-ministre-l-ascension-d-un-grand-fidele-d-emmanuel-macron-1227400",
+      "sourcePrincipale": "France Bleu",
+      "sourceDate": "2025-09-09",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2017-06-21",
+      "dateFin": "2018-10-16",
+      "categorie": "MANDAT_GOUVERNEMENTAL",
+      "titre": "Secretaire d'Etat aupres du ministre de la Transition ecologique et solidaire",
+      "organisation": "Gouvernement Edouard Philippe",
+      "description": "Charge notamment des energies renouvelables, de la fermeture de Fessenheim, de l'EPR de Flamanville et du projet Cigeo a Bure. Benjamin du gouvernement a 31 ans.",
+      "sourceUrl": "https://www.vie-publique.fr/discours/203389-declaration-de-m-sebastien-lecornu-secretaire-detat-aupres-du-ministr",
+      "sourcePrincipale": "vie-publique.fr",
+      "sourceDate": "2017-11-22",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2018-10-16",
+      "dateFin": "2020-07-06",
+      "categorie": "MANDAT_GOUVERNEMENTAL",
+      "titre": "Ministre charge des Collectivites territoriales",
+      "organisation": "Gouvernement Edouard Philippe",
+      "description": "Ministre aupres de la ministre de la Cohesion des territoires et des Relations avec les collectivites territoriales (Jacqueline Gourault). Gestion de la crise des Gilets jaunes et du Grand debat national.",
+      "sourceUrl": "https://www.banquedesterritoires.fr/sebastien-lecornu",
+      "sourcePrincipale": "Banque des Territoires",
+      "sourceDate": "2025-09-09",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2020-07-06",
+      "dateFin": "2022-05-20",
+      "categorie": "MANDAT_GOUVERNEMENTAL",
+      "titre": "Ministre des Outre-mer",
+      "organisation": "Gouvernement Jean Castex",
+      "description": "Succede a Annick Girardin. Gere les crises sanitaires dans les territoires ultramarins et le processus referendaire en Nouvelle-Caledonie. Quitte le poste pour devenir ministre des Armees.",
+      "sourceUrl": "https://la1ere.franceinfo.fr/sebastien-lecornu-et-les-outre-mer-un-bilan-contraste-1621445.html",
+      "sourcePrincipale": "France Info (La 1ere)",
+      "sourceDate": "2025-09-09",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2020-09-27",
+      "dateFin": "2020-11-03",
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Senateur de l'Eure",
+      "organisation": "Senat",
+      "description": "Elu senateur pour l'Eure en septembre 2020. Ne peut sieger en raison de sa fonction ministerielle. Demissionne le 3 novembre 2020.",
+      "sourceUrl": "https://www.senat.fr/senateur/lecornu_sebastien19265t.html",
+      "sourcePrincipale": "Senat",
+      "sourceDate": "2020-11-03",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2022-05-20",
+      "dateFin": "2025-09-09",
+      "categorie": "MANDAT_GOUVERNEMENTAL",
+      "titre": "Ministre des Armees",
+      "organisation": "Gouvernement Elisabeth Borne / Gouvernement Gabriel Attal",
+      "description": "Plus long mandat a ce poste sous la Ve Republique (3 ans). Pilote la loi de programmation militaire 2024-2030 (413 milliards d'euros). Reconduit sous le gouvernement Attal.",
+      "sourceUrl": "https://www.defense.gouv.fr/en/ministry/sebastien-lecornu-french-minister-armed-forces",
+      "sourcePrincipale": "Ministere des Armees",
+      "sourceDate": "2025-09-09",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2025-09-09",
+      "dateFin": null,
+      "categorie": "MANDAT_GOUVERNEMENTAL",
+      "titre": "Premier ministre",
+      "organisation": "Gouvernement Lecornu",
+      "description": "Nomme Premier ministre le 9 septembre 2025 par Emmanuel Macron, succedant a Francois Bayrou (demission apres echec d'un vote de confiance). Gouvernement Lecornu I forme le 5 octobre (demission le 6, record de brievete). Reappointe le 10 octobre, gouvernement Lecornu II forme le 12 octobre 2025.",
+      "sourceUrl": "https://www.vie-publique.fr/en-bref/300414-emmanuel-macron-nomme-sebastien-lecornu-premier-ministre",
+      "sourcePrincipale": "vie-publique.fr",
+      "sourceDate": "2025-09-09",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2004-01-01",
+      "dateFin": "2017-06-18",
+      "categorie": "AUTRE",
+      "titre": "Militant et cadre UMP / Les Republicains",
+      "organisation": "UMP / Les Republicains",
+      "description": "Prend sa carte a l'UMP a 16 ans. Gravit les echelons du parti dans l'Eure. Rejoint La Republique En Marche en 2017 pour soutenir Emmanuel Macron.",
+      "sourceUrl": "https://www.franceinfo.fr/politique/gouvernement-de-sebastien-lecornu/ministre-indeboulonnable-proche-de-macron-ancien-reserviste-on-vous-presente-sebastien-lecornu-successeur-de-francois-bayrou-comme-premier-ministre_7482922.html",
+      "sourcePrincipale": "France Info",
+      "sourceDate": "2025-09-09",
+      "confidence": "medium",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2004-01-01",
+      "dateFin": "2008-01-01",
+      "categorie": "FORMATION",
+      "titre": "Maitrise (Master 1) de droit public",
+      "organisation": "Universite Paris 2 Pantheon-Assas",
+      "description": "Obtient une maitrise (bac+4) en droit public. N'a pas finalise son master 2 — controverse mediatique en septembre 2025 lorsque son cabinet admet qu'il ne detient pas de master contrairement a ce qu'il affirmait depuis 2016.",
+      "sourceUrl": "https://www.franceinfo.fr/politique/gouvernement-de-sebastien-lecornu/sebastien-lecornu-n-est-pas-titulaire-d-un-master-de-droit-reconnait-le-cabinet-du-premier-ministre_7502077.html",
+      "sourcePrincipale": "France Info",
+      "sourceDate": "2025-09-01",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": [
+    {
+      "date": "2023-05-15",
+      "type": "ENQUETE_PRELIMINAIRE",
+      "nature": "Favoritisme, prise illegale d'interets, recel",
+      "juridiction": "Parquet national financier (PNF)",
+      "statut": "EN_COURS",
+      "resume": "Le PNF ouvre une enquete preliminaire pour favoritisme et prise illegale d'interets concernant deux expositions photographiques commandees a l'ancien journaliste de TF1 Jean-Claude Narcy lorsque Lecornu etait president du conseil departemental de l'Eure, facturees 39 900 et 40 000 euros (juste sous le seuil d'appel d'offres). Lecornu entendu en audition libre le 11 avril 2025. Pas de mise en examen a ce jour.",
+      "sourcePrincipale": "France 3 Normandie",
+      "sourceUrl": "https://france3-regions.franceinfo.fr/normandie/eure/le-ministre-sebastien-lecornu-entendu-par-la-police-dans-une-enquete-pour-favoritisme-3138986.html",
+      "sourceDate": "2025-04-15",
+      "verifie": true,
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "conflict_flags": [
+    {
+      "description": "Enquete PNF en cours pour favoritisme et prise illegale d'interets (expositions Narcy). Lecornu entendu en audition libre avril 2025. Enquete pourrait etre transmise a la CJR compte tenu de son statut de Premier ministre.",
+      "sourceUrl": "https://france3-regions.franceinfo.fr/normandie/eure/justice-sebastien-lecornu-a-t-il-favorise-un-ancien-journaliste-de-tf1-lors-de-la-commande-d-une-exposition-photo-dans-l-eure-3168216.html",
+      "confidence": "high"
+    }
+  ]
+}

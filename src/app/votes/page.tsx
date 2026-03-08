@@ -46,7 +46,7 @@ const TAG_COLORS: Record<string, string> = {
 };
 
 export default async function VotesPage() {
-  const [tagCounts, totalScrutins, adoptedCount, recentScrutins] = await Promise.all([
+  const [tagCounts, totalScrutins, adoptedCount, recentScrutins, topLois] = await Promise.all([
     prisma.scrutinTag.groupBy({
       by: ["tag"],
       _count: { tag: true },
@@ -60,6 +60,17 @@ export default async function VotesPage() {
       orderBy: { dateScrutin: "desc" },
       take: 8,
       include: { tags: { select: { tag: true } } },
+    }),
+    prisma.loiParlementaire.findMany({
+      orderBy: { rang: "asc" },
+      take: 4,
+      include: {
+        scrutins: {
+          where: { role: "VOTE_FINAL" },
+          take: 1,
+          include: { scrutin: { select: { pour: true, contre: true, abstentions: true } } },
+        },
+      },
     }),
   ]);
 
@@ -140,6 +151,65 @@ export default async function VotesPage() {
                 </Link>
               );
             })}
+          </div>
+        </section>
+
+        {/* ── Grandes lois ── */}
+        <section>
+          <div className="mb-5 flex items-center justify-between">
+            <h2 className="text-xs font-semibold uppercase tracking-[0.15em] text-bureau-500">
+              Grandes lois
+            </h2>
+            <Link
+              href="/votes/lois"
+              className="text-xs text-teal/70 transition-colors hover:text-teal"
+            >
+              Toutes les lois &rarr;
+            </Link>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            {topLois.map((loi) => {
+              const vf = loi.scrutins[0]?.scrutin;
+              const total = vf ? vf.pour + vf.contre + vf.abstentions : 0;
+              const isAdopted = loi.statut === "adopte";
+              return (
+                <Link
+                  key={loi.id}
+                  href={`/votes/lois/${loi.slug}`}
+                  className="group flex flex-col gap-3 rounded-xl border border-bureau-700/30 bg-bureau-800/30 p-4 transition-colors hover:border-teal/30 hover:bg-bureau-800/50"
+                >
+                  <div className="flex items-center gap-2">
+                    <span className={`rounded px-2 py-0.5 text-xs font-medium ${isAdopted ? "bg-teal/10 text-teal" : "bg-rose/10 text-rose"}`}>
+                      {isAdopted ? "Adopté" : "Rejeté"}
+                    </span>
+                    {loi.dateVote && (
+                      <span className="text-xs text-bureau-500">{fmtDate(loi.dateVote)}</span>
+                    )}
+                  </div>
+                  <p className="font-serif text-base text-bureau-100 group-hover:text-teal transition-colors">
+                    {loi.titreCourt}
+                  </p>
+                  <p className="line-clamp-2 text-xs text-bureau-400">{loi.resumeSimple}</p>
+                  {vf && total > 0 && (
+                    <div className="flex h-1.5 w-full overflow-hidden rounded-full bg-bureau-700/40">
+                      <div className="bg-teal/60" style={{ width: `${(vf.pour / total) * 100}%` }} />
+                      <div className="bg-rose/60" style={{ width: `${(vf.contre / total) * 100}%` }} />
+                      <div className="bg-amber/40" style={{ width: `${(vf.abstentions / total) * 100}%` }} />
+                    </div>
+                  )}
+                </Link>
+              );
+            })}
+          </div>
+
+          <div className="mt-4 text-right">
+            <Link
+              href="/votes/lois"
+              className="rounded-lg border border-bureau-700/40 bg-bureau-800/20 px-4 py-2 text-xs text-bureau-300 transition-colors hover:bg-bureau-800/40"
+            >
+              Voir tous les textes législatifs &rarr;
+            </Link>
           </div>
         </section>
 
