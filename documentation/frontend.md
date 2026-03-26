@@ -1,6 +1,6 @@
 # Frontend Implementation
 
-> Last updated: Mar 8, 2026 — Session 36. 62 routes + 5 OG image routes, 43 components, 14 client components.
+> Last updated: Mar 26, 2026 — Session 39 (UX Restructure). ~35 active routes + ~30 legacy (Phase 6 removal pending) + 5 OG image routes, 42 components, 14 client components.
 
 Complete reference for all UI pages, components, styling, and patterns.
 
@@ -11,10 +11,10 @@ Complete reference for all UI pages, components, styling, and patterns.
 - **Next.js 16** App Router — all pages are React Server Components by default
 - **Tailwind CSS 4** with custom theme tokens defined in `globals.css`
 - **No client-side data fetching** — every page queries Prisma directly at render time
-- **14 client components**: `SearchInput`, `Avatar`, `DeclarationSection`, `ProfileTabs`, `DeptLookup`, `NavSearch`, `SearchBox`, `FranceMap`, `DeltaBadge`, `HeroSlider`, `GroupExpander`, `ScrutinAccordion`, `MediaBoard`, `MobileNav` (all use `"use client"`)
+- **14 client components**: `SearchInput`, `Avatar`, `DeclarationSection`, `ProfileTabs`, `DeptLookup`, `NavSearch`, `SearchBox`, `FranceMap`, `DeltaBadge`, `GroupExpander`, `ScrutinAccordion`, `MediaBoard`, `MobileNav`, `ConflictDrilldown` (all use `"use client"`) — `HeroSlider` deleted in Session 39
 - **1 shared lib**: `nuance-colors.ts` — political party color mapping used by elections pages
 - **French localization** throughout: `<html lang="fr">`, `fr-FR` locale for numbers/dates
-- **ISR** (`export const revalidate = N`): homepage + votes = 3600s; dossiers + representants hub + economie + patrimoine + territoire hub = 86400s; profiles = dynamic (no revalidate)
+- **ISR** (`export const revalidate = N`): homepage + votes = 3600s; profils hub + economie + patrimoine + territoire hub = 86400s; profiles = dynamic (no revalidate); surviving dossiers (medias, financement-politique) = 86400s
 - **generateMetadata**: all 9 key dynamic routes export `generateMetadata` for SEO
 
 ---
@@ -101,53 +101,85 @@ Applied with: `font-[family-name:var(--font-display)]` for headings.
 
 [layout.tsx](../src/app/layout.tsx) provides the shell:
 
-- **Navbar**: Sticky top, backdrop-blur, SVG logo + "L'Observatoire" brand + **`NavSearch`** (always-visible search form — `flex`, not `hidden md:flex`) + **7 nav links** (Accueil, Dossiers, Représentants, Votes, Économie, Territoire, Patrimoine) wrapped in `.nav-links` div (hidden on mobile via CSS) + **`MobileNav`** hamburger menu (visible only on mobile <768px)
+- **Navbar**: Sticky top, backdrop-blur, SVG logo + "L'Observatoire" brand (click → `/`) + **`NavSearch`** (always-visible search form — `flex`, `w-80`, `/` keyboard shortcut to focus) + **4 nav links** (**Signaux**, **Profils**, **Votes**, **Territoire**) wrapped in `.nav-links` div (hidden on mobile via CSS) + **`MobileNav`** hamburger menu (visible only on mobile <768px). Session 39 restructure: collapsed from 9 items; killed from nav: Accueil, Dossiers, Représentants, Gouvernement, Économie, Patrimoine.
 - **Main**: `flex-1` content area
-- **Footer**: Data source attribution ("data.gouv.fr, INSEE, Senat, HATVP") + "L'Observatoire Citoyen 2025"
+- **Footer**: Data source attribution ("data.gouv.fr, INSEE, Senat, HATVP") + "Patrimoine culturel" link + "L'Observatoire Citoyen 2025"
 - **Mobile nav**: `MobileNav` client component — hamburger button (`.mobile-menu-btn`) toggles full-screen overlay (`.mobile-nav-overlay`) with `slideDown` animation. Closes on link click.
 - **Container**: `max-w-7xl px-6` on list pages; `max-w-4xl px-6` on profile detail pages (focused editorial width)
+
+**Breadcrumbs**: `/profils/*` pages use `{ label: "Profils", href: "/profils" }`. Legacy `/representants/*` pages still use `{ label: "Représentants", href: "/representants" }`. `PageHeader` component renders breadcrumbs with `/` separators.
 
 **Metadata**: `"L'Observatoire Citoyen — Intelligence civique française"`
 
 ---
 
-## Route Map (61 routes + 5 OG image routes)
+## Route Map (~35 active + ~30 legacy + 5 OG image routes)
 
 ### Static (prerendered at build time)
 | Route | Purpose |
 |-------|---------|
-| `/` | Homepage — `HeroSlider` cycling ~10 civic data points, dossier cards, recent votes, conflict alerts, dept lookup, postal code CTA |
-| `/dossiers` | Dossier hub — 8 issue cards |
-| `/representants` | Représentants hub — 8 section cards: Président · Gouvernement (37 membres, rose) · Députés · Sénateurs · Élus locaux · Représentants d'intérêts · Scrutins · Partis politiques |
+| `/` | Homepage — search-first hero with giant search bar, entity pills (Députés, Sénateurs, Ministres, Lobbyistes, Votes), inline top 6 signals, 5 recent votes, territory lookup. Session 39 rewrite: removed HeroSlider, dossier grid, KPI counters, economic indicators. |
+| `/profils` | **People hub** (Session 39) — index page linking to all people sections: députés, sénateurs, ministres, lobbyistes, partis, élus, comparer |
+| `/profils/ministres` | Government index — Lecornu II government (37 members), grouped by type (President → PM → Ministres → Délégués → Secrétaires), avatar grid, links to profiles. Supports `?gouvernement=borne|attal|barnier` filter. Copy of `/gouvernement` page with updated links. |
 | `/elections` | Hub — Législatives 2024 card + national summary stats |
-| `/economie` | Dashboard — SVG MiniChart per indicator (15+ series) |
+| `/economie` | Dashboard — SVG MiniChart per indicator (15+ series). No longer in nav; accessible via footer/search. |
 | `/territoire` | Browser — regions with department cards + `FranceMap` (Phase 8A/8B, 6 indicators, dept click → `/territoire/[code]`) |
-| `/gouvernement` | Government index — Lecornu II government (37 members), grouped by type (President → PM → Ministres → Délégués → Secrétaires), avatar grid, links to profiles (Phase 9A + Session 34) |
-| `/patrimoine` | Hub — top 10 museums + monument domains |
+| `/patrimoine` | Hub — top 10 museums + monument domains. No longer in nav; accessible via footer link "Patrimoine culturel". |
 | `/votes` | Votes hub — 13 topic grid + recent scrutins |
 | `/votes/alignements` | Alignment matrix — N×N group co-vote heatmap, top 5 allies/opponents per group (ISR 86400) |
-| `/president` | **HTTP 308 permanent redirect → `/gouvernement/emmanuel-macron`** |
+| `/president` | **HTTP 308 permanent redirect → `/profils/emmanuel-macron`** |
 
-### Dossiers (9 dynamic pages)
+### Dossiers (2 surviving + 8 killed → redirected)
+
+**Surviving deep-dive enquêtes** (linked from `/signaux`):
 | Route | Topic |
 |-------|-------|
-| `/dossiers/pouvoir-dachat` | Purchasing power — `FranceMap` (rev/income), inflation, votes, lobbying (Phase 8B) |
-| `/dossiers/confiance-democratique` | Democratic trust — declarations, party money, 49.3 |
-| `/dossiers/dette-publique` | Public debt — `FranceMap` (det/debt), budget votes, local debt (Phase 8B) |
-| `/dossiers/emploi-jeunesse` | Employment & youth — `FranceMap` (cho/unemployment), education stats EDUC_NO_DIPLOMA + EDUC_BAC_PLUS + EDUC_HIGHER_EDUC (Phase 8B/8C) |
-| `/dossiers/logement` | Housing — permits, vacancy, votes, lobbying |
 | `/dossiers/medias` | **Media ownership concentration** — `MediaBoard` (interactive owner cards), `ConcentrationChart` (CSS stacked bars), `CamembertChart` (SVG donut), votes culture, lobbying audiovisuel/presse (Session 35) |
-| `/dossiers/sante` | Healthcare — `FranceMap` (med/GP density), PLFSS votes (Phase 8B) |
-| `/dossiers/transition-ecologique` | Ecology — votes, lobbying, declared energy interests |
-| `/dossiers/retraites` | Pensions — 49.3 votes, group positions, individual votes |
+| `/dossiers/financement-politique` | **Political financing** — cost per seat bars, funding structure stacked bars, electoral yield table, 2021-2024 evolution for RN/Renaissance/LFI/LR (Session 37) |
 
-### Représentants (canonical people section)
+**Killed dossier pages** (Session 39 — all redirect via `next.config.ts`):
+| Old Route | Redirects To |
+|-----------|-------------|
+| `/dossiers` | `/signaux` |
+| `/dossiers/pouvoir-dachat` | `/territoire` |
+| `/dossiers/confiance-democratique` | `/signaux` |
+| `/dossiers/dette-publique` | `/territoire` |
+| `/dossiers/emploi-jeunesse` | `/territoire` |
+| `/dossiers/logement` | `/territoire` |
+| `/dossiers/sante` | `/territoire` |
+| `/dossiers/transition-ecologique` | `/signaux` |
+| `/dossiers/retraites` | `/signaux` |
+
+### Signaux (Session 39)
+| Route | Key Features |
+|-------|-------------|
+| `/signaux` | Transparency signal feed — URL-param-driven filter pills by type (Conflits, Portes tournantes, Lobbying, Médias, Déclarations, Dissidences) and by severity (Critique, Notable, Informatif). Deep-dive "Enquête" link cards at bottom for `/dossiers/medias` + `/dossiers/financement-politique`. |
+
+### Profils (new canonical people section — Session 39)
+| Route | Key Features |
+|-------|-------------|
+| `/profils` | People hub index — links to all people sections |
+| `/profils/deputes` | Search, groupe filter, dept filter, pagination |
+| `/profils/deputes/[id]` | **Redirects to `/profils/[slug]`** if `PersonnalitePublique.deputeId` matches. Otherwise: Hero profile + tabs (Activité / Déclarations / **Transparence** / Informations) |
+| `/profils/senateurs` | Search, pagination |
+| `/profils/senateurs/[id]` | **Redirects to `/profils/[slug]`** if `PersonnalitePublique.senateurId` matches. Otherwise: Hero profile + tabs (Mandats & Commissions / Déclarations / **Transparence** / Informations). Transparence tab: commission-lobbying overlap via `COMMISSION_DOMAINS` regex → `ActionLobbyiste.count` queries |
+| `/profils/ministres` | Government index — SIGINT organigram, `?gouvernement=` filter |
+| `/profils/[slug]` | Minister profile — `ProfileHero` + `ProfileTabs`. Same as old `/gouvernement/[slug]` with updated internal links. |
+| `/profils/elus` | Local officials list — 593K rows, paginated |
+| `/profils/lobbyistes` | Search, pagination |
+| `/profils/lobbyistes/[id]` | Info panel, actions list |
+| `/profils/partis` | Year selector, sort options, aggregate stats |
+| `/profils/partis/[id]` | Revenue/expense breakdown bars, multi-year table |
+| `/profils/comparer` | Deputy comparison (4-state) |
+
+### Représentants (legacy — being phased out in Phase 6)
+Old `/representants/*` routes still exist with identical pages. Will be replaced with redirects to `/profils/*` in Phase 6.
 | Route | Key Features |
 |-------|-------------|
 | `/representants/deputes` | Search, groupe filter, dept filter, pagination |
-| `/representants/deputes/[id]` | **Redirects to `/gouvernement/[slug]`** if `PersonnalitePublique.deputeId` matches (auto-matched by name in seed script — covers current deputies who are ministers). Otherwise: Hero profile + tabs (Activité / Déclarations / **Transparence** / Informations) |
+| `/representants/deputes/[id]` | **Redirects to `/gouvernement/[slug]`** if `PersonnalitePublique.deputeId` matches. Otherwise: Hero profile + tabs (Activité / Déclarations / **Transparence** / Informations) |
 | `/representants/senateurs` | Search, pagination |
-| `/representants/senateurs/[id]` | **Redirects to `/gouvernement/[slug]`** if `PersonnalitePublique.senateurId` matches. Otherwise: Hero profile + tabs (Mandats & Commissions / Déclarations / Informations) |
+| `/representants/senateurs/[id]` | **Redirects to `/gouvernement/[slug]`** if `PersonnalitePublique.senateurId` matches. Otherwise: Hero profile + tabs (Mandats & Commissions / Déclarations / **Transparence** / Informations). Transparence tab (Session 37): commission-lobbying overlap via `COMMISSION_DOMAINS` regex → `ActionLobbyiste.count` queries |
 | `/representants/elus` | Local officials list — 593K rows, paginated |
 | `/representants/elus/maires` | Mayors subset |
 | `/representants/lobbyistes` | Search, pagination |
@@ -157,14 +189,14 @@ Applied with: `font-[family-name:var(--font-display)]` for headings.
 | `/representants/partis` | Year selector, sort options, aggregate stats |
 | `/representants/partis/[id]` | Revenue/expense breakdown bars, multi-year table |
 
-### Gouvernement (Phase 9)
+### Gouvernement (legacy — being phased out in Phase 6)
 | Route | Key Features |
 |-------|-------------|
-| `/gouvernement` | **SIGINT intelligence bureau organigram** (Session 36 redesign). Classified document aesthetic with amber classification bar, `GOV-FR-2026-044` doc ref, scan-line effects. 5-tier layout: `PresidentCard` (amber, `.gov-hero-card.sigint-amber`), `PremierMinistreCard` (teal), `StemNode` amber→teal relay connector, `SpreadConnector` horizontal branch, `MinistreCard` grid (blue, `.dossier-card`), `DelegueCard` grid (violet), `SecretaireCard` grid (rose). `TierLabel` section headers with `classification-badge`. `Brackets` component (4-corner targeting reticle using `border-current`). Tier stat pills in monospace. Legend footer with T1–T5 color codes. ISR 3600. |
-| `/gouvernement/[slug]` | Profile page — `ProfileHero` + `ProfileTabs`. **Redirects** from `/representants/deputes/[id]` and `/senateurs/[id]` when `PersonnalitePublique.deputeId`/`senateurId` matches. **Two tab layouts** based on `isPresident` detection (`mandats.some(m => m.type === "PRESIDENT")`): **President (6 tabs, default: Promesses)**: Parcours / Promesses / Bilan économique / Lobbying & Agenda / Déclarations HATVP / Affaires judiciaires — plus `ProfileHero` scores (election %, promise score, HATVP count) + contact (Élysée, Twitter). **Standard ministers (4–5 tabs, default: Parcours)**: Parcours / Déclarations HATVP / Mandats & Lobbying / Affaires judiciaires (conditional — only if `judiciaireCount > 0`) / Activité parlementaire (conditional — if `deputeId`/`senateurId` set). 44 profiles total (37 Lecornu II + Macron + 6 former Bayrou-only). (Phase 9A + 9E + Sessions 29–34) |
+| `/gouvernement` | SIGINT intelligence bureau organigram. Still active; will redirect to `/profils/ministres` in Phase 6. |
+| `/gouvernement/[slug]` | Profile page. Still active; will redirect to `/profils/[slug]` in Phase 6. |
 
-### Gouvernance (legacy — HTTP 308 redirects to /representants)
-`/gouvernance/*` routes remain active (still served; linked from older bookmarks and deputy profiles). Redirects configured in `next.config.ts`.
+### Gouvernance (legacy — HTTP 308 redirects to /profils)
+`/gouvernance/*` routes redirect to `/profils/*` (updated from `/representants/*` in Session 39). Configured in `next.config.ts`.
 
 ### Votes (dedicated votes section)
 | Route | Key Features |
@@ -208,7 +240,7 @@ Next.js `opengraph-image.tsx` files — `runtime = "nodejs"`, 1200×630, inline 
 
 | Route | Key Data |
 |-------|----------|
-| `/opengraph-image` | Homepage brand — platform name, tagline, 8 dossier chips, 3 stat cards (800K+ données, 57 dashboards, 8 dossiers). Static, no DB. |
+| `/opengraph-image` | Homepage brand — platform name, tagline, stat cards. Static, no DB. |
 | `/dossiers/logement/opengraph-image` | Logement dossier — queries live housing stats: avg vacancy rate + avg secondary rate (StatLocale) + vote count (ScrutinTag). |
 | `/representants/deputes/[id]/opengraph-image` | Initials monogram + name + groupe + participation % + vote count + conflict count |
 | `/territoire/[departementCode]/opengraph-image` | Dept + region name + 3 INSEE indicators (MEDIAN_INCOME, POVERTY_RATE, UNEMPLOYMENT_RATE) + counts (deputés, sénateurs, élus) |
@@ -220,49 +252,32 @@ Next.js `opengraph-image.tsx` files — `runtime = "nodejs"`, 1200×630, inline 
 
 ## Pages Detail
 
-### `/` — Homepage
+### `/` — Homepage (Session 39 rewrite)
 
 **File**: [page.tsx](../src/app/page.tsx) | `revalidate = 3600`
 
-**Data**: IPC_MENSUEL (13 months for YoY), CHOMAGE_TAUX_TRIM (latest), deport count, declarationInteret with participations count, 8 dossier configs, 5 recent scrutins with group votes, top 3 conflict signals, all entity counts for the grid.
+**Data**: Top 6 signals (conflict, lobby, judicial), 5 recent scrutins with group votes, entity counts (députés, sénateurs, ministres, lobbyistes, scrutins).
 
 **Sections**:
-1. **Hero** — `.grid-bg` pattern, `HeroSlider` client component cycling ~10 civic data points (2 DB-driven, 5 hardcoded factual, 2 DB transparency). Pauses on hover. Dot indicators.
-2. **Dossiers Thématiques** — 8 issue cards with key stats, each linking to `/dossiers/[slug]`
-3. **Derniers Scrutins** — 6 most recent parliamentary votes with result badge + group breakdown
-4. **Alertes Transparence** — Officials with highest financial participations (amber alert cards)
-5. **Votre Territoire** — `DeptLookup` client component → département dashboard redirect
-6. **Vue d'ensemble** — 13-stat grid (all entity counts)
+1. **Search-first hero** — `.grid-bg` pattern, giant centered search bar, entity pills (Députés, Sénateurs, Ministres, Lobbyistes, Votes) each linking to `/profils/*` or `/votes`
+2. **Signaux récents** — Top 6 transparency signals inline, "Tous les signaux →" link to `/signaux`
+3. **Derniers Scrutins** — 5 most recent parliamentary votes with result badge + group breakdown
+4. **Votre Territoire** — `DeptLookup` client component → département dashboard redirect
+
+Removed in Session 39: `HeroSlider`, dossier grid, KPI counters, economic indicators.
 
 ---
 
-### `/dossiers` — Dossier Hub
+### `/dossiers/medias` and `/dossiers/financement-politique` — Surviving Dossier Pages
 
-**File**: [page.tsx](../src/app/dossiers/page.tsx) | `revalidate = 86400`
+The 2 surviving dossier pages are deep-dive enquêtes linked from `/signaux`. They use `DossierNav` (simplified to 2 links + "← Signaux" back link).
 
-8 issue cards from `dossier-config.ts`, each with label, description, stat, and link. `DossierNav` sidebar.
-
----
-
-### `/dossiers/[slug]` — Dossier Pages
-
-All 8 follow the same layout pattern:
-
-**Components**: `DossierHero` + `DossierNav` + `IndicatorCard` row + `TopicVoteList` + `LobbyingDensity` + `ConflictAlert` (where applicable) + `RankingTable` (where applicable) + `DeptMap` (where applicable)
-
-**Data patterns by dossier**:
+**Data patterns**:
 
 | Dossier | Key Data Queries |
 |---------|----------------|
-| `pouvoir-dachat` | Indicateurs (pib/emploi/prix/salaires), StatLocale MEDIAN_INCOME by dept, Scrutins tagged budget/fiscalite, ActionLobbyiste fiscal/économi |
-| `confiance-democratique` | DeclarationInteret counts, Lobbyiste/ActionLobbyiste aggregates, PartiPolitique aide vs dons, Scrutin motions de censure |
-| `dette-publique` | Indicateurs (finances domain), Scrutins tagged budget, BudgetLocal aggregates |
-| `emploi-jeunesse` | Indicateurs (emploi domain), StatLocale EMPLOYMENT_RATE/UNEMPLOYMENT_RATE by dept, Scrutins travail/education |
-| `logement` | Indicateurs (construction domain), StatLocale housing vacancy, Scrutins logement, ActionLobbyiste immobili |
-| `sante` | DensiteMedicale by dept (GP density), Scrutins sante, ActionLobbyiste santé/pharma, `DeptMap` |
-| `transition-ecologique` | Scrutins ecologie, ActionLobbyiste énergi/environnement, DeclarationInteret energy sector |
-| `retraites` | Scrutins retraites (especially 49.3), GroupeVote breakdown, VoteRecord per-deputy on censure motions |
 | `medias` | GroupeMedia (with Filiale[], ParticipationMedia.proprietaire.personnalite), Filiale count, Scrutins culture tag, ActionLobbyiste audiovisuel/presse/media, top 5 lobbying orgs |
+| `financement-politique` | ComptePolitique (4 years), ElectionLegislative results, CandidatLegislatif seats/votes by nuance, nuance-party-map cross-reference |
 
 ### `/dossiers/medias` — Media Ownership Concentration (Session 35)
 
@@ -287,11 +302,13 @@ Unique dossier page with dedicated components for media ownership visualization.
 
 **Tabs**: Activité / Déclarations / **Transparence** / Informations
 
-**Transparence tab** (new in Phase 3):
-- `ConflictAlert`: declared participations financières cross-referenced against votes on matching ScrutinTag domains
-- Tag breakdown: bar chart of deputy's vote positions per policy domain (% pour/contre/abstention)
+**Declaration matching** (Session 38 fix): `DeclarationInteret` query uses `mode: "insensitive" as const` for `nom`/`prenom` to handle HATVP uppercase names (e.g., `FAYSSAT` vs `Fayssat`). Without this, deputies with uppercase HATVP entries showed empty declarations.
+
+**Transparence tab** (Phase 3 + Session 37 `ConflictDrilldown`):
+- Stat cards: total participations déclarées (€), votes sur textes thématiques, déports count
+- `ConflictDrilldown` (client component): per-tag conflict alerts with expandable vote lists showing position badge, scrutin link, date, result (adopté/rejeté)
+- Tag breakdown: bar chart of deputy's vote positions per policy domain
 - Déports list with scrutin links
-- "A voté sur N textes liés à ses intérêts déclarés"
 
 ---
 
@@ -395,11 +412,11 @@ Unique dossier page with dedicated components for media ownership visualization.
 
 ### All other pages (unchanged from v1)
 
-- `/economie` — `revalidate = 86400`, SVG MiniChart per indicator (now 15+ series)
+- `/economie` — `revalidate = 86400`, SVG MiniChart per indicator (now 15+ series). Unit-aware formatting (Session 39): `pourcent` → "X %", `eur` → "X,XX €", `centaines_millions_eur` → "X Md €" (÷10), `millions_eur` → "X Md €" (÷1000), `milliards_eur` → "X,X Md €", `indice` → plain number, all others → `fmt(Math.round(val))`. DETTE_PIB uses `centaines_millions_eur` (BDM series `001694258` returns raw debt, not % of GDP). SMIC uses `indice` (base 100).
 - `/representants/scrutins` + `/[id]` — group bars, individual votes (same as legacy `/gouvernance/scrutins`)
 - `/representants/lobbyistes` + `/[id]` — info panel, actions
 - `/representants/partis` + `/[id]` — year selector, revenue/expense bars
-- `/elections/legislatives-2024` — tour switcher, nuance bars
+- `/elections/legislatives-2024` — tour switcher, dept filter, nuance bars, **FinanceTable** (Session 37: aide publique/recettes/dons/sièges cross-referenced with CNCCFP via `nuance-party-map.ts`)
 - `/patrimoine/musees` + `/[id]` — SVG attendance chart
 - `/patrimoine/monuments` + `/[id]` — GPS link, description
 
@@ -429,7 +446,7 @@ Full-width hero banner for dossier pages. `.grid-bg` pattern, Instrument Serif h
 { current: string }  // current dossier slug
 ```
 
-Horizontal pill navigation between the 8 dossiers. Active dossier highlighted `bg-teal/10 text-teal`. Reads slug list from `dossier-config.ts`.
+Simplified navigation for the 2 surviving dossier pages (medias, financement-politique) + "← Signaux" back link. Active dossier highlighted `bg-bureau-700 text-bureau-100`. `overflow-x-auto scrollbar-hide` for horizontal scroll. Right-edge gradient fade (`pointer-events-none`, `from-bureau-900/90 to-transparent`) signals overflow. Reads slug list from `dossier-config.ts`.
 
 ---
 
@@ -525,7 +542,7 @@ Ranked bar visualization for département data. Renders a vertical bar chart (no
 // No props — self-contained
 ```
 
-Compact search input in the navbar. Always `flex` (not `hidden md:flex`). Uses `useRef` to read DOM value + `onKeyDown` on the input (Enter) + `type="button"` `onClick` on the magnifier icon — no `<form>` wrapper. Navigates to `/recherche?q=<value>` via `useRouter`. Min 2-char enforced. Styled: `w-44 border-bureau-700/50 bg-bureau-800/60 focus:border-teal-500/60`.
+Enlarged search input in the navbar (Session 39: `w-52` → `w-80`). Always `flex` (not `hidden md:flex`). Uses `useRef` to read DOM value + `onKeyDown` on the input (Enter) + `type="button"` `onClick` on the magnifier icon — no `<form>` wrapper. Navigates to `/recherche?q=<value>` via `useRouter`. Min 2-char enforced. `/` keyboard shortcut to focus. Styled: `w-80 border-bureau-700/50 bg-bureau-800/60 focus:border-teal-500/60`.
 
 ---
 
@@ -590,7 +607,7 @@ Interactive SVG choropleth of French departments (96 metro + 5 overseas insets).
 - `src/data/indicators.ts` — 6 `IndicatorConfig` objects, `INDICATORS[]`, `INDICATOR_MAP`, `DeptData`, `IndicatorKey`, `format: "euro"|"pct"|"compact"|"number"`
 - `src/lib/france-map-data.ts` — `getFranceMapData()` server async function, 4 parallel Prisma queries, `distinct + orderBy: { annee: "desc" }` for latest year per dept
 
-**Integrated on** (Phase 8B): `/territoire` (full, rev), `/dossiers/pouvoir-dachat` (full, rev), `/dossiers/sante` (full, med), `/dossiers/emploi-jeunesse` (full, cho), `/dossiers/dette-publique` (full, det), `/territoire/[dept]` (mini), `/mon-territoire` (mini).
+**Integrated on** (Phase 8B): `/territoire` (full, rev), `/territoire/[dept]` (mini), `/mon-territoire` (mini). Previously also on 4 killed dossier pages (pouvoir-dachat, sante, emploi-jeunesse, dette-publique).
 
 ---
 
@@ -878,13 +895,13 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
 
 **File**: [dossier-config.ts](../src/lib/dossier-config.ts)
 
-Central registry of all 8 dossiers. Each entry: `{ slug, label, description, stat, statSource, tags, lobbyDomains, color }`. Used by `DossierNav`, dossier hub page, and homepage.
+Registry of dossier metadata. Reduced from 8+2 to 2 surviving dossiers (medias, financement-politique) in Session 39. Each entry: `{ slug, label, description, stat, statSource, tags, lobbyDomains, color }`. Used by `DossierNav`.
 
 ### ISR Revalidation
 
 ```tsx
-export const revalidate = 3600;  // Homepage, votes pages
-export const revalidate = 86400; // Dossiers, economie, patrimoine, territoire hub, representants hub
+export const revalidate = 3600;  // Homepage, votes pages, /signaux, /profils/ministres
+export const revalidate = 86400; // Surviving dossiers (medias, financement-politique), economie, patrimoine, territoire hub, profils hub
 // (no export) = fully dynamic — deputy/senator/lobbyiste/scrutin profiles
 ```
 
@@ -935,51 +952,48 @@ List pages: `max-w-7xl px-6`. Profile detail pages: `max-w-4xl px-6` (focused ed
 
 ---
 
-## Build Output (Session 35 — 62 routes + 5 OG)
+## Build Output (Session 39 — ~35 active + ~30 legacy + 5 OG)
 
 ```
 Route (app)                                                   Type
-┌ ƒ /opengraph-image                                          Dynamic (OG — Session 18/19)
-├ ○ /                                                         Static (ISR 3600)
-├ ○ /dossiers                                                 Static (ISR 86400)
-├ ƒ /dossiers/confiance-democratique                          Dynamic
-├ ƒ /dossiers/dette-publique                                  Dynamic
-├ ƒ /dossiers/emploi-jeunesse                                 Dynamic
-├ ƒ /dossiers/logement                                        Dynamic
-├ ƒ /dossiers/logement/opengraph-image                        Dynamic (OG — Session 18/19)
-├ ƒ /dossiers/medias                                          Dynamic (Session 35)
-├ ƒ /dossiers/pouvoir-dachat                                  Dynamic
-├ ƒ /dossiers/retraites                                       Dynamic
-├ ƒ /dossiers/sante                                           Dynamic
-├ ƒ /dossiers/transition-ecologique                           Dynamic
-├ ○ /representants                                            Static (ISR 86400)
-├ ƒ /representants/deputes                                    Dynamic
-├ ƒ /representants/deputes/[id]                               Dynamic
+┌ ƒ /opengraph-image                                          Dynamic (OG)
+├ ○ /                                                         Static (ISR 3600) — Session 39 rewrite
+├ ○ /signaux                                                  Static (ISR 3600 — Session 39)
+├ ƒ /dossiers/medias                                          Dynamic (Session 35 — surviving)
+├ ƒ /dossiers/financement-politique                           Dynamic (Session 37 — surviving)
+├ ○ /profils                                                  Static (ISR 86400 — Session 39)
+├ ƒ /profils/deputes                                          Dynamic (Session 39)
+├ ƒ /profils/deputes/[id]                                     Dynamic (Session 39)
+├ ƒ /profils/senateurs                                        Dynamic (Session 39)
+├ ƒ /profils/senateurs/[id]                                   Dynamic (Session 39)
+├ ○ /profils/ministres                                        Static (ISR 3600 — Session 39)
+├ ƒ /profils/[slug]                                           Dynamic (Session 39)
+├ ƒ /profils/elus                                             Dynamic (Session 39)
+├ ƒ /profils/lobbyistes                                       Dynamic (Session 39)
+├ ƒ /profils/lobbyistes/[id]                                  Dynamic (Session 39)
+├ ƒ /profils/partis                                           Dynamic (Session 39)
+├ ƒ /profils/partis/[id]                                      Dynamic (Session 39)
+├ ƒ /profils/comparer                                         Dynamic (Session 39)
+├ ○ /representants                                            Static (legacy — Phase 6 removal)
+├ ƒ /representants/deputes                                    Dynamic (legacy)
+├ ƒ /representants/deputes/[id]                               Dynamic (legacy)
 ├ ƒ /representants/deputes/[id]/opengraph-image               Dynamic (OG — 7E)
-├ ƒ /representants/elus                                       Dynamic
-├ ƒ /representants/elus/maires                                Dynamic
-├ ƒ /representants/lobbyistes                                 Dynamic
-├ ƒ /representants/lobbyistes/[id]                            Dynamic
-├ ƒ /representants/partis                                     Dynamic
-├ ƒ /representants/partis/[id]                                Dynamic
-├ ƒ /representants/scrutins                                   Dynamic
-├ ƒ /representants/scrutins/[id]                              Dynamic
-├ ƒ /representants/senateurs                                  Dynamic
-├ ƒ /representants/senateurs/[id]                             Dynamic
-├ ○ /gouvernance                                              Static (legacy)
-├ ƒ /gouvernance/deputes                                      Dynamic (legacy)
-├ ƒ /gouvernance/deputes/[id]                                 Dynamic (legacy)
-├ ƒ /gouvernance/elus                                         Dynamic (legacy)
-├ ƒ /gouvernance/elus/maires                                  Dynamic (legacy)
-├ ƒ /gouvernance/lobbyistes                                   Dynamic (legacy)
-├ ƒ /gouvernance/lobbyistes/[id]                              Dynamic (legacy)
-├ ƒ /gouvernance/partis                                       Dynamic (legacy)
-├ ƒ /gouvernance/partis/[id]                                  Dynamic (legacy)
+├ ƒ /representants/elus                                       Dynamic (legacy)
+├ ƒ /representants/elus/maires                                Dynamic (legacy)
+├ ƒ /representants/lobbyistes                                 Dynamic (legacy)
+├ ƒ /representants/lobbyistes/[id]                            Dynamic (legacy)
+├ ƒ /representants/partis                                     Dynamic (legacy)
+├ ƒ /representants/partis/[id]                                Dynamic (legacy)
+├ ƒ /representants/scrutins                                   Dynamic (legacy)
+├ ƒ /representants/scrutins/[id]                              Dynamic (legacy)
+├ ƒ /representants/senateurs                                  Dynamic (legacy)
+├ ƒ /representants/senateurs/[id]                             Dynamic (legacy)
+├ ○ /gouvernement                                             Static (legacy — Phase 6 removal)
+├ ƒ /gouvernement/[slug]                                      Dynamic (legacy)
+├ ○ /gouvernance                                              Static (legacy — redirects to /profils)
 ├ ƒ /gouvernance/scrutins                                     Dynamic (legacy, still active)
 ├ ƒ /gouvernance/scrutins/[id]                                Dynamic (legacy, still active)
 ├ ƒ /gouvernance/scrutins/[id]/opengraph-image                Dynamic (OG — 7E)
-├ ƒ /gouvernance/senateurs                                    Dynamic (legacy)
-├ ƒ /gouvernance/senateurs/[id]                               Dynamic (legacy)
 ├ ƒ /recherche                                                Dynamic (7B + Session 18)
 ├ ○ /votes                                                    Static (ISR 3600)
 ├ ○ /votes/alignements                                        Static (ISR 86400 — 7F)
@@ -1001,13 +1015,18 @@ Route (app)                                                   Type
 ├ ƒ /patrimoine/monuments/[id]                                Dynamic
 ├ ƒ /patrimoine/musees                                        Dynamic
 ├ ƒ /patrimoine/musees/[id]                                   Dynamic
-├ ○ /president                                                Static (Phase 6)
+├ ○ /president                                                Static (redirect → /profils/emmanuel-macron)
 └ ƒ /mon-territoire                                           Dynamic (7A)
 ```
 
-11 static + 48 dynamic = 59 routes. Plus 5 OG image routes = 64 total in build output.
+~35 active functional routes + ~30 legacy (Phase 6 deletion pending) + 5 OG image routes.
 
-New since Session 20: `/gouvernement` (static ISR 3600), `/gouvernement/[slug]` (dynamic, Phase 9A+9E).
+**Redirects configured in `next.config.ts`** (Session 39):
+- `/gouvernance/*` → `/profils/*`
+- `/president` → `/profils/emmanuel-macron`
+- `/dossiers` → `/signaux`
+- 8 killed dossier paths → `/signaux` or `/territoire`
+- Phase 6 (prepared as comments): `/representants/*` → `/profils/*`, `/gouvernement/*` → `/profils/*`
 
 ---
 
@@ -1017,23 +1036,33 @@ New since Session 20: `/gouvernement` (static ISR 3600), `/gouvernement/[slug]` 
 src/
 ├── app/
 │   ├── globals.css              # Theme colors, effects, animations
-│   ├── layout.tsx               # Root: fonts, navbar (7 items), footer
+│   ├── layout.tsx               # Root: fonts, navbar (4 items: Signaux/Profils/Votes/Territoire), footer
 │   ├── page.tsx                 # Homepage (ISR 3600)
 │   ├── opengraph-image.tsx      # OG 1200×630: platform brand + 8 dossier chips + 3 stats (Session 18/19)
-│   ├── dossiers/
-│   │   ├── page.tsx             # Dossier hub (ISR 86400)
-│   │   ├── pouvoir-dachat/page.tsx
-│   │   ├── confiance-democratique/page.tsx
-│   │   ├── dette-publique/page.tsx
-│   │   ├── emploi-jeunesse/page.tsx
-│   │   ├── logement/
+│   ├── signaux/
+│   │   └── page.tsx             # Signal feed with filter pills (ISR 3600 — Session 39)
+│   ├── profils/
+│   │   ├── page.tsx             # People hub index (ISR 86400 — Session 39)
+│   │   ├── deputes/             # Copies of /representants/deputes with updated links
 │   │   │   ├── page.tsx
-│   │   │   └── opengraph-image.tsx  # OG 1200×630: housing stats (vacancy %, secondary %, vote count) (Session 18/19)
-│   │   ├── medias/page.tsx          # Media ownership concentration (Session 35)
-│   │   ├── sante/page.tsx
-│   │   ├── transition-ecologique/page.tsx
-│   │   └── retraites/page.tsx
-│   ├── representants/
+│   │   │   └── [id]/page.tsx
+│   │   ├── senateurs/
+│   │   │   ├── page.tsx
+│   │   │   └── [id]/page.tsx
+│   │   ├── ministres/page.tsx   # Copy of /gouvernement with updated links (ISR 3600)
+│   │   ├── [slug]/page.tsx      # Copy of /gouvernement/[slug] with updated links
+│   │   ├── elus/page.tsx
+│   │   ├── lobbyistes/
+│   │   │   ├── page.tsx
+│   │   │   └── [id]/page.tsx
+│   │   ├── partis/
+│   │   │   ├── page.tsx
+│   │   │   └── [id]/page.tsx
+│   │   └── comparer/page.tsx    # Deputy comparison (copy of /comparer/deputes)
+│   ├── dossiers/
+│   │   ├── medias/page.tsx          # Media ownership concentration (Session 35 — surviving)
+│   │   └── financement-politique/page.tsx  # Political financing (Session 37 — surviving)
+│   ├── representants/               # Legacy — Phase 6 removal pending
 │   │   ├── page.tsx             # Hub (ISR 86400)
 │   │   ├── deputes/
 │   │   │   ├── page.tsx         # List + group/dept filters
@@ -1139,7 +1168,7 @@ src/
 │   ├── loi-card.tsx             # Server: law card with type badge + inline GroupBar (Session 33)
 │   ├── scrutin-accordion.tsx    # Client: expandable scrutin list for law detail (Session 33)
 │   ├── group-expander.tsx       # Client: expandable party vote breakdown (Session 33)
-│   ├── hero-slider.tsx          # Client: cycling civic data points on homepage (Session 33)
+│   ├── conflict-drilldown.tsx   # Client: expandable per-tag vote list on Transparence tab (Session 37)
 │   └── gouvernement/            # Phase 9 section components (all async server components)
 │       ├── interets-section.tsx # Server: HATVP interests grouped by rubrique, <details> expander
 │       ├── mandats-section.tsx  # Server: government mandate timeline (border-l + dots)
@@ -1157,6 +1186,7 @@ src/
     ├── db.ts                    # Prisma client (pg adapter, singleton) — named export `{ prisma }`
     ├── dossier-config.ts        # Dossier metadata (slug, label, tags, lobbyDomains)
     ├── format.ts                # French number/date formatting (7 functions)
+    ├── slug.ts                   # generateSlug(prenom, nom) utility (Session 39)
     ├── nuance-colors.ts         # Political nuance code → { color, bg, label } mapping
     ├── alignment.ts             # computeAlignment(): $queryRaw CTE self-join on GroupeVote (7F)
     ├── postal-resolver.ts       # resolvePostalCode(): CP → ResolvedTerritory[] (Session 14)

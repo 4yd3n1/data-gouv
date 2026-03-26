@@ -393,6 +393,37 @@ html { scroll-behavior: smooth; }
   );
 }
 
+/* Rose scan line — /signaux page */
+.sigint-rose::after {
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(244, 63, 94, 0.03) 20%,
+    rgba(244, 63, 94, 0.10) 50%,
+    rgba(244, 63, 94, 0.03) 80%,
+    transparent 100%
+  );
+}
+
+/* Signal severity badges */
+.severity-critique {
+  font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase;
+  padding: 2px 8px; border-radius: 2px;
+  border: 1px solid rgba(244, 63, 94, 0.3);
+  color: var(--color-rose); background: rgba(244, 63, 94, 0.08);
+}
+.severity-notable {
+  font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase;
+  padding: 2px 8px; border-radius: 2px;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  color: var(--color-amber); background: rgba(245, 158, 11, 0.08);
+}
+.severity-informatif {
+  font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase;
+  padding: 2px 8px; border-radius: 2px;
+  border: 1px solid rgba(45, 212, 191, 0.2);
+  color: var(--color-teal); background: rgba(45, 212, 191, 0.05);
+}
+
 /* Gouvernement organigram hero card */
 .gov-hero-card {
   position: relative;

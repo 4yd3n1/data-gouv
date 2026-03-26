@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 export function NavSearch() {
@@ -18,6 +18,17 @@ export function NavSearch() {
       navigate();
     }
   }
+
+  useEffect(() => {
+    function onSlash(e: KeyboardEvent) {
+      if (e.key === "/" && !["INPUT", "TEXTAREA", "SELECT"].includes((e.target as HTMLElement).tagName)) {
+        e.preventDefault();
+        inputRef.current?.focus();
+      }
+    }
+    document.addEventListener("keydown", onSlash);
+    return () => document.removeEventListener("keydown", onSlash);
+  }, []);
 
   return (
     <div className="flex items-center">
@@ -47,9 +58,10 @@ export function NavSearch() {
           type="text"
           name="q"
           onKeyDown={handleKeyDown}
-          placeholder="Rechercher..."
-          className="w-44 rounded-lg border border-bureau-700/50 bg-bureau-800/60 pl-8 pr-3 py-1.5 text-sm text-bureau-100 placeholder-bureau-500 focus:outline-none focus:border-teal-500/60 transition-colors"
+          placeholder="Chercher un élu, un vote..."
+          className="w-52 md:w-72 lg:w-80 rounded-lg border border-bureau-700/50 bg-bureau-800/60 pl-8 pr-8 py-1.5 text-sm text-bureau-100 placeholder-bureau-500 focus:outline-none focus:border-teal/40 search-glow transition-colors"
         />
+        <kbd className="absolute right-2.5 top-1/2 -translate-y-1/2 hidden sm:inline-flex h-5 items-center rounded border border-bureau-700/50 bg-bureau-800/80 px-1.5 text-[10px] text-bureau-500 font-mono">/</kbd>
       </div>
     </div>
   );

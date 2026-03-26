@@ -116,7 +116,7 @@ export default async function DeputesPage({ searchParams }: { searchParams: Prom
         subtitle="Assemblée nationale — données Datan"
         breadcrumbs={[
           { label: "Accueil", href: "/" },
-          { label: "Gouvernance", href: "/representants" },
+          { label: "Représentants", href: "/representants" },
           { label: "Députés" },
         ]}
       />

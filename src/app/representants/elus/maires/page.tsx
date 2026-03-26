@@ -144,7 +144,7 @@ export default async function MairesPage({ searchParams }: { searchParams: Promi
         subtitle={`${fmt(totalMaires)} maires de France`}
         breadcrumbs={[
           { label: "Accueil", href: "/" },
-          { label: "Gouvernance", href: "/representants" },
+          { label: "Représentants", href: "/representants" },
           { label: "Élus", href: "/representants/elus" },
           { label: "Maires" },
         ]}

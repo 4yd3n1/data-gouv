@@ -87,7 +87,19 @@ export default async function EconomiePage() {
                   {latest && (
                     <div className="text-right">
                       <p className="text-2xl font-bold text-bureau-100">
-                        {ind.unite === "pourcent" ? `${latest.valeur.toLocaleString("fr-FR", { maximumFractionDigits: 1 })} %` : fmt(Math.round(latest.valeur))}
+                        {ind.unite === "pourcent"
+                          ? `${latest.valeur.toLocaleString("fr-FR", { maximumFractionDigits: 1 })} %`
+                          : ind.unite === "eur"
+                            ? `${latest.valeur.toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €`
+                            : ind.unite === "centaines_millions_eur"
+                              ? `${(latest.valeur / 10).toLocaleString("fr-FR", { maximumFractionDigits: 0 })} Md €`
+                              : ind.unite === "millions_eur"
+                                ? `${(latest.valeur / 1000).toLocaleString("fr-FR", { maximumFractionDigits: 0 })} Md €`
+                                : ind.unite === "milliards_eur"
+                                  ? `${latest.valeur.toLocaleString("fr-FR", { maximumFractionDigits: 1 })} Md €`
+                                  : ind.unite === "indice"
+                                    ? latest.valeur.toLocaleString("fr-FR", { maximumFractionDigits: 1 })
+                                    : fmt(Math.round(latest.valeur))}
                       </p>
                       <p className="text-xs text-bureau-500">{latest.periode}</p>
                     </div>

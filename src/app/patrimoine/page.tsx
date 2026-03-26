@@ -5,6 +5,11 @@ import { PageHeader } from "@/components/page-header";
 
 export const revalidate = 86400; // Heritage data changes only on ingestion
 
+function capitalizeMuseumName(name: string): string {
+  if (!name) return name;
+  return name.charAt(0).toUpperCase() + name.slice(1);
+}
+
 export default async function PatrimoinePage() {
   const [museeCount, monumentCount, topMusees] = await Promise.all([
     prisma.musee.count(),
@@ -62,7 +67,7 @@ export default async function PatrimoinePage() {
               <Link key={t.museeId} href={`/patrimoine/musees/${t.museeId}`} className="group flex items-center gap-4 rounded-lg border border-bureau-700/20 bg-bureau-800/20 px-4 py-3 hover:bg-bureau-800/40 transition-all">
                 <span className="w-6 text-right text-sm font-bold text-bureau-600">{i + 1}</span>
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm text-bureau-100 group-hover:text-amber transition-colors">{m.nom}</p>
+                  <p className="truncate text-sm text-bureau-100 group-hover:text-amber transition-colors">{capitalizeMuseumName(m.nom)}</p>
                   <p className="text-xs text-bureau-500">{m.ville ?? "—"}</p>
                   <div className="mt-1 h-1 overflow-hidden rounded-full bg-bureau-700/30">
                     <div className="bar-fill h-full rounded-full bg-amber/50" style={{ width: `${(total / maxTotal) * 100}%` }} />

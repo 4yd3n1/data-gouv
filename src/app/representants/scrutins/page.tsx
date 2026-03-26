@@ -146,7 +146,7 @@ export default async function ScrutinsPage({ searchParams }: { searchParams: Pro
         subtitle="Votes parlementaires — Assemblée nationale"
         breadcrumbs={[
           { label: "Accueil", href: "/" },
-          { label: "Gouvernance", href: "/representants" },
+          { label: "Représentants", href: "/representants" },
           { label: "Scrutins" },
         ]}
       />

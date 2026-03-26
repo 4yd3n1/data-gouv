@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { notFound, redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
-import { fmtDate } from "@/lib/format";
+import { fmtDate, fmtEuro, fmt } from "@/lib/format";
 
 export async function generateMetadata({
   params,
@@ -24,6 +24,15 @@ export async function generateMetadata({
 import { ProfileHero } from "@/components/profile-hero";
 import { ProfileTabs } from "@/components/profile-tabs";
 import { DeclarationSection } from "@/components/declaration-section";
+
+const COMMISSION_DOMAINS: Array<{ pattern: RegExp; keywords: string[] }> = [
+  { pattern: /affaires sociales|sant\u00e9/i, keywords: ["sant\u00e9", "sante", "pharma"] },
+  { pattern: /finances|budget/i, keywords: ["finance", "fiscal", "budget"] },
+  { pattern: /d\u00e9veloppement durable|environnement/i, keywords: ["environnement", "\u00e9nergie", "climat"] },
+  { pattern: /affaires \u00e9conomiques/i, keywords: ["\u00e9conomi", "industr", "num\u00e9rique"] },
+  { pattern: /culture|\u00e9ducation/i, keywords: ["culture", "\u00e9ducation", "m\u00e9dia"] },
+  { pattern: /lois/i, keywords: ["justice", "s\u00e9curit\u00e9", "droit"] },
+];
 
 export default async function SenateurDetailPage({
   params,
@@ -57,6 +66,38 @@ export default async function SenateurDetailPage({
     orderBy: { dateDepot: "desc" },
   });
 
+  const conflictDeclarations = declarations.filter(
+    (decl) => (decl.totalParticipations ?? 0) > 0
+  );
+  const totalParticipationsAmount = conflictDeclarations.reduce(
+    (sum, decl) => sum + (decl.totalParticipations ?? 0),
+    0
+  );
+
+  // Commission-lobbying overlap
+  const matchedCommissions = s.commissions
+    .map(c => {
+      const match = COMMISSION_DOMAINS.find(cd => cd.pattern.test(c.nom));
+      return match ? { commission: c.nom, keywords: match.keywords } : null;
+    })
+    .filter((mc): mc is { commission: string; keywords: string[] } => mc !== null);
+
+  const overlapCounts = matchedCommissions.length > 0
+    ? await Promise.all(
+        matchedCommissions.map(mc =>
+          prisma.actionLobbyiste.count({
+            where: {
+              OR: mc.keywords.map(kw => ({ domaine: { contains: kw, mode: "insensitive" as const } })),
+            },
+          })
+        )
+      )
+    : [];
+
+  const commissionOverlaps = matchedCommissions
+    .map((mc, i) => ({ ...mc, lobbyCount: overlapCounts[i] }))
+    .filter(o => o.lobbyCount > 0);
+
   return (
     <>
       <ProfileHero
@@ -72,7 +113,7 @@ export default async function SenateurDetailPage({
         }}
         breadcrumbs={[
           { label: "Accueil", href: "/" },
-          { label: "Gouvernance", href: "/representants" },
+          { label: "Représentants", href: "/representants" },
           { label: "S\u00e9nateurs", href: "/representants/senateurs" },
           { label: `${s.prenom} ${s.nom}` },
         ]}
@@ -89,6 +130,11 @@ export default async function SenateurDetailPage({
                 key: "declarations",
                 label: "D\u00e9clarations",
                 count: declarations.length,
+              },
+              {
+                key: "transparence",
+                label: "Transparence",
+                count: conflictDeclarations.length || undefined,
               },
               { key: "infos", label: "Informations" },
             ]}
@@ -204,6 +250,65 @@ export default async function SenateurDetailPage({
             ) : (
               <p className="py-8 text-center text-sm text-bureau-500 italic">
                 Aucune d&eacute;claration d&apos;int&eacute;r&ecirc;ts.
+              </p>
+            )}
+          </div>
+        )}
+
+        {/* ── Transparence ── */}
+        {tab === "transparence" && (
+          <div className="space-y-8 fade-up">
+            {conflictDeclarations.length > 0 && (
+              <section>
+                <h2 className="mb-1 text-xs font-semibold uppercase tracking-[0.15em] text-bureau-500">
+                  Int&eacute;r&ecirc;ts financiers d&eacute;clar&eacute;s
+                </h2>
+                <p className="mb-4 text-xs text-bureau-500">
+                  Source : HATVP &mdash; d&eacute;clarations d&apos;int&eacute;r&ecirc;ts
+                </p>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="rounded-xl border border-amber/20 bg-amber/5 px-4 py-3">
+                    <p className="text-[10px] uppercase tracking-widest text-bureau-500">Participations d&eacute;clar&eacute;es</p>
+                    <p className="mt-1 text-xl font-bold text-amber">{fmtEuro(totalParticipationsAmount)}</p>
+                  </div>
+                  <div className="rounded-xl border border-bureau-700/20 bg-bureau-800/20 px-4 py-3">
+                    <p className="text-[10px] uppercase tracking-widest text-bureau-500">D&eacute;clarations</p>
+                    <p className="mt-1 text-xl font-bold text-bureau-200">{fmt(declarations.length)}</p>
+                  </div>
+                </div>
+              </section>
+            )}
+
+            {commissionOverlaps.length > 0 && (
+              <section>
+                <h2 className="mb-4 text-xs font-semibold uppercase tracking-[0.15em] text-bureau-500">
+                  Recoupement commissions / lobbying
+                </h2>
+                <div className="space-y-2">
+                  {commissionOverlaps.map((o) => (
+                    <div
+                      key={o.commission}
+                      className="flex items-center justify-between rounded-xl border border-bureau-700/20 bg-bureau-800/20 px-5 py-4"
+                    >
+                      <div className="min-w-0">
+                        <p className="text-sm text-bureau-200 line-clamp-1">{o.commission}</p>
+                        <p className="mt-1 text-xs text-bureau-500">
+                          Domaines cibl&eacute;s : {o.keywords.join(", ")}
+                        </p>
+                      </div>
+                      <div className="shrink-0 ml-4 text-right">
+                        <p className="text-lg font-bold text-amber">{fmt(o.lobbyCount)}</p>
+                        <p className="text-[10px] uppercase tracking-widest text-bureau-500">actions de lobbying</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {conflictDeclarations.length === 0 && commissionOverlaps.length === 0 && (
+              <p className="py-8 text-center text-sm text-bureau-500 italic">
+                Aucun recoupement identifi&eacute; entre d&eacute;clarations et activit&eacute;s de lobbying.
               </p>
             )}
           </div>

@@ -8,7 +8,10 @@ const NUANCE_MAP: Record<string, { label: string; bg: string; text: string; bar:
   UG:  { label: "Union de la gauche", bg: "bg-rose/10", text: "text-rose", bar: "bg-rose" },
   SOC: { label: "Parti socialiste", bg: "bg-rose/10", text: "text-rose", bar: "bg-rose" },
   DVG: { label: "Divers gauche", bg: "bg-rose/10", text: "text-rose", bar: "bg-pink-500" },
-  ECO: { label: "Écologiste", bg: "bg-emerald-800/20", text: "text-emerald-400", bar: "bg-emerald-500" },
+  ECO: { label: "\u00c9cologiste", bg: "bg-emerald-800/20", text: "text-emerald-400", bar: "bg-emerald-500" },
+  COM: { label: "Communiste", bg: "bg-red-900/20", text: "text-red-400", bar: "bg-red-800" },
+  RDG: { label: "Radical de gauche", bg: "bg-rose/10", text: "text-rose", bar: "bg-pink-600" },
+  VEC: { label: "\u00c9cologiste", bg: "bg-emerald-800/20", text: "text-emerald-400", bar: "bg-emerald-500" },
   // Centre
   ENS: { label: "Ensemble", bg: "bg-amber/10", text: "text-amber", bar: "bg-amber" },
   MDM: { label: "MoDem", bg: "bg-orange-800/20", text: "text-orange-400", bar: "bg-orange-500" },

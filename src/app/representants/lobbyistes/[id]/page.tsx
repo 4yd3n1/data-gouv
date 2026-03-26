@@ -36,7 +36,7 @@ export default async function LobbyisteDetailPage({ params }: { params: Promise<
         subtitle={l.categorieActivite ?? "Représentant d'intérêts"}
         breadcrumbs={[
           { label: "Accueil", href: "/" },
-          { label: "Gouvernance", href: "/representants" },
+          { label: "Représentants", href: "/representants" },
           { label: "Lobbyistes", href: "/representants/lobbyistes" },
           { label: l.nom },
         ]}

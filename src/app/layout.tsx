@@ -14,13 +14,10 @@ export const metadata: Metadata = {
 };
 
 const NAV = [
-  { href: "/", label: "Accueil" },
-  { href: "/dossiers", label: "Dossiers" },
-  { href: "/representants", label: "Représentants" },
+  { href: "/signaux", label: "Signaux" },
+  { href: "/profils", label: "Profils" },
   { href: "/votes", label: "Votes" },
-  { href: "/economie", label: "Économie" },
   { href: "/territoire", label: "Territoire" },
-  { href: "/patrimoine", label: "Patrimoine" },
 ];
 
 function Navbar() {
@@ -63,7 +60,11 @@ function Footer() {
   return (
     <footer className="mt-auto border-t border-bureau-700/30 bg-bureau-950">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-6 text-xs text-bureau-500">
-        <p>Données publiques — data.gouv.fr, INSEE, Sénat, HATVP</p>
+        <div className="flex items-center gap-4">
+          <p>Données publiques — data.gouv.fr, INSEE, Sénat, HATVP</p>
+          <span className="hidden sm:inline text-bureau-600">·</span>
+          <Link href="/patrimoine" className="hidden sm:inline hover:text-bureau-400 transition-colors">Patrimoine culturel</Link>
+        </div>
         <p>L&apos;Observatoire Citoyen · 2025</p>
       </div>
     </footer>

@@ -100,9 +100,9 @@ export default async function GouvernancePage() {
   return (
     <>
       <PageHeader
-        title="Gouvernance"
+        title="Représentants"
         subtitle={`${fmt(deputes + senateurs)} parlementaires · ${fmt(elus)} élus locaux · ${fmt(lobbyistes)} représentants d'intérêts · ${fmt(declarations)} déclarations`}
-        breadcrumbs={[{ label: "Accueil", href: "/" }, { label: "Gouvernance" }]}
+        breadcrumbs={[{ label: "Accueil", href: "/" }, { label: "Représentants" }]}
       />
       <div className="mx-auto max-w-7xl px-6 py-10">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

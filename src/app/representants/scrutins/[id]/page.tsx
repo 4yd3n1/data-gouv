@@ -59,7 +59,7 @@ export default async function ScrutinDetailPage({ params }: { params: Promise<{ 
         subtitle={`${fmtDate(scrutin.dateScrutin)} · ${scrutin.libelleTypeVote}`}
         breadcrumbs={[
           { label: "Accueil", href: "/" },
-          { label: "Gouvernance", href: "/representants" },
+          { label: "Représentants", href: "/representants" },
           { label: "Scrutins", href: "/gouvernance/scrutins" },
           { label: `n°${scrutin.numero}` },
         ]}

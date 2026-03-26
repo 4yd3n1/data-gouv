@@ -14,6 +14,7 @@ import { PresidentBilanSection } from "@/components/gouvernement/president-bilan
 import { PresidentPromessesSection } from "@/components/gouvernement/president-promesses-section";
 import { PresidentLobbyingSection } from "@/components/gouvernement/president-lobbying-section";
 import { PresidentDeclarationsSection } from "@/components/gouvernement/president-declarations-section";
+import { MediaTutelleSection } from "@/components/gouvernement/media-tutelle-section";
 import { getPromesseSummary, BIO, PROMESSES } from "@/data/president-macron";
 
 export const revalidate = 3600;
@@ -220,6 +221,9 @@ export default async function GouvernementProfilePage({
             <LobbySection
               ministereCode={currentMandat?.ministereCode ?? null}
             />
+            {currentMandat?.ministereCode && (
+              <MediaTutelleSection ministereCode={currentMandat.ministereCode} />
+            )}
           </div>
         )}
 

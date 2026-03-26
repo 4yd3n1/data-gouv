@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { getDossier } from "@/lib/dossier-config";
-import { fmt, fmtDate } from "@/lib/format";
+import { fmt, fmtDate, fmtEuro } from "@/lib/format";
 import { DossierHero } from "@/components/dossier-hero";
 import { DossierNav } from "@/components/dossier-nav";
 import { TopicVoteList } from "@/components/topic-vote-list";
@@ -34,11 +34,11 @@ function getDominantType(filiales: Array<{ type: string }>): string {
 }
 
 const TYPE_STAT_CONFIG = [
-  { type: "TELEVISION", label: "Television", color: "#60a5fa" },
+  { type: "TELEVISION", label: "Télévision", color: "#60a5fa" },
   { type: "RADIO", label: "Radio", color: "#fbbf24" },
   { type: "PRESSE_QUOTIDIENNE", label: "Presse", color: "#2dd4bf" },
   { type: "PRESSE_MAGAZINE", label: "Magazines", color: "#0d9488" },
-  { type: "NUMERIQUE", label: "Numerique", color: "#fb7185" },
+  { type: "NUMERIQUE", label: "Numérique", color: "#fb7185" },
 ];
 
 export default async function MediasPage() {
@@ -98,6 +98,41 @@ export default async function MediasPage() {
       take: 5,
     }),
   ]);
+
+  // Political connections
+  const politicalOwners = await prisma.mediaProprietaire.findMany({
+    where: { contextePolitique: { not: null } },
+    select: {
+      nom: true,
+      prenom: true,
+      slug: true,
+      contextePolitique: true,
+      sourceContextePolitique: true,
+      participations: {
+        select: { groupe: { select: { nomCourt: true } } },
+      },
+    },
+    orderBy: { nom: "asc" },
+  });
+
+  // AGORA lobbying targeting Culture ministry
+  const cultureLobbying = await prisma.actionLobby.groupBy({
+    by: ["representantNom"],
+    where: { ministereCode: "CULTURE" },
+    _count: { id: true },
+    orderBy: { _count: { id: "desc" } },
+    take: 5,
+  });
+  const cultureLobbyTotal = await prisma.actionLobby.count({
+    where: { ministereCode: "CULTURE" },
+  });
+  const cultureDomains = await prisma.actionLobby.groupBy({
+    by: ["domaine"],
+    where: { ministereCode: "CULTURE", domaine: { not: null } },
+    _count: { id: true },
+    orderBy: { _count: { id: "desc" } },
+    take: 5,
+  });
 
   // Separate query for signalements (avoids Promise.all type widening)
   const signalements = await prisma.signalementArcom.findMany({
@@ -255,7 +290,7 @@ export default async function MediasPage() {
               <span className="live-dot" />
               <span className="classification-badge">Surveillance active</span>
               <span className="hidden text-[10px] text-bureau-600 tracking-wider uppercase sm:inline">
-                Derniere mise a jour : {fmtDate(new Date())}
+                Dernière mise à jour : {fmtDate(new Date())}
               </span>
             </div>
             <div className="flex items-center gap-4 text-[11px] data-value text-bureau-500">
@@ -275,26 +310,26 @@ export default async function MediasPage() {
           <div className="grid gap-4 sm:grid-cols-3">
             <div className="stat-card rounded-xl border border-rose/20 bg-rose/5 p-5">
               <p className="stat-number-rose text-3xl font-bold">9</p>
-              <p className="mt-1 text-sm text-bureau-300">milliardaires controlent plus de 80 % des medias prives</p>
+              <p className="mt-1 text-sm text-bureau-300">milliardaires contrôlent plus de 80 % des médias privés</p>
             </div>
             <div className="stat-card rounded-xl border border-amber/20 bg-amber/5 p-5">
               <p className="stat-number-amber text-3xl font-bold">25<sup className="text-lg">e</sup></p>
-              <p className="mt-1 text-sm text-bureau-300">au classement RSF de la liberte de la presse (2025)</p>
+              <p className="mt-1 text-sm text-bureau-300">au classement RSF de la liberté de la presse (2025)</p>
             </div>
             <div className="stat-card rounded-xl border border-teal/20 bg-teal/5 p-5">
               <p className="stat-number-teal text-3xl font-bold">{fmt(filialeCount)}</p>
-              <p className="mt-1 text-sm text-bureau-300">titres de presse, chaines TV, radios et medias numeriques recenses</p>
+              <p className="mt-1 text-sm text-bureau-300">titres de presse, chaînes TV, radios et médias numériques recensés</p>
             </div>
           </div>
 
           <div className="desc-block mt-6 rounded-xl border border-rose/20 bg-bureau-800/40 p-6 pl-8">
             <p className="text-sm text-bureau-300 leading-relaxed">
-              La concentration des medias en France est un enjeu democratique majeur.
-              Une poignee de groupes industriels — dont les activites principales sont souvent
-              etrangeres a l&apos;information — controlent la majorite des titres de presse,
-              chaines de television et stations de radio. Cette page recense les structures
-              de propriete, les filiales et les liens entre proprietaires de medias et responsables
-              politiques, a partir de donnees publiques.
+              La concentration des médias en France est un enjeu démocratique majeur.
+              Une poignée de groupes industriels — dont les activités principales sont souvent
+              étrangères à l&apos;information — contrôlent la majorité des titres de presse,
+              chaînes de télévision et stations de radio. Cette page recense les structures
+              de propriété, les filiales et les liens entre propriétaires de médias et responsables
+              politiques, à partir de données publiques.
             </p>
           </div>
         </section>
@@ -304,10 +339,10 @@ export default async function MediasPage() {
           <div className="mb-6 flex items-center justify-between">
             <div>
               <h2 className="font-[family-name:var(--font-display)] text-2xl text-bureau-100">
-                Cartographie du pouvoir mediatique
+                Cartographie du pouvoir médiatique
               </h2>
               <p className="mt-1 text-sm text-bureau-500">
-                Chaque noeud represente un groupe — taille proportionnelle au nombre de medias controles
+                Chaque nœud représente un groupe — taille proportionnelle au nombre de médias contrôlés
               </p>
             </div>
             <span className="classification-badge hidden sm:inline">Analyse structurelle</span>
@@ -339,10 +374,10 @@ export default async function MediasPage() {
           <div className="mb-6 flex items-center justify-between">
             <div>
               <h2 className="font-[family-name:var(--font-display)] text-2xl text-bureau-100">
-                Dossiers proprietaires
+                Dossiers propriétaires
               </h2>
               <p className="mt-1 text-sm text-bureau-500">
-                {groupesRaw.length} groupes, leurs proprietaires et {fmt(filialeCount)} medias — cliquez pour explorer
+                {groupesRaw.length} groupes, leurs propriétaires et {fmt(filialeCount)} médias — cliquez pour explorer
               </p>
             </div>
             <span className="classification-badge hidden sm:inline">Confidentiel</span>
@@ -362,10 +397,10 @@ export default async function MediasPage() {
                   Signalements ARCOM
                 </h2>
                 <p className="mt-1 text-sm text-bureau-500">
-                  Mises en demeure, sanctions et amendes prononcees par le regulateur audiovisuel
+                  Mises en demeure, sanctions et amendes prononcées par le régulateur audiovisuel
                 </p>
               </div>
-              <span className="classification-badge hidden sm:inline">Incidents regulatoires</span>
+              <span className="classification-badge hidden sm:inline">Incidents régulatoires</span>
             </div>
 
             <ArcomSection
@@ -373,6 +408,95 @@ export default async function MediasPage() {
               totalAmendes={totalAmendes}
               channelCount={arcomChannels.size}
             />
+          </section>
+        )}
+
+        {/* Section — Connexions politiques */}
+        {politicalOwners.length > 0 && (
+          <section className="sigint-section section-divider">
+            <div className="mb-6 flex items-center justify-between">
+              <div>
+                <h2 className="font-[family-name:var(--font-display)] text-2xl text-bureau-100">
+                  Connexions politiques
+                </h2>
+                <p className="mt-1 text-sm text-bureau-500">
+                  Liens document&eacute;s entre propri&eacute;taires de m&eacute;dias et responsables politiques
+                </p>
+              </div>
+              <span className="classification-badge hidden sm:inline">Liens crois&eacute;s</span>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {politicalOwners.map((o) => {
+                const groupNames = [...new Set(o.participations.map(p => p.groupe.nomCourt))].join(", ");
+                return (
+                  <div key={o.slug} className="rounded-xl border border-amber/20 bg-amber/5 p-5">
+                    <div className="flex items-start justify-between gap-3 mb-2">
+                      <div>
+                        <p className="text-sm font-medium text-bureau-100">{o.prenom} {o.nom}</p>
+                        <p className="text-[10px] uppercase tracking-widest text-bureau-500">{groupNames}</p>
+                      </div>
+                    </div>
+                    <p className="text-xs text-bureau-400 leading-relaxed line-clamp-3">
+                      {o.contextePolitique}
+                    </p>
+                    {o.sourceContextePolitique && (
+                      <p className="mt-2 text-[10px] text-bureau-600">
+                        Source : {o.sourceContextePolitique}
+                      </p>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+        )}
+
+        {/* Section — Lobbying Culture */}
+        {cultureLobbyTotal > 0 && (
+          <section className="sigint-section section-divider">
+            <div className="mb-6 flex items-center justify-between">
+              <div>
+                <h2 className="font-[family-name:var(--font-display)] text-2xl text-bureau-100">
+                  Lobbying ciblant le minist&egrave;re de la Culture
+                </h2>
+                <p className="mt-1 text-sm text-bureau-500">
+                  {fmt(cultureLobbyTotal)} actions de lobbying d&eacute;clar&eacute;es au registre HATVP / AGORA
+                </p>
+              </div>
+              <span className="classification-badge hidden sm:inline">AGORA</span>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              {/* Top organisations */}
+              <div className="rounded-xl border border-bureau-700/20 bg-bureau-800/20 p-5">
+                <h3 className="text-xs font-semibold uppercase tracking-[0.15em] text-bureau-500 mb-3">
+                  Principaux repr&eacute;sentants
+                </h3>
+                <div className="space-y-2">
+                  {cultureLobbying.map((l) => (
+                    <div key={l.representantNom} className="flex items-center justify-between">
+                      <span className="text-xs text-bureau-300 line-clamp-1">{l.representantNom}</span>
+                      <span className="text-xs text-amber font-medium">{fmt(l._count.id)}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Domain breakdown */}
+              <div className="rounded-xl border border-bureau-700/20 bg-bureau-800/20 p-5">
+                <h3 className="text-xs font-semibold uppercase tracking-[0.15em] text-bureau-500 mb-3">
+                  Domaines d&apos;action
+                </h3>
+                <div className="space-y-2">
+                  {cultureDomains.map((d) => (
+                    <div key={d.domaine} className="flex items-center justify-between">
+                      <span className="text-xs text-bureau-300 line-clamp-1">{d.domaine}</span>
+                      <span className="text-xs text-bureau-400">{fmt(d._count.id)}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
           </section>
         )}
 
@@ -384,7 +508,7 @@ export default async function MediasPage() {
                 Matrice de concentration
               </h2>
               <p className="mt-1 text-sm text-bureau-500">
-                Surface proportionnelle au nombre de titres controles
+                Surface proportionnelle au nombre de titres contrôlés
               </p>
             </div>
             <span className="classification-badge hidden sm:inline">Analyse structurelle</span>
@@ -426,7 +550,7 @@ export default async function MediasPage() {
               Votes au Parlement
             </h2>
             <p className="mt-1 text-sm text-bureau-500">
-              Scrutins publics lies a la culture, l&apos;audiovisuel et la presse
+              Scrutins publics liés à la culture, l&apos;audiovisuel et la presse
             </p>
           </div>
 
@@ -440,7 +564,7 @@ export default async function MediasPage() {
               Lobbying audiovisuel et presse
             </h2>
             <p className="mt-1 text-sm text-bureau-500">
-              Actions de lobbying dans les domaines audiovisuel, presse, telecommunications et edition — registre HATVP
+              Actions de lobbying dans les domaines audiovisuel, presse, télécommunications et édition — registre HATVP
             </p>
           </div>
 

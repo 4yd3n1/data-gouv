@@ -1,9 +1,88 @@
 import Link from "next/link";
 import { prisma } from "@/lib/db";
-import { fmt, fmtPct } from "@/lib/format";
+import { fmt, fmtPct, fmtEuro } from "@/lib/format";
 import { PageHeader } from "@/components/page-header";
 import { getNuanceStyle } from "@/lib/nuance-colors";
+import { getPartyCodes, isCoalition } from "@/lib/nuance-party-map";
 import { Suspense } from "react";
+
+async function FinanceTable({ nuanceRanking }: { nuanceRanking: [string, { label: string; voix: number; elus: number }][] }) {
+  const allPartyCodes = [...new Set(nuanceRanking.flatMap(([code]) => getPartyCodes(code)))];
+  if (allPartyCodes.length === 0) return null;
+
+  const allParties = await prisma.partiPolitique.findMany({
+    where: { codeCNCC: { in: allPartyCodes } },
+    orderBy: { exercice: "desc" },
+  });
+
+  const partyByCode = new Map<number, typeof allParties[0]>();
+  for (const p of allParties) {
+    if (!partyByCode.has(p.codeCNCC)) partyByCode.set(p.codeCNCC, p);
+  }
+
+  const rows = nuanceRanking
+    .map(([code, data]) => {
+      const codes = getPartyCodes(code);
+      if (codes.length === 0) return null;
+      const parties = codes.map(c => partyByCode.get(c)).filter(Boolean) as typeof allParties;
+      if (parties.length === 0) return null;
+      const aide = parties.reduce((s, p) => s + (p.aidePublique1 ?? 0) + (p.aidePublique2 ?? 0), 0);
+      return {
+        code,
+        label: data.label,
+        seats: data.elus,
+        aide,
+        recettes: parties.reduce((s, p) => s + p.totalProduits, 0),
+        dons: parties.reduce((s, p) => s + (p.donsPersonnes ?? 0), 0),
+        costPerSeat: data.elus > 0 ? aide / data.elus : null,
+        coalition: isCoalition(code),
+      };
+    })
+    .filter((r): r is NonNullable<typeof r> => r !== null);
+
+  if (rows.length === 0) return null;
+
+  return (
+    <div className="mb-6 rounded-xl border border-bureau-700/20 bg-bureau-800/20 p-4">
+      <h3 className="text-xs uppercase tracking-widest text-bureau-500 mb-3">Financement des partis par nuance</h3>
+      <div className="overflow-x-auto">
+        <table className="w-full text-xs">
+          <thead>
+            <tr className="border-b border-bureau-700/20">
+              <th className="pb-2 text-left text-bureau-500 font-normal">Nuance</th>
+              <th className="pb-2 text-right text-bureau-500 font-normal">Aide publique</th>
+              <th className="pb-2 text-right text-bureau-500 font-normal">Recettes</th>
+              <th className="pb-2 text-right text-bureau-500 font-normal">Dons</th>
+              <th className="pb-2 text-right text-bureau-500 font-normal">Si&egrave;ges</th>
+              <th className="pb-2 text-right text-bureau-500 font-normal">Aide / si&egrave;ge</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((r) => {
+              const style = getNuanceStyle(r.code);
+              return (
+                <tr key={r.code} className="border-b border-bureau-700/10">
+                  <td className="py-2">
+                    <div className="flex items-center gap-1.5">
+                      <div className={`h-2 w-2 rounded-full ${style.bar}`} />
+                      <span className="text-bureau-300">{r.label}</span>
+                      {r.coalition && <span className="text-[9px] text-amber">coalition</span>}
+                    </div>
+                  </td>
+                  <td className="py-2 text-right text-amber">{fmtEuro(r.aide)}</td>
+                  <td className="py-2 text-right text-bureau-300">{fmtEuro(r.recettes)}</td>
+                  <td className="py-2 text-right text-bureau-300">{fmtEuro(r.dons)}</td>
+                  <td className="py-2 text-right text-teal font-medium">{r.seats}</td>
+                  <td className="py-2 text-right text-bureau-400">{r.costPerSeat !== null ? fmtEuro(r.costPerSeat) : "\u2014"}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
 
 async function ResultsContent({ searchParams }: { searchParams: Record<string, string> }) {
   const dept = searchParams.dept ?? "";
@@ -140,6 +219,9 @@ async function ResultsContent({ searchParams }: { searchParams: Record<string, s
           </div>
         </div>
       )}
+
+      {/* Finance cross-reference table */}
+      {!dept && nuanceRanking.length > 0 && <FinanceTable nuanceRanking={nuanceRanking} />}
 
       {/* Constituency results */}
       <p className="mb-4 text-xs text-bureau-500">{fmt(elections.length)} circonscriptions</p>

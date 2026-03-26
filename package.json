@@ -37,7 +37,8 @@
     "refresh:search": "tsx scripts/refresh-search.ts",
     "ingest:agora": "tsx scripts/ingest-agora.ts",
     "generate:carriere": "tsx scripts/generate-carriere.ts",
-    "seed:medias": "tsx scripts/seed-medias.ts"
+    "seed:medias": "tsx scripts/seed-medias.ts",
+    "seed:gouvernement": "tsx scripts/seed-gouvernement.ts"
   },
   "keywords": [],
   "author": "",

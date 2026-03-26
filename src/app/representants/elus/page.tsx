@@ -153,7 +153,7 @@ export default async function ElusPage({ searchParams }: { searchParams: Promise
         subtitle={`Répertoire national des élus — ${fmt(totalElus)} mandats`}
         breadcrumbs={[
           { label: "Accueil", href: "/" },
-          { label: "Gouvernance", href: "/representants" },
+          { label: "Représentants", href: "/representants" },
           { label: "Élus" },
         ]}
       />

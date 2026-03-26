@@ -179,7 +179,7 @@ export default async function PartisPage({ searchParams }: { searchParams: Promi
         subtitle={`Comptes financiers CNCCFP — ${fmt(totalPartis)} partis (2024)`}
         breadcrumbs={[
           { label: "Accueil", href: "/" },
-          { label: "Gouvernance", href: "/representants" },
+          { label: "Représentants", href: "/representants" },
           { label: "Partis politiques" },
         ]}
       />

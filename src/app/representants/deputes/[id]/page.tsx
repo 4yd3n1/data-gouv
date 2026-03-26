@@ -27,6 +27,7 @@ import { ProfileTabs } from "@/components/profile-tabs";
 import { VoteBadge } from "@/components/vote-badge";
 import { DeclarationSection } from "@/components/declaration-section";
 import { ConflictAlert } from "@/components/conflict-alert";
+import { ConflictDrilldown } from "@/components/conflict-drilldown";
 
 const TAG_LABELS: Record<string, string> = {
   budget: "Budget & Finances",
@@ -79,7 +80,11 @@ export default async function DeputeDetailPage({
       orderBy: { dateCreation: "desc" },
     }),
     prisma.declarationInteret.findMany({
-      where: { nom: d.nom, prenom: d.prenom, typeMandat: "Député" },
+      where: {
+        nom: { equals: d.nom, mode: "insensitive" as const },
+        prenom: { equals: d.prenom, mode: "insensitive" as const },
+        typeMandat: "Député",
+      },
       include: { participations: true, revenus: true },
       orderBy: { dateDepot: "desc" },
     }),
@@ -97,6 +102,33 @@ export default async function DeputeDetailPage({
       orderBy: { voteCount: "desc" },
     }),
   ]);
+
+  // Fetch votes linked to conflict signal tags for drill-down
+  const signalTags = [...new Set(conflictSignals.map(s => s.tag))];
+  const conflictVoteRecords = signalTags.length > 0 ? await prisma.voteRecord.findMany({
+    where: { deputeId: id, scrutin: { tags: { some: { tag: { in: signalTags } } } } },
+    select: {
+      position: true,
+      scrutin: { select: { id: true, titre: true, dateScrutin: true, sortCode: true, tags: { select: { tag: true } } } },
+    },
+    orderBy: { scrutin: { dateScrutin: "desc" } },
+  }) : [];
+
+  const votesByTag: Record<string, Array<{ position: string; scrutinId: string; titre: string; date: string; sortCode: string }>> = {};
+  for (const vr of conflictVoteRecords) {
+    const item = {
+      position: vr.position,
+      scrutinId: vr.scrutin.id,
+      titre: vr.scrutin.titre,
+      date: fmtDate(vr.scrutin.dateScrutin),
+      sortCode: vr.scrutin.sortCode,
+    };
+    for (const t of vr.scrutin.tags) {
+      if (signalTags.includes(t.tag)) {
+        (votesByTag[t.tag] ??= []).push(item);
+      }
+    }
+  }
 
   const conflictDeclarations = declarations.filter(
     (decl) => (decl.totalParticipations ?? 0) > 0
@@ -123,7 +155,7 @@ export default async function DeputeDetailPage({
         badge={d.groupeAbrev}
         breadcrumbs={[
           { label: "Accueil", href: "/" },
-          { label: "Gouvernance", href: "/representants" },
+          { label: "Représentants", href: "/representants" },
           { label: "D\u00e9put\u00e9s", href: "/representants/deputes" },
           { label: `${d.prenom} ${d.nom}` },
         ]}
@@ -283,7 +315,7 @@ export default async function DeputeDetailPage({
                   <div className="space-y-3">
                     {conflictSignals.length > 0
                       ? conflictSignals.map((signal) => (
-                          <ConflictAlert
+                          <ConflictDrilldown
                             key={signal.id}
                             deputyName={`${d.prenom} ${d.nom}`}
                             sector={signal.secteurDeclaration}
@@ -291,6 +323,7 @@ export default async function DeputeDetailPage({
                             relatedVoteCount={signal.voteCount}
                             votePour={signal.votePour}
                             voteContre={signal.voteContre}
+                            votes={votesByTag[signal.tag] ?? []}
                           />
                         ))
                       : conflictDeclarations.map((decl) => {

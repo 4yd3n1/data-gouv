@@ -61,6 +61,7 @@ interface ProprietaireDef {
   activitePrincipale?: string;
   contextePolitique?: string;
   sourceContextePolitique?: string;
+  personnaliteSlug?: string;
 }
 
 interface ParticipationDef {
@@ -191,6 +192,7 @@ const PROPRIETAIRES: ProprietaireDef[] = [
     slug: "etat-francais", nom: "Etat francais", prenom: "Republique",
     bioCourte: "L'Etat francais est l'actionnaire unique de France Televisions, Radio France, France Medias Monde (France 24, RFI) et l'INA, via la holding France Medias.",
     formation: "Secteur public", activitePrincipale: "Service public de l'audiovisuel",
+    personnaliteSlug: "catherine-pegard",
     contextePolitique: "La redevance audiovisuelle a ete supprimee en 2022, remplacee par un financement budgetaire direct suscitant des inquietudes sur l'independance editoriale. Tensions recurrentes entre le pouvoir executif et les redactions, particulierement lors des campagnes presidentielles. France Inter et France Culture sont regulierement qualifiees de 'radios de gauche' par la droite parlementaire.",
     sourceContextePolitique: "Cour des comptes ; France Televisions rapport annuel ; commission de la culture du Senat",
   },
@@ -429,8 +431,16 @@ async function main() {
   }
   console.log(`  Groups: ${GROUPES.length}`);
 
-  // 2. Upsert owners (with contextePolitique)
+  // 2. Upsert owners (with contextePolitique + optional government link)
   for (const p of PROPRIETAIRES) {
+    let personnaliteId: string | undefined;
+    if (p.personnaliteSlug) {
+      const linked = await prisma.personnalitePublique.findUnique({
+        where: { slug: p.personnaliteSlug },
+        select: { id: true },
+      });
+      personnaliteId = linked?.id;
+    }
     await prisma.mediaProprietaire.upsert({
       where: { slug: p.slug },
       update: {
@@ -438,12 +448,14 @@ async function main() {
         formation: p.formation, fortuneEstimee: p.fortuneEstimee,
         sourceFortuneEstimee: p.sourceFortuneEstimee, activitePrincipale: p.activitePrincipale,
         contextePolitique: p.contextePolitique, sourceContextePolitique: p.sourceContextePolitique,
+        ...(personnaliteId && { personnaliteId }),
       },
       create: {
         slug: p.slug, nom: p.nom, prenom: p.prenom, civilite: p.civilite,
         bioCourte: p.bioCourte, formation: p.formation, fortuneEstimee: p.fortuneEstimee,
         sourceFortuneEstimee: p.sourceFortuneEstimee, activitePrincipale: p.activitePrincipale,
         contextePolitique: p.contextePolitique, sourceContextePolitique: p.sourceContextePolitique,
+        ...(personnaliteId && { personnaliteId }),
       },
     });
   }

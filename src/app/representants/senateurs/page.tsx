@@ -67,7 +67,7 @@ export default async function SenateursPage({ searchParams }: { searchParams: Pr
       <PageHeader
         title="Sénateurs"
         subtitle="Sénat — mandats et commissions"
-        breadcrumbs={[{ label: "Accueil", href: "/" }, { label: "Gouvernance", href: "/representants" }, { label: "Sénateurs" }]}
+        breadcrumbs={[{ label: "Accueil", href: "/" }, { label: "Représentants", href: "/representants" }, { label: "Sénateurs" }]}
       />
       <div className="mx-auto max-w-7xl px-6 py-8">
         <Suspense><SearchInput placeholder="Rechercher un sénateur, département..." /></Suspense>

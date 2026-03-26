@@ -62,7 +62,7 @@ export default async function LobbyistesPage({ searchParams }: { searchParams: P
       <PageHeader
         title="Représentants d'intérêts"
         subtitle="Registre HATVP — organisations de lobbying"
-        breadcrumbs={[{ label: "Accueil", href: "/" }, { label: "Gouvernance", href: "/representants" }, { label: "Lobbyistes" }]}
+        breadcrumbs={[{ label: "Accueil", href: "/" }, { label: "Représentants", href: "/representants" }, { label: "Lobbyistes" }]}
       />
       <div className="mx-auto max-w-7xl px-6 py-8">
         <Suspense><SearchInput placeholder="Rechercher une organisation..." /></Suspense>
