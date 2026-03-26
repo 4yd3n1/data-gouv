@@ -596,8 +596,8 @@ export default async function SignauxPage({
                   <Link
                     href={
                       c.deputeId
-                        ? `/representants/deputes/${c.deputeId}?tab=transparence`
-                        : `/representants`
+                        ? `/profils/deputes/${c.deputeId}?tab=transparence`
+                        : `/profils`
                     }
                     className="group block"
                   >
@@ -646,7 +646,7 @@ export default async function SignauxPage({
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {fRevolvingDoors.map((r) => (
                 <SignalCard key={`${r.slug}-${r.careerOrganisation}`} severity={r.severity}>
-                  <Link href={`/gouvernement/${r.slug}?tab=parcours`} className="group block">
+                  <Link href={`/profils/${r.slug}?tab=parcours`} className="group block">
                     <p className="text-sm font-medium text-bureau-100 group-hover:text-teal">
                       {r.prenom} {r.nom}
                     </p>
@@ -702,7 +702,7 @@ export default async function SignauxPage({
                     <p className="text-xs text-bureau-500">actions de lobbying declarees</p>
                     {l.ministerSlug && (
                       <Link
-                        href={`/gouvernement/${l.ministerSlug}?tab=mandats`}
+                        href={`/profils/${l.ministerSlug}?tab=mandats`}
                         className="mt-2 inline-block text-xs text-teal hover:underline"
                       >
                         {l.ministerName} →
@@ -784,7 +784,7 @@ export default async function SignauxPage({
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {fGaps.map((g) => (
                 <SignalCard key={g.slug} severity={g.severity}>
-                  <Link href={`/gouvernement/${g.slug}?tab=declarations`} className="group block">
+                  <Link href={`/profils/${g.slug}?tab=declarations`} className="group block">
                     <p className="text-sm font-medium text-bureau-100 group-hover:text-teal">
                       {g.prenom} {g.nom}
                     </p>
@@ -826,7 +826,7 @@ export default async function SignauxPage({
               {fDiscipline.map((d) => (
                 <SignalCard key={d.deputeId} severity={d.severity}>
                   <Link
-                    href={`/representants/deputes/${d.deputeId}?tab=activite`}
+                    href={`/profils/deputes/${d.deputeId}?tab=activite`}
                     className="group block"
                   >
                     <p className="text-sm font-medium text-bureau-100 group-hover:text-teal">

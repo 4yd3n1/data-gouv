@@ -34,7 +34,7 @@ const PRESIDENT_STATIC: SearchResult = {
   entityId: "macron",
   title: "Emmanuel Macron",
   subtitle: "Président de la République",
-  url: "/gouvernement/emmanuel-macron",
+  url: "/profils/emmanuel-macron",
   rank: 1,
 };
 

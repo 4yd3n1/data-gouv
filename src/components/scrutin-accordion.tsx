@@ -177,7 +177,7 @@ function ScrutinRowItem({ scrutin, highlight }: { scrutin: ScrutinRow; highlight
 
   return (
     <Link
-      href={`/representants/scrutins/${scrutin.id}`}
+      href={`/votes/scrutins/${scrutin.id}`}
       className={`group flex items-center gap-3 rounded-lg border px-4 py-3 transition-colors ${
         highlight
           ? "border-teal/30 bg-teal/5 hover:border-teal/50 hover:bg-teal/10"

@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db";
 import { fmtDate } from "@/lib/format";
 import { PageHeader } from "@/components/page-header";
 import { LoiCard } from "@/components/loi-card";
+import { TAG_LABELS_SHORT as TAG_LABELS } from "@/lib/vote-tags";
 
 export const metadata: Metadata = {
   title: "Grandes lois · L'Observatoire Citoyen",
@@ -12,18 +13,6 @@ export const metadata: Metadata = {
 };
 
 export const revalidate = 3600;
-
-const TAG_LABELS: Record<string, string> = {
-  budget: "Budget",
-  fiscalite: "Fiscalité",
-  sante: "Santé",
-  logement: "Logement",
-  securite: "Sécurité",
-  immigration: "Immigration",
-  ecologie: "Écologie",
-  travail: "Emploi",
-  agriculture: "Agriculture",
-};
 
 const TYPE_FILTER_LABELS: Record<string, string> = {
   all: "Tous",

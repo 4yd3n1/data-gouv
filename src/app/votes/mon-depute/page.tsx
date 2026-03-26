@@ -7,22 +7,7 @@ import { SearchInput } from "@/components/search-input";
 import { Avatar } from "@/components/avatar";
 import { VoteBadge } from "@/components/vote-badge";
 import { ScrutinResultBadge } from "@/components/scrutin-result-badge";
-
-const TAG_LABELS: Record<string, string> = {
-  budget:     "Budget & Finances",
-  fiscalite:  "Fiscalité",
-  sante:      "Santé",
-  logement:   "Logement",
-  retraites:  "Retraites",
-  education:  "Éducation",
-  securite:   "Sécurité & Justice",
-  immigration: "Immigration",
-  ecologie:   "Écologie",
-  travail:    "Emploi & Travail",
-  defense:    "Défense",
-  agriculture: "Agriculture",
-  culture:    "Culture",
-};
+import { TAG_LABELS } from "@/lib/vote-tags";
 
 const POSITION_COLORS: Record<string, string> = {
   pour:      "text-teal",
@@ -97,7 +82,7 @@ async function DeputeResults({ q, id }: { q: string; id?: string }) {
             </div>
           </div>
           <Link
-            href={`/representants/deputes/${depute.id}?tab=transparence`}
+            href={`/profils/deputes/${depute.id}?tab=transparence`}
             className="shrink-0 rounded-lg border border-bureau-600/30 px-3 py-1.5 text-xs text-bureau-400 transition-colors hover:border-teal/30 hover:text-teal"
           >
             Profil complet &rarr;
@@ -168,7 +153,7 @@ async function DeputeResults({ q, id }: { q: string; id?: string }) {
             {recentVotes.map((v, i) => (
               <Link
                 key={v.id}
-                href={`/gouvernance/scrutins/${v.scrutinId}`}
+                href={`/votes/scrutins/${v.scrutinId}`}
                 className="group flex items-start gap-3 rounded-xl border border-bureau-700/20 bg-bureau-800/20 px-5 py-3.5 transition-all hover:border-bureau-600/40 hover:bg-bureau-800/40"
                 style={{ animationDelay: `${i * 20}ms` }}
               >

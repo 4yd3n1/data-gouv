@@ -82,8 +82,8 @@ async function getHomeData() {
           ? `${c.participationCount} participation${c.participationCount > 1 ? "s" : ""} · ${fmtEuro(c.totalMontant)} · ${c.voteCount} vote${c.voteCount > 1 ? "s" : ""}`
           : `${c.participationCount} participation${c.participationCount > 1 ? "s" : ""} · ${c.voteCount} vote${c.voteCount > 1 ? "s" : ""}`,
       href: c.deputeId
-        ? `/representants/deputes/${c.deputeId}?tab=transparence`
-        : `/representants/deputes`,
+        ? `/profils/deputes/${c.deputeId}?tab=transparence`
+        : `/profils/deputes`,
     });
   }
 
@@ -115,10 +115,10 @@ async function getHomeData() {
 /* ------------------------------------------------------------------ */
 
 const ENTITY_PILLS = [
-  { href: "/representants/deputes", label: "Députés" },
-  { href: "/representants/senateurs", label: "Sénateurs" },
-  { href: "/gouvernement", label: "Ministres" },
-  { href: "/representants/lobbyistes", label: "Lobbyistes" },
+  { href: "/profils/deputes", label: "Députés" },
+  { href: "/profils/senateurs", label: "Sénateurs" },
+  { href: "/profils/ministres", label: "Ministres" },
+  { href: "/profils/lobbyistes", label: "Lobbyistes" },
   { href: "/votes", label: "Votes" },
 ];
 
@@ -263,7 +263,7 @@ export default async function HomePage() {
               return (
                 <Link
                   key={s.id}
-                  href={`/representants/scrutins/${s.id}`}
+                  href={`/votes/scrutins/${s.id}`}
                   className="flex items-center gap-4 bg-bureau-800/20 px-5 py-3.5 transition-colors hover:bg-bureau-800/40"
                 >
                   <div className="flex-1 min-w-0">

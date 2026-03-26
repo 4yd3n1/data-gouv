@@ -126,7 +126,7 @@ export function GroupExpander({ groups, deputies }: Props) {
                             {filtered.slice(0, 30).map((d) => (
                               <Link
                                 key={d.id}
-                                href={`/representants/deputes/${d.id}`}
+                                href={`/profils/deputes/${d.id}`}
                                 className="block truncate text-xs text-bureau-300 hover:text-teal"
                               >
                                 {d.prenom} {d.nom}

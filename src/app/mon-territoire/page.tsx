@@ -279,7 +279,7 @@ async function Dashboard({ communeCode, deptCode, cp }: { communeCode: string; d
                   {deputes.map((d) => (
                     <Link
                       key={d.id}
-                      href={`/representants/deputes/${d.id}`}
+                      href={`/profils/deputes/${d.id}`}
                       className="group flex items-center gap-3 px-5 py-3 transition-colors hover:bg-bureau-700/20"
                     >
                       <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-blue/20 bg-blue/10 text-[10px] font-semibold text-blue">
@@ -319,7 +319,7 @@ async function Dashboard({ communeCode, deptCode, cp }: { communeCode: string; d
                   {senateurs.map((s) => (
                     <Link
                       key={s.id}
-                      href={`/representants/senateurs/${s.id}`}
+                      href={`/profils/senateurs/${s.id}`}
                       className="group flex items-center gap-3 px-5 py-3 transition-colors hover:bg-bureau-700/20"
                     >
                       <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-teal/20 bg-teal/10 text-[10px] font-semibold text-teal">
@@ -463,7 +463,7 @@ async function Dashboard({ communeCode, deptCode, cp }: { communeCode: string; d
             <div className="mb-6 flex items-center justify-between gap-4">
               <SectionHeader color="teal-dim" label="Comment votent mes députés" inline />
               <Link
-                href="/gouvernance/scrutins"
+                href="/votes"
                 className="text-xs text-teal/60 transition-colors hover:text-teal"
               >
                 Tous les scrutins &rarr;
@@ -476,7 +476,7 @@ async function Dashboard({ communeCode, deptCode, cp }: { communeCode: string; d
                 return (
                   <Link
                     key={scrutin.id}
-                    href={`/gouvernance/scrutins/${scrutin.id}`}
+                    href={`/votes/scrutins/${scrutin.id}`}
                     className="group flex items-start gap-4 rounded-xl border border-bureau-700/20 bg-bureau-800/20 px-5 py-4 transition-all hover:border-bureau-600/40 hover:bg-bureau-800/40"
                   >
                     <span

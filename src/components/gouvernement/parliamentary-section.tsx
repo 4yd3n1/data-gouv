@@ -153,7 +153,7 @@ async function DeputeSection({ deputeId }: { deputeId: string }) {
               Votes récents
             </h2>
             <Link
-              href="/gouvernance/scrutins"
+              href="/votes"
               className="text-xs text-teal/70 transition-colors hover:text-teal"
             >
               Tous les scrutins →
@@ -163,7 +163,7 @@ async function DeputeSection({ deputeId }: { deputeId: string }) {
             {recentVotes.map((v) => (
               <Link
                 key={v.id}
-                href={`/gouvernance/scrutins/${v.scrutinId}`}
+                href={`/votes/scrutins/${v.scrutinId}`}
                 className="group flex items-start gap-3 rounded-xl border border-bureau-700/20 bg-bureau-800/20 px-5 py-4 transition-all hover:border-bureau-600/40 hover:bg-bureau-800/40"
               >
                 <VoteBadge position={v.position} />

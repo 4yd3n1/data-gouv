@@ -29,21 +29,7 @@ import { DeclarationSection } from "@/components/declaration-section";
 import { ConflictAlert } from "@/components/conflict-alert";
 import { ConflictDrilldown } from "@/components/conflict-drilldown";
 
-const TAG_LABELS: Record<string, string> = {
-  budget: "Budget & Finances",
-  fiscalite: "Fiscalité",
-  sante: "Santé",
-  logement: "Logement",
-  retraites: "Retraites",
-  education: "Éducation",
-  securite: "Sécurité & Justice",
-  immigration: "Immigration",
-  ecologie: "Écologie",
-  travail: "Emploi & Travail",
-  defense: "Défense",
-  agriculture: "Agriculture",
-  culture: "Culture",
-};
+import { TAG_LABELS } from "@/lib/vote-tags";
 
 export default async function DeputeDetailPage({
   params,
@@ -60,7 +46,7 @@ export default async function DeputeDetailPage({
     where: { deputeId: id },
     select: { slug: true },
   });
-  if (govProfile) redirect(`/gouvernement/${govProfile.slug}`);
+  if (govProfile) redirect(`/profils/${govProfile.slug}`);
 
   const d = await prisma.depute.findUnique({
     where: { id },
@@ -188,7 +174,7 @@ export default async function DeputeDetailPage({
       <div className="border-b border-bureau-700/20 bg-bureau-900/30">
         <div className="mx-auto max-w-4xl px-6 py-2 flex justify-end">
           <Link
-            href={`/comparer/deputes?a=${d.id}`}
+            href={`/profils/comparer?a=${d.id}`}
             className="text-xs text-bureau-500 transition-colors hover:text-teal"
           >
             Comparer avec un autre d&eacute;put&eacute; &rarr;
@@ -209,7 +195,7 @@ export default async function DeputeDetailPage({
                     Votes r&eacute;cents
                   </h2>
                   <Link
-                    href="/representants/scrutins"
+                    href="/votes"
                     className="text-xs text-teal/70 transition-colors hover:text-teal"
                   >
                     Tous les scrutins &rarr;
@@ -219,7 +205,7 @@ export default async function DeputeDetailPage({
                   {votes.map((v, i) => (
                     <Link
                       key={v.id}
-                      href={`/representants/scrutins/${v.scrutinId}`}
+                      href={`/votes/scrutins/${v.scrutinId}`}
                       className="group flex items-start gap-3 rounded-xl border border-bureau-700/20 bg-bureau-800/20 px-5 py-4 transition-all hover:border-bureau-600/40 hover:bg-bureau-800/40"
                       style={{ animationDelay: `${i * 40}ms` }}
                     >

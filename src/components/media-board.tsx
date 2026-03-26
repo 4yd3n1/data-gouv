@@ -351,7 +351,7 @@ export function MediaBoard({ groups }: MediaBoardProps) {
                           {/* Gov link */}
                           {owner?.gouvernementSlug && (
                             <Link
-                              href={`/gouvernement/${owner.gouvernementSlug}`}
+                              href={`/profils/${owner.gouvernementSlug}`}
                               className="flex items-center gap-2 rounded-lg border
                                          border-amber/20 bg-amber/5 px-3 py-2
                                          text-xs text-amber hover:bg-amber/10

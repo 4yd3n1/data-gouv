@@ -128,7 +128,7 @@ function PresidentCard({ p }: { p: Personnalite }) {
   const initials = `${p.prenom[0] ?? ""}${p.nom[0] ?? ""}`.toUpperCase();
   return (
     <Link
-      href={`/gouvernement/${p.slug}`}
+      href={`/profils/${p.slug}`}
       className="group gov-hero-card sigint-section sigint-amber relative flex w-full max-w-lg items-center gap-7 rounded-xl border border-amber/22 bg-amber/[0.028] px-8 py-7 text-amber"
       style={{
         boxShadow:
@@ -178,7 +178,7 @@ function PremierMinistreCard({ p }: { p: Personnalite }) {
   const initials = `${p.prenom[0] ?? ""}${p.nom[0] ?? ""}`.toUpperCase();
   return (
     <Link
-      href={`/gouvernement/${p.slug}`}
+      href={`/profils/${p.slug}`}
       className="group gov-hero-card sigint-section relative flex w-full max-w-lg items-center gap-7 rounded-xl border border-teal/18 bg-teal/[0.02] px-8 py-7 text-teal"
       style={{
         boxShadow:
@@ -223,7 +223,7 @@ function MinistreCard({ p }: { p: Personnalite }) {
   const initials = `${p.prenom[0] ?? ""}${p.nom[0] ?? ""}`.toUpperCase();
   return (
     <Link
-      href={`/gouvernement/${p.slug}`}
+      href={`/profils/${p.slug}`}
       className="group dossier-card relative flex items-center gap-3.5 rounded-lg border border-blue-500/10 bg-blue-500/[0.022] p-4 text-blue-400 transition-all duration-200 hover:border-blue-500/28"
     >
       <Brackets />
@@ -254,7 +254,7 @@ function DelegueCard({ p }: { p: Personnalite }) {
   const initials = `${p.prenom[0] ?? ""}${p.nom[0] ?? ""}`.toUpperCase();
   return (
     <Link
-      href={`/gouvernement/${p.slug}`}
+      href={`/profils/${p.slug}`}
       className="group dossier-card relative flex items-center gap-2.5 rounded-md border border-violet-500/10 bg-violet-500/[0.018] p-3 text-violet-400 transition-all duration-150 hover:border-violet-500/25"
     >
       <Brackets />
@@ -285,7 +285,7 @@ function SecretaireCard({ p }: { p: Personnalite }) {
   const initials = `${p.prenom[0] ?? ""}${p.nom[0] ?? ""}`.toUpperCase();
   return (
     <Link
-      href={`/gouvernement/${p.slug}`}
+      href={`/profils/${p.slug}`}
       className="group dossier-card relative flex items-center gap-2.5 rounded-md border border-rose/10 bg-rose/[0.015] p-3 text-rose transition-all duration-150 hover:border-rose/25"
     >
       <Brackets />

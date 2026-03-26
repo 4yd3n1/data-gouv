@@ -56,9 +56,9 @@ export default async function EconomiePage() {
   return (
     <>
       <PageHeader
-        title="Économie"
-        subtitle="Indicateurs macroéconomiques — INSEE, data.gouv.fr"
-        breadcrumbs={[{ label: "Accueil", href: "/" }, { label: "Économie" }]}
+        title="Economie nationale"
+        subtitle="Indicateurs macroeconomiques — INSEE, data.gouv.fr"
+        breadcrumbs={[{ label: "Accueil", href: "/" }, { label: "Territoire", href: "/territoire" }, { label: "Economie nationale" }]}
       />
       <div className="mx-auto max-w-7xl px-6 py-10">
         <div className="grid gap-6">

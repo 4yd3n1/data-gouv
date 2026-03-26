@@ -6,24 +6,7 @@ import { fmt, fmtDate } from "@/lib/format";
 import { PageHeader } from "@/components/page-header";
 import { Pagination } from "@/components/pagination";
 import { ScrutinResultBadge } from "@/components/scrutin-result-badge";
-
-const TAG_LABELS: Record<string, string> = {
-  budget:     "Budget & Finances",
-  fiscalite:  "Fiscalité",
-  sante:      "Santé",
-  logement:   "Logement",
-  retraites:  "Retraites",
-  education:  "Éducation",
-  securite:   "Sécurité & Justice",
-  immigration: "Immigration",
-  ecologie:   "Écologie",
-  travail:    "Emploi & Travail",
-  defense:    "Défense",
-  agriculture: "Agriculture",
-  culture:    "Culture",
-};
-
-const VALID_TAGS = Object.keys(TAG_LABELS);
+import { TAG_LABELS, VALID_TAGS } from "@/lib/vote-tags";
 const PER_PAGE = 25;
 export const revalidate = 3600; // Revalidate hourly — scrutins added periodically
 
@@ -191,7 +174,7 @@ export default async function VotesByTagPage({
               return (
                 <Link
                   key={s.id}
-                  href={`/gouvernance/scrutins/${s.id}`}
+                  href={`/votes/scrutins/${s.id}`}
                   className="card-accent group block rounded-xl border border-bureau-700/20 bg-bureau-800/20 px-5 py-4 transition-all hover:border-bureau-600/40 hover:bg-bureau-800/40"
                   style={{ animationDelay: `${i * 20}ms` }}
                 >

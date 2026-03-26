@@ -148,7 +148,7 @@ function EmptyPicker() {
             {EXAMPLES.map(({ a, b, labelA, labelB }) => (
               <Link
                 key={`${a}-${b}`}
-                href={`/comparer/territoires?a=${a}&b=${b}`}
+                href={`/territoire/comparer?a=${a}&b=${b}`}
                 className="group flex items-center justify-between rounded-xl border border-bureau-700/20 bg-bureau-800/20 px-4 py-3 transition-colors hover:border-teal/20 hover:bg-bureau-800/40"
               >
                 <span className="text-sm text-bureau-300 group-hover:text-teal">
@@ -224,7 +224,7 @@ function PartialComparison({ codeA, dataA }: { codeA: string; dataA: DeptData })
                 {["93", "69", "13", "59", "06", "35", "67", "76"].filter((c) => c !== codeA).slice(0, 6).map((c) => (
                   <Link
                     key={c}
-                    href={`/comparer/territoires?a=${codeA}&b=${c}`}
+                    href={`/territoire/comparer?a=${codeA}&b=${c}`}
                     className="rounded-lg border border-bureau-700/40 bg-bureau-800/30 px-2.5 py-1 text-xs text-bureau-400 transition-colors hover:border-teal/30 hover:text-teal"
                   >
                     {c}
@@ -280,7 +280,7 @@ function FullComparison({
             <div className="text-center">
               <p className="font-[family-name:var(--font-display)] text-2xl font-medium text-bureau-600">vs</p>
               <Link
-                href="/comparer/territoires"
+                href="/territoire/comparer"
                 className="mt-2 block text-[10px] text-bureau-600 hover:text-teal transition-colors"
               >
                 Nouvelle comparaison
@@ -506,7 +506,7 @@ function FullComparison({
         <div className="border-t border-bureau-700/20 pt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <ExploreLink href={`/territoire/${codeA}`} label={`Tableau de bord ${dA!.libelle}`} sub="Détails complets" />
           <ExploreLink href={`/territoire/${codeB}`} label={`Tableau de bord ${dB!.libelle}`} sub="Détails complets" />
-          <ExploreLink href="/comparer/territoires" label="Nouvelle comparaison" sub="Choisir deux autres depts" />
+          <ExploreLink href="/territoire/comparer" label="Nouvelle comparaison" sub="Choisir deux autres depts" />
           <ExploreLink href="/territoire" label="Tous les départements" sub="Parcourir le territoire" />
         </div>
 
@@ -545,7 +545,7 @@ function ErrorState({ message }: { message: string }) {
       <PageShell />
       <div className="mx-auto max-w-2xl px-6 py-16 text-center">
         <p className="text-sm text-bureau-400 italic">{message}</p>
-        <Link href="/comparer/territoires" className="mt-4 inline-block text-xs text-teal hover:underline">
+        <Link href="/territoire/comparer" className="mt-4 inline-block text-xs text-teal hover:underline">
           Nouvelle comparaison
         </Link>
       </div>

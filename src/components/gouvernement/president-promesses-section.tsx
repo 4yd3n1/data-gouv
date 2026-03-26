@@ -86,7 +86,7 @@ export async function PresidentPromessesSection({
           {([2017, 2022] as const).map((yr) => (
             <Link
               key={yr}
-              href={`/gouvernement/emmanuel-macron?tab=promesses&election=${yr}`}
+              href={`/profils/emmanuel-macron?tab=promesses&election=${yr}`}
               className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
                 electionYear === yr
                   ? "bg-teal/10 text-teal"

@@ -50,7 +50,7 @@ async function main() {
       titre AS title,
       CASE WHEN "sortCode" = 'adopt\u00e9' THEN 'Adopt\u00e9' ELSE 'Rejet\u00e9' END
         || ' \u00b7 ' || TO_CHAR("dateScrutin", 'DD/MM/YYYY') AS subtitle,
-      '/representants/scrutins/' || id AS url,
+      '/votes/scrutins/' || id AS url,
       to_tsvector('french', titre) AS search_vector
     FROM "Scrutin"
 

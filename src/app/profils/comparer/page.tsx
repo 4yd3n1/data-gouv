@@ -10,21 +10,7 @@ export const metadata: Metadata = {
   description: "Comparez côte à côte la participation, les votes par thème et les déclarations de deux députés.",
 };
 
-const TAG_LABELS: Record<string, string> = {
-  budget: "Budget",
-  fiscalite: "Fiscalité",
-  sante: "Santé",
-  logement: "Logement",
-  retraites: "Retraites",
-  education: "Éducation",
-  securite: "Sécurité",
-  immigration: "Immigration",
-  ecologie: "Écologie",
-  travail: "Emploi",
-  defense: "Défense",
-  agriculture: "Agriculture",
-  culture: "Culture",
-};
+import { TAG_LABELS_SHORT as TAG_LABELS } from "@/lib/vote-tags";
 
 // ── Data ─────────────────────────────────────────────────────────────────────
 
@@ -229,7 +215,7 @@ function SearchResultsA({
             {results.map((d) => (
               <Link
                 key={d.id}
-                href={`/comparer/deputes?a=${d.id}`}
+                href={`/profils/comparer?a=${d.id}`}
                 className="group flex items-center gap-3 rounded-xl border border-bureau-700/20 bg-bureau-800/20 px-5 py-3.5 transition-all hover:border-teal/30 hover:bg-bureau-800/40"
               >
                 <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-teal/20 bg-teal/10 text-[10px] font-semibold text-teal">
@@ -373,7 +359,7 @@ function SearchResultsB({
                 {resultsB.filter((d) => d.id !== idA).map((d) => (
                   <Link
                     key={d.id}
-                    href={`/comparer/deputes?a=${idA}&b=${d.id}`}
+                    href={`/profils/comparer?a=${idA}&b=${d.id}`}
                     className="group flex items-center gap-3 rounded-xl border border-bureau-700/20 bg-bureau-800/20 px-4 py-3 transition-all hover:border-teal/30 hover:bg-bureau-800/40"
                   >
                     <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-amber/20 bg-amber/10 text-[10px] font-semibold text-amber">
@@ -459,7 +445,7 @@ function FullComparison({
             <div className="text-center">
               <p className="font-[family-name:var(--font-display)] text-2xl font-medium text-bureau-600">vs</p>
               <Link
-                href="/comparer/deputes"
+                href="/profils/comparer"
                 className="mt-2 block text-[10px] text-bureau-600 hover:text-teal transition-colors"
               >
                 Nouvelle comparaison
@@ -617,7 +603,7 @@ function FullComparison({
                 return (
                   <Link
                     key={scrutin.id}
-                    href={`/representants/scrutins/${scrutin.id}`}
+                    href={`/votes/scrutins/${scrutin.id}`}
                     className="group flex items-start gap-4 rounded-xl border border-bureau-700/20 bg-bureau-800/20 px-5 py-4 transition-all hover:border-bureau-600/40 hover:bg-bureau-800/40"
                   >
                     <div className="shrink-0 mt-0.5">
@@ -663,7 +649,7 @@ function FullComparison({
             label={`Profil ${dB!.prenom} ${dB!.nom}`}
             sub="Déclarations, votes, transparence"
           />
-          <ExploreLink href="/comparer/deputes" label="Nouvelle comparaison" sub="Choisir deux autres députés" />
+          <ExploreLink href="/profils/comparer" label="Nouvelle comparaison" sub="Choisir deux autres députés" />
           <ExploreLink href="/profils/deputes" label="Tous les députés" sub="Parcourir la liste" />
         </div>
 
@@ -702,7 +688,7 @@ function ErrorState({ message }: { message: string }) {
   return (
     <div className="mx-auto max-w-2xl px-6 py-16 text-center">
       <p className="text-sm text-bureau-400 italic">{message}</p>
-      <Link href="/comparer/deputes" className="mt-4 inline-block text-xs text-teal hover:underline">
+      <Link href="/profils/comparer" className="mt-4 inline-block text-xs text-teal hover:underline">
         Nouvelle comparaison
       </Link>
     </div>

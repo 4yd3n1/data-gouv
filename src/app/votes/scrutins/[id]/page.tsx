@@ -5,6 +5,7 @@ import { prisma } from "@/lib/db";
 import { fmt, fmtDate } from "@/lib/format";
 import { PageHeader } from "@/components/page-header";
 import { ScrutinResultBadge } from "@/components/scrutin-result-badge";
+import { VoteBadge } from "@/components/vote-badge";
 
 export async function generateMetadata({
   params,
@@ -22,21 +23,28 @@ export async function generateMetadata({
     description: s.titre.slice(0, 160),
   };
 }
-import { VoteBadge } from "@/components/vote-badge";
 
 export default async function ScrutinDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
 
-  const scrutin = await prisma.scrutin.findUnique({
-    where: { id },
-    include: {
-      groupeVotes: {
-        include: { organe: true },
-        orderBy: { nombreMembresGroupe: "desc" },
+  const [scrutin, parentLois] = await Promise.all([
+    prisma.scrutin.findUnique({
+      where: { id },
+      include: {
+        groupeVotes: {
+          include: { organe: true },
+          orderBy: { nombreMembresGroupe: "desc" },
+        },
       },
-    },
-  });
+    }),
+    prisma.scrutinLoi.findMany({
+      where: { scrutinId: id },
+      include: { loi: { select: { slug: true, titreCourt: true } } },
+    }),
+  ]);
   if (!scrutin) notFound();
+
+  const parentLoi = parentLois[0];
 
   // Fetch individual votes grouped by position
   const votes = await prisma.voteRecord.findMany({
@@ -59,9 +67,13 @@ export default async function ScrutinDetailPage({ params }: { params: Promise<{ 
         subtitle={`${fmtDate(scrutin.dateScrutin)} · ${scrutin.libelleTypeVote}`}
         breadcrumbs={[
           { label: "Accueil", href: "/" },
-          { label: "Gouvernance", href: "/gouvernance" },
-          { label: "Scrutins", href: "/gouvernance/scrutins" },
-          { label: `n°${scrutin.numero}` },
+          { label: "Votes", href: "/votes" },
+          ...(parentLoi
+            ? [
+                { label: parentLoi.loi.titreCourt, href: `/votes/lois/${parentLoi.loi.slug}` },
+                { label: `Scrutin n\u00b0${scrutin.numero}` },
+              ]
+            : [{ label: `Scrutin n\u00b0${scrutin.numero}` }]),
         ]}
       />
       <div className="mx-auto max-w-7xl px-6 py-10">
@@ -75,6 +87,22 @@ export default async function ScrutinDetailPage({ params }: { params: Promise<{ 
             <p className="mt-2 text-sm text-bureau-500">Demandeur : {scrutin.demandeur}</p>
           )}
         </div>
+
+        {/* Parent law link */}
+        {parentLoi && (
+          <Link
+            href={`/votes/lois/${parentLoi.loi.slug}`}
+            className="mb-8 flex items-center gap-3 rounded-xl border border-bureau-700/30 bg-bureau-800/20 px-5 py-3.5 transition-colors hover:border-bureau-600/40 hover:bg-bureau-800/40"
+          >
+            <span className="shrink-0 rounded bg-teal/10 px-2 py-0.5 text-xs font-medium text-teal">
+              {parentLoi.role === "VOTE_FINAL" ? "Vote final" : parentLoi.role === "AMENDEMENT" ? "Amendement" : parentLoi.role === "ARTICLE" ? "Article" : parentLoi.role}
+            </span>
+            <span className="min-w-0 flex-1 text-sm text-bureau-300">
+              Loi : <span className="text-bureau-100">{parentLoi.loi.titreCourt}</span>
+            </span>
+            <span className="shrink-0 text-xs text-bureau-500">Voir la loi &rarr;</span>
+          </Link>
+        )}
 
         {/* Summary */}
         <div className="mb-8 grid grid-cols-2 gap-3 sm:grid-cols-5">
@@ -147,7 +175,7 @@ export default async function ScrutinDetailPage({ params }: { params: Promise<{ 
                   {posVotes.map((v) => (
                     <Link
                       key={v.id}
-                      href={`/gouvernance/deputes/${v.deputeId}`}
+                      href={`/profils/deputes/${v.deputeId}`}
                       className="flex items-center justify-between rounded px-2 py-1 text-sm text-bureau-300 hover:bg-bureau-700/20 hover:text-teal transition-colors"
                     >
                       <span>{v.depute.prenom} {v.depute.nom}</span>

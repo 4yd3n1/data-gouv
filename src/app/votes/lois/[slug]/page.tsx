@@ -210,7 +210,7 @@ export default async function LoiDetailPage({
             {voteFinal.libelleTypeVote}
             {voteFinal.demandeur ? ` · Demandé par ${voteFinal.demandeur}` : ""}
             {" · "}
-            <Link href={`/representants/scrutins/${voteFinal.id}`} className="text-teal hover:underline">
+            <Link href={`/votes/scrutins/${voteFinal.id}`} className="text-teal hover:underline">
               Voir le scrutin complet
             </Link>
           </p>

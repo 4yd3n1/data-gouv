@@ -49,7 +49,7 @@ export default async function SenateurDetailPage({
     where: { senateurId: id },
     select: { slug: true },
   });
-  if (govProfile) redirect(`/gouvernement/${govProfile.slug}`);
+  if (govProfile) redirect(`/profils/${govProfile.slug}`);
 
   const s = await prisma.senateur.findUnique({
     where: { id },

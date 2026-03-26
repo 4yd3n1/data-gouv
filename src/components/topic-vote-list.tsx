@@ -71,7 +71,7 @@ export function TopicVoteList({ scrutins }: TopicVoteListProps) {
         return (
           <Link
             key={s.id}
-            href={`/gouvernance/scrutins/${s.id}`}
+            href={`/votes/scrutins/${s.id}`}
             className="flex flex-col gap-2 bg-bureau-800/20 px-5 py-4 transition-colors hover:bg-bureau-800/40"
           >
             <div className="flex items-start justify-between gap-4">

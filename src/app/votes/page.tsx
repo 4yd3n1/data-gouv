@@ -3,47 +3,9 @@ import { prisma } from "@/lib/db";
 import { fmt, fmtDate } from "@/lib/format";
 import { PageHeader } from "@/components/page-header";
 import { ScrutinResultBadge } from "@/components/scrutin-result-badge";
+import { TAG_LABELS, TAG_ORDER, TAG_COLORS } from "@/lib/vote-tags";
 
 export const revalidate = 3600; // Revalidate every hour — new scrutins ingested periodically
-
-const TAG_LABELS: Record<string, string> = {
-  budget:     "Budget & Finances",
-  fiscalite:  "Fiscalité",
-  sante:      "Santé",
-  logement:   "Logement",
-  retraites:  "Retraites",
-  education:  "Éducation",
-  securite:   "Sécurité & Justice",
-  immigration: "Immigration",
-  ecologie:   "Écologie",
-  travail:    "Emploi & Travail",
-  defense:    "Défense",
-  agriculture: "Agriculture",
-  culture:    "Culture",
-};
-
-const TAG_ORDER = [
-  "budget", "fiscalite", "travail", "sante", "logement",
-  "retraites", "ecologie", "education", "securite",
-  "immigration", "agriculture", "defense", "culture",
-];
-
-// Accent colors cycling through teal / amber / rose / blue
-const TAG_COLORS: Record<string, string> = {
-  budget:     "border-amber/20  bg-amber/5  text-amber",
-  fiscalite:  "border-amber/20  bg-amber/5  text-amber",
-  sante:      "border-rose/20   bg-rose/5   text-rose",
-  logement:   "border-teal/20   bg-teal/5   text-teal",
-  retraites:  "border-amber/20  bg-amber/5  text-amber",
-  education:  "border-blue-400/20 bg-blue-400/5 text-blue-400",
-  securite:   "border-rose/20   bg-rose/5   text-rose",
-  immigration: "border-bureau-600/30 bg-bureau-800/20 text-bureau-300",
-  ecologie:   "border-teal/20   bg-teal/5   text-teal",
-  travail:    "border-blue-400/20 bg-blue-400/5 text-blue-400",
-  defense:    "border-bureau-600/30 bg-bureau-800/20 text-bureau-300",
-  agriculture: "border-teal/20  bg-teal/5   text-teal",
-  culture:    "border-rose/20   bg-rose/5   text-rose",
-};
 
 export default async function VotesPage() {
   const [tagCounts, totalScrutins, adoptedCount, recentScrutins, topLois] = await Promise.all([
@@ -220,7 +182,7 @@ export default async function VotesPage() {
               Scrutins récents
             </h2>
             <Link
-              href="/gouvernance/scrutins"
+              href="/votes/par-sujet/budget"
               className="text-xs text-teal/70 transition-colors hover:text-teal"
             >
               Tous les scrutins &rarr;
@@ -231,7 +193,7 @@ export default async function VotesPage() {
             {recentScrutins.map((s, i) => (
               <Link
                 key={s.id}
-                href={`/gouvernance/scrutins/${s.id}`}
+                href={`/votes/scrutins/${s.id}`}
                 className="card-accent group flex items-start gap-4 rounded-xl border border-bureau-700/20 bg-bureau-800/20 px-5 py-4 transition-all hover:border-bureau-600/40 hover:bg-bureau-800/40"
                 style={{ animationDelay: `${i * 30}ms` }}
               >

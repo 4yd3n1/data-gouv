@@ -88,7 +88,7 @@ export function ConflictDrilldown({
           {votes.map((v) => (
             <Link
               key={v.scrutinId}
-              href={`/gouvernance/scrutins/${v.scrutinId}`}
+              href={`/votes/scrutins/${v.scrutinId}`}
               className="group flex items-center gap-2.5 rounded-lg border border-bureau-700/10 bg-bureau-900/30 px-3 py-2 transition-colors hover:border-bureau-600/30 hover:bg-bureau-800/30"
             >
               <VoteBadge position={v.position} />

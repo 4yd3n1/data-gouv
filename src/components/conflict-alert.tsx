@@ -27,7 +27,7 @@ export function ConflictAlert({
   votePour,
   voteContre,
 }: ConflictAlertProps) {
-  const linkHref = href ?? (declarationId ? `/gouvernance/declarations/${declarationId}` : null);
+  const linkHref = href ?? null;
   return (
     <div className="rounded-xl border border-amber/20 bg-amber/5 p-5">
       <div className="flex items-start gap-3">
