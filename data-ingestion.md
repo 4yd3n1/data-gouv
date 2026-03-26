@@ -13,7 +13,7 @@ The platform ingests data from **15+ French government open data sources** throu
 | **Deputies** | AN/Datan Tabular API | 577 active + 2,100 historic deputies with participation/loyalty scores | ~2,400 rows |
 | **Senators** | Sénat CSV (ISO-8859-1) | 348 senators + mandates + commissions | ~1,700 rows |
 | **Lobbyists** | HATVP AGORA JSON (80MB) | ~1,500 orgs, 131K+ lobbying actions | ~142K rows |
-| **Declarations** | HATVP XML (150MB) | Financial interests, participations, revenues for all declarants | ~12K rows |
+| **Declarations** | HATVP XML (143MB) | Financial interests, participations, revenues for all declarants | ~500K rows (12,756 declarations + 13K participations + 475K revenus) |
 | **Votes** | AN JSON archive (4,691 files) | Every parliamentary vote + per-deputy position | ~605K rows |
 | **Organes** | AN JSON archive (7,137 files) | Parliamentary bodies (groups, commissions) | ~7K rows |
 | **Economy** | INSEE BDM (SDMX) + data.gouv GDP | 15 macro indicators (unemployment, inflation, debt, SMIC...) | ~2K observations |
@@ -83,6 +83,7 @@ pnpm ingest:agora              # Phase 9: AGORA lobby targeting ministries
 pnpm generate:carriere         # Phase 9: Generate government career timelines
 pnpm seed:medias               # Phase 8: Seed media ownership data
 pnpm seed:gouvernement         # Phase 9: Seed 4 governments (Borne/Attal/Barnier/Lecornu)
+pnpm audit:declarations        # Audit: verify HATVP XML vs DB vs display (read-only)
 ```
 
 ---
@@ -253,26 +254,26 @@ pnpm seed:gouvernement         # Phase 9: Seed 4 governments (Borne/Attal/Barnie
 
 ### Wave 4: HATVP Interest Declarations
 
-**File**: `scripts/ingest-declarations.ts`
+**File**: `scripts/ingest-declarations.ts` (parsing logic in `scripts/lib/hatvp-parser.ts`)
 
 - **Source**: HATVP merged XML file (download with resume/retry)
-  - `https://hatvp.fr/livraison/merge/declarations.xml` (~150MB)
+  - `https://hatvp.fr/livraison/merge/declarations.xml` (~143MB)
   - Local fallback cache: `documentation/hatvp-old-context/declarations.xml`
-- **Prisma Models**: `DeclarationInteret`, `Declaration` (legacy), `Depute`/`Senateur` links
-- **Idempotency**: Delete then insert for `DeclarationInteret` (no stable composite ID), upsert `Declaration`
+- **Prisma Models**: `DeclarationInteret`, `ParticipationFinanciere`, `RevenuDeclaration`
+- **Idempotency**: Delete-all then upsert per UUID. Child records (participations, revenus) cascade-deleted and recreated.
 - **Transformations**:
   - **Download with Resume**: Supports HTTP 206 partial content; retries up to 30 times with 2s backoff
-  - **XML Parsing**: `fast-xml-parser` (handles 150MB+ efficiently)
-  - **Name Normalization**: Lowercase, NFD decompose, remove accents, strip particles ("de", "du"). **HATVP stores names UPPERCASE** (e.g., "FAYSSAT") — deputy profile queries use `mode: "insensitive"` for case-insensitive matching (Session 38 fix)
-  - **Date Parsing**: Multiple formats (DD/MM/YYYY HH:MM, DD/MM/YYYY, MM/YYYY, YYYY)
-  - **Declaration Matching**: Match declarant name -> existing Depute/Senateur/PersonnalitePublique
-  - **Rubrique Extraction**: 8 sections (HATVP XML -> RubriqueInteret enum)
-  - **Montant Parsing**: Remove spaces/commas, handle French decimal notation
-- **Volume**: ~2,000+ declarations (~tens of thousands of individual interests)
+  - **XML Parsing**: Regex-based manual extraction (`extractText`, `extractBlock`, `parseAllMontants`) — NOT fast-xml-parser. Handles triple-nested `<montant>` tags via regex.
+  - **Shared Parser**: `scripts/lib/hatvp-parser.ts` — all pure parsing functions extracted (Session 42). Used by both ingestion and audit scripts.
+  - **Montant Parsing**: `parseMontant()` — strips spaces, commas to periods, parseFloat. Returns null for NaN.
+  - **Date Parsing**: `parseFrenchDate()` — handles DD/MM/YYYY HH:MM:SS, DD/MM/YYYY, MM/YYYY formats
+  - **Revenue Grouping**: `totalRevenus` = sum of latest-year montant per `type|description|employeur` group
+  - **Participation Totals**: `totalParticipations` = sum of all `evaluation` fields
+- **Volume**: 12,756 declarations (1,973 deputy/senator), 13,230 participations, 474,601 revenus. Total: ~500K rows.
+- **Audit Script** (Session 42): `pnpm audit:declarations` — 3-phase read-only verification (XML vs DB, internal consistency, cross-system). Produces JSON report at `data/audit-declarations-{date}.json`. Session 42 result: **1,973/1,973 perfect matches** against fresh HATVP XML.
 - **Special Handling**:
   - HATVP server flakiness -> resume from last byte on retry
-  - XML streaming to avoid loading entire file into memory
-  - Declaration vs. interest distinction: Declaration has timestamps; Interests inherit dates
+  - Profile queries use `mode: "insensitive" as const` for nom/prenom matching on ALL routes (Session 42 fix — was missing on senator routes + `/gouvernance/deputes/`)
   - As of early 2026: Government declarations marked "publication a venir" (not in XML yet)
 
 ---
@@ -586,7 +587,7 @@ pnpm seed:gouvernement         # Phase 9: Seed 4 governments (Borne/Attal/Barnie
 
 - **Source**: HATVP AGORA JSON (same as lobbyist source, different extraction)
 - **Prisma Model**: `ActionLobby`
-- **Idempotency**: Delete then insert
+- **Idempotency**: Delete then insert **within a single `prisma.$transaction()`** (Session 41). Records accumulate in memory first, then atomic delete+insert prevents partial data loss on failure. 2-minute timeout for large datasets.
 - **Transformations**:
   - Extract actions targeting specific ministries via `ministereCode`
   - 20 ministry codes mapped to current government structure
@@ -637,8 +638,9 @@ pnpm seed:gouvernement         # Phase 9: Seed 4 governments (Borne/Attal/Barnie
 
 **Government Profiles** (`scripts/seed-gouvernement.ts`):
 - Prisma Models: `PersonnalitePublique`, `MandatGouvernemental`
-- Source: Manual government data (37 Lecornu II members + others)
-- Volume: 44 PersonnalitePublique total
+- Source: `scripts/data/gouvernement-{lecornu,borne,attal,barnier}.ts`
+- Volume: 44 PersonnalitePublique total (37 Lecornu II + historical)
+- **Formation data reconciled** (Session 41): All 20 minister `formation` fields verified against `data/research-output/*.json` (Tier 1-2 press sources). 20 errors corrected, including 3 wholly fabricated entries (Barbut, Ferrari, Papin). `LECORNU_RESHUFFLE_DEPARTURES` updated to include `charlotte-parmentier-lecocq`.
 
 ---
 
@@ -646,9 +648,11 @@ pnpm seed:gouvernement         # Phase 9: Seed 4 governments (Borne/Attal/Barnie
 
 **File**: `scripts/refresh-search.ts`
 
-- **SQL**: `REFRESH MATERIALIZED VIEW search_index`
+- **SQL**: Drops and recreates `search_index` materialized view + GIN/B-tree indexes (Session 41 — was previously just `REFRESH MATERIALIZED VIEW`)
 - **Timing**: Final step after all data ingested
-- **Purpose**: Update PostgreSQL materialized view combining deputy names, senator names, scrutin titles, lobby org names for fast full-text search
+- **Purpose**: Full-text search view combining deputy names, senator names, scrutin titles, lobby org names, commune names, party names
+- **URLs**: Canonical `/profils/*` paths for deputies, senators, lobbyists, parties (updated Session 41 from legacy `/representants/*`). Scrutins still at `/representants/scrutins/[id]`, communes at `/territoire/commune/[code]`.
+- **Must run after**: Any schema change affecting search entities, or after Phase 6 route cleanup
 
 ---
 

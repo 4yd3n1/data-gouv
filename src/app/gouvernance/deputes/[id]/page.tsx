@@ -53,7 +53,11 @@ export default async function DeputeDetailPage({
       orderBy: { dateCreation: "desc" },
     }),
     prisma.declarationInteret.findMany({
-      where: { nom: d.nom, prenom: d.prenom, typeMandat: "Député" },
+      where: {
+        nom: { equals: d.nom, mode: "insensitive" as const },
+        prenom: { equals: d.prenom, mode: "insensitive" as const },
+        typeMandat: "Député",
+      },
       include: { participations: true, revenus: true },
       orderBy: { dateDepot: "desc" },
     }),

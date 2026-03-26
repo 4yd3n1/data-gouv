@@ -64,35 +64,40 @@ export default async function VotesByTagPage({
   searchParams: Promise<Record<string, string>>;
 }) {
   const { tag } = await params;
-  const { page: pageStr = "1" } = await searchParams;
+  const { page: pageStr = "1", vue = "final" } = await searchParams;
   const page = Math.max(1, parseInt(pageStr, 10));
+  const showAll = vue === "tous";
 
   if (!VALID_TAGS.includes(tag)) notFound();
 
   const label = TAG_LABELS[tag];
 
-  const [total, adoptedCount, rejectedCount, scrutins] = await Promise.all([
-    prisma.scrutin.count({ where: { tags: { some: { tag } } } }),
+  // Base filter: tagged with this topic
+  const tagFilter = { tags: { some: { tag } } };
+  // In "final" mode, exclude scrutins with "amendement" in the title
+  const amendmentExclude = showAll ? {} : { NOT: { titre: { contains: "amendement", mode: "insensitive" as const } } };
+  const where = { ...tagFilter, ...amendmentExclude };
+
+  const [total, adoptedCount, rejectedCount, scrutins, totalAll, totalAmendments] = await Promise.all([
+    prisma.scrutin.count({ where }),
     prisma.scrutin.count({
-      where: {
-        tags: { some: { tag } },
-        sortCode: { contains: "adopt", mode: "insensitive" },
-      },
+      where: { ...where, sortCode: { contains: "adopt", mode: "insensitive" } },
     }),
     prisma.scrutin.count({
-      where: {
-        tags: { some: { tag } },
-        sortCode: { contains: "rejet", mode: "insensitive" },
-      },
+      where: { ...where, sortCode: { contains: "rejet", mode: "insensitive" } },
     }),
     prisma.scrutin.findMany({
-      where: { tags: { some: { tag } } },
+      where,
       orderBy: { dateScrutin: "desc" },
       skip: (page - 1) * PER_PAGE,
       take: PER_PAGE,
       include: {
         groupeVotes: { select: { pour: true, contre: true, abstentions: true } },
       },
+    }),
+    prisma.scrutin.count({ where: tagFilter }),
+    prisma.scrutin.count({
+      where: { ...tagFilter, titre: { contains: "amendement", mode: "insensitive" } },
     }),
   ]);
 
@@ -134,6 +139,37 @@ export default async function VotesByTagPage({
           </div>
         </div>
 
+        {/* View filter */}
+        {totalAmendments > 0 && (
+          <div className="flex items-center gap-2">
+            <Link
+              href={`/votes/par-sujet/${tag}?vue=final`}
+              className={`rounded-full px-3 py-1 text-xs transition-colors ${
+                !showAll
+                  ? "bg-bureau-600/40 text-bureau-100"
+                  : "bg-bureau-800/40 text-bureau-500 hover:text-bureau-300"
+              }`}
+            >
+              Votes finals ({fmt(totalAll - totalAmendments)})
+            </Link>
+            <Link
+              href={`/votes/par-sujet/${tag}?vue=tous`}
+              className={`rounded-full px-3 py-1 text-xs transition-colors ${
+                showAll
+                  ? "bg-bureau-600/40 text-bureau-100"
+                  : "bg-bureau-800/40 text-bureau-500 hover:text-bureau-300"
+              }`}
+            >
+              Tous les scrutins ({fmt(totalAll)})
+            </Link>
+            {!showAll && totalAmendments > 0 && (
+              <span className="text-[10px] text-bureau-600">
+                {fmt(totalAmendments)} {"amendements masqu\u00e9s"}
+              </span>
+            )}
+          </div>
+        )}
+
         {/* Scrutin list */}
         <section>
           <div className="mb-4 flex items-center justify-between">
@@ -142,7 +178,7 @@ export default async function VotesByTagPage({
               {total > PER_PAGE && ` · page ${page} / ${totalPages}`}
             </h2>
             <Link href="/votes" className="text-xs text-bureau-500 hover:text-teal transition-colors">
-              &larr; Tous les thèmes
+              &larr; Tous les th&egrave;mes
             </Link>
           </div>
 
@@ -197,7 +233,7 @@ export default async function VotesByTagPage({
               currentPage={page}
               totalPages={totalPages}
               baseUrl={`/votes/par-sujet/${tag}`}
-              searchParams={{}}
+              searchParams={showAll ? { vue: "tous" } : {}}
             />
           )}
         </section>

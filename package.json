@@ -38,7 +38,8 @@
     "ingest:agora": "tsx scripts/ingest-agora.ts",
     "generate:carriere": "tsx scripts/generate-carriere.ts",
     "seed:medias": "tsx scripts/seed-medias.ts",
-    "seed:gouvernement": "tsx scripts/seed-gouvernement.ts"
+    "seed:gouvernement": "tsx scripts/seed-gouvernement.ts",
+    "audit:declarations": "tsx scripts/audit-declarations.ts"
   },
   "keywords": [],
   "author": "",

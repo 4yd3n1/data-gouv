@@ -34,9 +34,10 @@ interface Props {
   dateVote: Date | null;
   scrutinsCount: number;
   voteFinal?: { pour: number; contre: number; abstentions: number } | null;
+  roleCounts?: Record<string, number>;
 }
 
-export function LoiCard({ slug, titreCourt, resumeSimple, type, statut, dateVote, scrutinsCount, voteFinal }: Props) {
+export function LoiCard({ slug, titreCourt, resumeSimple, type, statut, dateVote, scrutinsCount, voteFinal, roleCounts }: Props) {
   return (
     <Link
       href={`/votes/lois/${slug}`}
@@ -76,13 +77,24 @@ export function LoiCard({ slug, titreCourt, resumeSimple, type, statut, dateVote
       )}
 
       {/* Footer */}
-      <div className="mt-auto flex items-center justify-between pt-1">
-        <span className="text-xs text-bureau-600">
-          {scrutinsCount} scrutin{scrutinsCount > 1 ? "s" : ""} liés
-        </span>
-        <span className="text-xs text-teal opacity-0 transition-opacity group-hover:opacity-100">
-          Voir le détail →
-        </span>
+      <div className="mt-auto space-y-1.5 pt-1">
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-bureau-600">
+          <span>{scrutinsCount} scrutin{scrutinsCount > 1 ? "s" : ""}</span>
+          {roleCounts?.AMENDEMENT && (
+            <span className="text-blue-400/60">{roleCounts.AMENDEMENT} amend.</span>
+          )}
+          {roleCounts?.ARTICLE && (
+            <span className="text-bureau-500">{roleCounts.ARTICLE} art.</span>
+          )}
+          {roleCounts?.MOTION && (
+            <span className="text-amber/60">{roleCounts.MOTION} mot.</span>
+          )}
+        </div>
+        <div className="flex items-center justify-end">
+          <span className="text-xs text-teal opacity-0 transition-opacity group-hover:opacity-100">
+            Voir le d\u00e9tail \u2192
+          </span>
+        </div>
       </div>
     </Link>
   );

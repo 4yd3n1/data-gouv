@@ -122,13 +122,10 @@ export async function ingestAgora() {
     const publications = json.publications;
     console.log(`  ${publications.length} lobbying organizations found`);
 
-    // Clear existing ActionLobby — no stable composite IDs for upsert
-    const deleted = await prisma.actionLobby.deleteMany({});
-    console.log(`  Cleared ${deleted.count} existing ActionLobby records`);
-
-    // Accumulate inserts and batch-create in chunks of 500
+    // Accumulate all inserts first, then delete+insert in a single transaction
+    // to prevent partial data loss if the script fails mid-execution
     const CHUNK = 500;
-    const batch: Array<{
+    const allRecords: Array<{
       representantNom: string;
       representantCategorie: string | null;
       ministereCode: string;
@@ -138,12 +135,10 @@ export async function ingestAgora() {
       depensesTranche: string | null;
       sourceUrl: string | null;
     }> = [];
+    const batch = allRecords; // alias for compatibility with loop below
 
-    async function flushBatch(force = false) {
-      while (batch.length >= CHUNK || (force && batch.length > 0)) {
-        const chunk = batch.splice(0, CHUNK);
-        await prisma.actionLobby.createMany({ data: chunk });
-      }
+    async function flushBatch(_force = false) {
+      // no-op: records accumulate in allRecords, flushed at the end in transaction
     }
 
     for (const pub of publications) {
@@ -213,7 +208,18 @@ export async function ingestAgora() {
       }
     }
 
-    await flushBatch(true);
+    // All records accumulated — now delete+insert in a transaction to prevent partial data loss
+    console.log(`\n  ${allRecords.length} records prepared. Writing in transaction...`);
+    await prisma.$transaction(async (tx) => {
+      const deleted = await tx.actionLobby.deleteMany({});
+      console.log(`  Cleared ${deleted.count} existing ActionLobby records`);
+
+      // Batch insert in chunks within the transaction
+      for (let i = 0; i < allRecords.length; i += CHUNK) {
+        const chunk = allRecords.slice(i, i + CHUNK);
+        await tx.actionLobby.createMany({ data: chunk });
+      }
+    }, { timeout: 120_000 }); // 2 min timeout for large datasets
 
     console.log(`\n  AGORA ingestion complete.`);
     console.log(`  Organizations processed : ${stats.publications}`);

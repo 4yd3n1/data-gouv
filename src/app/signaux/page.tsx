@@ -29,11 +29,11 @@ export const metadata = {
 /*  Data fetching                                                      */
 /* ================================================================== */
 
-async function getConflicts() {
+async function getConflicts(showAll: boolean) {
   const rows = await prisma.conflictSignal.findMany({
     where: { voteCount: { gt: 0 } },
     orderBy: [{ participationCount: "desc" }, { voteCount: "desc" }],
-    take: 15,
+    ...(showAll ? {} : { take: 15 }),
   });
   return rows.map((r) => ({
     severity: conflictSeverity(r.totalMontant, r.voteCount),
@@ -105,12 +105,12 @@ async function getRevolvingDoors(): Promise<RevolvingDoorSignal[]> {
   return signals.sort((a, b) => SEVERITY_ORDER[a.severity] - SEVERITY_ORDER[b.severity]);
 }
 
-async function getLobbyConcentration(): Promise<LobbyConcentrationSignal[]> {
+async function getLobbyConcentration(showAll: boolean): Promise<LobbyConcentrationSignal[]> {
   const topMinistries = await prisma.actionLobby.groupBy({
     by: ["ministereCode"],
     _count: { id: true },
     orderBy: { _count: { id: "desc" } },
-    take: 6,
+    take: showAll ? 20 : 6,
   });
 
   const signals = await Promise.all(
@@ -182,7 +182,7 @@ async function getMediaNexus(): Promise<MediaNexusSignal[]> {
     .sort((a, b) => SEVERITY_ORDER[a.severity] - SEVERITY_ORDER[b.severity]);
 }
 
-async function getDeclarationGaps(): Promise<DeclarationGapSignal[]> {
+async function getDeclarationGaps(showAll: boolean): Promise<DeclarationGapSignal[]> {
   const currentMandats = await prisma.mandatGouvernemental.findMany({
     where: { dateFin: null, ministereCode: { not: null } },
     select: {
@@ -226,10 +226,10 @@ async function getDeclarationGaps(): Promise<DeclarationGapSignal[]> {
   return signals
     .filter((s) => s.lobbyActionCount > 0)
     .sort((a, b) => b.ratio - a.ratio)
-    .slice(0, 10);
+    .slice(0, showAll ? 30 : 10);
 }
 
-async function getPartyDiscipline(): Promise<PartyDisciplineSignal[]> {
+async function getPartyDiscipline(showAll: boolean): Promise<PartyDisciplineSignal[]> {
   // Step 1: final vote scrutin IDs (bounded — ~19 laws currently)
   const finalScrutins = await prisma.scrutinLoi.findMany({
     where: { role: "VOTE_FINAL" },
@@ -328,7 +328,7 @@ async function getPartyDiscipline(): Promise<PartyDisciplineSignal[]> {
       examples: d.examples,
     }))
     .sort((a, b) => b.dissidenceRate - a.dissidenceRate)
-    .slice(0, 15);
+    .slice(0, showAll ? 50 : 15);
 }
 
 /* ================================================================== */
@@ -432,15 +432,31 @@ export default async function SignauxPage({
   const filterType = sp.type ?? null;
   const filterSeverity = (sp.severity ?? null) as SignalSeverity | null;
 
+  // When a type filter is active, fetch more items for that type
+  const expandConflicts = filterType === "conflits";
+  const expandLobbying = filterType === "lobbying";
+  const expandGaps = filterType === "declarations";
+  const expandDiscipline = filterType === "dissidences";
+
   const [conflicts, revolvingDoors, lobbying, mediaNexus, gaps, discipline] =
     await Promise.all([
-      getConflicts(),
+      getConflicts(expandConflicts),
       getRevolvingDoors(),
-      getLobbyConcentration(),
+      getLobbyConcentration(expandLobbying),
       getMediaNexus(),
-      getDeclarationGaps(),
-      getPartyDiscipline(),
+      getDeclarationGaps(expandGaps),
+      getPartyDiscipline(expandDiscipline),
     ]);
+
+  // Per-type counts for filter pills
+  const typeCounts: Record<string, number> = {
+    conflits: conflicts.length,
+    "portes-tournantes": revolvingDoors.length,
+    lobbying: lobbying.length,
+    medias: mediaNexus.length,
+    declarations: gaps.length,
+    dissidences: discipline.length,
+  };
 
   // Severity counts (unfiltered)
   const allSeverities = [
@@ -546,7 +562,7 @@ export default async function SignauxPage({
             <FilterPill
               key={t.key}
               href={filterUrl("type", filterType === t.key ? null : t.key)}
-              label={t.label}
+              label={`${t.label} (${typeCounts[t.key] ?? 0})`}
               active={filterType === t.key}
             />
           ))}

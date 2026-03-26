@@ -1,6 +1,6 @@
 # Handoff — data-gouv Civic Intelligence Platform
 
-> Updated: Mar 26, 2026 (Session 40). Current phase: **UX Restructure (Phases 1-3 done, 4-6 pending)** + Phase 9 Government Profiles.
+> Updated: Mar 26, 2026 (Session 42). Current phase: **UX Restructure (Phases 1-3 done, 4-6 pending)** + Phase 9 Government Profiles.
 
 ---
 
@@ -12,9 +12,9 @@ Full blueprint: [`ARCHITECTURAL-PLAN.md`](../ARCHITECTURAL-PLAN.md)
 
 ---
 
-## Current State — Phases 1–8 + Phase 9 + UX Restructure (Sessions 33–40)
+## Current State — Phases 1–8 + Phase 9 + UX Restructure (Sessions 33–41)
 
-~800K rows across 42 Prisma models. **~35 active routes** + ~30 legacy (Phase 6 deletion pending) + 5 OG image routes. **4-item nav**: Signaux | Profils | Votes | Territoire. `pnpm build` verified zero TS errors (Session 40).
+~800K rows across 42 Prisma models. **~35 active routes** + ~30 legacy (Phase 6 deletion pending) + 5 OG image routes. **4-item nav**: Signaux | Profils | Votes | Territoire. `pnpm build` verified zero TS errors (Session 42).
 
 | Layer | Models | Rows |
 |-------|--------|------|
@@ -25,15 +25,17 @@ Full blueprint: [`ARCHITECTURAL-PLAN.md`](../ARCHITECTURAL-PLAN.md)
 | Local | StatLocale (~1,644), BudgetLocal (69,023), StatCriminalite, DensiteMedicale | varies |
 | Culture | Musee, FrequentationMusee, Monument | ~60,071 |
 | Elections | Elu, ElectionLegislative, CandidatLegislatif, PartiPolitique | ~601,514 |
-| Declarations | DeclarationInteret, ParticipationFinanciere, RevenuDeclaration | varies |
+| Declarations *(re-ingested Session 42)* | DeclarationInteret, ParticipationFinanciere, RevenuDeclaration | 12,756 decl + 13,230 part + 474,601 rev = **~500K rows** |
 | Gov. Profiles *(Phase 9 + Session 34)* | PersonnalitePublique, MandatGouvernemental, EntreeCarriere, InteretDeclare, EvenementJudiciaire, ActionLobby | 44 persons, 49 mandats, 474 career, **14 judicial** (Bergé CJR upgrade + Jeanbrun 2nd entry), 184 HATVP interests, 131,842 ActionLobby |
 | Media Ownership *(Session 35)* | GroupeMedia, MediaProprietaire, ParticipationMedia, Filiale | 10 groups, 10 owners, 10 participations, 72 filiales |
 
 | Cross-references *(Session 37–38)* | nuance-party-map, conflict drill-down, commission-lobby overlap | static mappings + runtime queries |
 | Historical govts *(Session 37, not yet seeded)* | 4 data files: Borne (36), Attal (35), Barnier (41), Lecornu (36) | 148 members prepared |
 
-| Signals *(Session 38)* | signal-types.ts, signal-card.tsx | 6 signal types computed at query time (no new models) |
+| Signals *(Session 38, recalibrated 41)* | signal-types.ts, signal-card.tsx | 6 signal types computed at query time (no new models). Severity thresholds recalibrated Session 41. |
 | UX Restructure *(Session 40)* | /profils hub, /signaux filters, slug.ts | ~35 active routes (was 62), 4-nav, search-first homepage |
+| Voting Overhaul *(Session 41)* | ScrutinAccordion, scrutin breadcrumbs, par-sujet filter, LoiCard, search URLs | Role-grouped amendments, parent law links, amendment filter on par-sujet |
+| Declaration Audit *(Session 42)* | audit-declarations.ts, hatvp-parser.ts, case-insensitive fixes | 3-phase audit (XML vs DB vs display). 1,973/1,973 perfect matches. Fresh HATVP re-ingestion. |
 
 **Client components** (14): `SearchInput`, `SearchBox`, `Avatar`, `DeclarationSection`, `ProfileTabs`, `DeptLookup`, `NavSearch`, `FranceMap`, `DeltaBadge`, `GroupExpander`, `ScrutinAccordion`, `MediaBoard`, `MobileNav`, `ConflictDrilldown`.
 
@@ -45,7 +47,7 @@ Full blueprint: [`ARCHITECTURAL-PLAN.md`](../ARCHITECTURAL-PLAN.md)
 - **Killed**: 8 dossier pages + index (redirect to /signaux or /territoire). `HeroSlider` component deleted.
 - **Kept**: `/dossiers/medias`, `/dossiers/financement-politique` (linked from /signaux).
 - **Legacy routes**: `/representants/*` and `/gouvernement/*` still active — Phase 6 will delete them and activate redirects to `/profils/*`.
-- **Remaining phases**: 4 (Votes simplification), 5 (Territory+Economics merge), 6 (Cleanup/delete old routes).
+- **Remaining phases**: 4 (Votes simplification — partially addressed by Session 41 voting overhaul), 5 (Territory+Economics merge), 6 (Cleanup/delete old routes).
 
 ---
 
@@ -68,6 +70,9 @@ npx tsx scripts/ingest-hatvp.ts                  # Ingest HATVP XML declarations
 npx tsx scripts/ingest-agora.ts                  # AGORA lobby → 131,842 ActionLobby (20 ministry codes)
 npx tsx scripts/ingest-research-output.ts --all  # Career + judicial from data/research-output/*.json
 
+# Audit (read-only — run anytime to verify data integrity)
+pnpm audit:declarations                          # 3-phase HATVP audit: XML vs DB vs display (JSON report)
+
 # Session 33 (run manually)
 npx tsx scripts/seed-lois.ts           # Seed 19 LoiParlementaire + 2,589 ScrutinLoi links (idempotent)
 
@@ -86,7 +91,7 @@ pnpm seed:medias                       # Seed media groups + owners + état-fran
 - **`Elu` fields**: `Elu.nom/prenom` (not `nomElu/prenomElu`), `Elu.codeDepartement` (not `departementCode`).
 - **`DensiteMedicale`**: field is `specialite` (not `profession`).
 - **`ConflictSignal` is empty** until `pnpm compute:conflicts` runs. All UI has graceful fallbacks.
-- **`search_index` view**: uses `Depute.groupe` (not `groupePolitique`), `Lobbyiste.categorieActivite` (not `categorie`). Refreshed in Wave 10.
+- **`search_index` view**: uses `Depute.groupe` (not `groupePolitique`), `Lobbyiste.categorieActivite` (not `categorie`). `refresh-search.ts` now DROP+RECREATE (not just REFRESH) with canonical `/profils/*` URLs (Session 41). Run `pnpm refresh:search` after any route changes.
 - **`ElectionLegislative`**: no FK to `Departement` — overseas codes (`"ZZ"`) don't exist in COG. `codeDepartement` is plain string.
 - **`Depute.departementRefCode`** for joins (not `departementCode` which can be `"099"`).
 - **`ingest:elus`** needs 8GB heap — do not change `NODE_OPTIONS=--max-old-space-size=8192`.
@@ -119,6 +124,15 @@ pnpm seed:medias                       # Seed media groups + owners + état-fran
 - **Dossier nav overflow indicator** (Session 39) — `DossierNav` gained right-edge gradient fade to signal scrollable content (10 dossiers, last 2 hidden on most viewports).
 - **Museum name capitalization** (Session 39) — `capitalizeMuseumName()` helper on `/patrimoine` page. Source data stores names lowercase.
 - **Deputy/Senator photo URLs are 404** (Session 39) — Assemblée Nationale changed URL structure. `photoUrl` values in DB (`https://www.assemblee-nationale.fr/dyn/deputes/{id}/image`) return 404. Avatar component correctly falls back to initials. Requires new photo source, not a code fix.
+- **ScrutinAccordion redesigned** (Session 41) — Now groups scrutins by role (VOTE_FINAL pinned, then Articles/Amendements/Motions/Procedural collapsible sections). Filter pills at top. No longer flat list with arbitrary 5-item cutoff. Component is `RoleGroup`-based internally.
+- **Scrutin detail has parent law breadcrumb** (Session 41) — `/representants/scrutins/[id]` queries `ScrutinLoi` for parent law(s). Shows "Votes > [Loi name] > Scrutin n°X" breadcrumb + role-tagged link card. Falls back to old breadcrumb if scrutin has no linked law.
+- **Par-sujet default excludes amendments** (Session 41) — `/votes/par-sujet/[tag]` defaults to `?vue=final`, hiding scrutins with "amendement" in title. Toggle pill to `?vue=tous` shows all. Pagination preserves `vue` param.
+- **LoiCard shows role breakdown** (Session 41) — Footer: "343 scrutins 327 amend. 15 art." Lois page query includes all scrutin roles (was VOTE_FINAL only). `roleCounts` prop on `LoiCard`.
+- **Signal severity recalibrated** (Session 41) — `lobbySeverity` CRITIQUE: 10K→5K, NOTABLE: 3K→1.5K. `gapSeverity` CRITIQUE: ratio 100→50, NOTABLE: 30→15. Filter pills now show per-type counts. When type filter active, `take` limits removed for expanded results.
+- **AGORA ingestion transaction-safe** (Session 41) — `ingest-agora.ts` accumulates all records in memory, then runs `deleteMany()` + batch `createMany()` inside `prisma.$transaction()` with 2-min timeout. Prevents partial data loss on failure.
+- **20 formation errors fixed** (Session 41) — All minister `formation` fields in `gouvernement-lecornu.ts` reconciled against `data/research-output/*.json`. 20/21 fields were wrong (many fabricated by AI). Corrections verified against Tier 1-2 press. `LECORNU_RESHUFFLE_DEPARTURES` gained `charlotte-parmentier-lecocq`. Rist bio corrected (rhumatologue, not chirurgienne).
+- **HATVP declaration audit** (Session 42) — `scripts/audit-declarations.ts` 3-phase read-only audit: (A) XML source vs DB field-by-field (1,973/1,973 perfect match), (B) internal consistency (stored totals vs recomputed — 0 divergences), (C) cross-system System 1 vs System 2 check. Parsing functions extracted to shared module `scripts/lib/hatvp-parser.ts`. Fresh XML downloaded (143MB, 12,756 declarations) and re-ingested: 500K total rows. `pnpm audit:declarations` now available.
+- **Senator case-insensitive fix** (Session 42) — All 3 senator profile routes (`/representants/`, `/profils/`, `/gouvernance/`) and `/gouvernance/deputes/` now use `mode: "insensitive" as const` for declaration queries. Audit found 471 senator declarations were unreachable due to HATVP storing names in different case (UPPERCASE or lowercase) vs the Senat table.
 
 ---
 
@@ -127,7 +141,7 @@ pnpm seed:medias                       # Seed media groups + owners + état-fran
 ### UX Restructure (remaining)
 - **Phase 4** — Votes simplification: absorb `/votes/par-sujet/[tag]` into `/votes?sujet=`, kill `/votes/mon-depute`, move scrutin pages to `/votes/scrutins/`
 - **Phase 5** — Territory + Economics merge: absorb `/economie` into `/territoire?vue=economie`, move `/comparer/territoires` to `/territoire/comparer`
-- **Phase 6** — Cleanup: delete `/representants/*`, `/gouvernement/*`, `/gouvernance/*` page stubs, activate ~30 commented redirects in `next.config.ts`, update `search_index` URLs
+- **Phase 6** — Cleanup: delete `/representants/*`, `/gouvernement/*`, `/gouvernance/*` page stubs, activate ~30 commented redirects in `next.config.ts` (`search_index` URLs already updated to `/profils/*` in Session 41)
 
 ### Phase 9G (remaining)
 Run `pnpm seed:gouvernement` + `generate-carriere` for historical govts, research agents for ~80 new members, HATVP declarations for Lecornu II (when published).
@@ -156,6 +170,8 @@ Sub-phases:
 
 | Session | What Was Built |
 |---------|----------------|
+| **42** (Mar 26) | **HATVP Financial Declaration Audit** — Full 3-phase audit of all deputy/senator financial declarations against official HATVP XML source. (1) Created `scripts/lib/hatvp-parser.ts` — shared parsing module extracted from `ingest-declarations.ts` (10 exported functions). (2) Created `scripts/audit-declarations.ts` — Phase A: XML vs DB comparison (1,973/1,973 perfect matches after re-ingestion), Phase B: internal consistency (stored totals vs recomputed — 0 divergences; display grouping verified equivalent to ingestion), Phase C: cross-system System 1 vs System 2. (3) Fresh HATVP XML downloaded (143MB, 12,756 declarations) and re-ingested: 12,756 declarations + 13,230 participations + 474,601 revenus = ~500K rows. (4) **Case-sensitivity bug fixed**: 471 senator declarations were unreachable on all 3 senator routes — HATVP stores names in different case (UPPERCASE/lowercase) vs Senat table, but queries used exact matching. Added `mode: "insensitive" as const` to 3 senator routes + 1 legacy deputy route (`/gouvernance/deputes/`). (5) Browser-tested: Braun-Pivet (deputy, 9 participations), Apourceau-Poly (senator with lowercase HATVP name — now visible), Fayssat (40 participations), Wauquiez (66 InteretDeclare), Transparence tab cross-refs. Build clean. |
+| **41** (Mar 26) | **Full Platform Audit + Voting Overhaul + Data Accuracy** — Comprehensive 4-agent parallel audit (frontend UX, voting system, data accuracy, data flow). (1) **Data accuracy**: 20/21 minister `formation` fields in `gouvernement-lecornu.ts` were wrong (many AI-fabricated); all reconciled against `data/research-output/*.json` verified sources. Added missing `charlotte-parmentier-lecocq` to reshuffle departures. Fixed Rist bio (rhumatologue not chirurgienne). (2) **Voting system overhaul**: `ScrutinAccordion` redesigned from flat 5-item list to role-grouped collapsible sections (Articles/Amendements/Motions/Procedural) with filter pills + adopted/rejected counts. Scrutin detail page (`/representants/scrutins/[id]`) gains parent law breadcrumb + role-tagged link card via `ScrutinLoi` query. `/votes/par-sujet/[tag]` defaults to `?vue=final` excluding amendment-titled scrutins (Budget: 69 finals shown vs 1,216 total). `LoiCard` footer shows role breakdown per law. (3) **Signal recalibration**: `lobbySeverity` CRITIQUE 10K→5K, `gapSeverity` CRITIQUE ratio 100→50. Filter pills show per-type counts. Expanded results when type-filtered. (4) **Search URLs**: `refresh-search.ts` now DROP+RECREATE with canonical `/profils/*` URLs. (5) **AGORA safety**: `ingest-agora.ts` wraps delete+insert in `prisma.$transaction()`. Browser-tested all changes. Build clean. |
 | **40** (Mar 26) | **UX Restructure Phases 1-3** — Inspired by Track AIPAC + TheyWorkForYou. (1) Nav 9→4 items (Signaux, Profils, Votes, Territoire). NavSearch enlarged w-80 + `/` keyboard shortcut. (2) Homepage full rewrite: search-first hero (giant search bar, entity pills), inline top 6 signal cards, 5 recent votes, territory lookup. Killed: HeroSlider component, dossier grid, KPI counters, economic indicators. (3) New `/profils` hub: unified people directory at `/profils` (index), `/profils/[slug]` (ministers from `/gouvernement/[slug]`), `/profils/deputes`, `/profils/senateurs`, `/profils/ministres`, `/profils/lobbyistes`, `/profils/partis`, `/profils/elus`, `/profils/comparer`. All links updated. (4) Killed 8 dossier pages + index (redirect to `/signaux` or `/territoire`). Kept: `/dossiers/medias`, `/dossiers/financement-politique`. (5) `/signaux` gains URL-param filter pills (type + severity) + deep-dive "Enquête" cards for surviving dossiers. (6) DossierNav simplified to 2 links + "← Signaux" back link. (7) `src/lib/slug.ts` utility. (8) Footer: "Patrimoine culturel" link. Phase 6 redirects prepared as comments in `next.config.ts`. Docs updated (frontend.md, data-ingestion.md). Build clean. |
 | **39** (Mar 25) | **Full UX/UI Audit + 7 Fixes** — Comprehensive browser testing of all major routes using Chrome automation. 3 bug fixes: (1) ~30 missing French accents across `/dossiers/medias` page + `dossier-config.ts`. (2) PIB display on pouvoir-dachat showed "3 Md €" (division by 1M instead of 1K) — fixed to show 2,639 Md €. (3) Dette publique on `/economie` showed "22 157 %" — BDM series `001694258` returns centaines de millions, not percentages. Unit corrected in DB + ingestion. Economie page gained unit-aware formatting for 5 unit types. 4 UX improvements: (4) Homepage stat cards (Députés/Élus/Scrutins/Monuments) wrapped in `<Link>` to respective routes. (5) `DossierNav` right-edge gradient fade for overflow indication. (6) Museum names capitalized on `/patrimoine`. (7) Investigated deputy photo URLs — all 404 (AN changed URL structure), Avatar fallback to initials is correct. Build clean. |
 | **38** (Mar 25) | **Full Browser Testing + QA Fixes** — Comprehensive browser testing of all 62 routes from citizen perspective. 4 fixes: (1) Case-insensitive `DeclarationInteret` matching in deputy profile (`mode: "insensitive" as const`) — HATVP stores uppercase names, causing empty declarations for deputies like Fayssat despite 7.7M€ in financial participations. (2) SMIC BDM series `010605027` corrected from `unite: "eur"` to `unite: "indice"` — values are index (base 100), not euros. Economy page display now formats `"eur"` with euro symbol + 2 decimals. (3) "Gouvernement" link added to main nav (8 items). (4) "Gouvernance" → "Représentants" in 13 breadcrumbs across `/representants/*` pages. Build clean. |

@@ -9,7 +9,7 @@ const members: MemberSeed[] = [
     titre: "Premier ministre, charg\u00e9 de la planification \u00e9cologique et \u00e9nerg\u00e9tique",
     titreCourt: "Premier ministre", ministereCode: "MATIGNON",
     bioCourte: "S\u00e9bastien Lecornu est Premier ministre depuis le 12 octobre 2025. Ancien ministre des Arm\u00e9es (2022-2025), il est une figure montante de la droite macroniste.",
-    formation: "Institut d'\u00e9tudes politiques de Rennes, master en droit public",
+    formation: "Universit\u00e9 Paris 2 Panth\u00e9on-Assas, ma\u00eetrise en droit public",
   },
   // --- Ministres de plein exercice ---
   {
@@ -17,21 +17,21 @@ const members: MemberSeed[] = [
     type: TypeMandat.MINISTRE,
     titre: "Ministre de l'Int\u00e9rieur", titreCourt: "Int\u00e9rieur", ministereCode: "INTERIEUR",
     bioCourte: "Laurent Nu\u00f1ez est un haut fonctionnaire, ancien pr\u00e9fet de police de Paris et ancien coordonnateur national du renseignement.",
-    formation: "ENA (promotion Averro\u00e8s, 1993), IEP de Paris",
+    formation: "DESS gestion des collectivit\u00e9s locales (universit\u00e9 de Tours), ENA (promotion Cyrano-de-Bergerac, 1997)",
   },
   {
     nom: "Vautrin", prenom: "Catherine", civilite: "Mme", slug: "catherine-vautrin", rang: 4,
     type: TypeMandat.MINISTRE,
     titre: "Ministre des Arm\u00e9es et des Anciens combattants", titreCourt: "Arm\u00e9es", ministereCode: "ARMEES",
     bioCourte: "Catherine Vautrin est une femme politique LR, ancienne ministre d\u00e9l\u00e9gu\u00e9e sous Chirac et pr\u00e9sidente du Grand Reims.",
-    formation: "Universit\u00e9 de Reims (sciences \u00e9conomiques), DESS gestion des entreprises",
+    formation: "Universit\u00e9 Paris 5 Ren\u00e9-Descartes, ma\u00eetrise en droit des affaires",
   },
   {
     nom: "Farandou", prenom: "Jean-Pierre", civilite: "M.", slug: "jean-pierre-farandou", rang: 5,
     type: TypeMandat.MINISTRE,
     titre: "Ministre du Travail et des Solidarit\u00e9s", titreCourt: "Travail et Solidarit\u00e9s", ministereCode: "TRAVAIL_SOLIDARITES",
     bioCourte: "Jean-Pierre Farandou est un dirigeant d'entreprise, ancien PDG de la SNCF (2019-2024), issu du monde ferroviaire.",
-    formation: "\u00c9cole polytechnique (X1977), \u00c9cole nationale des ponts et chauss\u00e9es",
+    formation: "\u00c9cole des Mines de Paris (Mines ParisTech)",
   },
   {
     nom: "Barbut", prenom: "Monique", civilite: "Mme", slug: "monique-barbut", rang: 6,
@@ -39,7 +39,7 @@ const members: MemberSeed[] = [
     titre: "Ministre de la Transition \u00e9cologique, de la Biodiversit\u00e9 et des N\u00e9gociations climatiques internationales",
     titreCourt: "Transition \u00e9cologique", ministereCode: "TRANSITION_ECOLOGIQUE",
     bioCourte: "Monique Barbut est une haute fonctionnaire internationale, ancienne secr\u00e9taire ex\u00e9cutive de la Convention des Nations unies sur la lutte contre la d\u00e9sertification.",
-    formation: "ENA (promotion Fernand Braudel, 1984), HEC Paris",
+    formation: "Ma\u00eetrise en sciences \u00e9conomiques (Paris I Panth\u00e9on-Sorbonne), Institut des hautes \u00e9tudes internationales (Paris II)",
   },
   {
     nom: "Darmanin", prenom: "G\u00e9rald", civilite: "M.", slug: "gerald-darmanin", rang: 7,
@@ -54,7 +54,7 @@ const members: MemberSeed[] = [
     titre: "Ministre de l'\u00c9conomie, des Finances et de la Souverainet\u00e9 industrielle, \u00e9nerg\u00e9tique et num\u00e9rique",
     titreCourt: "\u00c9conomie et Finances", ministereCode: "ECONOMIE_FINANCES",
     bioCourte: "Roland Lescure est un homme politique et financier franco-canadien, ancien d\u00e9put\u00e9 des Fran\u00e7ais d'Am\u00e9rique du Nord et ministre d\u00e9l\u00e9gu\u00e9 \u00e0 l'Industrie.",
-    formation: "HEC Paris, universit\u00e9 Paris-Dauphine",
+    formation: "\u00c9cole polytechnique (X1987), ENSAE, London School of Economics",
     deputeNom: "Lescure", deputePrenom: "Roland",
   },
   {
@@ -63,7 +63,7 @@ const members: MemberSeed[] = [
     titre: "Ministre des PME, du Commerce, de l'Artisanat, du Tourisme et du Pouvoir d'achat",
     titreCourt: "PME et Commerce", ministereCode: "PME_COMMERCE",
     bioCourte: "Serge Papin est un chef d'entreprise, ancien PDG de Syst\u00e8me U (2005-2018), figure du commerce coop\u00e9ratif fran\u00e7ais.",
-    formation: "ESSCA Angers (\u00e9cole sup\u00e9rieure de commerce)",
+    formation: "BEP Commerce, CCI de Nantes",
   },
   {
     nom: "Genevard", prenom: "Annie", civilite: "Mme", slug: "annie-genevard", rang: 10,
@@ -71,7 +71,7 @@ const members: MemberSeed[] = [
     titre: "Ministre de l'Agriculture, de l'Agroalimentaire et de la Souverainet\u00e9 alimentaire",
     titreCourt: "Agriculture", ministereCode: "AGRICULTURE",
     bioCourte: "Annie Genevard est une femme politique LR, ancienne vice-pr\u00e9sidente de l'Assembl\u00e9e nationale et d\u00e9put\u00e9e du Doubs.",
-    formation: "Universit\u00e9 de Besan\u00e7on (lettres modernes), CAPES",
+    formation: "Universit\u00e9 de Franche-Comt\u00e9 (lettres classiques, histoire de l'art), CAPES de lettres classiques",
     deputeNom: "Genevard", deputePrenom: "Annie",
   },
   {
@@ -79,14 +79,14 @@ const members: MemberSeed[] = [
     type: TypeMandat.MINISTRE,
     titre: "Ministre de l'\u00c9ducation nationale", titreCourt: "\u00c9ducation nationale", ministereCode: "EDUCATION_NATIONALE",
     bioCourte: "\u00c9douard Geffray est un haut fonctionnaire, ancien directeur g\u00e9n\u00e9ral de l'enseignement scolaire et ancien secr\u00e9taire g\u00e9n\u00e9ral de la CNIL.",
-    formation: "ENA (promotion L\u00e9opold S\u00e9dar Senghor, 2004), Sciences Po Paris",
+    formation: "Ma\u00eetrise d'histoire \u00e9conomique (Paris-Sorbonne), Sciences Po Paris, ENA (promotion Romain Gary, 2003)",
   },
   {
     nom: "Barrot", prenom: "Jean-No\u00ebl", civilite: "M.", slug: "jean-noel-barrot", rang: 12,
     type: TypeMandat.MINISTRE,
     titre: "Ministre de l'Europe et des Affaires \u00e9trang\u00e8res", titreCourt: "Affaires \u00e9trang\u00e8res", ministereCode: "AFFAIRES_ETRANGERES",
     bioCourte: "Jean-No\u00ebl Barrot est un homme politique MoDem, universitaire en \u00e9conomie, ancien ministre d\u00e9l\u00e9gu\u00e9 au Num\u00e9rique.",
-    formation: "HEC Paris, MIT (PhD en \u00e9conomie)",
+    formation: "HEC Paris (doctorat en sciences de gestion), Sciences Po Paris, \u00c9cole d'\u00e9conomie de Paris (PSE)",
     deputeNom: "Barrot", deputePrenom: "Jean-No\u00ebl",
   },
   {
@@ -94,7 +94,7 @@ const members: MemberSeed[] = [
     type: TypeMandat.MINISTRE,
     titre: "Ministre de la Culture", titreCourt: "Culture", ministereCode: "CULTURE",
     bioCourte: "Catherine P\u00e9gard est une journaliste politique et haute fonctionnaire, ancienne pr\u00e9sidente de l'\u00c9tablissement public du ch\u00e2teau de Versailles (2011-2024).",
-    formation: "Institut fran\u00e7ais de presse (Paris II)",
+    formation: "Licence d'histoire, ma\u00eetrise de sciences politiques",
     dateDebut: new Date("2026-02-26"),
   },
   {
@@ -102,8 +102,8 @@ const members: MemberSeed[] = [
     type: TypeMandat.MINISTRE,
     titre: "Ministre de la Sant\u00e9, des Familles, de l'Autonomie et des Personnes handicap\u00e9es",
     titreCourt: "Sant\u00e9 et Familles", ministereCode: "SANTE_FAMILLE",
-    bioCourte: "St\u00e9phanie Rist est m\u00e9decin chirurgienne et d\u00e9put\u00e9e Renaissance du Loiret, sp\u00e9cialiste des questions de sant\u00e9 \u00e0 l'Assembl\u00e9e.",
-    formation: "Facult\u00e9 de m\u00e9decine de Tours, internat en chirurgie orthop\u00e9dique",
+    bioCourte: "St\u00e9phanie Rist est m\u00e9decin rhumatologue et d\u00e9put\u00e9e Renaissance du Loiret, sp\u00e9cialiste des questions de sant\u00e9 \u00e0 l'Assembl\u00e9e.",
+    formation: "Doctorat en m\u00e9decine, sp\u00e9cialit\u00e9 rhumatologie (facult\u00e9 de m\u00e9decine de Tours), master en gestion de sant\u00e9 (Sciences Po Paris)",
     deputeNom: "Rist", deputePrenom: "St\u00e9phanie",
   },
   {
@@ -111,7 +111,7 @@ const members: MemberSeed[] = [
     type: TypeMandat.MINISTRE,
     titre: "Ministre de l'Outre-mer", titreCourt: "Outre-mer", ministereCode: "OUTREMER",
     bioCourte: "Na\u00efma Moutchou est avocate et d\u00e9put\u00e9e Horizons du Val-d'Oise, ancienne vice-pr\u00e9sidente de l'Assembl\u00e9e nationale.",
-    formation: "Universit\u00e9 Paris 1 Panth\u00e9on-Sorbonne (droit), barreau de Paris",
+    formation: "Universit\u00e9 de Cergy-Pontoise puis Paris II Panth\u00e9on-Assas (droit), barreau de Paris",
     deputeNom: "Moutchou", deputePrenom: "Na\u00efma",
   },
   {
@@ -120,7 +120,7 @@ const members: MemberSeed[] = [
     titre: "Ministre de l'Am\u00e9nagement du territoire et de la D\u00e9centralisation",
     titreCourt: "Am\u00e9nagement du territoire", ministereCode: "AMENAGEMENT_TERRITOIRE",
     bioCourte: "Fran\u00e7oise Gatel est s\u00e9natrice centriste d'Ille-et-Vilaine, ancienne pr\u00e9sidente de la d\u00e9l\u00e9gation aux collectivit\u00e9s territoriales du S\u00e9nat.",
-    formation: "Universit\u00e9 de Rennes (lettres)",
+    formation: "Licence d'anglais, DESS en administration et gestion des entreprises (Institut de gestion de Rennes)",
     senateurNom: "Gatel", senateurPrenom: "Fran\u00e7oise",
   },
   {
@@ -128,7 +128,7 @@ const members: MemberSeed[] = [
     type: TypeMandat.MINISTRE,
     titre: "Ministre des Comptes publics", titreCourt: "Comptes publics", ministereCode: "ECONOMIE_FINANCES",
     bioCourte: "David Amiel est d\u00e9put\u00e9 Renaissance de Paris, ancien conseiller \u00e0 l'\u00c9lys\u00e9e, sp\u00e9cialiste des questions \u00e9conomiques.",
-    formation: "ENS (Ulm), Sciences Po Paris, MIT (\u00e9conomie)",
+    formation: "ENS Paris (Ulm), universit\u00e9 de Princeton (\u00e9conomie)",
     dateDebut: new Date("2026-02-26"),
     deputeNom: "Amiel", deputePrenom: "David",
   },
@@ -138,7 +138,7 @@ const members: MemberSeed[] = [
     titre: "Ministre de l'Enseignement sup\u00e9rieur, de la Recherche et de l'Espace",
     titreCourt: "Enseignement sup\u00e9rieur et Recherche", ministereCode: "ENSEIGNEMENT_SUPERIEUR",
     bioCourte: "Philippe Baptiste est un scientifique, ancien PDG du CNES (Centre national d'\u00e9tudes spatiales), sp\u00e9cialiste d'intelligence artificielle.",
-    formation: "\u00c9cole polytechnique, ENSTA ParisTech, PhD en informatique (universit\u00e9 Paris-Sud)",
+    formation: "\u00c9cole des Mines de Nancy, University of Strathclyde (Glasgow), doctorat en informatique (universit\u00e9 de Technologie de Compi\u00e8gne)",
   },
   {
     nom: "Ferrari", prenom: "Marina", civilite: "Mme", slug: "marina-ferrari", rang: 19,
@@ -146,7 +146,7 @@ const members: MemberSeed[] = [
     titre: "Ministre des Sports, de la Jeunesse et de la Vie associative",
     titreCourt: "Sports et Jeunesse", ministereCode: "SPORTS_JEUNESSE",
     bioCourte: "Marina Ferrari est d\u00e9put\u00e9e Renaissance de Savoie, ancienne secr\u00e9taire d'\u00c9tat au Num\u00e9rique.",
-    formation: "EM Lyon Business School",
+    formation: "HEIP Paris (relations internationales), DEA en sciences politiques (universit\u00e9 Paris Cit\u00e9), DEA en droit (universit\u00e9 Lyon 3)",
     deputeNom: "Ferrari", deputePrenom: "Marina",
   },
   {
@@ -154,7 +154,7 @@ const members: MemberSeed[] = [
     type: TypeMandat.MINISTRE,
     titre: "Ministre des Transports", titreCourt: "Transports", ministereCode: "TRANSPORTS",
     bioCourte: "Philippe Tabarot est s\u00e9nateur LR des Alpes-Maritimes, sp\u00e9cialiste des transports au S\u00e9nat.",
-    formation: "IEP d'Aix-en-Provence, DESS en droit public",
+    formation: "Ma\u00eetrise de droit public, universit\u00e9 de Nice",
     senateurNom: "Tabarot", senateurPrenom: "Philippe",
   },
   {
@@ -162,7 +162,7 @@ const members: MemberSeed[] = [
     type: TypeMandat.MINISTRE,
     titre: "Ministre de la Ville et du Logement", titreCourt: "Ville et Logement", ministereCode: "VILLE_LOGEMENT",
     bioCourte: "Vincent Jeanbrun est le maire de L'Ha\u00ff-les-Roses, figure de la politique locale du Val-de-Marne.",
-    formation: "Sciences Po Paris, master en affaires publiques",
+    formation: "\u00c9cole de commerce d'\u00c9vry",
   },
   // --- Ministres d\u00e9l\u00e9gu\u00e9s ---
   {
@@ -251,7 +251,7 @@ const members: MemberSeed[] = [
     titre: "Ministre d\u00e9l\u00e9gu\u00e9 charg\u00e9 de l'Europe",
     titreCourt: "Europe", ministereCode: "AFFAIRES_ETRANGERES",
     bioCourte: "Benjamin Haddad est d\u00e9put\u00e9 Renaissance de Paris, politologue sp\u00e9cialiste des relations transatlantiques, ancien directeur \u00e0 l'Atlantic Council.",
-    formation: "Sciences Po Paris, Johns Hopkins SAIS (Washington)",
+    formation: "Sciences Po Paris (affaires internationales), HEC Paris (\u00e9conomie financi\u00e8re)",
     deputeNom: "Haddad", deputePrenom: "Benjamin",
   },
   {
@@ -309,4 +309,5 @@ export const LECORNU_CONFIG: GovernmentConfig = {
 export const LECORNU_RESHUFFLE_DEPARTURES = [
   "rachida-dati",
   "amelie-de-montchalin",
+  "charlotte-parmentier-lecocq",
 ];

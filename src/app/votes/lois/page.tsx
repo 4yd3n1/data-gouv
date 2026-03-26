@@ -51,15 +51,12 @@ export default async function LoisPage({
     orderBy: { rang: "asc" },
     include: {
       scrutins: {
-        where: { role: "VOTE_FINAL" },
-        take: 1,
         include: {
           scrutin: {
             select: { pour: true, contre: true, abstentions: true },
           },
         },
       },
-      _count: { select: { scrutins: true } },
     },
   });
 
@@ -194,7 +191,12 @@ export default async function LoisPage({
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {lois.map((loi) => {
-            const voteFinalScrutin = loi.scrutins[0]?.scrutin;
+            const voteFinalLink = loi.scrutins.find((sl) => sl.role === "VOTE_FINAL");
+            const voteFinalScrutin = voteFinalLink?.scrutin;
+            const roleCounts: Record<string, number> = {};
+            for (const sl of loi.scrutins) {
+              roleCounts[sl.role] = (roleCounts[sl.role] ?? 0) + 1;
+            }
             return (
               <LoiCard
                 key={loi.id}
@@ -204,8 +206,9 @@ export default async function LoisPage({
                 type={loi.type}
                 statut={loi.statut}
                 dateVote={loi.dateVote}
-                scrutinsCount={loi._count.scrutins}
+                scrutinsCount={loi.scrutins.length}
                 voteFinal={voteFinalScrutin ?? null}
+                roleCounts={roleCounts}
               />
             );
           })}

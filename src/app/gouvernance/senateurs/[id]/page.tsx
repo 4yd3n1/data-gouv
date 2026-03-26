@@ -26,7 +26,11 @@ export default async function SenateurDetailPage({
   if (!s) notFound();
 
   const declarations = await prisma.declarationInteret.findMany({
-    where: { nom: s.nom, prenom: s.prenom, typeMandat: "S\u00e9nateur" },
+    where: {
+      nom: { equals: s.nom, mode: "insensitive" as const },
+      prenom: { equals: s.prenom, mode: "insensitive" as const },
+      typeMandat: "S\u00e9nateur",
+    },
     include: { participations: true, revenus: true },
     orderBy: { dateDepot: "desc" },
   });

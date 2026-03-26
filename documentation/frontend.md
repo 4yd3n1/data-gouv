@@ -1,6 +1,6 @@
 # Frontend Implementation
 
-> Last updated: Mar 26, 2026 — Session 40 (UX Restructure). ~35 active routes + ~30 legacy (Phase 6 removal pending) + 5 OG image routes, 42 components, 14 client components.
+> Last updated: Mar 26, 2026 — Session 42 (HATVP Declaration Audit + Case-Sensitivity Fixes). ~35 active routes + ~30 legacy (Phase 6 removal pending) + 5 OG image routes, 42 components, 14 client components.
 
 Complete reference for all UI pages, components, styling, and patterns.
 
@@ -150,10 +150,10 @@ Applied with: `font-[family-name:var(--font-display)]` for headings.
 | `/dossiers/transition-ecologique` | `/signaux` |
 | `/dossiers/retraites` | `/signaux` |
 
-### Signaux (Session 39)
+### Signaux (Session 39, updated Session 41)
 | Route | Key Features |
 |-------|-------------|
-| `/signaux` | Transparency signal feed — URL-param-driven filter pills by type (Conflits, Portes tournantes, Lobbying, Médias, Déclarations, Dissidences) and by severity (Critique, Notable, Informatif). Deep-dive "Enquête" link cards at bottom for `/dossiers/medias` + `/dossiers/financement-politique`. |
+| `/signaux` | Transparency signal feed — URL-param-driven filter pills by type (Conflits, Portes tournantes, Lobbying, Médias, Déclarations, Dissidences) and by severity (Critique, Notable, Informatif). **Filter pills show per-type counts** (Session 41). When a type filter is active, data-fetching removes `take` limits to show all items. **Severity thresholds recalibrated** (Session 41): lobby CRITIQUE 10K→5K, gap CRITIQUE ratio 100→50. Deep-dive "Enquête" link cards at bottom for `/dossiers/medias` + `/dossiers/financement-politique`. |
 
 ### Profils (new canonical people section — Session 39)
 | Route | Key Features |
@@ -185,7 +185,7 @@ Old `/representants/*` routes still exist with identical pages. Will be replaced
 | `/representants/lobbyistes` | Search, pagination |
 | `/representants/lobbyistes/[id]` | Info panel, actions list |
 | `/representants/scrutins` | Search, result filter, **SPS/MOC type filter** (`?type=sps\|moc`), pagination |
-| `/representants/scrutins/[id]` | Result summary, group bars, individual votes |
+| `/representants/scrutins/[id]` | Result summary, group bars, individual votes. **Parent law breadcrumb** (Session 41): queries `ScrutinLoi` for parent law, shows contextual breadcrumb "Votes > [Loi] > Scrutin n°X" + role-tagged link card ("Amendement — Loi : X — Voir la loi ->"). |
 | `/representants/partis` | Year selector, sort options, aggregate stats |
 | `/representants/partis/[id]` | Revenue/expense breakdown bars, multi-year table |
 
@@ -202,9 +202,9 @@ Old `/representants/*` routes still exist with identical pages. Will be replaced
 | Route | Key Features |
 |-------|-------------|
 | `/votes` | Tag grid (13 topics), stats, recent scrutins, **Grandes lois** section (top 4 laws by `rang` with inline GroupBar) |
-| `/votes/lois` | Parliamentary Laws hub — 19 major laws. Filters: statut (Tous/Adoptés/Rejetés), type (PLF/PROJET_LOI/etc), tag pills. `LoiCard` grid with inline GroupBar. `revalidate = 3600`. [Session 33] |
-| `/votes/lois/[slug]` | Law detail — hero stats (votants/pour/contre/abstentions), `GroupExpander` (party breakdown, expandable deputy list), `ScrutinAccordion` (all linked scrutins, VOTE_FINAL pinned top). `generateMetadata` for SEO. [Session 33] |
-| `/votes/par-sujet/[tag]` | Tag-filtered scrutins, pagination, vote bars, related tags |
+| `/votes/lois` | Parliamentary Laws hub — 19 major laws. Filters: statut (Tous/Adoptés/Rejetés), type (PLF/PROJET_LOI/etc), tag pills. `LoiCard` grid with inline GroupBar + **role breakdown** (amendment/article/motion counts per card, Session 41). `revalidate = 3600`. [Session 33] |
+| `/votes/lois/[slug]` | Law detail — hero stats (votants/pour/contre/abstentions), `GroupExpander` (party breakdown, expandable deputy list), `ScrutinAccordion` (**role-grouped**: Final Vote pinned, then Articles/Amendements/Motions/Procedural collapsible sections with adopted/rejected counts + filter pills, Session 41). `generateMetadata` for SEO. [Session 33] |
+| `/votes/par-sujet/[tag]` | Tag-filtered scrutins, pagination, vote bars, related tags. **Default `?vue=final`** excludes amendment-titled scrutins; toggle to `?vue=tous` shows all. Amendment count indicator shown when filtered. [Session 41] |
 | `/votes/mon-depute` | 3-state deputy lookup: empty → list → detail with tag breakdown |
 | `/votes/alignements` | N×N group alignment heatmap. Backed by `src/lib/alignment.ts` (`computeAlignment()`). Top 5 allies (teal) and opponents (rose) per group. ISR 86400. |
 
@@ -302,7 +302,7 @@ Unique dossier page with dedicated components for media ownership visualization.
 
 **Tabs**: Activité / Déclarations / **Transparence** / Informations
 
-**Declaration matching** (Session 38 fix): `DeclarationInteret` query uses `mode: "insensitive" as const` for `nom`/`prenom` to handle HATVP uppercase names (e.g., `FAYSSAT` vs `Fayssat`). Without this, deputies with uppercase HATVP entries showed empty declarations.
+**Declaration matching** (Session 38 fix, extended Session 42): `DeclarationInteret` query uses `mode: "insensitive" as const` for `nom`/`prenom` on ALL routes (deputies + senators + gouvernance). Session 42 audit found 471 senator declarations and 517 deputy declarations unreachable due to missing `mode: "insensitive"` on senator routes and `/gouvernance/deputes/`. Now fixed on all 6 profile routes.
 
 **Transparence tab** (Phase 3 + Session 37 `ConflictDrilldown`):
 - Stat cards: total participations déclarées (€), votes sur textes thématiques, déports count
@@ -330,11 +330,13 @@ Unique dossier page with dedicated components for media ownership visualization.
 
 **File**: [page.tsx](../src/app/votes/par-sujet/[tag]/page.tsx)
 
-**Data**: Scrutins filtered by ScrutinTag, paginated (20/page). Related tags from overlapping ScrutinTag records.
+**Data**: Scrutins filtered by ScrutinTag, paginated (25/page). Related tags from overlapping ScrutinTag records.
 
-**Layout**: `PageHeader` (tag label + count) + recent related tags pills + scrutin list with group vote bars + `Pagination`.
+**URL params**: `?vue=final` (default) excludes amendment-titled scrutins; `?vue=tous` shows all. `?page=` for pagination (preserves `vue` param). [Session 41]
 
-**Note**: `VALID_TAGS` array hardcoded — returns 404 for unknown tags.
+**Layout**: `PageHeader` (tag label + count) + stats row (total, adopted, rejected, adoption rate) + **view filter pills** ("Votes finals (N)" / "Tous les scrutins (N)" with amendment count indicator) + scrutin list with group vote bars + `Pagination` + related tags.
+
+**Note**: `VALID_TAGS` array hardcoded — returns 404 for unknown tags. Amendment detection is title-based heuristic (`titre` contains "amendement").
 
 ---
 
@@ -800,7 +802,7 @@ Expandable HATVP declaration cards. Collapsed: type badge + title + date + summa
 }
 ```
 
-Card for a single `LoiParlementaire`. Shows type badge, short title, plain-language summary, `ScrutinResultBadge` for statut, vote date, scrutin count, and an inline `GroupBar` (teal=pour/rose=contre/amber=abstention stacked bar per group). Links to `/votes/lois/[slug]`.
+Card for a single `LoiParlementaire`. Shows type badge, short title, plain-language summary, `ScrutinResultBadge` for statut, vote date, scrutin count, and an inline `GroupBar` (teal=pour/rose=contre/amber=abstention stacked bar per group). **Footer shows role breakdown** (Session 41): amendment/article/motion counts per law (e.g. "343 scrutins 327 amend. 15 art."). Accepts optional `roleCounts` prop (`Record<string, number>`). Links to `/votes/lois/[slug]`.
 
 ---
 
@@ -830,7 +832,7 @@ Expandable group-by-group vote breakdown for law detail pages. Each row: colored
 }
 ```
 
-Collapsible list of scrutins linked to a law. The `VOTE_FINAL` scrutin is always pinned to the top regardless of expand state. Other scrutins show the first 5 by default; "N scrutins supplémentaires" button expands the rest. Each row: role badge (`VOTE_FINAL`/`AMENDEMENT`/`ARTICLE`/`MOTION`/`PROCEDURAL`), truncated title, mini stacked bar (hidden on mobile), `ScrutinResultBadge`, date. Links to `/representants/scrutins/[id]`. Inline `ChevronDown` SVG (not lucide-react).
+**Redesigned Session 41** — Role-grouped scrutin display for laws. `VOTE_FINAL` always pinned at top with teal highlight border. Remaining scrutins grouped into collapsible `RoleGroup` sections: Articles, Amendements, Motions, Procedural. Each group header shows count + adopted/rejected tally. **Filter pills** at top when >3 scrutins: "Tous (N) | Articles (N) | Amendements (N) | Procedurals (N)". Clicking a filter shows only that role group expanded. Groups auto-expand when <=5 items or when filtered. Each row: role badge, truncated title, mini stacked bar (hidden mobile), `ScrutinResultBadge`, date. Links to `/representants/scrutins/[id]`. Inline `ChevronDown` SVG (not lucide-react).
 
 ---
 

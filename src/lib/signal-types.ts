@@ -155,14 +155,14 @@ export function conflictSeverity(
 }
 
 export function lobbySeverity(count: number): SignalSeverity {
-  if (count > 10_000) return "CRITIQUE";
-  if (count > 3_000) return "NOTABLE";
+  if (count > 5_000) return "CRITIQUE";
+  if (count > 1_500) return "NOTABLE";
   return "INFORMATIF";
 }
 
 export function gapSeverity(ratio: number): SignalSeverity {
-  if (ratio > 100) return "CRITIQUE";
-  if (ratio > 30) return "NOTABLE";
+  if (ratio > 50) return "CRITIQUE";
+  if (ratio > 15) return "NOTABLE";
   return "INFORMATIF";
 }
 
