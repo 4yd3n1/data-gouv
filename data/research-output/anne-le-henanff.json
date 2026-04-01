@@ -2,7 +2,7 @@
   "slug": "anne-le-henanff",
   "nom": "Le Hénanff",
   "prenom": "Anne",
-  "researched_at": "2026-03-05",
+  "researched_at": "2026-03-27",
   "sources_used": [
     "https://www.nosdeputes.fr/anne-le-henanff",
     "https://www.usine-digitale.fr/editorial/qui-est-anne-le-henanff-nouvelle-ministre-deleguee-a-l-ia-et-au-numerique.N2239484",
@@ -198,5 +198,21 @@
     }
   ],
   "judicial_events": [],
-  "conflict_flags": []
+  "conflict_flags": [
+    {
+      "type": "VOTE_CONTRADICTION",
+      "description": "En tant que député(e), a voté contre 46 scrutin(s) sur 373 portant sur les thématiques budget — domaine(s) relevant de son portefeuille ministériel actuel (taux d'opposition : 12 %).",
+      "severity": "informatif",
+      "data": {
+        "totalVotes": 373,
+        "contreVotes": 46,
+        "contreRate": 12,
+        "tags": [
+          "budget"
+        ],
+        "topExamples": "l'amendement n° 25 de M. Renault à l'article 3 et ÉTAT A du projet de loi de fin; la première partie du projet de loi de finances pour 2025 (première lecture).; l'amendement n° 2947 de M. Dessigny après l'article 16 du projet de loi de finan"
+      },
+      "_ingested": false
+    }
+  ]
 }

@@ -5,7 +5,7 @@
   "civilite": "Mme",
   "dateNaissance": "1973-10-10",
   "lieuNaissance": "Aix-les-Bains, Savoie",
-  "researched_at": "2026-03-05",
+  "researched_at": "2026-03-27",
   "sources_used": [
     "https://presse.economie.gouv.fr/biographie-de-marina-ferrari/",
     "https://www.sports.gouv.fr/biographie-de-marina-ferrari-857",
@@ -176,5 +176,21 @@
     }
   ],
   "judicial_events": [],
-  "conflict_flags": []
+  "conflict_flags": [
+    {
+      "type": "VOTE_CONTRADICTION",
+      "description": "En tant que député(e), a voté contre 3 scrutin(s) sur 5 portant sur les thématiques education — domaine(s) relevant de son portefeuille ministériel actuel (taux d'opposition : 60 %).",
+      "severity": "critique",
+      "data": {
+        "totalVotes": 5,
+        "contreVotes": 3,
+        "contreRate": 60,
+        "tags": [
+          "education"
+        ],
+        "topExamples": "la motion de rejet préalable, déposée par Mme Mathilde Panot, de la proposition ; l'amendement n° 7 de Mme Mesmeur à l'article 2 de la proposition de loi relative; l'amendement n° 6 de Mme Mesmeur à l'article 2 de la proposition de loi relative"
+      },
+      "_ingested": false
+    }
+  ]
 }

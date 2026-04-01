@@ -5,7 +5,7 @@
   "civilite": "Mme",
   "dateNaissance": "1973-08-06",
   "lieuNaissance": "Athis-Mons (Essonne)",
-  "researched_at": "2026-03-05",
+  "researched_at": "2026-03-27",
   "sources_used": [
     "https://solidarites.gouv.fr/biographie-de-stephanie-rist",
     "https://sante.gouv.fr/ministere/les-ministres/stephanie-rist/biographie/article/biographie",
@@ -154,5 +154,34 @@
     }
   ],
   "judicial_events": [],
-  "conflict_flags": []
+  "conflict_flags": [
+    {
+      "type": "VOTE_CONTRADICTION",
+      "description": "En tant que député(e), a voté contre 67 scrutin(s) sur 395 portant sur les thématiques sante — domaine(s) relevant de son portefeuille ministériel actuel (taux d'opposition : 17 %).",
+      "severity": "notable",
+      "data": {
+        "totalVotes": 395,
+        "contreVotes": 67,
+        "contreRate": 17,
+        "tags": [
+          "sante"
+        ],
+        "topExamples": "la motion de rejet préalable, déposée par Mme Mathilde Panot, de la proposition ; la motion de rejet préalable, déposée par Mme Mathilde Panot, du projet de loi p; la proposition de résolution visant à abroger la loi n° 2023-270 du 14 avril 202"
+      },
+      "_ingested": false
+    },
+    {
+      "type": "LIENS_INDUSTRIE_PHARMACEUTIQUE",
+      "description": "Entre 2012 et 2017, en tant que rhumatologue au CHR d'Orléans, Rist a déclaré 309 liens d'intérêts avec des laboratoires pharmaceutiques totalisant 40 196 € (hébergements, repas, transports, congrès, formations rémunérées). Record parmi les médecins-députés selon PharmaPapers/transparence.sante.gouv.fr. La polémique a resurgi lors de sa nomination comme ministre de la Santé (octobre 2025).",
+      "sourceUrl": "https://www.francebleu.fr/infos/politique/une-polemique-ressurgit-sur-les-liens-de-stephanie-rist-nouvelle-ministre-de-la-sante-avec-l-industrie-pharmaceutique-7992473",
+      "sourcePrincipale": "France Bleu / PharmaPapers",
+      "severity": "critique",
+      "data": {
+        "liensCount": 309,
+        "totalEuros": 40196,
+        "period": "2012-2017"
+      },
+      "_ingested": false
+    }
+  ]
 }

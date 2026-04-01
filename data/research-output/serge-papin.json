@@ -5,7 +5,7 @@
   "civilite": "M.",
   "dateNaissance": "1955-08-01",
   "lieuNaissance": "Saint-Gilles-Croix-de-Vie, Vendee",
-  "researched_at": "2026-03-05",
+  "researched_at": "2026-03-27",
   "sources_used": [
     "https://www.francebleu.fr/infos/politique/le-vendeen-serge-papin-fils-d-epiciers-et-ex-pdg-de-systeme-u-nouveau-ministre-des-pme-6560258",
     "https://www.lejournaldesentreprises.com/article/serge-papin-ex-patron-de-systeme-u-devient-ministre-des-pme-du-gouvernement-lecornu-ii-2128455",
@@ -193,6 +193,36 @@
       "type": "CARRIERE_PRIVEE_GRANDE_DISTRIBUTION",
       "description": "Ancien PDG de Systeme U (2005-2018) et administrateur d'Auchan (2022-2025), nomme ministre du Commerce et des PME. Potentiel conflit d'interets entre son reseau dans la grande distribution et ses fonctions ministerielles couvrant le commerce.",
       "confidence": "medium",
+      "_ingested": false
+    },
+    {
+      "type": "PORTE_TOURNANTE",
+      "description": "PDG de Système U pendant 13 ans (2005-2018), l'une des plus grandes coopératives de distribution française. Nommé ministre délégué chargé du Commerce, de l'Artisanat, des PME et du Tourisme — portefeuille qui inclut la régulation du commerce de détail dont Système U est un acteur majeur.",
+      "sourceUrl": "https://www.lefigaro.fr/conjoncture/qui-est-serge-papin-ancien-patron-de-systeme-u-nouveau-ministre.html",
+      "sourcePrincipale": "Le Figaro",
+      "severity": "informatif",
+      "data": {
+        "careerOrg": "Système U",
+        "portfolio": "PME, Commerce & Artisanat",
+        "lobbyOrg": "Système U Centrale Nationale",
+        "lobbyCount": 0
+      },
+      "_ingested": false
+    },
+    {
+      "type": "DEPORT_OFFICIEL",
+      "description": "Décret de déport publié au Journal Officiel le 6 décembre 2025 : le ministre se récuse de tous les dossiers relatifs au groupe Auchan et aux entreprises qu'il a conseillées dans les 5 années précédant son entrée au gouvernement. Décision prise sur recommandation de la HATVP.",
+      "sourceUrl": "https://www.franceinfo.fr/politique/gouvernement-de-sebastien-lecornu/",
+      "sourcePrincipale": "France Info / Journal Officiel",
+      "severity": "notable",
+      "data": {
+        "decretDate": "2025-12-06",
+        "domainesRecuses": [
+          "Auchan",
+          "entreprises conseillées 2020-2025"
+        ],
+        "hatvpRecommandation": true
+      },
       "_ingested": false
     }
   ]

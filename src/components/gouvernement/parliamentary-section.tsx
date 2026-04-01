@@ -3,23 +3,55 @@ import { prisma } from "@/lib/db";
 import { VoteBadge } from "@/components/vote-badge";
 import { fmtDate } from "@/lib/format";
 
+const MINISTERECODE_TO_TAGS: Record<string, string[]> = {
+  ECONOMIE_FINANCES: ["budget", "fiscalite"],
+  SANTE_FAMILLE: ["sante"],
+  TRANSITION_ECOLOGIQUE: ["ecologie"],
+  EDUCATION_NATIONALE: ["education"],
+  JUSTICE: ["securite"],
+  TRAVAIL_SOLIDARITES: ["travail", "retraites"],
+  AGRICULTURE: ["agriculture"],
+  ARMEES: ["defense"],
+  CULTURE: ["culture"],
+  VILLE_LOGEMENT: ["logement"],
+  TRANSPORTS: ["ecologie"],
+  INTERIEUR: ["securite", "immigration"],
+  SPORTS_JEUNESSE: ["education"],
+  AFFAIRES_ETRANGERES: ["defense"],
+  INDUSTRIE_NUMERIQUE: ["budget"],
+  AMENAGEMENT_TERRITOIRE: ["logement"],
+  ENSEIGNEMENT_SUPERIEUR: ["education"],
+  PME_COMMERCE: ["travail", "fiscalite"],
+  MATIGNON: ["budget", "fiscalite"],
+};
+
 export async function ParliamentarySection({
   deputeId,
   senateurId,
+  ministereCode,
 }: {
   deputeId?: string | null;
   senateurId?: string | null;
+  ministereCode?: string | null;
 }) {
   if (!deputeId && !senateurId) return null;
 
   if (deputeId) {
-    return <DeputeSection deputeId={deputeId} />;
+    return <DeputeSection deputeId={deputeId} ministereCode={ministereCode} />;
   }
   return <SenateurSection senateurId={senateurId!} />;
 }
 
-async function DeputeSection({ deputeId }: { deputeId: string }) {
-  const [depute, recentVotes] = await Promise.all([
+async function DeputeSection({
+  deputeId,
+  ministereCode,
+}: {
+  deputeId: string;
+  ministereCode?: string | null;
+}) {
+  const relevantTags = ministereCode ? (MINISTERECODE_TO_TAGS[ministereCode] ?? []) : [];
+
+  const [depute, recentVotes, contradictions] = await Promise.all([
     prisma.depute.findUnique({
       where: { id: deputeId },
       select: {
@@ -44,6 +76,44 @@ async function DeputeSection({ deputeId }: { deputeId: string }) {
       orderBy: { scrutin: { dateScrutin: "desc" } },
       take: 8,
     }),
+    // Vote contradictions: votes "contre" on scrutins tagged with current portfolio
+    relevantTags.length > 0
+      ? (async () => {
+          const taggedScrutinIds = await prisma.scrutinTag.findMany({
+            where: { tag: { in: relevantTags } },
+            select: { scrutinId: true },
+          });
+          const ids = [...new Set(taggedScrutinIds.map((t) => t.scrutinId))];
+          if (ids.length === 0) return { total: 0, contre: 0, examples: [] };
+
+          const [totalVotes, contreVotes] = await Promise.all([
+            prisma.voteRecord.count({
+              where: { deputeId, scrutinId: { in: ids } },
+            }),
+            prisma.voteRecord.findMany({
+              where: { deputeId, scrutinId: { in: ids }, position: "contre" },
+              include: { scrutin: { select: { id: true, titre: true, dateScrutin: true, numero: true } } },
+              orderBy: { scrutin: { dateScrutin: "desc" } },
+              take: 5,
+            }),
+          ]);
+
+          return {
+            total: totalVotes,
+            contre: contreVotes.length > 0
+              ? await prisma.voteRecord.count({
+                  where: { deputeId, scrutinId: { in: ids }, position: "contre" },
+                })
+              : 0,
+            examples: contreVotes.map((v) => ({
+              scrutinId: v.scrutin.id,
+              titre: v.scrutin.titre,
+              date: v.scrutin.dateScrutin,
+              numero: v.scrutin.numero,
+            })),
+          };
+        })()
+      : Promise.resolve({ total: 0, contre: 0, examples: [] }),
   ]);
 
   if (!depute) return null;
@@ -106,6 +176,52 @@ async function DeputeSection({ deputeId }: { deputeId: string }) {
               {scores.map((score) => (
                 <ScoreBar key={score.label} {...score} />
               ))}
+            </div>
+          )}
+
+          {/* Vote contradictions */}
+          {contradictions.total > 0 && contradictions.contre > 0 && (
+            <div className="rounded-xl border border-amber-600/30 bg-amber-950/20 px-4 py-3">
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-semibold text-amber-400">
+                  Votes en tension avec le portefeuille actuel
+                </span>
+                <span className="rounded bg-amber-500/20 px-1.5 py-px text-[10px] font-medium tabular-nums text-amber-300">
+                  {contradictions.contre}/{contradictions.total}
+                </span>
+              </div>
+              <p className="mt-1 text-xs text-bureau-400">
+                {contradictions.contre} vote{contradictions.contre > 1 ? "s" : ""} contre
+                sur {contradictions.total} scrutin{contradictions.total > 1 ? "s" : ""} portant
+                sur {relevantTags.join(", ")} — domaine{relevantTags.length > 1 ? "s" : ""} relevant{relevantTags.length > 1 ? "s" : ""} du portefeuille ministériel
+                ({((contradictions.contre / contradictions.total) * 100).toFixed(0)} %).
+              </p>
+              {contradictions.examples.length > 0 && (
+                <ul className="mt-2 space-y-1">
+                  {contradictions.examples.map((ex) => (
+                    <li key={ex.scrutinId}>
+                      <Link
+                        href={`/votes/scrutins/${ex.scrutinId}`}
+                        className="group flex items-start gap-2 text-xs"
+                      >
+                        <span className="shrink-0 rounded border border-rose-500/30 bg-rose-500/10 px-1 py-px text-[10px] text-rose-400">
+                          contre
+                        </span>
+                        <span className="line-clamp-1 text-bureau-300 group-hover:text-bureau-100">
+                          {ex.titre}
+                        </span>
+                        <span className="shrink-0 tabular-nums text-bureau-600">
+                          {fmtDate(ex.date)}
+                        </span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              <p className="mt-2 text-[10px] text-bureau-600">
+                Scrutins sélectionnés par correspondance de thématique. Un vote contre peut refléter une opposition
+                à un amendement spécifique, pas nécessairement au domaine.
+              </p>
             </div>
           )}
 

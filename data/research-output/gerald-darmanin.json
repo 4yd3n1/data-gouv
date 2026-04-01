@@ -2,7 +2,7 @@
   "slug": "gerald-darmanin",
   "nom": "Darmanin",
   "prenom": "Gérald",
-  "researched_at": "2026-03-04",
+  "researched_at": "2026-03-27",
   "sources_used": [
     "France Info",
     "France Bleu",
@@ -86,7 +86,33 @@
         "AA Agency"
       ],
       "_ingested": true
+    },
+    {
+      "date": "2025-10-30",
+      "type": "CLASSEMENT_SANS_SUITE",
+      "nature": "prise illégale d'intérêts",
+      "juridiction": "Cour de Justice de la République (CJR)",
+      "statut": "CLOS",
+      "resume": "Le 29 octobre 2025, le garde des Sceaux a rendu visite à Nicolas Sarkozy incarcéré à la prison de la Santé. Un collectif de 29 avocats a déposé plainte pour prise illégale d'intérêts. Le 4 décembre 2025, la commission des requêtes de la CJR a classé sans suite.",
+      "sourcePrincipale": "France Info",
+      "sourceUrl": "https://www.franceinfo.fr/politique/gerald-darmanin/visite-de-gerald-darmanin-a-nicolas-sarkozy-le-garde-des-sceaux-vise-par-une-plainte-pour-prise-illegale-d-interets_7585403.html",
+      "sourceDate": "2025-10-31",
+      "corroborated_by": [
+        "Euronews",
+        "Le Club des Juristes"
+      ],
+      "verifie": true,
+      "_ingested": true
     }
   ],
-  "conflict_flags": []
+  "conflict_flags": [
+    {
+      "type": "CONFLIT_STRUCTUREL",
+      "description": "Garde des Sceaux (chef du système judiciaire) tout en étant témoin assisté dans une enquête judiciaire en cours (affaire PSG/Neymar, complicité de fraude fiscale). Tension structurelle relevée par la doctrine juridique (Dalloz).",
+      "sourceUrl": "https://www.franceinfo.fr/politique/gerald-darmanin/transfert-de-neymar-au-psg-on-vous-explique-pourquoi-gerald-darmanin-est-soupconne-de-complicite-de-fraude-fiscale_6296634.html",
+      "sourcePrincipale": "France Info",
+      "severity": "critique",
+      "_ingested": false
+    }
+  ]
 }

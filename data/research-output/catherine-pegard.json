@@ -5,7 +5,7 @@
   "civilite": "Mme",
   "dateNaissance": "1954-08-05",
   "lieuNaissance": "Le Havre, Seine-Maritime",
-  "researched_at": "2026-03-05",
+  "researched_at": "2026-03-27",
   "sources_used": [
     "https://www.lejournaldesarts.fr/personnalite/catherine-pegard-504",
     "https://actu-culture.com/elles-ils-font-la-culture/apres-versailles-et-afalula-catherine-pegard-retrouve-lelysee/",
@@ -152,5 +152,49 @@
     }
   ],
   "judicial_events": [],
-  "conflict_flags": []
+  "conflict_flags": [
+    {
+      "type": "PORTE_TOURNANTE",
+      "description": "Journaliste politique au Point pendant plus de 20 ans, puis présidente du Château de Versailles nommée par Nicolas Sarkozy en 2011. Nommée ministre de la Culture. Profil atypique illustrant la porosité entre journalisme politique, nomination présidentielle et ministère de tutelle de l'établissement qu'elle dirigeait.",
+      "sourceUrl": "https://www.lemonde.fr/culture/article/2026/02/26/catherine-pegard-nommee-ministre-de-la-culture.html",
+      "sourcePrincipale": "Le Monde",
+      "severity": "informatif",
+      "data": {
+        "careerOrg": "Le Point",
+        "portfolio": "Culture",
+        "lobbyOrg": "N/A",
+        "lobbyCount": 0
+      },
+      "_ingested": false
+    },
+    {
+      "type": "NOMINATION_PRESIDENTIELLE",
+      "description": "Journaliste politique au Point pendant 20 ans, puis nommée présidente du Château de Versailles par Nicolas Sarkozy en 2011. Reconduite par Hollande et Macron (2016, 2020). Nommée ministre de la Culture en 2026. Profil illustrant la porosité entre journalisme politique, nomination présidentielle et fonction ministérielle — le ministère de la Culture est le tuteur de l'établissement qu'elle dirigeait.",
+      "sourceUrl": "https://www.lemonde.fr/culture/",
+      "sourcePrincipale": "Le Monde",
+      "severity": "informatif",
+      "_ingested": false
+    },
+    {
+      "type": "EPSTEIN_VERSAILLES",
+      "description": "Enquête du Monde (11 mars 2026) : Pégard a organisé une visite 'très privée' du Château de Versailles pour Jeffrey Epstein le 25 mars 2013. Photo issue de documents judiciaires américains montrant Pégard posant dans la Galerie des Glaces avec Epstein, Woody Allen et Caroline Lang. Pégard a déclaré au Monde n'avoir 'aucun souvenir' de cette visite, contredite par la photographie.",
+      "sourceUrl": "https://www.lemonde.fr",
+      "sourcePrincipale": "Le Monde / BFMTV",
+      "severity": "critique",
+      "data": {
+        "date": "2013-03-25",
+        "source": "documents judiciaires US",
+        "photo": true
+      },
+      "_ingested": false
+    },
+    {
+      "type": "COUR_DES_COMPTES_ABUS",
+      "description": "Rapport de la Cour des comptes critiquant le maintien de Pégard à la tête de Versailles au-delà de la limite légale de 3 mandats et de la limite d'âge de 67 ans (atteinte en mars 2021). 27+ mois de statut intérimaire irrégulier après l'expiration formelle de son mandat (octobre 2022). La Cour a estimé que cette situation 'pourrait être assimilée à une forme d'abus de pouvoir' de la part de l'État.",
+      "sourceUrl": "https://www.franceinfo.fr/culture/patrimoine/chateau-de-versailles/la-cour-des-comptes-critique-le-maintien-de-catherine-pegard-a-la-tete-du-chateau-de-versailles-apres-trois-mandats_6169620.html",
+      "sourcePrincipale": "France Info / Cour des comptes",
+      "severity": "critique",
+      "_ingested": false
+    }
+  ]
 }

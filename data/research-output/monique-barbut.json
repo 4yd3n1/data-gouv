@@ -2,7 +2,7 @@
   "slug": "monique-barbut",
   "nom": "Barbut",
   "prenom": "Monique",
-  "researched_at": "2026-03-05",
+  "researched_at": "2026-03-27",
   "sources_used": [
     "France 24 (AFP)",
     "France Info",
@@ -213,5 +213,14 @@
     }
   ],
   "judicial_events": [],
-  "conflict_flags": []
+  "conflict_flags": [
+    {
+      "type": "PORTE_TOURNANTE",
+      "description": "Présidente du WWF France (janvier 2021-2023), organisation qui entretenait des partenariats avec Crédit Agricole (400 000 €, banque investissant dans les énergies fossiles), Lafarge, Ikea et Carrefour. Nommée ministre de la Transition écologique en octobre 2025. Sous sa présidence, le WWF a engagé une action en justice contre la classification du nucléaire dans la taxonomie verte de l'UE.",
+      "sourceUrl": "https://www.revolutionpermanente.fr/Monique-Barbut-nouveau-visage-de-l-ecologie-bourgeoise-dans-le-gouvernement-Lecornu-II",
+      "sourcePrincipale": "Révolution Permanente / agriculture-environnement.fr",
+      "severity": "notable",
+      "_ingested": false
+    }
+  ]
 }

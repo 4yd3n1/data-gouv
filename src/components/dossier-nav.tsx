@@ -1,7 +1,8 @@
 import Link from "next/link";
 
 const DOSSIER_LINKS = [
-  { slug: "medias", label: "Concentration des médias" },
+  { slug: "bilan-macron", label: "Bilan Macron" },
+  { slug: "medias", label: "Concentration des m\u00e9dias" },
   { slug: "financement-politique", label: "Financement politique" },
 ];
 

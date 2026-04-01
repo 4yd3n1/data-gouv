@@ -5,7 +5,7 @@
   "civilite": "M.",
   "dateNaissance": "1992-11-28",
   "lieuNaissance": "Paris",
-  "researched_at": "2026-03-05",
+  "researched_at": "2026-03-27",
   "_ingested": false,
   "sources_used": [
     "https://www.franceinfo.fr/politique/gouvernement-de-sebastien-lecornu/normalien-macroniste-historique-depute-a-29-ans-qui-est-david-amiel-le-nouveau-ministre-des-comptes-publics_7822934.html",
@@ -155,6 +155,22 @@
       "sourceUrl": "https://www.anticor.org/2022/06/07/elections-legislatives-2022-anticor-75-analyse-des-candidatures-a-paris/",
       "sourcePrincipale": "Anticor",
       "severity": "low"
+    },
+    {
+      "type": "VOTE_CONTRADICTION",
+      "description": "En tant que député(e), a voté contre 256 scrutin(s) sur 634 portant sur les thématiques budget, fiscalite — domaine(s) relevant de son portefeuille ministériel actuel (taux d'opposition : 40 %).",
+      "severity": "critique",
+      "data": {
+        "totalVotes": 634,
+        "contreVotes": 256,
+        "contreRate": 40,
+        "tags": [
+          "budget",
+          "fiscalite"
+        ],
+        "topExamples": "l'amendement n° 15 de Mme Simonnet après l'article premier de la proposition de ; l'article unique de la proposition de loi instaurant un impôt plancher de 2 % su; l'ensemble de la proposition de loi instaurant un impôt plancher de 2 % sur le p"
+      },
+      "_ingested": false
     }
   ]
 }

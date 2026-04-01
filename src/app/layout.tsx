@@ -18,6 +18,7 @@ const NAV = [
   { href: "/profils", label: "Profils" },
   { href: "/votes", label: "Votes" },
   { href: "/territoire", label: "Territoire" },
+  { href: "/dossiers/bilan-macron", label: "Bilan Macron" },
 ];
 
 function Navbar() {

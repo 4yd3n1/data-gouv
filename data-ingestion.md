@@ -14,7 +14,7 @@ The platform ingests data from **15+ French government open data sources** throu
 | **Senators** | Sénat CSV (ISO-8859-1) | 348 senators + mandates + commissions | ~1,700 rows |
 | **Lobbyists** | HATVP AGORA JSON (80MB) | ~1,500 orgs, 131K+ lobbying actions | ~142K rows |
 | **Declarations** | HATVP XML (143MB) | Financial interests, participations, revenues for all declarants | ~500K rows (12,756 declarations + 13K participations + 475K revenus) |
-| **Votes** | AN JSON archive (4,691 files) | Every parliamentary vote + per-deputy position | ~605K rows |
+| **Votes** | AN JSON archive (5,831 files) | Every parliamentary vote + per-deputy position | ~973K vote records |
 | **Organes** | AN JSON archive (7,137 files) | Parliamentary bodies (groups, commissions) | ~7K rows |
 | **Economy** | INSEE BDM (SDMX) + data.gouv GDP | 15 macro indicators (unemployment, inflation, debt, SMIC...) | ~2K observations |
 | **Territory** | INSEE COG 2026 CSV | Regions, departments, communes | ~36K rows |
@@ -26,9 +26,10 @@ The platform ingests data from **15+ French government open data sources** throu
 | **Elections** | Interior Ministry CSV | 2024 legislative results (2 tours, 577 constituencies) | ~6K rows |
 | **Party finances** | CNCCFP CSV | Revenue/expense accounts for ~35 parties, 2021–2024 | ~140 rows |
 | **Culture** | Ministry Tabular API | 3K museums + attendance, 46K monuments | ~65K rows |
-| **Government** | Manual research + seed | 44 members (current); 148 across 4 govts after historical seed. Career timelines, judicial events, lobby targeting | ~600 rows (current), ~2K after full seed |
+| **Government** | Manual research + seed + deep investigation | 44 members (current); 148 across 4 govts after historical seed. Career timelines, **15 judicial events** (Darmanin CJR added Session 44), lobby targeting, **24 conflict flags** (revolving doors, vote contradictions, HATVP gaps, lobby-career overlaps) | ~600 rows (current), ~2K after full seed |
 | **Media** | Manual seed | 10 groups, 10 owners, 72 subsidiaries, ARCOM signalements, political connections | ~100 rows |
 | **Party-Election** | Nuance-party mapping | Election results cross-referenced with CNCCFP party finances via nuance codes | static mapping (23 nuances) |
+| **Bilan Macron** *(Session 45)* | Deep web research (4 parallel agents, 150+ searches) + official sources (INSEE, Eurostat, DREES, France Stratégie, Oxfam, CEVIPOF, Amnesty, RSF, EIU). All key claims independently fact-checked (3 verification agents, 30+ searches). | Structured static data covering 7 dimensions: poverty/inequality (6 before/after metrics), purchasing power (4), debt/fiscal (5 + 5 fiscal gifts), employment (3), healthcare (6 + 4 social cuts + 4 education + 3 public services), human rights (police violence stats + 5 democratic erosion + 3 labor rights + 5 environment + 5 social fabric), elite enrichment (3 billionaire metrics + 5 facts + 4 revolving door cases + 8 contrast rows). Verified figures: billionaires x2.15 (Challenges: 571→1,228 Md), 49.3 Borne 23x (France Info), deficit 5.1% (INSEE Mar 27 2026), youth unemp ~24%→21.5%, dividends source Vernimmen/CAC 40, hospital beds trend since ~2003 (DREES/IRDES). | static data file (`src/data/bilan-macron.ts`) — no new DB models |
 
 ---
 
@@ -84,6 +85,13 @@ pnpm generate:carriere         # Phase 9: Generate government career timelines
 pnpm seed:medias               # Phase 8: Seed media ownership data
 pnpm seed:gouvernement         # Phase 9: Seed 4 governments (Borne/Attal/Barnier/Lecornu)
 pnpm audit:declarations        # Audit: verify HATVP XML vs DB vs display (read-only)
+
+# Session 44: Analysis scripts (read-only, produce JSON reports)
+npx tsx scripts/analyze-vote-contradictions.ts  # Vote contradiction analysis for deputy-ministers → data/vote-contradictions.json
+npx tsx scripts/analyze-lobby-exposure.ts       # Lobby exposure + career overlap analysis → data/lobby-exposure.json
+npx tsx scripts/add-conflict-flags.ts           # Add revolving door + vote contradiction flags to research-output JSONs
+npx tsx scripts/update-investigation-findings.ts # Add judicial events + conflict flags from investigation agents
+npx tsx scripts/update-wave2-findings.ts        # Add wave 2 findings (Tabarot PNF, Rist pharma, Pegard Epstein, etc.)
 ```
 
 ---
@@ -300,7 +308,8 @@ pnpm audit:declarations        # Audit: verify HATVP XML vs DB vs display (read-
 **File**: `scripts/ingest-scrutins.ts`
 
 - **Source**: Local JSON files (cached from AN open data)
-  - `documentation/hatvp-old-context/scrutins/json/` (~4,691 files)
+  - `documentation/hatvp-old-context/scrutins/json/` (~5,831 files as of Mar 2026)
+  - To update: download latest AN scrutin JSON archive, extract into this folder, re-run `pnpm ingest:scrutins`
 - **Prisma Models**: `Scrutin`, `GroupeVote`, `VoteRecord`
 - **Idempotency**:
   - `Scrutin`: Upsert on `id` (uid)
@@ -311,7 +320,7 @@ pnpm audit:declarations        # Audit: verify HATVP XML vs DB vs display (read-
   - Individual votes: collect and create VoteRecord (only if Deputy exists)
   - Normalize single-item-or-array JSON structures to arrays
   - Parse counts safely (handle nulls, default to 0)
-- **Volume**: ~4,691 scrutins, ~600,000+ individual vote records
+- **Volume**: ~5,831 scrutins, ~973K individual vote records (Oct 2024 – Mar 2026)
 - **Batch Processing**: 50 files per batch for memory efficiency
 - **FK Validation**: Pre-load valid Deputy/Organe IDs; skip records with missing FKs
 
@@ -344,7 +353,7 @@ pnpm audit:declarations        # Audit: verify HATVP XML vs DB vs display (read-
   - Case-insensitive, accent-insensitive matching against scrutin `titre` + `objet`
   - Multi-tag per scrutin (many domains may be relevant)
   - Domain buckets: defense, justice, healthcare, environment, economy, employment, etc.
-- **Volume**: ~4,691 scrutins, typically 2-5 tags per scrutin
+- **Volume**: ~5,831 scrutins, typically 2-5 tags per scrutin
 - **Dependency**: Must run after scrutins ingestion; must run before computeConflicts
 
 ---
@@ -651,7 +660,7 @@ pnpm audit:declarations        # Audit: verify HATVP XML vs DB vs display (read-
 - **SQL**: Drops and recreates `search_index` materialized view + GIN/B-tree indexes (Session 41 — was previously just `REFRESH MATERIALIZED VIEW`)
 - **Timing**: Final step after all data ingested
 - **Purpose**: Full-text search view combining deputy names, senator names, scrutin titles, lobby org names, commune names, party names
-- **URLs**: Canonical `/profils/*` paths for deputies, senators, lobbyists, parties (updated Session 41 from legacy `/representants/*`). Scrutins still at `/representants/scrutins/[id]`, communes at `/territoire/commune/[code]`.
+- **URLs**: Canonical `/profils/*` paths for deputies, senators, lobbyists, parties. Scrutins at `/votes/scrutins/[id]` (updated Session 43). Communes at `/territoire/commune/[code]`.
 - **Must run after**: Any schema change affecting search entities, or after Phase 6 route cleanup
 
 ---
@@ -866,7 +875,7 @@ PersonnalitePublique.findUnique({
 - 4 top `LoiParlementaire` by rang with final vote scrutin
 - **Adoption rate** = (adopted count / total count) x 100
 
-**Vote Detail (`/representants/scrutins/[id]`, also `/gouvernance/scrutins/[id]`):**
+**Vote Detail (`/votes/scrutins/[id]`):**
 - Individual votes grouped by position (pour, contre, abstention, nonVotant)
 - Per political group: majority position badge, stacked bar chart (pour%, contre%, abst%), raw counts
 - Individual deputy vote list, click to profile
@@ -1160,7 +1169,7 @@ Territories (Wave 1a)
 | 3 | ingest-monuments | Ministry Tabular API | Monument | Upsert | ~46.7K |
 | 4 | ingest-declarations | HATVP XML | Declaration, DeclarationInteret | Upsert / Delete+Insert | ~2K + 10K |
 | 5a | ingest-organes | Local JSON files | Organe | Upsert | ~7.1K |
-| 5b | ingest-scrutins | Local JSON files | Scrutin, GroupeVote, VoteRecord | Upsert / Delete+Insert | 4.7K + 600K |
+| 5b | ingest-scrutins | Local JSON files | Scrutin, GroupeVote, VoteRecord | Upsert / Delete+Insert | 5.8K + 973K |
 | 5b | ingest-deports | Local JSON files | Deport | Upsert | ~33 |
 | 5c | tag-scrutins | DB (scrutins) | ScrutinTag | Delete+Insert | ~10-20K tags |
 | 5d | compute-conflicts | DB (declarations + scrutins + tags) | ConflictSignal | Delete+Insert | ~100-500 |
@@ -1176,6 +1185,10 @@ Territories (Wave 1a)
 | P9 | ingest-agora | HATVP AGORA JSON | ActionLobby | Delete+Insert | ~131K |
 | P9 | generate-carriere | DB (mandats + deputes) | EntreeCarriere | Upsert | ~500 |
 | P9 | ingest-research-output | Local JSON files | EntreeCarriere, EvenementJudiciaire | Upsert | ~488 |
+| S44 | analyze-vote-contradictions | DB (VoteRecord + ScrutinTag) | JSON report | Read-only | 11 results |
+| S44 | analyze-lobby-exposure | DB (ActionLobby + EntreeCarriere) | JSON report | Read-only | 34 results |
+| S44 | add-conflict-flags | JSON files | research-output/*.json | Update | 16 files |
+| S44 | update-investigation-findings | Agent reports | research-output/*.json | Update | 8 files |
 | Seed | seed-medias | Hardcoded | GroupeMedia, MediaProprietaire, Filiale | Delete+Insert | ~92 |
 | Seed | seed-lois | Hardcoded | LoiParlementaire, ScrutinLoi | Delete+Insert | 19 + 2,589 |
 | Seed | seed-gouvernement | Hardcoded | PersonnalitePublique, MandatGouvernemental | Upsert | ~44 + 49 |
@@ -1187,7 +1200,7 @@ Territories (Wave 1a)
 Across all waves:
 - **Territory**: ~35,000 communes + 101 departments + 17 regions
 - **People**: ~640K elus + ~900 deputies/senators + 44 gouvernement (148 after historical seed) + ~10K lobbyists
-- **Votes**: ~4,700 scrutins + ~600K vote records + ~20K tags
+- **Votes**: ~5,831 scrutins + ~973K vote records + ~20K tags
 - **Economic**: ~2,000 observations across 15 indicators
 - **Culture**: ~50K monuments, ~6K museums + ~12K attendance records
 - **Finance**: ~2.5K party accounts + ~10K budgets
@@ -1208,7 +1221,7 @@ Across all waves:
 ### Local Documentation Directories
 
 - `documentation/hatvp-old-context/`
-  - `scrutins/json/` — ~4,691 scrutin JSON files (AN open data)
+  - `scrutins/json/` — ~5,831 scrutin JSON files (AN open data, last updated Mar 2026)
   - `an-data/json/organe/` — ~7,137 organe JSON files
   - `an-data/json/deport/` — ~33 deport JSON files
   - `declarations.xml` — ~150MB HATVP merged declarations (cached download)
@@ -1241,6 +1254,24 @@ Across all waves:
 1. **HATVP declarations for Lecornu II government** — marked "publication a venir" by HATVP as of Q1 2026. The `InteretDeclare` model and ingestion pipeline are ready; the data isn't published yet.
 
 2. **Career/judicial research for historical governments** — ~80 unique new members from Borne/Attal/Barnier need research agent runs for `EntreeCarriere` and `EvenementJudiciaire` backfill. Run research agents in batches then `npx tsx scripts/ingest-research-output.ts --all`.
+
+---
+
+### 16. Deep Government Investigation (Session 44)
+
+Full transparency investigation of all 37 Lecornu II ministers. 6-phase pipeline:
+
+**Phase 1 — Judicial deep dive**: 12 parallel web-research agents (~200+ searches). Each minister searched for: judicial proceedings, conflicts of interest, HATVP declarations, controversies. Findings added to `data/research-output/*.json` as `judicial_events` and `conflict_flags`. Key findings: Darmanin CJR complaint (classement sans suite), Tabarot PNF enquete (ongoing), Rist 309 pharma links, Pegard Epstein photo, Farandou/Papin official recusal decrees.
+
+**Phase 2 — Revolving door documentation**: 6 `PORTE_TOURNANTE` conflict flags with AGORA lobby action counts. Script: `scripts/add-conflict-flags.ts`.
+
+**Phase 3 — Vote contradiction analysis**: `scripts/analyze-vote-contradictions.ts` queries `VoteRecord` for 17 deputy-ministers, maps `ministereCode` → `ScrutinTag`, finds "contre" votes on portfolio topics. Output: `data/vote-contradictions.json`. Top: Lefevre 81.5%, Galliard-Minier 68.4%, Amiel 40.4%.
+
+**Phase 4 — Lobby exposure cross-reference**: `scripts/analyze-lobby-exposure.ts` maps 131,842 `ActionLobby` by `ministereCode`, checks career-lobby overlaps. Output: `data/lobby-exposure.json`. Top: EDF→130 actions on Bregeon's ministry, SNCF→75 on Farandou's.
+
+**Phase 5 — Ingestion**: `ingest-research-output.ts --all` + `generate-carriere.ts` + `refresh:search`.
+
+**Phase 6 — UI conflict indicators**: 3 component enhancements (CareerSection revolving door badge, ParliamentarySection vote contradiction alert, LobbySection career overlap highlight). `PORTFOLIO_KEYWORDS` expanded in `signal-types.ts`.
 
 3. **Deputy enrichment** — Activite tab "Domaines d'activite" (vote records grouped by ScrutinTag), deeper lobby cross-reference on Transparence tab (top ScrutinTag topics x ActionLobbyiste.domaine keywords), `ConflictAlert` with `totalParticipations > 0` alert on Declarations tab.
 

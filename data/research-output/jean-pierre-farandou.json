@@ -2,7 +2,7 @@
   "slug": "jean-pierre-farandou",
   "nom": "Farandou",
   "prenom": "Jean-Pierre",
-  "researched_at": "2026-03-05",
+  "researched_at": "2026-03-27",
   "sources_used": [
     "France Info",
     "Public Sénat",
@@ -161,5 +161,37 @@
     }
   ],
   "judicial_events": [],
-  "conflict_flags": []
+  "conflict_flags": [
+    {
+      "type": "PORTE_TOURNANTE",
+      "description": "PDG de la SNCF de 2019 à 2024, puis nommé ministre du Travail et des Solidarités. Les entités du groupe SNCF (SNCF SA, SNCF Voyageurs, SNCF Réseau, Keolis, FRET SNCF) ont effectué 75 actions de lobbying déclarées ciblant son ministère de tutelle.",
+      "sourceUrl": "https://www.lemonde.fr/politique/article/2025/10/12/jean-pierre-farandou-ex-patron-de-la-sncf-ministre-du-travail.html",
+      "sourcePrincipale": "Le Monde / AGORA HATVP",
+      "severity": "critique",
+      "data": {
+        "careerOrg": "SNCF",
+        "portfolio": "Travail & Solidarités",
+        "lobbyOrg": "SNCF (toutes entités)",
+        "lobbyCount": 75
+      },
+      "_ingested": false
+    },
+    {
+      "type": "DEPORT_OFFICIEL",
+      "description": "Décret de déport publié au Journal Officiel le 11 novembre 2025 : le ministre se récuse de tous les dossiers relatifs au groupe SNCF, au groupe La Poste, à Fer de France et à Uside. Ces dossiers sont réattribués au Premier ministre. Reconnaissance formelle du conflit d'intérêts lié à ses fonctions antérieures de PDG de la SNCF.",
+      "sourceUrl": "https://www.franceinfo.fr/politique/gouvernement-de-sebastien-lecornu/le-ministre-du-travail-et-des-solidarites-jean-pierre-farandou-se-deporte-des-dossiers-lies-a-la-sncf-et-la-poste_7609559.html",
+      "sourcePrincipale": "France Info / Journal Officiel",
+      "severity": "critique",
+      "data": {
+        "decretDate": "2025-11-11",
+        "domainesRecuses": [
+          "SNCF",
+          "La Poste",
+          "Fer de France",
+          "Uside"
+        ]
+      },
+      "_ingested": false
+    }
+  ]
 }

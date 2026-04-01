@@ -2,7 +2,7 @@
   "slug": "mathieu-lefevre",
   "nom": "Lefèvre",
   "prenom": "Mathieu",
-  "researched_at": "2026-03-05",
+  "researched_at": "2026-03-27",
   "sources_used": [
     "https://www.nosdeputes.fr/mathieu-lefevre",
     "https://www.linfodurable.fr/politique/qui-est-mathieu-lefevre-nouveau-ministre-delegue-charge-de-la-transition-ecologique-53192",
@@ -132,5 +132,21 @@
     }
   ],
   "judicial_events": [],
-  "conflict_flags": []
+  "conflict_flags": [
+    {
+      "type": "VOTE_CONTRADICTION",
+      "description": "En tant que député(e), a voté contre 53 scrutin(s) sur 65 portant sur les thématiques ecologie — domaine(s) relevant de son portefeuille ministériel actuel (taux d'opposition : 82 %).",
+      "severity": "critique",
+      "data": {
+        "totalVotes": 65,
+        "contreVotes": 53,
+        "contreRate": 82,
+        "tags": [
+          "ecologie"
+        ],
+        "topExamples": "l'ensemble de la proposition de loi portant programmation nationale pour l'énerg; l'amendement n° 339 de Mme Trouvé à l'article 5 de la proposition de loi portant; l'amendement n° 211 de M. Tavel à l'article 5 de la proposition de loi portant p"
+      },
+      "_ingested": false
+    }
+  ]
 }

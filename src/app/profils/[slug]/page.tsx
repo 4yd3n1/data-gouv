@@ -175,7 +175,11 @@ export default async function GouvernementProfilePage({
         {/* ── Parcours ── */}
         {tab === "parcours" && (
           <div className="fade-up">
-            <CareerSection personnaliteId={personnalite.id} />
+            <CareerSection
+              personnaliteId={personnalite.id}
+              ministereCode={currentMandat?.ministereCode}
+              portefeuille={currentMandat?.portefeuille}
+            />
           </div>
         )}
 
@@ -220,6 +224,7 @@ export default async function GouvernementProfilePage({
             <MandatsSection mandats={personnalite.mandats} />
             <LobbySection
               ministereCode={currentMandat?.ministereCode ?? null}
+              personnaliteId={personnalite.id}
             />
             {currentMandat?.ministereCode && (
               <MediaTutelleSection ministereCode={currentMandat.ministereCode} />
@@ -240,6 +245,7 @@ export default async function GouvernementProfilePage({
             <ParliamentarySection
               deputeId={personnalite.deputeId}
               senateurId={personnalite.senateurId}
+              ministereCode={currentMandat?.ministereCode}
             />
           </div>
         )}

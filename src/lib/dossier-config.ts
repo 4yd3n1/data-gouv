@@ -121,6 +121,17 @@ export const DOSSIERS: Dossier[] = [
     lobbyDomains: [],
     color: "amber",
   },
+  {
+    slug: "bilan-macron",
+    label: "Bilan Macron",
+    subtitle: "Deux mandats, neuf ans de donn\u00e9es : ce que les chiffres r\u00e9v\u00e8lent",
+    priority: 1,
+    stat: "+1 million de personnes sous le seuil de pauvret\u00e9 pendant que les milliardaires doublaient leur fortune",
+    statSource: "INSEE / Oxfam France 2024",
+    tags: ["budget", "fiscalite", "sante", "travail", "education", "ecologie"],
+    lobbyDomains: [],
+    color: "rose",
+  },
 ];
 
 export function getDossier(slug: string): Dossier | undefined {

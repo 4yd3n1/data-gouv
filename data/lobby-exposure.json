@@ -1,0 +1,3126 @@
+[
+  {
+    "slug": "roland-lescure",
+    "ministereCode": "ECONOMIE_FINANCES",
+    "totalActions": 21121,
+    "topOrgs": [
+      {
+        "nom": "BOURY TALLON & ASSOCIES",
+        "count": 534
+      },
+      {
+        "nom": "ANTHENOR PUBLIC AFFAIRS",
+        "count": 326
+      },
+      {
+        "nom": "FEDERATION FRANCAISE DE L ASSURANCE (FFA)",
+        "count": 268
+      },
+      {
+        "nom": "MOUVEMENT DES ENTREPRISES DE FRANCE",
+        "count": 244
+      },
+      {
+        "nom": "LYSIOS",
+        "count": 222
+      },
+      {
+        "nom": "GOOGLE FRANCE",
+        "count": 220
+      },
+      {
+        "nom": "FEDERATION ENTREP COMMERCE DISTRIBUTION",
+        "count": 214
+      },
+      {
+        "nom": "COM'PUBLICS",
+        "count": 205
+      },
+      {
+        "nom": "PLEAD",
+        "count": 190
+      },
+      {
+        "nom": "ATLAS PUBLIC AFFAIRS",
+        "count": 182
+      }
+    ],
+    "topDomains": [
+      {
+        "domaine": "Economie",
+        "count": 3116
+      },
+      {
+        "domaine": "Agriculture",
+        "count": 2132
+      },
+      {
+        "domaine": "Environnement",
+        "count": 1876
+      },
+      {
+        "domaine": "Politique industrielle",
+        "count": 1734
+      },
+      {
+        "domaine": "Finances publiques",
+        "count": 1451
+      },
+      {
+        "domaine": "Numérique",
+        "count": 1360
+      },
+      {
+        "domaine": "Energie",
+        "count": 1323
+      },
+      {
+        "domaine": "agroalimentaire",
+        "count": 1235
+      },
+      {
+        "domaine": "PME/TPE",
+        "count": 1157
+      },
+      {
+        "domaine": "Santé",
+        "count": 1073
+      }
+    ],
+    "careerOverlaps": [
+      {
+        "careerOrg": "Natixis",
+        "lobbyOrg": "NATIXIS INVESTMENT MANAGERS",
+        "count": 3
+      },
+      {
+        "careerOrg": "Groupama",
+        "lobbyOrg": "UP",
+        "count": 24
+      },
+      {
+        "careerOrg": "Groupama",
+        "lobbyOrg": "CAISSE NATIONALE DE REASSURANCE MUTUELLE AGRICOLE GROUPAMA",
+        "count": 6
+      }
+    ],
+    "yearRange": "2018-2026"
+  },
+  {
+    "slug": "david-amiel",
+    "ministereCode": "ECONOMIE_FINANCES",
+    "totalActions": 21121,
+    "topOrgs": [
+      {
+        "nom": "BOURY TALLON & ASSOCIES",
+        "count": 534
+      },
+      {
+        "nom": "ANTHENOR PUBLIC AFFAIRS",
+        "count": 326
+      },
+      {
+        "nom": "FEDERATION FRANCAISE DE L ASSURANCE (FFA)",
+        "count": 268
+      },
+      {
+        "nom": "MOUVEMENT DES ENTREPRISES DE FRANCE",
+        "count": 244
+      },
+      {
+        "nom": "LYSIOS",
+        "count": 222
+      },
+      {
+        "nom": "GOOGLE FRANCE",
+        "count": 220
+      },
+      {
+        "nom": "FEDERATION ENTREP COMMERCE DISTRIBUTION",
+        "count": 214
+      },
+      {
+        "nom": "COM'PUBLICS",
+        "count": 205
+      },
+      {
+        "nom": "PLEAD",
+        "count": 190
+      },
+      {
+        "nom": "ATLAS PUBLIC AFFAIRS",
+        "count": 182
+      }
+    ],
+    "topDomains": [
+      {
+        "domaine": "Economie",
+        "count": 3116
+      },
+      {
+        "domaine": "Agriculture",
+        "count": 2132
+      },
+      {
+        "domaine": "Environnement",
+        "count": 1876
+      },
+      {
+        "domaine": "Politique industrielle",
+        "count": 1734
+      },
+      {
+        "domaine": "Finances publiques",
+        "count": 1451
+      },
+      {
+        "domaine": "Numérique",
+        "count": 1360
+      },
+      {
+        "domaine": "Energie",
+        "count": 1323
+      },
+      {
+        "domaine": "agroalimentaire",
+        "count": 1235
+      },
+      {
+        "domaine": "PME/TPE",
+        "count": 1157
+      },
+      {
+        "domaine": "Santé",
+        "count": 1073
+      }
+    ],
+    "careerOverlaps": [
+      {
+        "careerOrg": "Élysée",
+        "lobbyOrg": "COMITE CHAMPS ELYSEES",
+        "count": 1
+      }
+    ],
+    "yearRange": "2018-2026"
+  },
+  {
+    "slug": "nicolas-forissier",
+    "ministereCode": "ECONOMIE_FINANCES",
+    "totalActions": 21121,
+    "topOrgs": [
+      {
+        "nom": "BOURY TALLON & ASSOCIES",
+        "count": 534
+      },
+      {
+        "nom": "ANTHENOR PUBLIC AFFAIRS",
+        "count": 326
+      },
+      {
+        "nom": "FEDERATION FRANCAISE DE L ASSURANCE (FFA)",
+        "count": 268
+      },
+      {
+        "nom": "MOUVEMENT DES ENTREPRISES DE FRANCE",
+        "count": 244
+      },
+      {
+        "nom": "LYSIOS",
+        "count": 222
+      },
+      {
+        "nom": "GOOGLE FRANCE",
+        "count": 220
+      },
+      {
+        "nom": "FEDERATION ENTREP COMMERCE DISTRIBUTION",
+        "count": 214
+      },
+      {
+        "nom": "COM'PUBLICS",
+        "count": 205
+      },
+      {
+        "nom": "PLEAD",
+        "count": 190
+      },
+      {
+        "nom": "ATLAS PUBLIC AFFAIRS",
+        "count": 182
+      }
+    ],
+    "topDomains": [
+      {
+        "domaine": "Economie",
+        "count": 3116
+      },
+      {
+        "domaine": "Agriculture",
+        "count": 2132
+      },
+      {
+        "domaine": "Environnement",
+        "count": 1876
+      },
+      {
+        "domaine": "Politique industrielle",
+        "count": 1734
+      },
+      {
+        "domaine": "Finances publiques",
+        "count": 1451
+      },
+      {
+        "domaine": "Numérique",
+        "count": 1360
+      },
+      {
+        "domaine": "Energie",
+        "count": 1323
+      },
+      {
+        "domaine": "agroalimentaire",
+        "count": 1235
+      },
+      {
+        "domaine": "PME/TPE",
+        "count": 1157
+      },
+      {
+        "domaine": "Santé",
+        "count": 1073
+      }
+    ],
+    "careerOverlaps": [],
+    "yearRange": "2018-2026"
+  },
+  {
+    "slug": "jean-pierre-farandou",
+    "ministereCode": "TRAVAIL_SOLIDARITES",
+    "totalActions": 18460,
+    "topOrgs": [
+      {
+        "nom": "BOURY TALLON & ASSOCIES",
+        "count": 397
+      },
+      {
+        "nom": "ANTHENOR PUBLIC AFFAIRS",
+        "count": 347
+      },
+      {
+        "nom": "UNION DES INDUSTRIES ET DES METIERS DE LA METALLURGIE",
+        "count": 283
+      },
+      {
+        "nom": "MOUVEMENT DES ENTREPRISES DE FRANCE",
+        "count": 261
+      },
+      {
+        "nom": "FEDERATION NATIONALE MUTUALITE FRANCAISE",
+        "count": 250
+      },
+      {
+        "nom": "LYSIOS",
+        "count": 201
+      },
+      {
+        "nom": "CONSEIL NATIONAL DES BARREAUX",
+        "count": 173
+      },
+      {
+        "nom": "FEDERATION FRANCAISE DE L ASSURANCE (FFA)",
+        "count": 168
+      },
+      {
+        "nom": "FEDERATION BANCAIRE FRANCAISE",
+        "count": 148
+      },
+      {
+        "nom": "LES ENTREPRISES DU MEDICAMENT",
+        "count": 142
+      }
+    ],
+    "topDomains": [
+      {
+        "domaine": "Agriculture",
+        "count": 3013
+      },
+      {
+        "domaine": "Economie",
+        "count": 1428
+      },
+      {
+        "domaine": "agroalimentaire",
+        "count": 1393
+      },
+      {
+        "domaine": "Santé",
+        "count": 1369
+      },
+      {
+        "domaine": "Emploi",
+        "count": 1343
+      },
+      {
+        "domaine": "solidarité",
+        "count": 1343
+      },
+      {
+        "domaine": "Environnement",
+        "count": 1104
+      },
+      {
+        "domaine": "Droit du travail",
+        "count": 986
+      },
+      {
+        "domaine": "Système de santé et médico-social",
+        "count": 954
+      },
+      {
+        "domaine": "Construction",
+        "count": 942
+      }
+    ],
+    "careerOverlaps": [
+      {
+        "careerOrg": "SNCF",
+        "lobbyOrg": "FRET SNCF",
+        "count": 3
+      },
+      {
+        "careerOrg": "SNCF",
+        "lobbyOrg": "SOCIETE NATIONALE SNCF",
+        "count": 26
+      },
+      {
+        "careerOrg": "SNCF",
+        "lobbyOrg": "SNCF MOBILITES",
+        "count": 9
+      },
+      {
+        "careerOrg": "SNCF",
+        "lobbyOrg": "SNCF RESEAU",
+        "count": 6
+      },
+      {
+        "careerOrg": "SNCF",
+        "lobbyOrg": "SNCF",
+        "count": 9
+      },
+      {
+        "careerOrg": "SNCF",
+        "lobbyOrg": "SNCF GARES & CONNEXIONS",
+        "count": 6
+      },
+      {
+        "careerOrg": "SNCF",
+        "lobbyOrg": "SNCF VOYAGEURS",
+        "count": 16
+      },
+      {
+        "careerOrg": "Keolis",
+        "lobbyOrg": "KEOLIS",
+        "count": 6
+      }
+    ],
+    "yearRange": "2018-2026"
+  },
+  {
+    "slug": "sebastien-lecornu",
+    "ministereCode": "MATIGNON",
+    "totalActions": 17425,
+    "topOrgs": [
+      {
+        "nom": "BOURY TALLON & ASSOCIES",
+        "count": 599
+      },
+      {
+        "nom": "ANTHENOR PUBLIC AFFAIRS",
+        "count": 345
+      },
+      {
+        "nom": "FEDERATION NATIONALE MUTUALITE FRANCAISE",
+        "count": 277
+      },
+      {
+        "nom": "LYSIOS",
+        "count": 245
+      },
+      {
+        "nom": "COM'PUBLICS",
+        "count": 193
+      },
+      {
+        "nom": "COMMUNICATION & INSTITUTIONS",
+        "count": 173
+      },
+      {
+        "nom": "GOOGLE FRANCE",
+        "count": 172
+      },
+      {
+        "nom": "RM CONSEIL",
+        "count": 165
+      },
+      {
+        "nom": "UNION DES INDUSTRIES ET DES METIERS DE LA METALLURGIE",
+        "count": 137
+      },
+      {
+        "nom": "FEDERATION BANCAIRE FRANCAISE",
+        "count": 130
+      }
+    ],
+    "topDomains": [
+      {
+        "domaine": "Agriculture",
+        "count": 2081
+      },
+      {
+        "domaine": "Economie",
+        "count": 1743
+      },
+      {
+        "domaine": "Santé",
+        "count": 1700
+      },
+      {
+        "domaine": "Environnement",
+        "count": 1561
+      },
+      {
+        "domaine": "Finances publiques",
+        "count": 1155
+      },
+      {
+        "domaine": "agroalimentaire",
+        "count": 1114
+      },
+      {
+        "domaine": "Système de santé et médico-social",
+        "count": 1077
+      },
+      {
+        "domaine": "Politique industrielle",
+        "count": 1047
+      },
+      {
+        "domaine": "Energie",
+        "count": 973
+      },
+      {
+        "domaine": "Numérique",
+        "count": 874
+      }
+    ],
+    "careerOverlaps": [],
+    "yearRange": "2018-2026"
+  },
+  {
+    "slug": "laurent-panifous",
+    "ministereCode": "MATIGNON",
+    "totalActions": 17425,
+    "topOrgs": [
+      {
+        "nom": "BOURY TALLON & ASSOCIES",
+        "count": 599
+      },
+      {
+        "nom": "ANTHENOR PUBLIC AFFAIRS",
+        "count": 345
+      },
+      {
+        "nom": "FEDERATION NATIONALE MUTUALITE FRANCAISE",
+        "count": 277
+      },
+      {
+        "nom": "LYSIOS",
+        "count": 245
+      },
+      {
+        "nom": "COM'PUBLICS",
+        "count": 193
+      },
+      {
+        "nom": "COMMUNICATION & INSTITUTIONS",
+        "count": 173
+      },
+      {
+        "nom": "GOOGLE FRANCE",
+        "count": 172
+      },
+      {
+        "nom": "RM CONSEIL",
+        "count": 165
+      },
+      {
+        "nom": "UNION DES INDUSTRIES ET DES METIERS DE LA METALLURGIE",
+        "count": 137
+      },
+      {
+        "nom": "FEDERATION BANCAIRE FRANCAISE",
+        "count": 130
+      }
+    ],
+    "topDomains": [
+      {
+        "domaine": "Agriculture",
+        "count": 2081
+      },
+      {
+        "domaine": "Economie",
+        "count": 1743
+      },
+      {
+        "domaine": "Santé",
+        "count": 1700
+      },
+      {
+        "domaine": "Environnement",
+        "count": 1561
+      },
+      {
+        "domaine": "Finances publiques",
+        "count": 1155
+      },
+      {
+        "domaine": "agroalimentaire",
+        "count": 1114
+      },
+      {
+        "domaine": "Système de santé et médico-social",
+        "count": 1077
+      },
+      {
+        "domaine": "Politique industrielle",
+        "count": 1047
+      },
+      {
+        "domaine": "Energie",
+        "count": 973
+      },
+      {
+        "domaine": "Numérique",
+        "count": 874
+      }
+    ],
+    "careerOverlaps": [],
+    "yearRange": "2018-2026"
+  },
+  {
+    "slug": "monique-barbut",
+    "ministereCode": "TRANSITION_ECOLOGIQUE",
+    "totalActions": 13924,
+    "topOrgs": [
+      {
+        "nom": "COM'PUBLICS",
+        "count": 310
+      },
+      {
+        "nom": "BOURY TALLON & ASSOCIES",
+        "count": 235
+      },
+      {
+        "nom": "ANTHENOR PUBLIC AFFAIRS",
+        "count": 217
+      },
+      {
+        "nom": "ATLAS PUBLIC AFFAIRS",
+        "count": 209
+      },
+      {
+        "nom": "UNION  TRANSPORTS PUBLICS FERROVIAIRES",
+        "count": 159
+      },
+      {
+        "nom": "MAITRES OUVRAGES PUBLICS",
+        "count": 153
+      },
+      {
+        "nom": "COMMUNICATION & INSTITUTIONS",
+        "count": 141
+      },
+      {
+        "nom": "LYSIOS",
+        "count": 139
+      },
+      {
+        "nom": "ELECTRICITE DE FRANCE",
+        "count": 130
+      },
+      {
+        "nom": "FONDS MONDIAL POUR LA NATURE FRANCE",
+        "count": 117
+      }
+    ],
+    "topDomains": [
+      {
+        "domaine": "Environnement",
+        "count": 2977
+      },
+      {
+        "domaine": "Energie",
+        "count": 2361
+      },
+      {
+        "domaine": "Agriculture",
+        "count": 1924
+      },
+      {
+        "domaine": "Energies renouvelables",
+        "count": 1817
+      },
+      {
+        "domaine": "Economie",
+        "count": 1324
+      },
+      {
+        "domaine": "Politique industrielle",
+        "count": 1133
+      },
+      {
+        "domaine": "Déchets",
+        "count": 1103
+      },
+      {
+        "domaine": "Transports",
+        "count": 1074
+      },
+      {
+        "domaine": "logistique",
+        "count": 1074
+      },
+      {
+        "domaine": "agroalimentaire",
+        "count": 990
+      }
+    ],
+    "careerOverlaps": [
+      {
+        "careerOrg": "FEM",
+        "lobbyOrg": "FED FRANCAISE DU PRET A PORTER FEMININ",
+        "count": 9
+      }
+    ],
+    "yearRange": "2018-2026"
+  },
+  {
+    "slug": "maud-bregeon",
+    "ministereCode": "TRANSITION_ECOLOGIQUE",
+    "totalActions": 13924,
+    "topOrgs": [
+      {
+        "nom": "COM'PUBLICS",
+        "count": 310
+      },
+      {
+        "nom": "BOURY TALLON & ASSOCIES",
+        "count": 235
+      },
+      {
+        "nom": "ANTHENOR PUBLIC AFFAIRS",
+        "count": 217
+      },
+      {
+        "nom": "ATLAS PUBLIC AFFAIRS",
+        "count": 209
+      },
+      {
+        "nom": "UNION  TRANSPORTS PUBLICS FERROVIAIRES",
+        "count": 159
+      },
+      {
+        "nom": "MAITRES OUVRAGES PUBLICS",
+        "count": 153
+      },
+      {
+        "nom": "COMMUNICATION & INSTITUTIONS",
+        "count": 141
+      },
+      {
+        "nom": "LYSIOS",
+        "count": 139
+      },
+      {
+        "nom": "ELECTRICITE DE FRANCE",
+        "count": 130
+      },
+      {
+        "nom": "FONDS MONDIAL POUR LA NATURE FRANCE",
+        "count": 117
+      }
+    ],
+    "topDomains": [
+      {
+        "domaine": "Environnement",
+        "count": 2977
+      },
+      {
+        "domaine": "Energie",
+        "count": 2361
+      },
+      {
+        "domaine": "Agriculture",
+        "count": 1924
+      },
+      {
+        "domaine": "Energies renouvelables",
+        "count": 1817
+      },
+      {
+        "domaine": "Economie",
+        "count": 1324
+      },
+      {
+        "domaine": "Politique industrielle",
+        "count": 1133
+      },
+      {
+        "domaine": "Déchets",
+        "count": 1103
+      },
+      {
+        "domaine": "Transports",
+        "count": 1074
+      },
+      {
+        "domaine": "logistique",
+        "count": 1074
+      },
+      {
+        "domaine": "agroalimentaire",
+        "count": 990
+      }
+    ],
+    "careerOverlaps": [
+      {
+        "careerOrg": "Électricité de France",
+        "lobbyOrg": "ELECTRICITE DE FRANCE",
+        "count": 130
+      }
+    ],
+    "yearRange": "2018-2026"
+  },
+  {
+    "slug": "mathieu-lefevre",
+    "ministereCode": "TRANSITION_ECOLOGIQUE",
+    "totalActions": 13924,
+    "topOrgs": [
+      {
+        "nom": "COM'PUBLICS",
+        "count": 310
+      },
+      {
+        "nom": "BOURY TALLON & ASSOCIES",
+        "count": 235
+      },
+      {
+        "nom": "ANTHENOR PUBLIC AFFAIRS",
+        "count": 217
+      },
+      {
+        "nom": "ATLAS PUBLIC AFFAIRS",
+        "count": 209
+      },
+      {
+        "nom": "UNION  TRANSPORTS PUBLICS FERROVIAIRES",
+        "count": 159
+      },
+      {
+        "nom": "MAITRES OUVRAGES PUBLICS",
+        "count": 153
+      },
+      {
+        "nom": "COMMUNICATION & INSTITUTIONS",
+        "count": 141
+      },
+      {
+        "nom": "LYSIOS",
+        "count": 139
+      },
+      {
+        "nom": "ELECTRICITE DE FRANCE",
+        "count": 130
+      },
+      {
+        "nom": "FONDS MONDIAL POUR LA NATURE FRANCE",
+        "count": 117
+      }
+    ],
+    "topDomains": [
+      {
+        "domaine": "Environnement",
+        "count": 2977
+      },
+      {
+        "domaine": "Energie",
+        "count": 2361
+      },
+      {
+        "domaine": "Agriculture",
+        "count": 1924
+      },
+      {
+        "domaine": "Energies renouvelables",
+        "count": 1817
+      },
+      {
+        "domaine": "Economie",
+        "count": 1324
+      },
+      {
+        "domaine": "Politique industrielle",
+        "count": 1133
+      },
+      {
+        "domaine": "Déchets",
+        "count": 1103
+      },
+      {
+        "domaine": "Transports",
+        "count": 1074
+      },
+      {
+        "domaine": "logistique",
+        "count": 1074
+      },
+      {
+        "domaine": "agroalimentaire",
+        "count": 990
+      }
+    ],
+    "careerOverlaps": [],
+    "yearRange": "2018-2026"
+  },
+  {
+    "slug": "catherine-pegard",
+    "ministereCode": "CULTURE",
+    "totalActions": 10283,
+    "topOrgs": [
+      {
+        "nom": "GOOGLE FRANCE",
+        "count": 224
+      },
+      {
+        "nom": "BOURY TALLON & ASSOCIES",
+        "count": 181
+      },
+      {
+        "nom": "FEDE NAT SYNDIC EXPL AGRICOLE",
+        "count": 170
+      },
+      {
+        "nom": "LYSIOS",
+        "count": 161
+      },
+      {
+        "nom": "ANTHENOR PUBLIC AFFAIRS",
+        "count": 156
+      },
+      {
+        "nom": "COM'PUBLICS",
+        "count": 143
+      },
+      {
+        "nom": "ASS NATIONALE IND. AGRO ALIMENTAIRES",
+        "count": 98
+      },
+      {
+        "nom": "CONFEDERATION PAYSANNE",
+        "count": 94
+      },
+      {
+        "nom": "LA COOPERATION AGRICOLE",
+        "count": 86
+      },
+      {
+        "nom": "CHAMBRES D'AGRICULTURE FRANCE",
+        "count": 72
+      }
+    ],
+    "topDomains": [
+      {
+        "domaine": "Agriculture",
+        "count": 5406
+      },
+      {
+        "domaine": "agroalimentaire",
+        "count": 2578
+      },
+      {
+        "domaine": "Industrie agroalimentaire",
+        "count": 1082
+      },
+      {
+        "domaine": "Audiovisuel",
+        "count": 922
+      },
+      {
+        "domaine": "Environnement",
+        "count": 758
+      },
+      {
+        "domaine": "Numérique",
+        "count": 721
+      },
+      {
+        "domaine": "Médias",
+        "count": 715
+      },
+      {
+        "domaine": "Economie",
+        "count": 575
+      },
+      {
+        "domaine": "Arts",
+        "count": 553
+      },
+      {
+        "domaine": "culture",
+        "count": 553
+      }
+    ],
+    "careerOverlaps": [],
+    "yearRange": "2018-2026"
+  },
+  {
+    "slug": "stephanie-rist",
+    "ministereCode": "SANTE_FAMILLE",
+    "totalActions": 10059,
+    "topOrgs": [
+      {
+        "nom": "FEDERATION NATIONALE MUTUALITE FRANCAISE",
+        "count": 356
+      },
+      {
+        "nom": "ANTHENOR PUBLIC AFFAIRS",
+        "count": 220
+      },
+      {
+        "nom": "FEDERATION DE L'HOSPITALISATION PRIVEE",
+        "count": 218
+      },
+      {
+        "nom": "BOURY TALLON & ASSOCIES",
+        "count": 205
+      },
+      {
+        "nom": "MEDECINS DU MONDE",
+        "count": 143
+      },
+      {
+        "nom": "LES ENTREPRISES DU MEDICAMENT",
+        "count": 130
+      },
+      {
+        "nom": "FEDERATION HOSPITALIERE FRANCE",
+        "count": 127
+      },
+      {
+        "nom": "CONSEIL NATIONAL DE L'ORDRE DES MASSEURS KINESITHERAPEUTES",
+        "count": 113
+      },
+      {
+        "nom": "SYND NAT ETS RETRAITE PERSONNES AGEES",
+        "count": 111
+      },
+      {
+        "nom": "ORDRE NATIONAL DES MEDECINS",
+        "count": 103
+      }
+    ],
+    "topDomains": [
+      {
+        "domaine": "Santé",
+        "count": 3645
+      },
+      {
+        "domaine": "Système de santé et médico-social",
+        "count": 2842
+      },
+      {
+        "domaine": "Soins et maladies",
+        "count": 1276
+      },
+      {
+        "domaine": "Prévention",
+        "count": 897
+      },
+      {
+        "domaine": "Médicaments",
+        "count": 884
+      },
+      {
+        "domaine": "Remboursements",
+        "count": 648
+      },
+      {
+        "domaine": "Emploi",
+        "count": 630
+      },
+      {
+        "domaine": "solidarité",
+        "count": 630
+      },
+      {
+        "domaine": "Société",
+        "count": 557
+      },
+      {
+        "domaine": "Finances publiques",
+        "count": 548
+      }
+    ],
+    "careerOverlaps": [],
+    "yearRange": "2018-2026"
+  },
+  {
+    "slug": "camille-galliard-minier",
+    "ministereCode": "SANTE_FAMILLE",
+    "totalActions": 10059,
+    "topOrgs": [
+      {
+        "nom": "FEDERATION NATIONALE MUTUALITE FRANCAISE",
+        "count": 356
+      },
+      {
+        "nom": "ANTHENOR PUBLIC AFFAIRS",
+        "count": 220
+      },
+      {
+        "nom": "FEDERATION DE L'HOSPITALISATION PRIVEE",
+        "count": 218
+      },
+      {
+        "nom": "BOURY TALLON & ASSOCIES",
+        "count": 205
+      },
+      {
+        "nom": "MEDECINS DU MONDE",
+        "count": 143
+      },
+      {
+        "nom": "LES ENTREPRISES DU MEDICAMENT",
+        "count": 130
+      },
+      {
+        "nom": "FEDERATION HOSPITALIERE FRANCE",
+        "count": 127
+      },
+      {
+        "nom": "CONSEIL NATIONAL DE L'ORDRE DES MASSEURS KINESITHERAPEUTES",
+        "count": 113
+      },
+      {
+        "nom": "SYND NAT ETS RETRAITE PERSONNES AGEES",
+        "count": 111
+      },
+      {
+        "nom": "ORDRE NATIONAL DES MEDECINS",
+        "count": 103
+      }
+    ],
+    "topDomains": [
+      {
+        "domaine": "Santé",
+        "count": 3645
+      },
+      {
+        "domaine": "Système de santé et médico-social",
+        "count": 2842
+      },
+      {
+        "domaine": "Soins et maladies",
+        "count": 1276
+      },
+      {
+        "domaine": "Prévention",
+        "count": 897
+      },
+      {
+        "domaine": "Médicaments",
+        "count": 884
+      },
+      {
+        "domaine": "Remboursements",
+        "count": 648
+      },
+      {
+        "domaine": "Emploi",
+        "count": 630
+      },
+      {
+        "domaine": "solidarité",
+        "count": 630
+      },
+      {
+        "domaine": "Société",
+        "count": 557
+      },
+      {
+        "domaine": "Finances publiques",
+        "count": 548
+      }
+    ],
+    "careerOverlaps": [],
+    "yearRange": "2018-2026"
+  },
+  {
+    "slug": "annie-genevard",
+    "ministereCode": "AGRICULTURE",
+    "totalActions": 6895,
+    "topOrgs": [
+      {
+        "nom": "FEDE NAT SYNDIC EXPL AGRICOLE",
+        "count": 170
+      },
+      {
+        "nom": "COM'PUBLICS",
+        "count": 141
+      },
+      {
+        "nom": "BOURY TALLON & ASSOCIES",
+        "count": 105
+      },
+      {
+        "nom": "ASS NATIONALE IND. AGRO ALIMENTAIRES",
+        "count": 95
+      },
+      {
+        "nom": "CONFEDERATION PAYSANNE",
+        "count": 94
+      },
+      {
+        "nom": "ANTHENOR PUBLIC AFFAIRS",
+        "count": 92
+      },
+      {
+        "nom": "LA COOPERATION AGRICOLE",
+        "count": 86
+      },
+      {
+        "nom": "CHAMBRES D'AGRICULTURE FRANCE",
+        "count": 72
+      },
+      {
+        "nom": "FEDERATION ENTREP COMMERCE DISTRIBUTION",
+        "count": 64
+      },
+      {
+        "nom": "EURALIA FRANCE",
+        "count": 63
+      }
+    ],
+    "topDomains": [
+      {
+        "domaine": "Agriculture",
+        "count": 5393
+      },
+      {
+        "domaine": "agroalimentaire",
+        "count": 2569
+      },
+      {
+        "domaine": "Industrie agroalimentaire",
+        "count": 1068
+      },
+      {
+        "domaine": "Environnement",
+        "count": 695
+      },
+      {
+        "domaine": "Economie",
+        "count": 415
+      },
+      {
+        "domaine": "Développement des territoires",
+        "count": 392
+      },
+      {
+        "domaine": "Politique industrielle",
+        "count": 295
+      },
+      {
+        "domaine": "Sécurité et normes alimentaires",
+        "count": 248
+      },
+      {
+        "domaine": "Energie",
+        "count": 215
+      },
+      {
+        "domaine": "Energies renouvelables",
+        "count": 212
+      }
+    ],
+    "careerOverlaps": [],
+    "yearRange": "2018-2026"
+  },
+  {
+    "slug": "catherine-chabaud",
+    "ministereCode": "AGRICULTURE",
+    "totalActions": 6895,
+    "topOrgs": [
+      {
+        "nom": "FEDE NAT SYNDIC EXPL AGRICOLE",
+        "count": 170
+      },
+      {
+        "nom": "COM'PUBLICS",
+        "count": 141
+      },
+      {
+        "nom": "BOURY TALLON & ASSOCIES",
+        "count": 105
+      },
+      {
+        "nom": "ASS NATIONALE IND. AGRO ALIMENTAIRES",
+        "count": 95
+      },
+      {
+        "nom": "CONFEDERATION PAYSANNE",
+        "count": 94
+      },
+      {
+        "nom": "ANTHENOR PUBLIC AFFAIRS",
+        "count": 92
+      },
+      {
+        "nom": "LA COOPERATION AGRICOLE",
+        "count": 86
+      },
+      {
+        "nom": "CHAMBRES D'AGRICULTURE FRANCE",
+        "count": 72
+      },
+      {
+        "nom": "FEDERATION ENTREP COMMERCE DISTRIBUTION",
+        "count": 64
+      },
+      {
+        "nom": "EURALIA FRANCE",
+        "count": 63
+      }
+    ],
+    "topDomains": [
+      {
+        "domaine": "Agriculture",
+        "count": 5393
+      },
+      {
+        "domaine": "agroalimentaire",
+        "count": 2569
+      },
+      {
+        "domaine": "Industrie agroalimentaire",
+        "count": 1068
+      },
+      {
+        "domaine": "Environnement",
+        "count": 695
+      },
+      {
+        "domaine": "Economie",
+        "count": 415
+      },
+      {
+        "domaine": "Développement des territoires",
+        "count": 392
+      },
+      {
+        "domaine": "Politique industrielle",
+        "count": 295
+      },
+      {
+        "domaine": "Sécurité et normes alimentaires",
+        "count": 248
+      },
+      {
+        "domaine": "Energie",
+        "count": 215
+      },
+      {
+        "domaine": "Energies renouvelables",
+        "count": 212
+      }
+    ],
+    "careerOverlaps": [],
+    "yearRange": "2018-2026"
+  },
+  {
+    "slug": "michel-fournier",
+    "ministereCode": "AGRICULTURE",
+    "totalActions": 6895,
+    "topOrgs": [
+      {
+        "nom": "FEDE NAT SYNDIC EXPL AGRICOLE",
+        "count": 170
+      },
+      {
+        "nom": "COM'PUBLICS",
+        "count": 141
+      },
+      {
+        "nom": "BOURY TALLON & ASSOCIES",
+        "count": 105
+      },
+      {
+        "nom": "ASS NATIONALE IND. AGRO ALIMENTAIRES",
+        "count": 95
+      },
+      {
+        "nom": "CONFEDERATION PAYSANNE",
+        "count": 94
+      },
+      {
+        "nom": "ANTHENOR PUBLIC AFFAIRS",
+        "count": 92
+      },
+      {
+        "nom": "LA COOPERATION AGRICOLE",
+        "count": 86
+      },
+      {
+        "nom": "CHAMBRES D'AGRICULTURE FRANCE",
+        "count": 72
+      },
+      {
+        "nom": "FEDERATION ENTREP COMMERCE DISTRIBUTION",
+        "count": 64
+      },
+      {
+        "nom": "EURALIA FRANCE",
+        "count": 63
+      }
+    ],
+    "topDomains": [
+      {
+        "domaine": "Agriculture",
+        "count": 5393
+      },
+      {
+        "domaine": "agroalimentaire",
+        "count": 2569
+      },
+      {
+        "domaine": "Industrie agroalimentaire",
+        "count": 1068
+      },
+      {
+        "domaine": "Environnement",
+        "count": 695
+      },
+      {
+        "domaine": "Economie",
+        "count": 415
+      },
+      {
+        "domaine": "Développement des territoires",
+        "count": 392
+      },
+      {
+        "domaine": "Politique industrielle",
+        "count": 295
+      },
+      {
+        "domaine": "Sécurité et normes alimentaires",
+        "count": 248
+      },
+      {
+        "domaine": "Energie",
+        "count": 215
+      },
+      {
+        "domaine": "Energies renouvelables",
+        "count": 212
+      }
+    ],
+    "careerOverlaps": [],
+    "yearRange": "2018-2026"
+  },
+  {
+    "slug": "vincent-jeanbrun",
+    "ministereCode": "VILLE_LOGEMENT",
+    "totalActions": 3607,
+    "topOrgs": [
+      {
+        "nom": "UNION NATIONALE FEDERATION H L M",
+        "count": 84
+      },
+      {
+        "nom": "BOURY TALLON & ASSOCIES",
+        "count": 75
+      },
+      {
+        "nom": "F N A I M",
+        "count": 72
+      },
+      {
+        "nom": "ANTHENOR PUBLIC AFFAIRS",
+        "count": 66
+      },
+      {
+        "nom": "FEDERATION DES ACTEURS DE LA SOLIDARITE",
+        "count": 62
+      },
+      {
+        "nom": "FEDERATION DES PROMOTEURS IMMOBILIERS DE FRANCE",
+        "count": 60
+      },
+      {
+        "nom": "COMITE NATIONAL OLYMPIQUE ET SPORTIF FRANCAIS",
+        "count": 47
+      },
+      {
+        "nom": "FEDERATION ENTREP COMMERCE DISTRIBUTION",
+        "count": 46
+      },
+      {
+        "nom": "ASSOCIATION UNION NATIONALE DES CLLAJ",
+        "count": 46
+      },
+      {
+        "nom": "UNION NATIONALE DES ORGANISMES FAISANT APPEL AUX GENEROSITES",
+        "count": 45
+      }
+    ],
+    "topDomains": [
+      {
+        "domaine": "Construction",
+        "count": 1341
+      },
+      {
+        "domaine": "Logement",
+        "count": 941
+      },
+      {
+        "domaine": "logement",
+        "count": 932
+      },
+      {
+        "domaine": "aménagement du territoire",
+        "count": 932
+      },
+      {
+        "domaine": "Sports",
+        "count": 674
+      },
+      {
+        "domaine": "loisirs",
+        "count": 302
+      },
+      {
+        "domaine": "tourisme",
+        "count": 302
+      },
+      {
+        "domaine": "Finances publiques",
+        "count": 249
+      },
+      {
+        "domaine": "Energie",
+        "count": 235
+      },
+      {
+        "domaine": "Environnement",
+        "count": 220
+      }
+    ],
+    "careerOverlaps": [],
+    "yearRange": "2018-2026"
+  },
+  {
+    "slug": "jean-noel-barrot",
+    "ministereCode": "AFFAIRES_ETRANGERES",
+    "totalActions": 3050,
+    "topOrgs": [
+      {
+        "nom": "CARE FRANCE",
+        "count": 91
+      },
+      {
+        "nom": "GOOGLE FRANCE",
+        "count": 58
+      },
+      {
+        "nom": "SANTE MONDIALE DEUX MILLE TRENTE",
+        "count": 50
+      },
+      {
+        "nom": "ANTHENOR PUBLIC AFFAIRS",
+        "count": 50
+      },
+      {
+        "nom": "SECOURS CATHOLIQUE",
+        "count": 49
+      },
+      {
+        "nom": "OXFAM FRANCE",
+        "count": 48
+      },
+      {
+        "nom": "BOURY TALLON & ASSOCIES",
+        "count": 47
+      },
+      {
+        "nom": "ACTION SANTE MONDIALE ASM",
+        "count": 43
+      },
+      {
+        "nom": "MEDECINS DU MONDE",
+        "count": 42
+      },
+      {
+        "nom": "AMNESTY INTERNATIONAL FRANCE",
+        "count": 41
+      }
+    ],
+    "topDomains": [
+      {
+        "domaine": "Agriculture",
+        "count": 370
+      },
+      {
+        "domaine": "Economie",
+        "count": 314
+      },
+      {
+        "domaine": "Coopération internationale",
+        "count": 274
+      },
+      {
+        "domaine": "Aide au développement",
+        "count": 264
+      },
+      {
+        "domaine": "Environnement",
+        "count": 224
+      },
+      {
+        "domaine": "Politique industrielle",
+        "count": 222
+      },
+      {
+        "domaine": "Numérique",
+        "count": 221
+      },
+      {
+        "domaine": "Commerce extérieur",
+        "count": 217
+      },
+      {
+        "domaine": "agroalimentaire",
+        "count": 197
+      },
+      {
+        "domaine": "Accords internationaux",
+        "count": 183
+      }
+    ],
+    "careerOverlaps": [],
+    "yearRange": "2018-2026"
+  },
+  {
+    "slug": "benjamin-haddad",
+    "ministereCode": "AFFAIRES_ETRANGERES",
+    "totalActions": 3050,
+    "topOrgs": [
+      {
+        "nom": "CARE FRANCE",
+        "count": 91
+      },
+      {
+        "nom": "GOOGLE FRANCE",
+        "count": 58
+      },
+      {
+        "nom": "SANTE MONDIALE DEUX MILLE TRENTE",
+        "count": 50
+      },
+      {
+        "nom": "ANTHENOR PUBLIC AFFAIRS",
+        "count": 50
+      },
+      {
+        "nom": "SECOURS CATHOLIQUE",
+        "count": 49
+      },
+      {
+        "nom": "OXFAM FRANCE",
+        "count": 48
+      },
+      {
+        "nom": "BOURY TALLON & ASSOCIES",
+        "count": 47
+      },
+      {
+        "nom": "ACTION SANTE MONDIALE ASM",
+        "count": 43
+      },
+      {
+        "nom": "MEDECINS DU MONDE",
+        "count": 42
+      },
+      {
+        "nom": "AMNESTY INTERNATIONAL FRANCE",
+        "count": 41
+      }
+    ],
+    "topDomains": [
+      {
+        "domaine": "Agriculture",
+        "count": 370
+      },
+      {
+        "domaine": "Economie",
+        "count": 314
+      },
+      {
+        "domaine": "Coopération internationale",
+        "count": 274
+      },
+      {
+        "domaine": "Aide au développement",
+        "count": 264
+      },
+      {
+        "domaine": "Environnement",
+        "count": 224
+      },
+      {
+        "domaine": "Politique industrielle",
+        "count": 222
+      },
+      {
+        "domaine": "Numérique",
+        "count": 221
+      },
+      {
+        "domaine": "Commerce extérieur",
+        "count": 217
+      },
+      {
+        "domaine": "agroalimentaire",
+        "count": 197
+      },
+      {
+        "domaine": "Accords internationaux",
+        "count": 183
+      }
+    ],
+    "careerOverlaps": [],
+    "yearRange": "2018-2026"
+  },
+  {
+    "slug": "eleonore-caroit",
+    "ministereCode": "AFFAIRES_ETRANGERES",
+    "totalActions": 3050,
+    "topOrgs": [
+      {
+        "nom": "CARE FRANCE",
+        "count": 91
+      },
+      {
+        "nom": "GOOGLE FRANCE",
+        "count": 58
+      },
+      {
+        "nom": "SANTE MONDIALE DEUX MILLE TRENTE",
+        "count": 50
+      },
+      {
+        "nom": "ANTHENOR PUBLIC AFFAIRS",
+        "count": 50
+      },
+      {
+        "nom": "SECOURS CATHOLIQUE",
+        "count": 49
+      },
+      {
+        "nom": "OXFAM FRANCE",
+        "count": 48
+      },
+      {
+        "nom": "BOURY TALLON & ASSOCIES",
+        "count": 47
+      },
+      {
+        "nom": "ACTION SANTE MONDIALE ASM",
+        "count": 43
+      },
+      {
+        "nom": "MEDECINS DU MONDE",
+        "count": 42
+      },
+      {
+        "nom": "AMNESTY INTERNATIONAL FRANCE",
+        "count": 41
+      }
+    ],
+    "topDomains": [
+      {
+        "domaine": "Agriculture",
+        "count": 370
+      },
+      {
+        "domaine": "Economie",
+        "count": 314
+      },
+      {
+        "domaine": "Coopération internationale",
+        "count": 274
+      },
+      {
+        "domaine": "Aide au développement",
+        "count": 264
+      },
+      {
+        "domaine": "Environnement",
+        "count": 224
+      },
+      {
+        "domaine": "Politique industrielle",
+        "count": 222
+      },
+      {
+        "domaine": "Numérique",
+        "count": 221
+      },
+      {
+        "domaine": "Commerce extérieur",
+        "count": 217
+      },
+      {
+        "domaine": "agroalimentaire",
+        "count": 197
+      },
+      {
+        "domaine": "Accords internationaux",
+        "count": 183
+      }
+    ],
+    "careerOverlaps": [],
+    "yearRange": "2018-2026"
+  },
+  {
+    "slug": "francoise-gatel",
+    "ministereCode": "AMENAGEMENT_TERRITOIRE",
+    "totalActions": 2783,
+    "topOrgs": [
+      {
+        "nom": "ANTHENOR PUBLIC AFFAIRS",
+        "count": 73
+      },
+      {
+        "nom": "MAITRES OUVRAGES PUBLICS",
+        "count": 57
+      },
+      {
+        "nom": "CONSEIL NATIONAL DES BARREAUX",
+        "count": 51
+      },
+      {
+        "nom": "FEDERATION ENTREP COMMERCE DISTRIBUTION",
+        "count": 46
+      },
+      {
+        "nom": "COM'PUBLICS",
+        "count": 42
+      },
+      {
+        "nom": "CONFEDERATION DES GROSSISTES DE FRANCE",
+        "count": 38
+      },
+      {
+        "nom": "RM CONSEIL",
+        "count": 35
+      },
+      {
+        "nom": "FEDERATION ENTREP TRANSPORT LOGIS FRANCE",
+        "count": 35
+      },
+      {
+        "nom": "MOUVEMENT DES ENTREPRISES DE TAILLE INTERMEDIAIRE LES ENTREPRISES DE LONG TERME",
+        "count": 35
+      },
+      {
+        "nom": "BOURY TALLON & ASSOCIES",
+        "count": 30
+      }
+    ],
+    "topDomains": [
+      {
+        "domaine": "Construction",
+        "count": 479
+      },
+      {
+        "domaine": "Agriculture",
+        "count": 388
+      },
+      {
+        "domaine": "Environnement",
+        "count": 360
+      },
+      {
+        "domaine": "Transports",
+        "count": 283
+      },
+      {
+        "domaine": "logistique",
+        "count": 283
+      },
+      {
+        "domaine": "logement",
+        "count": 275
+      },
+      {
+        "domaine": "aménagement du territoire",
+        "count": 275
+      },
+      {
+        "domaine": "Energie",
+        "count": 265
+      },
+      {
+        "domaine": "Economie",
+        "count": 227
+      },
+      {
+        "domaine": "Logement",
+        "count": 226
+      }
+    ],
+    "careerOverlaps": [],
+    "yearRange": "2018-2025"
+  },
+  {
+    "slug": "philippe-baptiste",
+    "ministereCode": "ENSEIGNEMENT_SUPERIEUR",
+    "totalActions": 2618,
+    "topOrgs": [
+      {
+        "nom": "ANTHENOR PUBLIC AFFAIRS",
+        "count": 67
+      },
+      {
+        "nom": "BOURY TALLON & ASSOCIES",
+        "count": 51
+      },
+      {
+        "nom": "ASSOCIATION NATIONALE DES ETUDIANTS EN PHARMACIE DE FRANCE",
+        "count": 46
+      },
+      {
+        "nom": "RIVINGTON",
+        "count": 39
+      },
+      {
+        "nom": "SECRETARIAT GENERAL DE L'ENSEIGNEMENT CATHOLIQUE SGEC",
+        "count": 38
+      },
+      {
+        "nom": "SOS EDUCATION",
+        "count": 37
+      },
+      {
+        "nom": "LES ENTREPRISES DU MEDICAMENT",
+        "count": 36
+      },
+      {
+        "nom": "ASS CONFERENCE DES GRANDES ECOLES",
+        "count": 34
+      },
+      {
+        "nom": "RM CONSEIL",
+        "count": 33
+      },
+      {
+        "nom": "FEDERATION ASS GENERALES ETUDIANTES",
+        "count": 33
+      }
+    ],
+    "topDomains": [
+      {
+        "domaine": "Education",
+        "count": 842
+      },
+      {
+        "domaine": "Enseignement supérieur",
+        "count": 711
+      },
+      {
+        "domaine": "enseignement",
+        "count": 452
+      },
+      {
+        "domaine": "formation",
+        "count": 452
+      },
+      {
+        "domaine": "recherche",
+        "count": 431
+      },
+      {
+        "domaine": "innovation",
+        "count": 431
+      },
+      {
+        "domaine": "Santé",
+        "count": 377
+      },
+      {
+        "domaine": "Recherche et innovation",
+        "count": 356
+      },
+      {
+        "domaine": "Système de santé et médico-social",
+        "count": 231
+      },
+      {
+        "domaine": "Formation professionnelle",
+        "count": 192
+      }
+    ],
+    "careerOverlaps": [
+      {
+        "careerOrg": "IBM",
+        "lobbyOrg": "CIE IBM FRANCE",
+        "count": 10
+      },
+      {
+        "careerOrg": "Total",
+        "lobbyOrg": "TOTALENERGIES SE",
+        "count": 1
+      }
+    ],
+    "yearRange": "2018-2025"
+  },
+  {
+    "slug": "edouard-geffray",
+    "ministereCode": "EDUCATION_NATIONALE",
+    "totalActions": 2517,
+    "topOrgs": [
+      {
+        "nom": "ANTHENOR PUBLIC AFFAIRS",
+        "count": 59
+      },
+      {
+        "nom": "BOURY TALLON & ASSOCIES",
+        "count": 47
+      },
+      {
+        "nom": "SECRETARIAT GENERAL DE L'ENSEIGNEMENT CATHOLIQUE SGEC",
+        "count": 38
+      },
+      {
+        "nom": "SOS EDUCATION",
+        "count": 37
+      },
+      {
+        "nom": "RIVINGTON",
+        "count": 37
+      },
+      {
+        "nom": "LES ENTREPRISES DU MEDICAMENT",
+        "count": 36
+      },
+      {
+        "nom": "ASSOCIATION NATIONALE DES ETUDIANTS EN PHARMACIE DE FRANCE",
+        "count": 34
+      },
+      {
+        "nom": "RM CONSEIL",
+        "count": 33
+      },
+      {
+        "nom": "ASS CONFERENCE DES GRANDES ECOLES",
+        "count": 32
+      },
+      {
+        "nom": "MOUVEMENT DES ENTREPRISES DE FRANCE",
+        "count": 32
+      }
+    ],
+    "topDomains": [
+      {
+        "domaine": "Education",
+        "count": 816
+      },
+      {
+        "domaine": "Enseignement supérieur",
+        "count": 670
+      },
+      {
+        "domaine": "enseignement",
+        "count": 430
+      },
+      {
+        "domaine": "formation",
+        "count": 430
+      },
+      {
+        "domaine": "recherche",
+        "count": 409
+      },
+      {
+        "domaine": "innovation",
+        "count": 409
+      },
+      {
+        "domaine": "Santé",
+        "count": 361
+      },
+      {
+        "domaine": "Recherche et innovation",
+        "count": 331
+      },
+      {
+        "domaine": "Système de santé et médico-social",
+        "count": 217
+      },
+      {
+        "domaine": "Formation professionnelle",
+        "count": 188
+      }
+    ],
+    "careerOverlaps": [],
+    "yearRange": "2018-2025"
+  },
+  {
+    "slug": "sabrina-agresti-roubache",
+    "ministereCode": "EDUCATION_NATIONALE",
+    "totalActions": 2517,
+    "topOrgs": [
+      {
+        "nom": "ANTHENOR PUBLIC AFFAIRS",
+        "count": 59
+      },
+      {
+        "nom": "BOURY TALLON & ASSOCIES",
+        "count": 47
+      },
+      {
+        "nom": "SECRETARIAT GENERAL DE L'ENSEIGNEMENT CATHOLIQUE SGEC",
+        "count": 38
+      },
+      {
+        "nom": "SOS EDUCATION",
+        "count": 37
+      },
+      {
+        "nom": "RIVINGTON",
+        "count": 37
+      },
+      {
+        "nom": "LES ENTREPRISES DU MEDICAMENT",
+        "count": 36
+      },
+      {
+        "nom": "ASSOCIATION NATIONALE DES ETUDIANTS EN PHARMACIE DE FRANCE",
+        "count": 34
+      },
+      {
+        "nom": "RM CONSEIL",
+        "count": 33
+      },
+      {
+        "nom": "ASS CONFERENCE DES GRANDES ECOLES",
+        "count": 32
+      },
+      {
+        "nom": "MOUVEMENT DES ENTREPRISES DE FRANCE",
+        "count": 32
+      }
+    ],
+    "topDomains": [
+      {
+        "domaine": "Education",
+        "count": 816
+      },
+      {
+        "domaine": "Enseignement supérieur",
+        "count": 670
+      },
+      {
+        "domaine": "enseignement",
+        "count": 430
+      },
+      {
+        "domaine": "formation",
+        "count": 430
+      },
+      {
+        "domaine": "recherche",
+        "count": 409
+      },
+      {
+        "domaine": "innovation",
+        "count": 409
+      },
+      {
+        "domaine": "Santé",
+        "count": 361
+      },
+      {
+        "domaine": "Recherche et innovation",
+        "count": 331
+      },
+      {
+        "domaine": "Système de santé et médico-social",
+        "count": 217
+      },
+      {
+        "domaine": "Formation professionnelle",
+        "count": 188
+      }
+    ],
+    "careerOverlaps": [],
+    "yearRange": "2018-2025"
+  },
+  {
+    "slug": "laurent-nunez",
+    "ministereCode": "INTERIEUR",
+    "totalActions": 2122,
+    "topOrgs": [
+      {
+        "nom": "CLUB  DES DIRECTEURS  DE SECURITE DE L ENTREPRISE",
+        "count": 111
+      },
+      {
+        "nom": "UNION  TRANSPORTS PUBLICS FERROVIAIRES",
+        "count": 75
+      },
+      {
+        "nom": "CONSEIL NATIONAL DES BARREAUX",
+        "count": 67
+      },
+      {
+        "nom": "FEDERATION NATIONALE DE L’AUTOMOBILE",
+        "count": 57
+      },
+      {
+        "nom": "ANTHENOR PUBLIC AFFAIRS",
+        "count": 51
+      },
+      {
+        "nom": "GOOGLE FRANCE",
+        "count": 45
+      },
+      {
+        "nom": "MEDECINS DU MONDE",
+        "count": 34
+      },
+      {
+        "nom": "LYSIOS",
+        "count": 34
+      },
+      {
+        "nom": "AMNESTY INTERNATIONAL FRANCE",
+        "count": 32
+      },
+      {
+        "nom": "EUROS AGENCY",
+        "count": 27
+      }
+    ],
+    "topDomains": [
+      {
+        "domaine": "Défense",
+        "count": 309
+      },
+      {
+        "domaine": "sécurité",
+        "count": 280
+      },
+      {
+        "domaine": "Sécurité nationale",
+        "count": 234
+      },
+      {
+        "domaine": "Transports",
+        "count": 185
+      },
+      {
+        "domaine": "logistique",
+        "count": 185
+      },
+      {
+        "domaine": "Agriculture",
+        "count": 172
+      },
+      {
+        "domaine": "Numérique",
+        "count": 165
+      },
+      {
+        "domaine": "Transport de voyageurs",
+        "count": 132
+      },
+      {
+        "domaine": "Marché du numérique",
+        "count": 128
+      },
+      {
+        "domaine": "Justice",
+        "count": 120
+      }
+    ],
+    "careerOverlaps": [],
+    "yearRange": "2018-2025"
+  },
+  {
+    "slug": "jean-didier-berger",
+    "ministereCode": "INTERIEUR",
+    "totalActions": 2122,
+    "topOrgs": [
+      {
+        "nom": "CLUB  DES DIRECTEURS  DE SECURITE DE L ENTREPRISE",
+        "count": 111
+      },
+      {
+        "nom": "UNION  TRANSPORTS PUBLICS FERROVIAIRES",
+        "count": 75
+      },
+      {
+        "nom": "CONSEIL NATIONAL DES BARREAUX",
+        "count": 67
+      },
+      {
+        "nom": "FEDERATION NATIONALE DE L’AUTOMOBILE",
+        "count": 57
+      },
+      {
+        "nom": "ANTHENOR PUBLIC AFFAIRS",
+        "count": 51
+      },
+      {
+        "nom": "GOOGLE FRANCE",
+        "count": 45
+      },
+      {
+        "nom": "MEDECINS DU MONDE",
+        "count": 34
+      },
+      {
+        "nom": "LYSIOS",
+        "count": 34
+      },
+      {
+        "nom": "AMNESTY INTERNATIONAL FRANCE",
+        "count": 32
+      },
+      {
+        "nom": "EUROS AGENCY",
+        "count": 27
+      }
+    ],
+    "topDomains": [
+      {
+        "domaine": "Défense",
+        "count": 309
+      },
+      {
+        "domaine": "sécurité",
+        "count": 280
+      },
+      {
+        "domaine": "Sécurité nationale",
+        "count": 234
+      },
+      {
+        "domaine": "Transports",
+        "count": 185
+      },
+      {
+        "domaine": "logistique",
+        "count": 185
+      },
+      {
+        "domaine": "Agriculture",
+        "count": 172
+      },
+      {
+        "domaine": "Numérique",
+        "count": 165
+      },
+      {
+        "domaine": "Transport de voyageurs",
+        "count": 132
+      },
+      {
+        "domaine": "Marché du numérique",
+        "count": 128
+      },
+      {
+        "domaine": "Justice",
+        "count": 120
+      }
+    ],
+    "careerOverlaps": [],
+    "yearRange": "2018-2025"
+  },
+  {
+    "slug": "marie-pierre-vedrenne",
+    "ministereCode": "INTERIEUR",
+    "totalActions": 2122,
+    "topOrgs": [
+      {
+        "nom": "CLUB  DES DIRECTEURS  DE SECURITE DE L ENTREPRISE",
+        "count": 111
+      },
+      {
+        "nom": "UNION  TRANSPORTS PUBLICS FERROVIAIRES",
+        "count": 75
+      },
+      {
+        "nom": "CONSEIL NATIONAL DES BARREAUX",
+        "count": 67
+      },
+      {
+        "nom": "FEDERATION NATIONALE DE L’AUTOMOBILE",
+        "count": 57
+      },
+      {
+        "nom": "ANTHENOR PUBLIC AFFAIRS",
+        "count": 51
+      },
+      {
+        "nom": "GOOGLE FRANCE",
+        "count": 45
+      },
+      {
+        "nom": "MEDECINS DU MONDE",
+        "count": 34
+      },
+      {
+        "nom": "LYSIOS",
+        "count": 34
+      },
+      {
+        "nom": "AMNESTY INTERNATIONAL FRANCE",
+        "count": 32
+      },
+      {
+        "nom": "EUROS AGENCY",
+        "count": 27
+      }
+    ],
+    "topDomains": [
+      {
+        "domaine": "Défense",
+        "count": 309
+      },
+      {
+        "domaine": "sécurité",
+        "count": 280
+      },
+      {
+        "domaine": "Sécurité nationale",
+        "count": 234
+      },
+      {
+        "domaine": "Transports",
+        "count": 185
+      },
+      {
+        "domaine": "logistique",
+        "count": 185
+      },
+      {
+        "domaine": "Agriculture",
+        "count": 172
+      },
+      {
+        "domaine": "Numérique",
+        "count": 165
+      },
+      {
+        "domaine": "Transport de voyageurs",
+        "count": 132
+      },
+      {
+        "domaine": "Marché du numérique",
+        "count": 128
+      },
+      {
+        "domaine": "Justice",
+        "count": 120
+      }
+    ],
+    "careerOverlaps": [],
+    "yearRange": "2018-2025"
+  },
+  {
+    "slug": "gerald-darmanin",
+    "ministereCode": "JUSTICE",
+    "totalActions": 1581,
+    "topOrgs": [
+      {
+        "nom": "CONSEIL NATIONAL DES BARREAUX",
+        "count": 280
+      },
+      {
+        "nom": "CONSEIL SUPER NOTARIAT",
+        "count": 67
+      },
+      {
+        "nom": "ORDRE DES AVOCATS A LA COUR DE PARIS",
+        "count": 63
+      },
+      {
+        "nom": "ORIGINES",
+        "count": 56
+      },
+      {
+        "nom": "CHAMBRE NATIONALE DES COMMISSAIRES DE JUSTICE",
+        "count": 53
+      },
+      {
+        "nom": "CONSEIL NATIONAL GREFFIERS TRIBUNAUX COM",
+        "count": 44
+      },
+      {
+        "nom": "CONSEIL NAT ADMIN JUDIC MANDA JUDIC...",
+        "count": 43
+      },
+      {
+        "nom": "GOOGLE FRANCE",
+        "count": 31
+      },
+      {
+        "nom": "FEDERATION NATIONALE DE L'INFORMATION D'ENTREPRISE DE LA GESTION DE CREANCES ET DE L'ENQUETE CIVILE",
+        "count": 30
+      },
+      {
+        "nom": "FONDATION DES FEMMES",
+        "count": 26
+      }
+    ],
+    "topDomains": [
+      {
+        "domaine": "Justice",
+        "count": 536
+      },
+      {
+        "domaine": "Justice civile",
+        "count": 195
+      },
+      {
+        "domaine": "Justice pénale",
+        "count": 118
+      },
+      {
+        "domaine": "Professions réglementées",
+        "count": 115
+      },
+      {
+        "domaine": "Institutions judiciaires",
+        "count": 108
+      },
+      {
+        "domaine": "Droits et libertés fondamentales",
+        "count": 90
+      },
+      {
+        "domaine": "Finances publiques",
+        "count": 84
+      },
+      {
+        "domaine": "Economie",
+        "count": 78
+      },
+      {
+        "domaine": "Système de santé et médico-social",
+        "count": 76
+      },
+      {
+        "domaine": "Numérique",
+        "count": 69
+      }
+    ],
+    "careerOverlaps": [],
+    "yearRange": "2018-2026"
+  },
+  {
+    "slug": "marina-ferrari",
+    "ministereCode": "SPORTS_JEUNESSE",
+    "totalActions": 1241,
+    "topOrgs": [
+      {
+        "nom": "ANTHENOR PUBLIC AFFAIRS",
+        "count": 51
+      },
+      {
+        "nom": "COMITE NATIONAL OLYMPIQUE ET SPORTIF FRANCAIS",
+        "count": 47
+      },
+      {
+        "nom": "UNION NATIONALE DES ORGANISMES FAISANT APPEL AUX GENEROSITES",
+        "count": 45
+      },
+      {
+        "nom": "FEDERATION FRANCAISE D EQUITATION",
+        "count": 35
+      },
+      {
+        "nom": "SPORT ET CITOYENNETE '3S'",
+        "count": 34
+      },
+      {
+        "nom": "COSMOS MAISON DU SPORT FRANCAIS",
+        "count": 34
+      },
+      {
+        "nom": "SPORSORA",
+        "count": 27
+      },
+      {
+        "nom": "L'UNION DES ENTREPRISES DE LA FILIERE DU SPORT DES LOISIRS DU CYCLE ET DE LA MOBILITE (L'UNION SPORT ET CYCLE)",
+        "count": 25
+      },
+      {
+        "nom": "FOOT UNIS",
+        "count": 23
+      },
+      {
+        "nom": "LIGUE DE FOOTBALL PROFESSIONNEL",
+        "count": 21
+      }
+    ],
+    "topDomains": [
+      {
+        "domaine": "Sports",
+        "count": 627
+      },
+      {
+        "domaine": "loisirs",
+        "count": 256
+      },
+      {
+        "domaine": "tourisme",
+        "count": 256
+      },
+      {
+        "domaine": "Education",
+        "count": 138
+      },
+      {
+        "domaine": "Finances publiques",
+        "count": 88
+      },
+      {
+        "domaine": "Emploi",
+        "count": 85
+      },
+      {
+        "domaine": "solidarité",
+        "count": 85
+      },
+      {
+        "domaine": "Construction",
+        "count": 81
+      },
+      {
+        "domaine": "Société",
+        "count": 77
+      },
+      {
+        "domaine": "Santé",
+        "count": 74
+      }
+    ],
+    "careerOverlaps": [],
+    "yearRange": "2018-2025"
+  },
+  {
+    "slug": "naima-moutchou",
+    "ministereCode": "OUTREMER",
+    "totalActions": 787,
+    "topOrgs": [
+      {
+        "nom": "FEDERATION DES ENTREPRISES DES OUTRE-MER",
+        "count": 65
+      },
+      {
+        "nom": "ASSOCIATION POUR LE DEVELOPPEMENT ECONOMIQUE DES DEPARTEMENTS D'OUTRE MER DANS LA CEE EURODOM",
+        "count": 47
+      },
+      {
+        "nom": "ANTHENOR PUBLIC AFFAIRS",
+        "count": 38
+      },
+      {
+        "nom": "UNION NATIONALE FEDERATION H L M",
+        "count": 19
+      },
+      {
+        "nom": "MOUVEMENT DES ENTREPRISES DE FRANCE",
+        "count": 16
+      },
+      {
+        "nom": "CTE REG PECHE MARITIME ELEV MARINS REUN",
+        "count": 15
+      },
+      {
+        "nom": "PERGAMON CONSULTING SERVICES",
+        "count": 15
+      },
+      {
+        "nom": "COMITE FRANCAIS POUR L'UNICEF",
+        "count": 14
+      },
+      {
+        "nom": "ASSOCIATION DES CCI DES OUTRE MER",
+        "count": 14
+      },
+      {
+        "nom": "CONFEDERATION DES PETITES ET MOYENNES ENTREPRISES",
+        "count": 13
+      }
+    ],
+    "topDomains": [
+      {
+        "domaine": "Outre-mer",
+        "count": 205
+      },
+      {
+        "domaine": "Développement économique des outre-mer",
+        "count": 130
+      },
+      {
+        "domaine": "Agriculture",
+        "count": 119
+      },
+      {
+        "domaine": "Economie des outre-mer",
+        "count": 119
+      },
+      {
+        "domaine": "Economie",
+        "count": 89
+      },
+      {
+        "domaine": "agroalimentaire",
+        "count": 74
+      },
+      {
+        "domaine": "Finances publiques",
+        "count": 57
+      },
+      {
+        "domaine": "Construction",
+        "count": 56
+      },
+      {
+        "domaine": "Santé",
+        "count": 56
+      },
+      {
+        "domaine": "Environnement",
+        "count": 54
+      }
+    ],
+    "careerOverlaps": [],
+    "yearRange": "2018-2025"
+  },
+  {
+    "slug": "sebastien-martin",
+    "ministereCode": "INDUSTRIE_NUMERIQUE",
+    "totalActions": 494,
+    "topOrgs": [
+      {
+        "nom": "GOOGLE FRANCE",
+        "count": 68
+      },
+      {
+        "nom": "LYSIOS",
+        "count": 29
+      },
+      {
+        "nom": "FACEBOOK FRANCE",
+        "count": 22
+      },
+      {
+        "nom": "LAGARDERE MEDIA NEWS",
+        "count": 17
+      },
+      {
+        "nom": "ASSOCIATION DE L'INDUSTRIE AUDIOVISUELLE INDEPENDANTE",
+        "count": 16
+      },
+      {
+        "nom": "ANTHENOR PUBLIC AFFAIRS",
+        "count": 16
+      },
+      {
+        "nom": "NETFLIX SERVICES FRANCE S.A.S",
+        "count": 13
+      },
+      {
+        "nom": "FRANCE MEDIAS MONDE",
+        "count": 12
+      },
+      {
+        "nom": "BOURY TALLON & ASSOCIES",
+        "count": 12
+      },
+      {
+        "nom": "NRJ GROUP",
+        "count": 11
+      }
+    ],
+    "topDomains": [
+      {
+        "domaine": "Numérique",
+        "count": 271
+      },
+      {
+        "domaine": "Médias",
+        "count": 224
+      },
+      {
+        "domaine": "Arts",
+        "count": 90
+      },
+      {
+        "domaine": "culture",
+        "count": 90
+      },
+      {
+        "domaine": "Audiovisuel",
+        "count": 77
+      },
+      {
+        "domaine": "Marché du numérique",
+        "count": 36
+      },
+      {
+        "domaine": "Concurrence",
+        "count": 34
+      },
+      {
+        "domaine": "consommation",
+        "count": 34
+      },
+      {
+        "domaine": "Propriété intellectuelle",
+        "count": 34
+      },
+      {
+        "domaine": "Société",
+        "count": 33
+      }
+    ],
+    "careerOverlaps": [],
+    "yearRange": "2019-2025"
+  },
+  {
+    "slug": "anne-le-henanff",
+    "ministereCode": "INDUSTRIE_NUMERIQUE",
+    "totalActions": 494,
+    "topOrgs": [
+      {
+        "nom": "GOOGLE FRANCE",
+        "count": 68
+      },
+      {
+        "nom": "LYSIOS",
+        "count": 29
+      },
+      {
+        "nom": "FACEBOOK FRANCE",
+        "count": 22
+      },
+      {
+        "nom": "LAGARDERE MEDIA NEWS",
+        "count": 17
+      },
+      {
+        "nom": "ASSOCIATION DE L'INDUSTRIE AUDIOVISUELLE INDEPENDANTE",
+        "count": 16
+      },
+      {
+        "nom": "ANTHENOR PUBLIC AFFAIRS",
+        "count": 16
+      },
+      {
+        "nom": "NETFLIX SERVICES FRANCE S.A.S",
+        "count": 13
+      },
+      {
+        "nom": "FRANCE MEDIAS MONDE",
+        "count": 12
+      },
+      {
+        "nom": "BOURY TALLON & ASSOCIES",
+        "count": 12
+      },
+      {
+        "nom": "NRJ GROUP",
+        "count": 11
+      }
+    ],
+    "topDomains": [
+      {
+        "domaine": "Numérique",
+        "count": 271
+      },
+      {
+        "domaine": "Médias",
+        "count": 224
+      },
+      {
+        "domaine": "Arts",
+        "count": 90
+      },
+      {
+        "domaine": "culture",
+        "count": 90
+      },
+      {
+        "domaine": "Audiovisuel",
+        "count": 77
+      },
+      {
+        "domaine": "Marché du numérique",
+        "count": 36
+      },
+      {
+        "domaine": "Concurrence",
+        "count": 34
+      },
+      {
+        "domaine": "consommation",
+        "count": 34
+      },
+      {
+        "domaine": "Propriété intellectuelle",
+        "count": 34
+      },
+      {
+        "domaine": "Société",
+        "count": 33
+      }
+    ],
+    "careerOverlaps": [],
+    "yearRange": "2019-2025"
+  },
+  {
+    "slug": "philippe-tabarot",
+    "ministereCode": "TRANSPORTS",
+    "totalActions": 49,
+    "topOrgs": [
+      {
+        "nom": "ASS NATIONALE IND. AGRO ALIMENTAIRES",
+        "count": 9
+      },
+      {
+        "nom": "TBWA GROUPE",
+        "count": 6
+      },
+      {
+        "nom": "SYNDICAT CIES AERIENNES AUTONOMES",
+        "count": 4
+      },
+      {
+        "nom": "AEROPORTS DE PARIS",
+        "count": 3
+      },
+      {
+        "nom": "EASYJET AIRLINE COMPANY LIMITED",
+        "count": 3
+      },
+      {
+        "nom": "FRANCE NATURE ENVIRONNEMENT",
+        "count": 2
+      },
+      {
+        "nom": "AIR FRANCE - KLM",
+        "count": 2
+      },
+      {
+        "nom": "FEDERAL EXPRESS CORPORATION",
+        "count": 2
+      },
+      {
+        "nom": "SOCIETE AIR FRANCE",
+        "count": 2
+      },
+      {
+        "nom": "ANTHENOR PUBLIC AFFAIRS",
+        "count": 2
+      }
+    ],
+    "topDomains": [
+      {
+        "domaine": "Transports",
+        "count": 14
+      },
+      {
+        "domaine": "logistique",
+        "count": 14
+      },
+      {
+        "domaine": "Transport de voyageurs",
+        "count": 13
+      },
+      {
+        "domaine": "Agriculture",
+        "count": 10
+      },
+      {
+        "domaine": "agroalimentaire",
+        "count": 10
+      },
+      {
+        "domaine": "Aéronautique",
+        "count": 9
+      },
+      {
+        "domaine": "aérospatiale",
+        "count": 9
+      },
+      {
+        "domaine": "Transport de fret",
+        "count": 7
+      },
+      {
+        "domaine": "Impact des transports marchands et collectifs",
+        "count": 5
+      },
+      {
+        "domaine": "Economie",
+        "count": 5
+      }
+    ],
+    "careerOverlaps": [],
+    "yearRange": "2018-2025"
+  },
+  {
+    "slug": "catherine-vautrin",
+    "ministereCode": "ARMEES",
+    "totalActions": 7,
+    "topOrgs": [
+      {
+        "nom": "ENTREPRISES FLUVIALES DE FRANCE",
+        "count": 5
+      },
+      {
+        "nom": "MOUVEMENT DES ENTREPRISES DE FRANCE",
+        "count": 1
+      },
+      {
+        "nom": "SYND NAT DE LA RESTAURATION COLLECTIVE",
+        "count": 1
+      }
+    ],
+    "topDomains": [
+      {
+        "domaine": "Education",
+        "count": 5
+      },
+      {
+        "domaine": "Transport de fret",
+        "count": 3
+      },
+      {
+        "domaine": "Transport de voyageurs",
+        "count": 3
+      },
+      {
+        "domaine": "Formation professionnelle",
+        "count": 3
+      },
+      {
+        "domaine": "Transports",
+        "count": 2
+      },
+      {
+        "domaine": "logistique",
+        "count": 2
+      },
+      {
+        "domaine": "enseignement",
+        "count": 2
+      },
+      {
+        "domaine": "formation",
+        "count": 2
+      },
+      {
+        "domaine": "Aides aux entreprises",
+        "count": 1
+      },
+      {
+        "domaine": "Système de santé et médico-social",
+        "count": 1
+      }
+    ],
+    "careerOverlaps": [],
+    "yearRange": "2019-2024"
+  },
+  {
+    "slug": "alice-rufo",
+    "ministereCode": "ARMEES",
+    "totalActions": 7,
+    "topOrgs": [
+      {
+        "nom": "ENTREPRISES FLUVIALES DE FRANCE",
+        "count": 5
+      },
+      {
+        "nom": "MOUVEMENT DES ENTREPRISES DE FRANCE",
+        "count": 1
+      },
+      {
+        "nom": "SYND NAT DE LA RESTAURATION COLLECTIVE",
+        "count": 1
+      }
+    ],
+    "topDomains": [
+      {
+        "domaine": "Education",
+        "count": 5
+      },
+      {
+        "domaine": "Transport de fret",
+        "count": 3
+      },
+      {
+        "domaine": "Transport de voyageurs",
+        "count": 3
+      },
+      {
+        "domaine": "Formation professionnelle",
+        "count": 3
+      },
+      {
+        "domaine": "Transports",
+        "count": 2
+      },
+      {
+        "domaine": "logistique",
+        "count": 2
+      },
+      {
+        "domaine": "enseignement",
+        "count": 2
+      },
+      {
+        "domaine": "formation",
+        "count": 2
+      },
+      {
+        "domaine": "Aides aux entreprises",
+        "count": 1
+      },
+      {
+        "domaine": "Système de santé et médico-social",
+        "count": 1
+      }
+    ],
+    "careerOverlaps": [],
+    "yearRange": "2019-2024"
+  }
+]

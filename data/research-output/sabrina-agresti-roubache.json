@@ -2,7 +2,7 @@
   "slug": "sabrina-agresti-roubache",
   "nom": "Agresti-Roubache",
   "prenom": "Sabrina",
-  "researched_at": "2026-03-05",
+  "researched_at": "2026-03-27",
   "sources_used": [
     "https://en.wikipedia.org/wiki/Sabrina_Agresti-Roubache",
     "https://wikimonde.com/article/Sabrina_Agresti-Roubache",
@@ -126,6 +126,14 @@
       "sourcePrincipale": "Marsactu",
       "sourceDate": "2025-02",
       "confidence": "high",
+      "_ingested": false
+    },
+    {
+      "type": "DECLARATION_HATVP_RECTIFIEE",
+      "description": "Enquête de Marianne (décembre 2023) : écart de ~91 000 € entre les revenus déclarés en tant que députée (août/décembre 2022) et ceux déclarés lors de sa nomination comme secrétaire d'État à la Ville. Émoluments sous-évalués pour la période 2018-2022. Déclaration corrigée le 21 décembre 2023. Explication : « revenus de droits d'auteur oubliés » + « dispositif de report d'imposition sur plus-values ». L'Observatoire d'Anticor a relevé ce manquement.",
+      "sourceUrl": "https://www.marianne.net",
+      "sourcePrincipale": "Marianne / Anticor",
+      "severity": "notable",
       "_ingested": false
     }
   ]

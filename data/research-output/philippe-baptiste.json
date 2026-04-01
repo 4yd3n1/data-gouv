@@ -5,7 +5,7 @@
   "civilite": "M.",
   "dateNaissance": "1972-03-28",
   "lieuNaissance": "Paris",
-  "researched_at": "2026-03-05",
+  "researched_at": "2026-03-27",
   "sources_used": [
     "https://www.enseignementsup-recherche.gouv.fr/fr/philippe-baptiste-ministre-de-l-enseignement-superieur-de-la-recherche-et-de-l-espace-98252",
     "https://www.letudiant.fr/educpros/personnalites/baptiste-philippe.html",
@@ -262,6 +262,20 @@
       "sourceUrl": "https://www.consultor.fr/articles/le-nouveau-ministre-de-lenseignement-superieur-et-de-la-recherche-est-passe-par-le-bcg",
       "sourcePrincipale": "Consultor",
       "confidence": "medium",
+      "_ingested": false
+    },
+    {
+      "type": "PORTE_TOURNANTE",
+      "description": "Ancien cadre d'IBM, de Total et de BCG, puis PDG du CNES. Nommé ministre de l'Enseignement supérieur et de la Recherche. IBM France (10 actions) et TotalEnergies (1 action) figurent parmi les lobbyistes déclarés ciblant son ministère.",
+      "sourceUrl": "https://www.lemonde.fr/sciences/article/2025/10/12/philippe-baptiste-patron-du-cnes-au-gouvernement.html",
+      "sourcePrincipale": "Le Monde / AGORA HATVP",
+      "severity": "notable",
+      "data": {
+        "careerOrg": "IBM / Total / BCG",
+        "portfolio": "Enseignement supérieur & Recherche",
+        "lobbyOrg": "IBM France + TotalEnergies",
+        "lobbyCount": 11
+      },
       "_ingested": false
     }
   ]

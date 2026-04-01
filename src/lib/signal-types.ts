@@ -91,18 +91,20 @@ export interface PartyDisciplineSignal {
 
 /** Maps ministereCode patterns to private-sector keywords that signal overlap. */
 export const PORTFOLIO_KEYWORDS: [RegExp, string[]][] = [
-  [/ECONOMIE|FINANCES|BUDGET/i, ["banque", "financ", "invest", "capital", "gestion d'actif", "audit", "conseil financ"]],
+  [/ECONOMIE|FINANCES|BUDGET/i, ["banque", "financ", "invest", "capital", "gestion d'actif", "audit", "conseil financ", "natixis", "groupama", "CDPQ", "caisse de dépôt"]],
   [/SANTE/i, ["pharma", "santé", "médic", "laborat", "biotech", "hôpital", "clinique"]],
-  [/ECOLOGIE|TRANSITION_ECOLOGIQUE|ENERGIE/i, ["énergie", "pétrole", "gaz", "nucléaire", "renouvelable", "total energies", "engie"]],
+  [/ECOLOGIE|TRANSITION_ECOLOGIQUE|ENERGIE/i, ["énergie", "pétrole", "gaz", "nucléaire", "renouvelable", "total energies", "engie", "EDF", "électricité"]],
   [/DEFENSE|ARMEES/i, ["défense", "armement", "thales", "dassault", "naval group", "mbda", "nexter"]],
   [/AGRICULTURE/i, ["agri", "alimentaire", "agroalimentaire", "céréal", "semence"]],
   [/NUMERIQUE|INDUSTRIE/i, ["télécom", "numérique", "technolog", "informatique", "digital", "logiciel"]],
-  [/CULTURE/i, ["audiovisuel", "presse", "édition", "média", "spectacle", "cinéma"]],
-  [/TRAVAIL|EMPLOI/i, ["emploi", "travail", "intérim", "recrutement", "formation profes"]],
+  [/CULTURE/i, ["audiovisuel", "presse", "édition", "média", "spectacle", "cinéma", "le point", "versailles"]],
+  [/TRAVAIL|EMPLOI/i, ["emploi", "travail", "intérim", "recrutement", "formation profes", "SNCF", "ferroviaire"]],
   [/LOGEMENT/i, ["immobili", "foncier", "construction", "BTP", "promotion immob"]],
   [/TRANSPORT/i, ["transport", "autoroute", "ferroviaire", "SNCF", "aérien", "logistique"]],
   [/EDUCATION/i, ["éducation", "enseignement", "formation", "école", "université"]],
   [/INTERIEUR/i, ["sécurité", "surveillance", "défense civile"]],
+  [/PME|COMMERCE|ARTISAN/i, ["distribution", "grande surface", "franchise", "système u", "leclerc", "carrefour", "auchan", "commerce"]],
+  [/ENSEIGNEMENT_SUPERIEUR|RECHERCHE/i, ["recherche", "CNRS", "CNES", "université", "IBM", "Total", "BCG"]],
 ];
 
 /**

@@ -1,6 +1,6 @@
 # Handoff — data-gouv Civic Intelligence Platform
 
-> Updated: Mar 26, 2026 (Session 42). Current phase: **UX Restructure (Phases 1-3 done, 4-6 pending)** + Phase 9 Government Profiles.
+> Updated: Mar 27, 2026 (Session 45). Current phase: **UX Restructure complete (Phases 1-6 done)** + Phase 9 Government Profiles + **Deep Government Investigation** + **Bilan Macron Dossier**.
 
 ---
 
@@ -12,42 +12,52 @@ Full blueprint: [`ARCHITECTURAL-PLAN.md`](../ARCHITECTURAL-PLAN.md)
 
 ---
 
-## Current State — Phases 1–8 + Phase 9 + UX Restructure (Sessions 33–41)
+## Current State — Phases 1–8 + Phase 9 + UX Restructure Complete (Sessions 33–43)
 
-~800K rows across 42 Prisma models. **~35 active routes** + ~30 legacy (Phase 6 deletion pending) + 5 OG image routes. **4-item nav**: Signaux | Profils | Votes | Territoire. `pnpm build` verified zero TS errors (Session 42).
+~1M rows across 42 Prisma models. **~26 active routes** (29 legacy pages deleted Session 43, +1 bilan-macron Session 45) + 6 OG image routes. **5-item nav**: Signaux | Profils | Votes | Territoire | Bilan Macron. `pnpm build` verified zero TS errors (Session 45).
 
 | Layer | Models | Rows |
 |-------|--------|------|
 | Territory | Region, Departement, Commune | 37,031 |
 | Governance | Depute, Senateur, MandatSenateur, CommissionSenateur, Lobbyiste, ActionLobbyiste | ~106,500 |
-| Parliament | Organe, Scrutin, GroupeVote, VoteRecord, Deport, ScrutinTag, ConflictSignal | varies |
+| Parliament | Organe, Scrutin, GroupeVote, VoteRecord, Deport, ScrutinTag, ConflictSignal | 5,831 scrutins + ~973K votes |
 | Parliamentary Laws *(Session 33)* | LoiParlementaire, ScrutinLoi | 19 lois, 2,589 links |
 | Local | StatLocale (~1,644), BudgetLocal (69,023), StatCriminalite, DensiteMedicale | varies |
 | Culture | Musee, FrequentationMusee, Monument | ~60,071 |
 | Elections | Elu, ElectionLegislative, CandidatLegislatif, PartiPolitique | ~601,514 |
 | Declarations *(re-ingested Session 42)* | DeclarationInteret, ParticipationFinanciere, RevenuDeclaration | 12,756 decl + 13,230 part + 474,601 rev = **~500K rows** |
-| Gov. Profiles *(Phase 9 + Session 34)* | PersonnalitePublique, MandatGouvernemental, EntreeCarriere, InteretDeclare, EvenementJudiciaire, ActionLobby | 44 persons, 49 mandats, 474 career, **14 judicial** (Bergé CJR upgrade + Jeanbrun 2nd entry), 184 HATVP interests, 131,842 ActionLobby |
+| Gov. Profiles *(Phase 9 + Sessions 34, 44)* | PersonnalitePublique, MandatGouvernemental, EntreeCarriere, InteretDeclare, EvenementJudiciaire, ActionLobby | 44 persons, 49 mandats, 474 career, **15 judicial** (Darmanin CJR added Session 44), 184 HATVP interests, 131,842 ActionLobby |
 | Media Ownership *(Session 35)* | GroupeMedia, MediaProprietaire, ParticipationMedia, Filiale | 10 groups, 10 owners, 10 participations, 72 filiales |
 
 | Cross-references *(Session 37–38)* | nuance-party-map, conflict drill-down, commission-lobby overlap | static mappings + runtime queries |
 | Historical govts *(Session 37, not yet seeded)* | 4 data files: Borne (36), Attal (35), Barnier (41), Lecornu (36) | 148 members prepared |
 
 | Signals *(Session 38, recalibrated 41)* | signal-types.ts, signal-card.tsx | 6 signal types computed at query time (no new models). Severity thresholds recalibrated Session 41. |
-| UX Restructure *(Session 40)* | /profils hub, /signaux filters, slug.ts | ~35 active routes (was 62), 4-nav, search-first homepage |
+| UX Restructure *(Sessions 40+43)* | /profils hub, /signaux filters, vote-tags.ts, slug.ts | ~25 active routes (was 62), 4-nav, search-first homepage. Phases 1-6 complete. |
 | Voting Overhaul *(Session 41)* | ScrutinAccordion, scrutin breadcrumbs, par-sujet filter, LoiCard, search URLs | Role-grouped amendments, parent law links, amendment filter on par-sujet |
 | Declaration Audit *(Session 42)* | audit-declarations.ts, hatvp-parser.ts, case-insensitive fixes | 3-phase audit (XML vs DB vs display). 1,973/1,973 perfect matches. Fresh HATVP re-ingestion. |
+| Route Consolidation *(Session 43)* | vote-tags.ts, /votes/scrutins/[id], /territoire/economie, /territoire/comparer | 29 legacy pages deleted, all redirects active, scrutin data refreshed to Mar 2026 |
+| Deep Investigation *(Session 44)* | analyze-vote-contradictions.ts, analyze-lobby-exposure.ts, PORTFOLIO_KEYWORDS expanded | 12 parallel investigation agents (200+ web searches), 24 conflict flags, vote contradiction alerts, revolving door badges, lobby-career overlap highlights |
 
 **Client components** (14): `SearchInput`, `SearchBox`, `Avatar`, `DeclarationSection`, `ProfileTabs`, `DeptLookup`, `NavSearch`, `FranceMap`, `DeltaBadge`, `GroupExpander`, `ScrutinAccordion`, `MediaBoard`, `MobileNav`, `ConflictDrilldown`.
 
+**Bilan Macron dossier (Session 45)**:
+- **New route**: `/dossiers/bilan-macron` — comprehensive data-driven assessment of Macron's two terms (2017-2026) using official data from 15+ sources.
+- **7 new server components** in `src/components/bilan/`: `BilanHeroSection`, `BilanEconomieSection`, `BilanSanteSection`, `BilanDroitsSection`, `BilanElitesSection`, `BilanContrasteSection` (+ page.tsx).
+- **Static data file**: `src/data/bilan-macron.ts` — ~740 lines of typed constants with source citations. No new DB models.
+- **Data coverage** (all figures independently verified via web research): Poverty (+1M people, 14.0%→15.4% — INSEE), purchasing power (+20% inflation, electricity doubled), debt (+1,350 Md EUR, deficit 5.1% — INSEE Mar 27 2026), healthcare (-30K beds since ~2003, 87% déserts médicaux), human rights (288 deaths during police interventions, ~32x 49.3, democracy downgraded), elite enrichment (billionaires x2.15 per Challenges: 571→1,228 Md EUR, CAC 40 dividends +135% per Vernimmen), youth unemployment down overall (~24%→21.5%) but recent spike, social fabric (trust collapsed to 22%).
+- **Nav**: Added as 5th main nav item. Also in `DossierNav` sub-navigation.
+- **Config**: Added to `dossier-config.ts` (slug: "bilan-macron", color: rose, priority: 1).
+
 **UX Restructure (Session 40)**:
-- **Nav**: 9 → 4 items (Signaux | Profils | Votes | Territoire). Patrimoine demoted to footer.
+- **Nav**: 9 → 4 items (Sessions 39-43), then 4 → 5 items (Session 45: + Bilan Macron). Patrimoine demoted to footer.
 - **Homepage**: Search-first hero (giant search bar + entity pills), inline top 6 signals, 5 recent votes, territory lookup. Killed: HeroSlider, dossier grid, KPI counters.
 - **`/profils` hub**: Unified people directory. `/profils/[slug]` (ministers), `/profils/deputes/[id]`, `/profils/senateurs/[id]`, `/profils/ministres`, `/profils/lobbyistes`, `/profils/partis`, `/profils/elus`, `/profils/comparer`.
 - **`/signaux`**: URL-param filters (`?type=conflits&severity=CRITIQUE`). Deep-dive "Enquête" cards linking to surviving dossiers.
 - **Killed**: 8 dossier pages + index (redirect to /signaux or /territoire). `HeroSlider` component deleted.
-- **Kept**: `/dossiers/medias`, `/dossiers/financement-politique` (linked from /signaux).
-- **Legacy routes**: `/representants/*` and `/gouvernement/*` still active — Phase 6 will delete them and activate redirects to `/profils/*`.
-- **Remaining phases**: 4 (Votes simplification — partially addressed by Session 41 voting overhaul), 5 (Territory+Economics merge), 6 (Cleanup/delete old routes).
+- **Kept**: `/dossiers/medias`, `/dossiers/financement-politique` (linked from /signaux). Session 45 added `/dossiers/bilan-macron`.
+- **All legacy routes deleted** (Session 43): `/representants/*`, `/gouvernement/*`, `/gouvernance/*`, `/comparer/*`, `/economie` — all redirect via `next.config.ts`.
+- **UX Restructure complete** — Phases 1-6 all done. Tag constants deduplicated to `src/lib/vote-tags.ts`. `/economie` → `/territoire/economie`, `/comparer/territoires` → `/territoire/comparer`.
 
 ---
 
@@ -91,14 +101,19 @@ pnpm seed:medias                       # Seed media groups + owners + état-fran
 - **`Elu` fields**: `Elu.nom/prenom` (not `nomElu/prenomElu`), `Elu.codeDepartement` (not `departementCode`).
 - **`DensiteMedicale`**: field is `specialite` (not `profession`).
 - **`ConflictSignal` is empty** until `pnpm compute:conflicts` runs. All UI has graceful fallbacks.
-- **`search_index` view**: uses `Depute.groupe` (not `groupePolitique`), `Lobbyiste.categorieActivite` (not `categorie`). `refresh-search.ts` now DROP+RECREATE (not just REFRESH) with canonical `/profils/*` URLs (Session 41). Run `pnpm refresh:search` after any route changes.
+- **`search_index` view**: uses `Depute.groupe` (not `groupePolitique`), `Lobbyiste.categorieActivite` (not `categorie`). `refresh-search.ts` DROP+RECREATE with canonical `/profils/*` + `/votes/scrutins/*` URLs (updated Session 43). Run `pnpm refresh:search` after any route changes.
 - **`ElectionLegislative`**: no FK to `Departement` — overseas codes (`"ZZ"`) don't exist in COG. `codeDepartement` is plain string.
 - **`Depute.departementRefCode`** for joins (not `departementCode` which can be `"099"`).
 - **`ingest:elus`** needs 8GB heap — do not change `NODE_OPTIONS=--max-old-space-size=8192`.
 - **ARM communes** (Paris/Lyon/Marseille): `postal-resolver.ts` replaces ARM codes with parent COM via `comparent`. Always filter `typecom: "COM"` for counts.
-- **`/gouvernance/*`** redirects to `/profils/*` (final destination). `/representants/scrutins/*` still active (scrutin detail pages).
+- **All legacy routes deleted** (Session 43): `/gouvernance/*`, `/representants/*`, `/gouvernement/*`, `/comparer/*` → HTTP 308 redirects in `next.config.ts`. Scrutin detail canonical at `/votes/scrutins/[id]`.
+- **CareerSection revolving door badge** (Session 44) — `matchRevolvingDoor()` from `signal-types.ts` applied to each `CARRIERE_PRIVEE` entry. Amber dot + "Porte tournante" badge when career org matches `PORTFOLIO_KEYWORDS` for current `ministereCode`. Props: `ministereCode`, `portefeuille` passed from profile page.
+- **ParliamentarySection vote contradiction alert** (Session 44) — `MINISTERECODE_TO_TAGS` mapping (20 codes → ScrutinTag values). Queries `VoteRecord` for "contre" votes on tagged scrutins. Shows amber alert with count badge, 5 example votes with red "contre" pills, and disclaimer text. Prop: `ministereCode` passed from profile page.
+- **LobbySection career overlap** (Session 44) — Queries `EntreeCarriere` for `CARRIERE_PRIVEE` orgs, normalize-matches against top lobby orgs. Amber border + "Ancien employeur" tag on matching cards. Prop: `personnaliteId` passed from profile page.
+- **`PORTFOLIO_KEYWORDS` expanded** (Session 44) — Added: EDF/electricite (ECOLOGIE), SNCF/ferroviaire (TRAVAIL), natixis/groupama/CDPQ (ECONOMIE), le point/versailles (CULTURE), systeme u/distribution (PME_COMMERCE), IBM/Total/BCG (ENSEIGNEMENT_SUPERIEUR).
+- **Only 6 ministers have `deputeId` linked** (Session 44 finding) — Most deputy-ministers don't have their PersonnalitePublique.deputeId populated. Vote contradiction alerts only appear for linked ministers (Rist, Galliard-Minier, etc.). Remaining need manual deputeId matching.
 - **HATVP XML**: use `fast-xml-parser`. Files can be 200MB+. Stream, don't load into memory.
-- **New `/gouvernement` profile sections** must be self-contained components (`<InteretsSection />`, `<LobbySection />`, etc.) imported into `page.tsx`. Never inline section logic directly in `page.tsx`.
+- **Profile sections** must be self-contained components (`<InteretsSection />`, `<LobbySection />`, etc.) imported into `page.tsx`. Never inline section logic directly in `page.tsx`.
 - **Lecornu II government** (Session 34): 37 current members. Bayrou mandates closed with `dateFin = 2025-10-11`. AGORA `MINISTERECODE_KEYWORDS` updated with 20 codes (was ~14). HATVP XML not yet published for Lecornu II ministers.
 - **`LoiParlementaire` + `ScrutinLoi`** (Session 33): `lucide-react` is NOT installed — use inline SVG for icons in `GroupExpander` and `ScrutinAccordion`. The `role = "VOTE_FINAL"` `ScrutinLoi` row drives the group breakdown bar; every law should have at most one.
 - **`GroupExpander` deputy key**: deputies are grouped by `groupeAbrev` matched against `Organe.libelleAbrege`. Both values must match (verified: `"RN"` === `"RN"`).
@@ -115,8 +130,8 @@ pnpm seed:medias                       # Seed media groups + owners + état-fran
 - **Jeanbrun has two active judicial entries (Session 36)**: (1) SIVU/logements — Parquet de Créteil, nature corrected to `prise illégale d'intérêts, recel, concussion, soustraction et détournement de biens d'un dépôt public`. (2) favoritisme/marchés urbains — PNF, information judiciaire opened June 2022, Anticor partie civile Jan 2022, relates to CITALLIOS urban development contracts.
 - **DeclarationInteret case-insensitive matching** (Session 38) — HATVP XML stores names UPPERCASE (e.g., `FAYSSAT`). Deputy profile query now uses `mode: "insensitive" as const` for `nom`/`prenom` matching. Without this, deputies with uppercase HATVP names showed empty declarations despite having ConflictSignal alerts on the homepage.
 - **SMIC BDM series is an index, not euros** (Session 38) — Series `010605027` returns index values (base 100), not actual SMIC in euros. `unite` corrected from `"eur"` to `"indice"` in both ingestion config and DB. Economy page display updated to format `"eur"` with `€` symbol and 2 decimals, `"indice"` as plain number.
-- **Nav collapsed to 4 items** (Session 40) — `layout.tsx` NAV: `Signaux | Profils | Votes | Territoire`. Killed: Accueil, Dossiers, Représentants, Gouvernement, Économie, Patrimoine. Patrimoine → footer link only.
-- **`/profils` is the new canonical people hub** (Session 40) — `/profils/[slug]` for ministers, `/profils/deputes/[id]` for deputies, etc. Old `/representants/*` and `/gouvernement/*` still active (Phase 6 deletion pending).
+- **Nav expanded to 5 items** (Session 45) — `layout.tsx` NAV: `Signaux | Profils | Votes | Territoire | Bilan Macron`. Was 4 items (Sessions 40-44). Patrimoine → footer link only.
+- **`/profils` is the canonical people hub** (Session 40, finalized 43) — `/profils/[slug]` for ministers, `/profils/deputes/[id]` for deputies, etc. All legacy routes deleted and redirected.
 - **`/signaux` has URL-param filters** (Session 40) — `?type=conflits|portes-tournantes|lobbying|medias|declarations|dissidences` + `?severity=CRITIQUE|NOTABLE|INFORMATIF`. Server-side filtering, filter bar with pills.
 - **Missing French accents on `/dossiers/medias`** (Session 39) — ~30 accent-less strings fixed across `dossier-config.ts` and `medias/page.tsx` (médias, contrôlent, propriété, télévision, numériques, etc.).
 - **Economy data display bugs** (Session 39) — (1) PIB on `/dossiers/pouvoir-dachat` showed "3 Md €" — division was by 1,000,000 instead of 1,000 (value is in millions). Now shows correct ~2,639 Md €. (2) SMIC unit changed from "€" to "(indice)" since BDM series `010605027` returns index values. (3) Dette publique on `/economie` showed "22 157 %" — unit was wrong (`pourcent` instead of `centaines_millions_eur`). Fixed in DB + ingestion config. Now shows correct ~2,216 Md €. Economie page gained unit-aware formatting for `centaines_millions_eur`, `millions_eur`, `milliards_eur`, `indice`.
@@ -125,7 +140,7 @@ pnpm seed:medias                       # Seed media groups + owners + état-fran
 - **Museum name capitalization** (Session 39) — `capitalizeMuseumName()` helper on `/patrimoine` page. Source data stores names lowercase.
 - **Deputy/Senator photo URLs are 404** (Session 39) — Assemblée Nationale changed URL structure. `photoUrl` values in DB (`https://www.assemblee-nationale.fr/dyn/deputes/{id}/image`) return 404. Avatar component correctly falls back to initials. Requires new photo source, not a code fix.
 - **ScrutinAccordion redesigned** (Session 41) — Now groups scrutins by role (VOTE_FINAL pinned, then Articles/Amendements/Motions/Procedural collapsible sections). Filter pills at top. No longer flat list with arbitrary 5-item cutoff. Component is `RoleGroup`-based internally.
-- **Scrutin detail has parent law breadcrumb** (Session 41) — `/representants/scrutins/[id]` queries `ScrutinLoi` for parent law(s). Shows "Votes > [Loi name] > Scrutin n°X" breadcrumb + role-tagged link card. Falls back to old breadcrumb if scrutin has no linked law.
+- **Scrutin detail has parent law breadcrumb** (Session 41, moved Session 43) — `/votes/scrutins/[id]` queries `ScrutinLoi` for parent law(s). Shows "Votes > [Loi name] > Scrutin n°X" breadcrumb + role-tagged link card. Falls back to old breadcrumb if scrutin has no linked law.
 - **Par-sujet default excludes amendments** (Session 41) — `/votes/par-sujet/[tag]` defaults to `?vue=final`, hiding scrutins with "amendement" in title. Toggle pill to `?vue=tous` shows all. Pagination preserves `vue` param.
 - **LoiCard shows role breakdown** (Session 41) — Footer: "343 scrutins 327 amend. 15 art." Lois page query includes all scrutin roles (was VOTE_FINAL only). `roleCounts` prop on `LoiCard`.
 - **Signal severity recalibrated** (Session 41) — `lobbySeverity` CRITIQUE: 10K→5K, NOTABLE: 3K→1.5K. `gapSeverity` CRITIQUE: ratio 100→50, NOTABLE: 30→15. Filter pills now show per-type counts. When type filter active, `take` limits removed for expanded results.
@@ -136,15 +151,32 @@ pnpm seed:medias                       # Seed media groups + owners + état-fran
 
 ---
 
-## Next: UX Restructure Phases 4-6 + Phase 9G Remaining
+## Next Steps
 
-### UX Restructure (remaining)
-- **Phase 4** — Votes simplification: absorb `/votes/par-sujet/[tag]` into `/votes?sujet=`, kill `/votes/mon-depute`, move scrutin pages to `/votes/scrutins/`
-- **Phase 5** — Territory + Economics merge: absorb `/economie` into `/territoire?vue=economie`, move `/comparer/territoires` to `/territoire/comparer`
-- **Phase 6** — Cleanup: delete `/representants/*`, `/gouvernement/*`, `/gouvernance/*` page stubs, activate ~30 commented redirects in `next.config.ts` (`search_index` URLs already updated to `/profils/*` in Session 41)
+### Immediate — Verification Pass (Session 46)
+The next agent should run a **full platform verification** using the Claude Chrome extension (`mcp__claude-in-chrome__navigate`, `computer`, `read_page`). Reconnect the extension before starting. Test these pages:
+
+1. **`/dossiers/bilan-macron`** — verify all 7 sections render, fact-checked numbers correct:
+   - Hero: "x 2" (not x2.5), "+1 million", "+1 350 Md EUR", "-30 000"
+   - Economy: poverty 14,0%→15,4%, deficit "5,1 % du PIB", dividends source "Vernimmen / CAC 40"
+   - Employment: youth unemp "~24 %" before, "21,5 %" after, delta mentions "remontée récente"
+   - Healthcare: hospital beds "-30 000 lits (tendance depuis les années 2000)"
+   - 49.3: "~32 fois sous Macron", "Borne seule : 23 (record depuis la réforme de 2008)"
+   - Elites: billionaires "571 Md EUR" → "1 228 Md EUR", "x 2,15 (record)"
+   - Sources footer: 16 sources listed
+2. **`/dossiers/medias`** — media ownership, political connections, ARCOM, lobbying all render
+3. **`/profils/ministres`** — 37 Lecornu II members visible, grouped by type
+4. **Sample minister profiles** — test at least: `/profils/gerald-darmanin` (4 judicial events), `/profils/maud-bregeon` (revolving door EDF badge), `/profils/stephanie-rist` (vote contradiction alert)
+5. **`/signaux`** — signal feed renders with filter pills
+6. **Nav bar** — "Bilan Macron" visible as 5th item on all tested pages
+7. **`/dossiers/financement-politique`** — cost per seat, funding structure, electoral yield
+
+### After Verification
+- **Link remaining deputeId**: Only 6/17 deputy-ministers have `PersonnalitePublique.deputeId` populated. The vote contradiction alert only shows for linked ministers. Run name-matching to link the remaining 11.
+- **Seed historical governments**: Run `pnpm seed:gouvernement` + `generate-carriere` for Borne/Attal/Barnier (104 members, data files ready).
 
 ### Phase 9G (remaining)
-Run `pnpm seed:gouvernement` + `generate-carriere` for historical govts, research agents for ~80 new members, HATVP declarations for Lecornu II (when published).
+Research agents for ~80 new historical government members, HATVP declarations for Lecornu II (when published).
 
 | Document | Purpose |
 |----------|---------|
@@ -159,10 +191,11 @@ Sub-phases:
 - ✅ **9C** — AGORA lobby ingestion → 131,842 `ActionLobby` records (20 ministry codes); keyword-matched `reponsablesPublics` → `ministereCode`; `LobbySection` shows top orgs + domain breakdown
 - ✅ **9D** — Career timeline → `generate-carriere.ts` populates `EntreeCarriere` from mandats + Depute/Senateur data; `CareerSection` shows vertical timeline with colored dots
 - ✅ **9F** — Research agents: 12 parallel web-research agents produced 38 `data/research-output/*.json` files (Tier 1-2 press). 474 career entries + 13 judicial events ingested. `review-agent-output.ts` interactive CLI for verification.
-- ✅ **9G (partial)** — President profile fully migrated: `/president` 308-redirects to `/gouvernement/emmanuel-macron`; 4 president-specific section components; 6-tab layout with hero scores + contact for president detection.
+- ✅ **9G (partial)** — President profile fully migrated: `/president` 308-redirects to `/profils/emmanuel-macron`; 4 president-specific section components; 6-tab layout with hero scores + contact for president detection.
 - ✅ **9H** — Lecornu II government rework (Session 34): Bayrou mandates closed, 37 Lecornu II members seeded (Oct 2025 + Feb 2026 reshuffle), `ingest-agora.ts` updated with 20 ministry codes (was ~14), all members researched via parallel agents, full ingestion pipeline re-run. Build clean.
 - ✅ **9G (historical govts)** — Session 37: data files for Borne/Attal/Barnier created (36+35+41 members). Seed refactored to process all 4 chronologically. `/gouvernement` page supports `?gouvernement=` filter. **Seed not yet run.**
-- ⬜ **9G (remaining)** — Run seed + generate-carriere + research agents for ~80 new members; HATVP declarations for Lecornu II (when published)
+- ✅ **Deep Investigation (Session 44)** — 12 parallel agents investigated all 37 Lecornu II ministers (~200 web searches). 1 new judicial event (Darmanin CJR), 24 conflict flags (revolving doors, vote contradictions, pharma links, Epstein, recusal decrees, HATVP gaps). 3 UI components enhanced (CareerSection revolving door badge, ParliamentarySection vote contradiction alert, LobbySection career overlap). `PORTFOLIO_KEYWORDS` expanded. Vote contradiction analysis + lobby exposure scripts. Build clean.
+- ⬜ **9G (remaining)** — Run seed + generate-carriere + research agents for ~80 new members; HATVP declarations for Lecornu II (when published). Link remaining 11 deputeId values.
 
 ---
 
@@ -170,6 +203,9 @@ Sub-phases:
 
 | Session | What Was Built |
 |---------|----------------|
+| **45** (Mar 27) | **Bilan Macron Investigation Dossier** — Deep research (4 parallel agents, 150+ web searches across INSEE, Eurostat, DREES, France Stratégie, Oxfam, CEVIPOF, Amnesty International, RSF, EIU, Fondation Abbé Pierre) into the socioeconomic impact of Macron's two presidential terms (2017-2026). New route `/dossiers/bilan-macron` with 7 section components: (1) `BilanHeroSection` — 4 headline stat cards (+1M poverty, +1,350 Md debt, billionaires x2, -30K hospital beds) + Bocquet "évaporation" quote. (2) `BilanEconomieSection` — before/after tables for poverty (14.0%→15.4%, +1M people), purchasing power (+20% inflation, electricity +60%), debt (+63%, deficit 5.1%), fiscal gifts (ISF ~35 Md EUR lost, CICE 900K EUR/job, "zero effect" per France Stratégie), employment (headline down, youth down from ~24% to 21.5% but recent spike, micro-entrepreneurs doubled). (3) `BilanSanteSection` — 30K hospital beds closed (trend since early 2000s), 87% medical deserts, 5 assurance chômage reforms (1M lost benefits), APL cuts, RSA conditioned (Défenseur des droits: "violates rights"), 10K+ teaching positions cut, PISA historic drop. (4) `BilanDroitsSection` — police violence (2,500 GJ injured, 24 eyes lost, 288 deaths 2018-2024 vs 92 under Hollande), ~32x 49.3 (Borne alone: 23, record since 2008 reform), democracy downgraded to "flawed", 33 association dissolutions, ordonnances travail, environment (France condemned twice, only EU country to miss 2020 renewables target). (5) `BilanElitesSection` — 32→52 billionaires, top 500 fortunes x2.15 (571→1,228 Md EUR), McKinsey 2.4 Md EUR (zero tax), 51% ministers to private sector. (6) `BilanContrasteSection` — side-by-side "Les deux Frances" grid (8 rows, 3 columns). (7) Sources footer (16 official sources). Static data file `src/data/bilan-macron.ts` (~740 lines, typed constants with source citations). Added to `dossier-config.ts` + `DossierNav`. Added "Bilan Macron" as 5th main nav item in `layout.tsx`. French accents fixed throughout (data file + all 7 components + page footer). **Fact-check verification** (3 parallel agents, 30+ web searches): corrected billionaire multiplier x2.5→x2 (1,228/571=2.15, Challenges confirmed), 49.3 Borne 19→23 (France Info confirmed), 49.3 total ~31→~32 (Bayrou used 4 not 3), youth unemployment added 2016 baseline ~24% for context, dividends source DGFiP→Vernimmen/CAC 40, hospital beds "since 2013"→"since early 2000s" (DREES/IRDES: trend since ~2003), deficit kept at 5.1% (INSEE published 5.1% on Mar 27 2026, not 5.4% as initially suggested). Build clean. All corrections browser-verified. |
+| **44** (Mar 27) | **Deep Government Investigation — Lecornu II** — Full transparency investigation of all 37 ministers via 12 parallel web-research agents (~200+ web searches). (1) **Phase 1 — Judicial deep dive**: New EvenementJudiciaire: Darmanin CJR complaint for Sarkozy prison visit (classement sans suite, Dec 2025). Tabarot PNF enquete confirmed (detournement de fonds publics, ongoing since Sept 2021). 8 new conflict flags across 8 ministers (Darmanin structural conflict, Farandou/Papin official recusal decrees, Lescure tax haven investments, Rist 309 pharma links, Bregeon EDF rapporteur, Pegard Epstein photo + Cour des comptes criticism, Agresti-Roubache HATVP gap, Genevard FNSEA proximity, Barbut WWF revolving door). (2) **Phase 2 — Revolving door documentation**: 6 PORTE_TOURNANTE flags with AGORA lobby data: Bregeon/EDF (130 lobby actions), Farandou/SNCF (75), Lescure/Natixis+Groupama (33), Baptiste/IBM+Total (11), Papin/Systeme U, Pegard/Le Point. (3) **Phase 3 — Vote contradiction analysis**: `analyze-vote-contradictions.ts` queries VoteRecord for 17 deputy-ministers. Top findings: Lefevre 81.5% contre on ecology, Galliard-Minier 68.4% on health, Amiel 40.4% on budget. 10 VOTE_CONTRADICTION flags added to JSONs. (4) **Phase 4 — Lobby exposure**: `analyze-lobby-exposure.ts` maps 131,842 ActionLobby by ministereCode. Career-lobby overlaps: EDF→130 actions on Bregeon's ministry, SNCF→75 on Farandou's, Natixis+Groupama→33 on Lescure's. (5) **Phase 5 — Ingestion**: All findings ingested, career timelines regenerated, search index refreshed. (6) **Phase 6 — UI conflict indicators**: CareerSection gains revolving door amber "Porte tournante" badge via `matchRevolvingDoor()`. ParliamentarySection gains "Votes en tension avec le portefeuille actuel" alert with count badge + example votes. LobbySection gains "Ancien employeur" highlight when top lobbying org matches career org. `PORTFOLIO_KEYWORDS` expanded with Lecornu II-specific companies (EDF, SNCF, Natixis, Systeme U, IBM, Total, Le Point, Versailles). `MINISTERECODE_TO_TAGS` mapping added to ParliamentarySection. Browser-tested: Bregeon Porte tournante badge, Rist vote contradiction alert (67/395), Darmanin 4 judicial events, /signaux 77 signals (21 portes tournantes). Build clean. |
+| **43** (Mar 26) | **UX Restructure Phases 4-6 + Scrutin Refresh** — (1) **Phase 4**: Extracted shared `src/lib/vote-tags.ts` (TAG_LABELS, TAG_LABELS_SHORT, TAG_ORDER, TAG_COLORS, VALID_TAGS) — replaced duplicated constants across 6 consumer files. Fixed all legacy route links in 22 non-legacy files: `/gouvernance/scrutins/*` → `/votes/scrutins/*`, `/representants/deputes/*` → `/profils/deputes/*`, `/gouvernement/*` → `/profils/*`. (2) **Phase 5**: Moved `/economie` → `/territoire/economie`, `/comparer/territoires` → `/territoire/comparer`. Added 3 quick-access cards (Economie nationale, Comparer, Mon territoire) to `/territoire` hub. Redirects configured in `next.config.ts`. (3) **Phase 6**: Created `/votes/scrutins/[id]` as canonical scrutin detail (copied from `/representants/scrutins/[id]` with updated breadcrumbs + canonical links). Activated all redirects in `next.config.ts` (14 `/representants/*`, 2 `/gouvernement/*`, 4 scrutin, 1 `/comparer/deputes`). Deleted 29 legacy pages across 4 directories (`/gouvernance/` 13, `/representants/` 13, `/gouvernement/` 2, `/comparer/deputes/` 1). Copied OG images to canonical routes. Rebuilt search_index with canonical URLs. Net: **-6,203 lines**. (4) **Scrutin data refresh**: Ingested 1,140 new scrutin JSON files (AN open data) — total now 5,831 scrutins + ~973K vote records (Oct 2024 – Mar 2026). `data-ingestion.md` updated. All redirects browser-tested. Build clean. |
 | **42** (Mar 26) | **HATVP Financial Declaration Audit** — Full 3-phase audit of all deputy/senator financial declarations against official HATVP XML source. (1) Created `scripts/lib/hatvp-parser.ts` — shared parsing module extracted from `ingest-declarations.ts` (10 exported functions). (2) Created `scripts/audit-declarations.ts` — Phase A: XML vs DB comparison (1,973/1,973 perfect matches after re-ingestion), Phase B: internal consistency (stored totals vs recomputed — 0 divergences; display grouping verified equivalent to ingestion), Phase C: cross-system System 1 vs System 2. (3) Fresh HATVP XML downloaded (143MB, 12,756 declarations) and re-ingested: 12,756 declarations + 13,230 participations + 474,601 revenus = ~500K rows. (4) **Case-sensitivity bug fixed**: 471 senator declarations were unreachable on all 3 senator routes — HATVP stores names in different case (UPPERCASE/lowercase) vs Senat table, but queries used exact matching. Added `mode: "insensitive" as const` to 3 senator routes + 1 legacy deputy route (`/gouvernance/deputes/`). (5) Browser-tested: Braun-Pivet (deputy, 9 participations), Apourceau-Poly (senator with lowercase HATVP name — now visible), Fayssat (40 participations), Wauquiez (66 InteretDeclare), Transparence tab cross-refs. Build clean. |
 | **41** (Mar 26) | **Full Platform Audit + Voting Overhaul + Data Accuracy** — Comprehensive 4-agent parallel audit (frontend UX, voting system, data accuracy, data flow). (1) **Data accuracy**: 20/21 minister `formation` fields in `gouvernement-lecornu.ts` were wrong (many AI-fabricated); all reconciled against `data/research-output/*.json` verified sources. Added missing `charlotte-parmentier-lecocq` to reshuffle departures. Fixed Rist bio (rhumatologue not chirurgienne). (2) **Voting system overhaul**: `ScrutinAccordion` redesigned from flat 5-item list to role-grouped collapsible sections (Articles/Amendements/Motions/Procedural) with filter pills + adopted/rejected counts. Scrutin detail page (`/representants/scrutins/[id]`) gains parent law breadcrumb + role-tagged link card via `ScrutinLoi` query. `/votes/par-sujet/[tag]` defaults to `?vue=final` excluding amendment-titled scrutins (Budget: 69 finals shown vs 1,216 total). `LoiCard` footer shows role breakdown per law. (3) **Signal recalibration**: `lobbySeverity` CRITIQUE 10K→5K, `gapSeverity` CRITIQUE ratio 100→50. Filter pills show per-type counts. Expanded results when type-filtered. (4) **Search URLs**: `refresh-search.ts` now DROP+RECREATE with canonical `/profils/*` URLs. (5) **AGORA safety**: `ingest-agora.ts` wraps delete+insert in `prisma.$transaction()`. Browser-tested all changes. Build clean. |
 | **40** (Mar 26) | **UX Restructure Phases 1-3** — Inspired by Track AIPAC + TheyWorkForYou. (1) Nav 9→4 items (Signaux, Profils, Votes, Territoire). NavSearch enlarged w-80 + `/` keyboard shortcut. (2) Homepage full rewrite: search-first hero (giant search bar, entity pills), inline top 6 signal cards, 5 recent votes, territory lookup. Killed: HeroSlider component, dossier grid, KPI counters, economic indicators. (3) New `/profils` hub: unified people directory at `/profils` (index), `/profils/[slug]` (ministers from `/gouvernement/[slug]`), `/profils/deputes`, `/profils/senateurs`, `/profils/ministres`, `/profils/lobbyistes`, `/profils/partis`, `/profils/elus`, `/profils/comparer`. All links updated. (4) Killed 8 dossier pages + index (redirect to `/signaux` or `/territoire`). Kept: `/dossiers/medias`, `/dossiers/financement-politique`. (5) `/signaux` gains URL-param filter pills (type + severity) + deep-dive "Enquête" cards for surviving dossiers. (6) DossierNav simplified to 2 links + "← Signaux" back link. (7) `src/lib/slug.ts` utility. (8) Footer: "Patrimoine culturel" link. Phase 6 redirects prepared as comments in `next.config.ts`. Docs updated (frontend.md, data-ingestion.md). Build clean. |

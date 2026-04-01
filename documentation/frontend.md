@@ -1,6 +1,6 @@
 # Frontend Implementation
 
-> Last updated: Mar 26, 2026 — Session 42 (HATVP Declaration Audit + Case-Sensitivity Fixes). ~35 active routes + ~30 legacy (Phase 6 removal pending) + 5 OG image routes, 42 components, 14 client components.
+> Last updated: Mar 27, 2026 — Session 45 (Bilan Macron Dossier). ~26 active routes + 6 OG image routes, 49 components (42 + 7 bilan), 14 client components.
 
 Complete reference for all UI pages, components, styling, and patterns.
 
@@ -14,7 +14,7 @@ Complete reference for all UI pages, components, styling, and patterns.
 - **14 client components**: `SearchInput`, `Avatar`, `DeclarationSection`, `ProfileTabs`, `DeptLookup`, `NavSearch`, `SearchBox`, `FranceMap`, `DeltaBadge`, `GroupExpander`, `ScrutinAccordion`, `MediaBoard`, `MobileNav`, `ConflictDrilldown` (all use `"use client"`) — `HeroSlider` deleted in Session 39
 - **1 shared lib**: `nuance-colors.ts` — political party color mapping used by elections pages
 - **French localization** throughout: `<html lang="fr">`, `fr-FR` locale for numbers/dates
-- **ISR** (`export const revalidate = N`): homepage + votes = 3600s; profils hub + economie + patrimoine + territoire hub = 86400s; profiles = dynamic (no revalidate); surviving dossiers (medias, financement-politique) = 86400s
+- **ISR** (`export const revalidate = N`): homepage + votes = 3600s; profils hub + economie + patrimoine + territoire hub = 86400s; profiles = dynamic (no revalidate); dossiers (medias, financement-politique, bilan-macron) = 86400s
 - **generateMetadata**: all 9 key dynamic routes export `generateMetadata` for SEO
 
 ---
@@ -101,7 +101,7 @@ Applied with: `font-[family-name:var(--font-display)]` for headings.
 
 [layout.tsx](../src/app/layout.tsx) provides the shell:
 
-- **Navbar**: Sticky top, backdrop-blur, SVG logo + "L'Observatoire" brand (click → `/`) + **`NavSearch`** (always-visible search form — `flex`, `w-80`, `/` keyboard shortcut to focus) + **4 nav links** (**Signaux**, **Profils**, **Votes**, **Territoire**) wrapped in `.nav-links` div (hidden on mobile via CSS) + **`MobileNav`** hamburger menu (visible only on mobile <768px). Session 39 restructure: collapsed from 9 items; killed from nav: Accueil, Dossiers, Représentants, Gouvernement, Économie, Patrimoine.
+- **Navbar**: Sticky top, backdrop-blur, SVG logo + "L'Observatoire" brand (click → `/`) + **`NavSearch`** (always-visible search form — `flex`, `w-80`, `/` keyboard shortcut to focus) + **5 nav links** (**Signaux**, **Profils**, **Votes**, **Territoire**, **Bilan Macron**) wrapped in `.nav-links` div (hidden on mobile via CSS) + **`MobileNav`** hamburger menu (visible only on mobile <768px). Session 39 restructure: collapsed from 9 to 4 items; Session 45: added Bilan Macron as 5th nav item.
 - **Main**: `flex-1` content area
 - **Footer**: Data source attribution ("data.gouv.fr, INSEE, Senat, HATVP") + "Patrimoine culturel" link + "L'Observatoire Citoyen 2025"
 - **Mobile nav**: `MobileNav` client component — hamburger button (`.mobile-menu-btn`) toggles full-screen overlay (`.mobile-nav-overlay`) with `slideDown` animation. Closes on link click.
@@ -129,11 +129,12 @@ Applied with: `font-[family-name:var(--font-display)]` for headings.
 | `/votes/alignements` | Alignment matrix — N×N group co-vote heatmap, top 5 allies/opponents per group (ISR 86400) |
 | `/president` | **HTTP 308 permanent redirect → `/profils/emmanuel-macron`** |
 
-### Dossiers (2 surviving + 8 killed → redirected)
+### Dossiers (3 surviving + 8 killed → redirected)
 
-**Surviving deep-dive enquêtes** (linked from `/signaux`):
+**Surviving deep-dive enquêtes** (linked from `/signaux` + main nav):
 | Route | Topic |
 |-------|-------|
+| `/dossiers/bilan-macron` | **Bilan de la présidence Macron** *(Session 45)* — 7-section investigation dossier using static research data (`src/data/bilan-macron.ts`). Custom `BilanHeroSection` (4 stat cards + Bocquet quote), `BilanEconomieSection` (poverty, purchasing power, debt, fiscal gifts, employment — before/after tables with severity colors), `BilanSanteSection` (healthcare, social cuts, education, public services), `BilanDroitsSection` (police violence side-by-side cards, democratic erosion, labor rights, environment, social fabric), `BilanElitesSection` (billionaires, elite facts, revolving door table), `BilanContrasteSection` (3-column "Les deux Frances" grid + summary callout), sources footer. All 7 components in `src/components/bilan/`. Added to main nav as 5th item. Data from INSEE, Eurostat, DREES, Cour des Comptes, France Stratégie, Oxfam, CEVIPOF, Amnesty, RSF, EIU. |
 | `/dossiers/medias` | **Media ownership concentration** — `MediaBoard` (interactive owner cards), `ConcentrationChart` (CSS stacked bars), `CamembertChart` (SVG donut), votes culture, lobbying audiovisuel/presse (Session 35) |
 | `/dossiers/financement-politique` | **Political financing** — cost per seat bars, funding structure stacked bars, electoral yield table, 2021-2024 evolution for RN/Renaissance/LFI/LR (Session 37) |
 
@@ -621,10 +622,10 @@ Ten server components in `src/components/gouvernement/`. Each is a self-containe
 |-----------|------|---------|
 | `InteretsSection` | [gouvernement/interets-section.tsx](../src/components/gouvernement/interets-section.tsx) | HATVP declared interests grouped by `rubrique`, progressive disclosure (first 5 inline, rest in native `<details><summary>`), `InteretItem` sub-component, conflict alert per item |
 | `MandatsSection` | [gouvernement/mandats-section.tsx](../src/components/gouvernement/mandats-section.tsx) | Timeline of government mandates (`border-l` vertical line, dot per mandate, active = teal dot) |
-| `CareerSection` | [gouvernement/career-section.tsx](../src/components/gouvernement/career-section.tsx) | Vertical career timeline from `EntreeCarriere`. Dot color by `categorie` (teal=gouvernemental, blue=électif, amber=fonction publique, purple=formation). "Parcours partiel" notice when no PRESSE source. |
-| `LobbySection` | [gouvernement/lobby-section.tsx](../src/components/gouvernement/lobby-section.tsx) | `ActionLobby` data for current `ministereCode`: total count, top 5 orgs by count, top 6 domains, year range. Source link to AGORA registry. |
+| `CareerSection` | [gouvernement/career-section.tsx](../src/components/gouvernement/career-section.tsx) | Vertical career timeline from `EntreeCarriere`. Dot color by `categorie` (teal=gouvernemental, blue=électif, amber=fonction publique, purple=formation). **Session 44**: accepts `ministereCode` + `portefeuille` props; `CARRIERE_PRIVEE` entries matching `PORTFOLIO_KEYWORDS` get amber dot + "Porte tournante" badge via `matchRevolvingDoor()`. "Parcours partiel" notice when no PRESSE source. |
+| `LobbySection` | [gouvernement/lobby-section.tsx](../src/components/gouvernement/lobby-section.tsx) | `ActionLobby` data for current `ministereCode`: total count, top 5 orgs by count, top 6 domains, year range. **Session 44**: accepts `personnaliteId` prop; queries `EntreeCarriere` for `CARRIERE_PRIVEE` orgs; top lobby orgs matching a career org get amber border + "Ancien employeur" tag. Source link to AGORA registry. |
 | `JudiciaireSection` | [gouvernement/judiciaire-section.tsx](../src/components/gouvernement/judiciaire-section.tsx) | Verified judicial events only (`verifie = true`); renders `null` when count = 0 |
-| `ParliamentarySection` | [gouvernement/parliamentary-section.tsx](../src/components/gouvernement/parliamentary-section.tsx) | Conditional — renders `null` if neither `deputeId` nor `senateurId` set. Deputies: 4 score bars, group/department, 8 recent vote links with `VoteBadge`, contact pills. Senators: group/department, active commissions (top 3), date of office. |
+| `ParliamentarySection` | [gouvernement/parliamentary-section.tsx](../src/components/gouvernement/parliamentary-section.tsx) | Conditional — renders `null` if neither `deputeId` nor `senateurId` set. Deputies: 4 score bars, group/department, 8 recent vote links with `VoteBadge`, contact pills. **Session 44**: accepts `ministereCode` prop; `MINISTERECODE_TO_TAGS` maps 20 ministry codes to ScrutinTag values; queries VoteRecord for "contre" votes on portfolio-tagged scrutins; amber alert box "Votes en tension avec le portefeuille actuel" with count badge, 5 example votes (red "contre" pills + scrutin links), and disclaimer. Senators: group/department, active commissions (top 3), date of office. |
 | `PresidentBilanSection` | [gouvernement/president-bilan-section.tsx](../src/components/gouvernement/president-bilan-section.tsx) | **President-only.** KPI grid (chômage, PIB, dette, SMIC from `Indicateur`), chômage timeline (`TimelineChart`), electoral results from `BIO.elections`, brief bio note. Baseline computed via `getBaselineObservation` at `ELECTION_DATES[2017]`. |
 | `PresidentPromessesSection` | [gouvernement/president-promesses-section.tsx](../src/components/gouvernement/president-promesses-section.tsx) | **President-only.** Props: `electionYear: 2017 \| 2022`. Election selector links (to `?tab=promesses&election=YEAR`), summary bar, promise cards with INSEE evidence blocks and parliament vote links. Data: `Indicateur` + `ScrutinTag` counts. |
 | `PresidentLobbyingSection` | [gouvernement/president-lobbying-section.tsx](../src/components/gouvernement/president-lobbying-section.tsx) | **President-only.** Overview stats, power lobbyist cards, consulting firm grid, domain cross-reference. Data: `ActionLobbyiste` group-by domain + curated SIREN action counts + `ScrutinTag` counts. |

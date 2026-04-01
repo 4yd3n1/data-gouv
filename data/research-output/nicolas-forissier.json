@@ -2,7 +2,7 @@
   "slug": "nicolas-forissier",
   "nom": "Forissier",
   "prenom": "Nicolas",
-  "researched_at": "2026-03-05",
+  "researched_at": "2026-03-27",
   "sources_used": [
     "https://wikimonde.com/article/Nicolas_Forissier",
     "https://www.assemblee-nationale.fr/dyn/deputes/PA1327",
@@ -238,5 +238,22 @@
     }
   ],
   "judicial_events": [],
-  "conflict_flags": []
+  "conflict_flags": [
+    {
+      "type": "VOTE_CONTRADICTION",
+      "description": "En tant que député(e), a voté contre 13 scrutin(s) sur 338 portant sur les thématiques budget, fiscalite — domaine(s) relevant de son portefeuille ministériel actuel (taux d'opposition : 4 %).",
+      "severity": "informatif",
+      "data": {
+        "totalVotes": 338,
+        "contreVotes": 13,
+        "contreRate": 4,
+        "tags": [
+          "budget",
+          "fiscalite"
+        ],
+        "topExamples": "la motion de rejet préalable, déposée par Mme Mathilde Panot, du projet de loi d; la première partie du projet de loi de finances pour 2025 (première lecture).; l'amendement n° 2044 de Mme Chatelain après l'article 3 du projet de loi de fina"
+      },
+      "_ingested": false
+    }
+  ]
 }

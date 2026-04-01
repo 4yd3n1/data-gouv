@@ -2,7 +2,7 @@
   "slug": "camille-galliard-minier",
   "nom": "Galliard-Minier",
   "prenom": "Camille",
-  "researched_at": "2026-03-05",
+  "researched_at": "2026-03-27",
   "sources_used": [
     "https://en.wikipedia.org/wiki/Camille_Galliard-Minier",
     "https://solidarites.gouv.fr/biographie-de-camille-galliard-minier",
@@ -108,5 +108,21 @@
     }
   ],
   "judicial_events": [],
-  "conflict_flags": []
+  "conflict_flags": [
+    {
+      "type": "VOTE_CONTRADICTION",
+      "description": "En tant que député(e), a voté contre 288 scrutin(s) sur 421 portant sur les thématiques sante — domaine(s) relevant de son portefeuille ministériel actuel (taux d'opposition : 68 %).",
+      "severity": "critique",
+      "data": {
+        "totalVotes": 421,
+        "contreVotes": 288,
+        "contreRate": 68,
+        "tags": [
+          "sante"
+        ],
+        "topExamples": "l'amendement n° 59 de Mme Jourdan à l'article 17 et annexe (précédemment réservé; l'amendement n° 532 de M. Clouet à l'article 17 et annexe (précédemment réservé); l'amendement n° 530 de Mme Leboucher à l'article 17 et annexe (précédemment rése"
+      },
+      "_ingested": false
+    }
+  ]
 }

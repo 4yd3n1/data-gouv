@@ -5,7 +5,7 @@
   "civilite": "M.",
   "dateNaissance": "1983-05-13",
   "lieuNaissance": "Paris",
-  "researched_at": "2026-03-05",
+  "researched_at": "2026-03-27",
   "sources_used": [
     "https://www.nosdeputes.fr/jean-noel-barrot",
     "https://www.touteleurope.eu/vie-politique-des-etats-membres/gouvernement-bayrou-jean-noel-barrot-confirme-ministre-de-l-europe-et-des-affaires-etrangeres/",
@@ -245,5 +245,18 @@
     }
   ],
   "judicial_events": [],
-  "conflict_flags": []
+  "conflict_flags": [
+    {
+      "type": "DEPORT_OFFICIEL",
+      "description": "Décret de déport publié au Journal Officiel le 22 juillet 2022 : en tant que ministre délégué au Numérique, Barrot se récuse de tout dossier relatif à Uber. Motif : sa sœur Hélène Barrot est directrice de la communication d'Uber pour l'Europe de l'Ouest et du Sud. Les décisions relatives à Uber ont été transférées à la Première ministre Élisabeth Borne.",
+      "sourceUrl": "https://www.franceinfo.fr/politique/affaire/uber-files/le-ministre-delegue-au-numerique-jean-noel-barrot-ecarte-du-dossier-uber_5271544.html",
+      "sourcePrincipale": "France Info / Anticor",
+      "severity": "notable",
+      "data": {
+        "decretDate": "2022-07-22",
+        "motif": "sœur directrice communication Uber Europe"
+      },
+      "_ingested": false
+    }
+  ]
 }

@@ -5,7 +5,7 @@
   "civilite": "Mme",
   "dateNaissance": "1980-11-04",
   "lieuNaissance": "Ermont, Val-d'Oise",
-  "researched_at": "2026-03-05",
+  "researched_at": "2026-03-27",
   "sources_used": [
     "https://la1ere.franceinfo.fr/polynesie/tahiti/polynesie-francaise/qui-est-naima-moutchou-la-nouvelle-ministre-des-outre-mer-1632314.html",
     "https://www.lagazettefrance.fr/article/naima-moutchou-horizons-une-ancienne-avocate-ministre-des-outre-mer",
@@ -148,5 +148,21 @@
     }
   ],
   "judicial_events": [],
-  "conflict_flags": []
+  "conflict_flags": [
+    {
+      "type": "VOTE_CONTRADICTION",
+      "description": "En tant que député(e), a voté contre 12 scrutin(s) sur 420 portant sur les thématiques budget — domaine(s) relevant de son portefeuille ministériel actuel (taux d'opposition : 3 %).",
+      "severity": "informatif",
+      "data": {
+        "totalVotes": 420,
+        "contreVotes": 12,
+        "contreRate": 3,
+        "tags": [
+          "budget"
+        ],
+        "topExamples": "la motion de rejet préalable, déposée par Mme Mathilde Panot, du projet de loi d; la première partie du projet de loi de finances pour 2025 (première lecture).; l'amendement n° 2947 de M. Dessigny après l'article 16 du projet de loi de finan"
+      },
+      "_ingested": false
+    }
+  ]
 }

@@ -5,7 +5,7 @@
   "civilite": "Mme",
   "dateNaissance": "1991-02-11",
   "lieuNaissance": "Poitiers, Vienne",
-  "researched_at": "2026-03-05",
+  "researched_at": "2026-03-27",
   "_ingested": false,
   "sources_used": [
     "https://reporterre.net/La-pronucleaire-Maud-Bregeon-devient-ministre-deleguee-a-l-Energie",
@@ -124,11 +124,41 @@
   "judicial_events": [],
   "conflict_flags": [
     {
-      "type": "conflit_interet_potentiel",
-      "description": "Ancienne salariee d'EDF (2014-2022) nommee ministre de l'Energie. Qualifiee d'avocate d'EDF a l'Assemblee par des ecologistes.",
+      "type": "PORTE_TOURNANTE",
+      "description": "Ancienne salariée d'EDF (2014-2022), nommée ministre déléguée chargée de l'Énergie. EDF a effectué 130 actions de lobbying déclarées ciblant le ministère de la Transition écologique, son ministère de tutelle.",
+      "sourceUrl": "https://reporterre.net/La-pronucleaire-Maud-Bregeon-devient-ministre-deleguee-a-l-Energie",
+      "sourcePrincipale": "Reporterre / AGORA HATVP",
+      "severity": "critique",
+      "data": {
+        "careerOrg": "EDF",
+        "portfolio": "Énergie",
+        "lobbyOrg": "EDF SA",
+        "lobbyCount": 130
+      },
+      "_ingested": false
+    },
+    {
+      "type": "VOTE_CONTRADICTION",
+      "description": "En tant que député(e), a voté contre 1 scrutin(s) sur 2 portant sur les thématiques ecologie — domaine(s) relevant de son portefeuille ministériel actuel (taux d'opposition : 50 %).",
+      "severity": "critique",
+      "data": {
+        "totalVotes": 2,
+        "contreVotes": 1,
+        "contreRate": 50,
+        "tags": [
+          "ecologie"
+        ],
+        "topExamples": "l'ensemble de la proposition de loi portant programmation nationale pour l'énerg"
+      },
+      "_ingested": false
+    },
+    {
+      "type": "RAPPORTEUR_CONFLIT",
+      "description": "Élue députée en juin 2022 après 8 ans chez EDF, Bregeon est immédiatement désignée rapporteure de la loi d'accélération nucléaire (février 2023), soulevant des questions de conflit d'intérêts. Reporterre et Contexte ont documenté cette chronologie : démission d'EDF → élection → rapporteur de la loi nucléaire en 8 mois.",
       "sourceUrl": "https://reporterre.net/La-pronucleaire-Maud-Bregeon-devient-ministre-deleguee-a-l-Energie",
       "sourcePrincipale": "Reporterre",
-      "severity": "medium"
+      "severity": "notable",
+      "_ingested": false
     }
   ]
 }

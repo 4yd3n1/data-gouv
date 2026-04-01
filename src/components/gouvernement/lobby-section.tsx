@@ -2,8 +2,10 @@ import { prisma } from "@/lib/db";
 
 export async function LobbySection({
   ministereCode,
+  personnaliteId,
 }: {
   ministereCode: string | null;
+  personnaliteId?: string | null;
 }) {
   if (!ministereCode) {
     return (
@@ -28,6 +30,22 @@ export async function LobbySection({
     orderBy: { createdAt: "desc" },
   });
 
+  // Fetch career organisations for this person to detect overlaps
+  const careerOrgs: string[] = personnaliteId
+    ? (
+        await prisma.entreeCarriere.findMany({
+          where: {
+            personnaliteId,
+            categorie: "CARRIERE_PRIVEE",
+            organisation: { not: null },
+          },
+          select: { organisation: true },
+        })
+      )
+        .map((e) => e.organisation!)
+        .filter(Boolean)
+    : [];
+
   if (actions.length === 0) {
     return (
       <section>
@@ -45,6 +63,15 @@ export async function LobbySection({
   const topOrgs = [...orgCounts.entries()]
     .sort((a, b) => b[1] - a[1])
     .slice(0, 5);
+
+  // Check which top orgs match a career organisation
+  const normalize = (s: string) =>
+    s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  const careerNorms = careerOrgs.map(normalize);
+  const matchesCareer = (lobbyOrg: string) => {
+    const norm = normalize(lobbyOrg);
+    return careerNorms.some((cn) => norm.includes(cn) || cn.includes(norm));
+  };
 
   // Group by domain (domains can be comma-separated)
   const domainCounts = new Map<string, number>();
@@ -83,17 +110,31 @@ export async function LobbySection({
             Principales organisations
           </p>
           <div className="space-y-1.5">
-            {topOrgs.map(([nom, count]) => (
-              <div
-                key={nom}
-                className="flex items-center justify-between rounded-lg border border-bureau-700/20 bg-bureau-800/20 px-3 py-2"
-              >
-                <span className="text-xs text-bureau-300">{nom}</span>
-                <span className="ml-4 shrink-0 text-xs tabular-nums text-bureau-500">
-                  {count} action{count > 1 ? "s" : ""}
-                </span>
-              </div>
-            ))}
+            {topOrgs.map(([nom, count]) => {
+              const isFormerEmployer = matchesCareer(nom);
+              return (
+                <div
+                  key={nom}
+                  className={`flex items-center justify-between rounded-lg border px-3 py-2 ${
+                    isFormerEmployer
+                      ? "border-amber-600/30 bg-amber-950/20"
+                      : "border-bureau-700/20 bg-bureau-800/20"
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-bureau-300">{nom}</span>
+                    {isFormerEmployer && (
+                      <span className="rounded border border-amber-500/30 bg-amber-500/10 px-1 py-px text-[10px] font-medium text-amber-400">
+                        Ancien employeur
+                      </span>
+                    )}
+                  </div>
+                  <span className="ml-4 shrink-0 text-xs tabular-nums text-bureau-500">
+                    {count} action{count > 1 ? "s" : ""}
+                  </span>
+                </div>
+              );
+            })}
           </div>
         </div>
 

@@ -5,7 +5,7 @@
   "civilite": "Mme",
   "dateNaissance": "1956-09-07",
   "lieuNaissance": "Audincourt (Doubs)",
-  "researched_at": "2026-03-05",
+  "researched_at": "2026-03-27",
   "sources_used": [
     "https://wikimonde.com/article/Annie_Genevard",
     "https://www.nosdeputes.fr/annie-genevard",
@@ -269,5 +269,14 @@
     }
   ],
   "judicial_events": [],
-  "conflict_flags": []
+  "conflict_flags": [
+    {
+      "type": "PROXIMITE_LOBBY",
+      "description": "Proximité documentée avec la FNSEA (principal syndicat agricole). Qualifiée de 'passe-plat de la FNSEA' par un député écologiste (Reporterre). A poussé la réintroduction dérogatoire de l'acétamipride (néonicotinoïde interdit). Accusée par Générations Futures d'avoir fait pression sur des scientifiques pour adoucir un rapport gouvernemental sur les pesticides.",
+      "sourceUrl": "https://novethic.fr/environnement/biodiversite/annie-genevard-une-ministre-de-lagriculture-proche-de-la-fnsea",
+      "sourcePrincipale": "Novethic / Reporterre / Générations Futures",
+      "severity": "notable",
+      "_ingested": false
+    }
+  ]
 }

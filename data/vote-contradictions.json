@@ -1,0 +1,1072 @@
+[
+  {
+    "slug": "mathieu-lefevre",
+    "ministerName": "Mathieu Lefèvre",
+    "ministereCode": "TRANSITION_ECOLOGIQUE",
+    "relevantTags": [
+      "ecologie"
+    ],
+    "deputeId": "PA795386",
+    "totalVotesOnPortfolio": 65,
+    "contreVotes": 53,
+    "abstentionVotes": 0,
+    "contreRate": 0.8153846153846154,
+    "examples": [
+      {
+        "scrutinId": "VTANR5L17V2653",
+        "scrutinNumero": 2653,
+        "titre": "l'ensemble de la proposition de loi portant programmation nationale pour l'énergie et le climat pour les années 2025 à 2035 (première lecture).",
+        "dateScrutin": "2025-06-24",
+        "position": "contre",
+        "tags": [
+          "ecologie"
+        ],
+        "sortCode": "rejeté"
+      },
+      {
+        "scrutinId": "VTANR5L17V2573",
+        "scrutinNumero": 2573,
+        "titre": "l'amendement n° 339 de Mme Trouvé à l'article 5 de la proposition de loi portant programmation nationale énergie et climat pour les années 2025 à 2035 (première lecture).",
+        "dateScrutin": "2025-06-19",
+        "position": "contre",
+        "tags": [
+          "ecologie"
+        ],
+        "sortCode": "rejeté"
+      },
+      {
+        "scrutinId": "VTANR5L17V2570",
+        "scrutinNumero": 2570,
+        "titre": "l'amendement n° 211 de M. Tavel à l'article 5 de la proposition de loi portant programmation nationale énergie et climat pour les années 2025 à 2035 (première lecture).",
+        "dateScrutin": "2025-06-19",
+        "position": "contre",
+        "tags": [
+          "ecologie"
+        ],
+        "sortCode": "rejeté"
+      },
+      {
+        "scrutinId": "VTANR5L17V2571",
+        "scrutinNumero": 2571,
+        "titre": "l'amendement n° 200 de M. Molac à l'article 5 de la proposition de loi portant programmation nationale énergie et climat pour les années 2025 à 2035 (première lecture).",
+        "dateScrutin": "2025-06-19",
+        "position": "contre",
+        "tags": [
+          "ecologie"
+        ],
+        "sortCode": "rejeté"
+      },
+      {
+        "scrutinId": "VTANR5L17V2580",
+        "scrutinNumero": 2580,
+        "titre": "l'amendement n° 486 de M. Nury après l'article 5 de la proposition de loi portant programmation nationale énergie et climat pour les années 2025 à 2035 (première lecture).",
+        "dateScrutin": "2025-06-19",
+        "position": "contre",
+        "tags": [
+          "ecologie"
+        ],
+        "sortCode": "adopté"
+      },
+      {
+        "scrutinId": "VTANR5L17V2572",
+        "scrutinNumero": 2572,
+        "titre": "le sous-amendement n° 879 de Potier à l'amendement n° 339 de Mme Trouvé à l'article 5 de la proposition de loi portant programmation nationale énergie et climat pour les années 2025 à 2035 (première lecture).",
+        "dateScrutin": "2025-06-19",
+        "position": "contre",
+        "tags": [
+          "ecologie"
+        ],
+        "sortCode": "rejeté"
+      },
+      {
+        "scrutinId": "VTANR5L17V2480",
+        "scrutinNumero": 2480,
+        "titre": "le sous-amendement n° 772 de M. Nury à l'amendement n° 503 de M. Armand et aux amendements identiques suivants à l'article 3 (supprimé) de la proposition de loi portant programmation nationale énergie et climat pour les années 2025 à 2035 (première lecture).",
+        "dateScrutin": "2025-06-18",
+        "position": "contre",
+        "tags": [
+          "ecologie"
+        ],
+        "sortCode": "rejeté"
+      },
+      {
+        "scrutinId": "VTANR5L17V2481",
+        "scrutinNumero": 2481,
+        "titre": "le sous-amendement n° 746 de M. Benbrahim à l'amendement n° 503 de M. Armand et aux amendements identiques suivants à l'article 3 (supprimé) de la proposition de loi portant programmation nationale énergie et climat pour les années 2025 à 2035 (première lecture).",
+        "dateScrutin": "2025-06-18",
+        "position": "contre",
+        "tags": [
+          "ecologie"
+        ],
+        "sortCode": "rejeté"
+      },
+      {
+        "scrutinId": "VTANR5L17V2482",
+        "scrutinNumero": 2482,
+        "titre": "le sous-amendement n° 725 de Mme Laernoes et le sous-amendement identique suivant à l'amendement n° 503 de M. Armand et aux amendements identiques suivants à l'article 3 (supprimé) de la proposition de loi portant programmation nationale énergie et climat pour les années 2025 à 2035 (première lecture).",
+        "dateScrutin": "2025-06-18",
+        "position": "contre",
+        "tags": [
+          "ecologie"
+        ],
+        "sortCode": "rejeté"
+      },
+      {
+        "scrutinId": "VTANR5L17V2483",
+        "scrutinNumero": 2483,
+        "titre": "le sous-amendement n° 825 de M. Amblard à l'amendement n° 503 de M. Armand et aux amendements identiques suivants à l'article 3 (supprimé) de la proposition de loi portant programmation nationale énergie et climat pour les années 2025 à 2035 (première lecture).",
+        "dateScrutin": "2025-06-18",
+        "position": "contre",
+        "tags": [
+          "ecologie"
+        ],
+        "sortCode": "rejeté"
+      }
+    ]
+  },
+  {
+    "slug": "camille-galliard-minier",
+    "ministerName": "Camille Galliard-Minier",
+    "ministereCode": "SANTE_FAMILLE",
+    "relevantTags": [
+      "sante"
+    ],
+    "deputeId": "PA719736",
+    "totalVotesOnPortfolio": 421,
+    "contreVotes": 288,
+    "abstentionVotes": 9,
+    "contreRate": 0.684085510688836,
+    "examples": [
+      {
+        "scrutinId": "VTANR5L17V4582",
+        "scrutinNumero": 4582,
+        "titre": "l'amendement n° 59 de Mme Jourdan à l'article 17 et annexe (précédemment réservé) du projet de loi de financement de la sécurité sociale pour 2026 (nouvelle lecture).",
+        "dateScrutin": "2025-12-05",
+        "position": "contre",
+        "tags": [
+          "sante"
+        ],
+        "sortCode": "adopté"
+      },
+      {
+        "scrutinId": "VTANR5L17V4581",
+        "scrutinNumero": 4581,
+        "titre": "l'amendement n° 532 de M. Clouet à l'article 17 et annexe (précédemment réservé) du projet de loi de financement de la sécurité sociale pour 2026 (nouvelle lecture).",
+        "dateScrutin": "2025-12-05",
+        "position": "contre",
+        "tags": [
+          "sante"
+        ],
+        "sortCode": "rejeté"
+      },
+      {
+        "scrutinId": "VTANR5L17V4580",
+        "scrutinNumero": 4580,
+        "titre": "l'amendement n° 530 de Mme Leboucher à l'article 17 et annexe (précédemment réservé) du projet de loi de financement de la sécurité sociale pour 2026 (nouvelle lecture).",
+        "dateScrutin": "2025-12-05",
+        "position": "contre",
+        "tags": [
+          "sante"
+        ],
+        "sortCode": "rejeté"
+      },
+      {
+        "scrutinId": "VTANR5L17V4601",
+        "scrutinNumero": 4601,
+        "titre": "le sous-amendement n° 1082 de M. Ménagé à l'amendement n° 241 (2e rect.) de M. Gernigon à l'article 18 quater du projet de loi de financement de la sécurité sociale pour 2026 (nouvelle lecture).",
+        "dateScrutin": "2025-12-05",
+        "position": "contre",
+        "tags": [
+          "sante"
+        ],
+        "sortCode": "rejeté"
+      },
+      {
+        "scrutinId": "VTANR5L17V4585",
+        "scrutinNumero": 4585,
+        "titre": "l'amendement n° 534 de Mme Leboucher à l'article 17 et annexe (précédemment réservé) du projet de loi de financement de la sécurité sociale pour 2026 (nouvelle lecture).",
+        "dateScrutin": "2025-12-05",
+        "position": "contre",
+        "tags": [
+          "sante"
+        ],
+        "sortCode": "rejeté"
+      },
+      {
+        "scrutinId": "VTANR5L17V4578",
+        "scrutinNumero": 4578,
+        "titre": "l'amendement n° 528 (rect.) de M. Vannier à l'article 17 et annexe (précédemment réservé) du projet de loi de financement de la sécurité sociale pour 2026 (nouvelle lecture).",
+        "dateScrutin": "2025-12-05",
+        "position": "contre",
+        "tags": [
+          "sante"
+        ],
+        "sortCode": "adopté"
+      },
+      {
+        "scrutinId": "VTANR5L17V4655",
+        "scrutinNumero": 4655,
+        "titre": "l'amendement n° 94 de M. Davi et les amendements identiques suivants de suppression de l'article 28 du projet de loi de financement de la sécurité sociale pour 2026 (nouvelle lecture).",
+        "dateScrutin": "2025-12-05",
+        "position": "contre",
+        "tags": [
+          "sante"
+        ],
+        "sortCode": "rejeté"
+      },
+      {
+        "scrutinId": "VTANR5L17V4637",
+        "scrutinNumero": 4637,
+        "titre": "l'amendement n° 92 de M. Davi à l'article 24 du projet de loi de financement de la sécurité sociale pour 2026 (nouvelle lecture).",
+        "dateScrutin": "2025-12-05",
+        "position": "contre",
+        "tags": [
+          "sante"
+        ],
+        "sortCode": "rejeté"
+      },
+      {
+        "scrutinId": "VTANR5L17V4638",
+        "scrutinNumero": 4638,
+        "titre": "l'amendement n° 281 de M. Bazin à l'article 24 du projet de loi de financement de la sécurité sociale pour 2026 (nouvelle lecture).",
+        "dateScrutin": "2025-12-05",
+        "position": "contre",
+        "tags": [
+          "sante"
+        ],
+        "sortCode": "adopté"
+      },
+      {
+        "scrutinId": "VTANR5L17V4639",
+        "scrutinNumero": 4639,
+        "titre": "l'article 24 du projet de loi de financement de la sécurité sociale pour 2026 (nouvelle lecture).",
+        "dateScrutin": "2025-12-05",
+        "position": "contre",
+        "tags": [
+          "sante"
+        ],
+        "sortCode": "rejeté"
+      }
+    ]
+  },
+  {
+    "slug": "marina-ferrari",
+    "ministerName": "Marina Ferrari",
+    "ministereCode": "SPORTS_JEUNESSE",
+    "relevantTags": [
+      "education"
+    ],
+    "deputeId": "PA795120",
+    "totalVotesOnPortfolio": 5,
+    "contreVotes": 3,
+    "abstentionVotes": 0,
+    "contreRate": 0.6,
+    "examples": [
+      {
+        "scrutinId": "VTANR5L17V2879",
+        "scrutinNumero": 2879,
+        "titre": "la motion de rejet préalable, déposée par Mme Mathilde Panot, de la proposition de loi relative à la lutte contre l'antisémitisme dans l'enseignement supérieur (texte de la commission mixte paritaire).",
+        "dateScrutin": "2025-07-02",
+        "position": "contre",
+        "tags": [
+          "education"
+        ],
+        "sortCode": "rejeté"
+      },
+      {
+        "scrutinId": "VTANR5L17V1574",
+        "scrutinNumero": 1574,
+        "titre": "l'amendement n° 7 de Mme Mesmeur à l'article 2 de la proposition de loi relative à la lutte contre l'antisémitisme, le racisme, les discriminations, les violences et la haine dans l'enseignement supérieur (première lecture).",
+        "dateScrutin": "2025-05-06",
+        "position": "contre",
+        "tags": [
+          "education"
+        ],
+        "sortCode": "rejeté"
+      },
+      {
+        "scrutinId": "VTANR5L17V1575",
+        "scrutinNumero": 1575,
+        "titre": "l'amendement n° 6 de Mme Mesmeur à l'article 2 de la proposition de loi relative à la lutte contre l'antisémitisme, le racisme, les discriminations, les violences et la haine dans l'enseignement supérieur (première lecture).",
+        "dateScrutin": "2025-05-06",
+        "position": "contre",
+        "tags": [
+          "education"
+        ],
+        "sortCode": "rejeté"
+      }
+    ]
+  },
+  {
+    "slug": "maud-bregeon",
+    "ministerName": "Maud Bregeon",
+    "ministereCode": "TRANSITION_ECOLOGIQUE",
+    "relevantTags": [
+      "ecologie"
+    ],
+    "deputeId": "PA795990",
+    "totalVotesOnPortfolio": 2,
+    "contreVotes": 1,
+    "abstentionVotes": 0,
+    "contreRate": 0.5,
+    "examples": [
+      {
+        "scrutinId": "VTANR5L17V2653",
+        "scrutinNumero": 2653,
+        "titre": "l'ensemble de la proposition de loi portant programmation nationale pour l'énergie et le climat pour les années 2025 à 2035 (première lecture).",
+        "dateScrutin": "2025-06-24",
+        "position": "contre",
+        "tags": [
+          "ecologie"
+        ],
+        "sortCode": "rejeté"
+      }
+    ]
+  },
+  {
+    "slug": "david-amiel",
+    "ministerName": "David Amiel",
+    "ministereCode": "ECONOMIE_FINANCES",
+    "relevantTags": [
+      "budget",
+      "fiscalite"
+    ],
+    "deputeId": "PA795950",
+    "totalVotesOnPortfolio": 634,
+    "contreVotes": 256,
+    "abstentionVotes": 1,
+    "contreRate": 0.4037854889589905,
+    "examples": [
+      {
+        "scrutinId": "VTANR5L17V2212",
+        "scrutinNumero": 2212,
+        "titre": "l'amendement n° 15 de Mme Simonnet après l'article premier de la proposition de loi visant à garantir un cadre fiscal stable, juste et lisible pour nos micro-entrepreneurs et nos petites entreprises (première lecture).",
+        "dateScrutin": "2025-06-02",
+        "position": "contre",
+        "tags": [
+          "fiscalite"
+        ],
+        "sortCode": "adopté"
+      },
+      {
+        "scrutinId": "VTANR5L17V878",
+        "scrutinNumero": 878,
+        "titre": "l'article unique de la proposition de loi instaurant un impôt plancher de 2 % sur le patrimoine des ultra riches (première lecture).",
+        "dateScrutin": "2025-02-20",
+        "position": "contre",
+        "tags": [
+          "fiscalite"
+        ],
+        "sortCode": "adopté"
+      },
+      {
+        "scrutinId": "VTANR5L17V881",
+        "scrutinNumero": 881,
+        "titre": "l'ensemble de la proposition de loi instaurant un impôt plancher de 2 % sur le patrimoine des ultra riches (première lecture).",
+        "dateScrutin": "2025-02-20",
+        "position": "contre",
+        "tags": [
+          "fiscalite"
+        ],
+        "sortCode": "adopté"
+      },
+      {
+        "scrutinId": "VTANR5L17V517",
+        "scrutinNumero": 517,
+        "titre": "la motion de rejet préalable, déposée par Mme Mathilde Panot, du projet de loi de finances de fin de gestion pour 2024 (texte de la commission mixte paritaire).",
+        "dateScrutin": "2024-12-04",
+        "position": "contre",
+        "tags": [
+          "budget"
+        ],
+        "sortCode": "rejeté"
+      },
+      {
+        "scrutinId": "VTANR5L17V439",
+        "scrutinNumero": 439,
+        "titre": "la motion de rejet préalable, déposée par Mme Mathilde Panot, du projet de loi de finances de fin des gestion pour 2024 (première lecture).",
+        "dateScrutin": "2024-11-19",
+        "position": "contre",
+        "tags": [
+          "budget"
+        ],
+        "sortCode": "rejeté"
+      },
+      {
+        "scrutinId": "VTANR5L17V440",
+        "scrutinNumero": 440,
+        "titre": "l'amendement de suppression n° 17 de M. Sansu et l'amendement identique suivant à l'article liminaire du projet de loi de finances de fin des gestion pour 2024 (première lecture).",
+        "dateScrutin": "2024-11-19",
+        "position": "contre",
+        "tags": [
+          "budget"
+        ],
+        "sortCode": "adopté"
+      },
+      {
+        "scrutinId": "VTANR5L17V441",
+        "scrutinNumero": 441,
+        "titre": "l'amendement n° 24 de M. Renault à l'article 2 du projet de loi de finances de fin des gestion pour 2024 (première lecture).",
+        "dateScrutin": "2024-11-19",
+        "position": "contre",
+        "tags": [
+          "budget"
+        ],
+        "sortCode": "rejeté"
+      },
+      {
+        "scrutinId": "VTANR5L17V442",
+        "scrutinNumero": 442,
+        "titre": "l'amendement n° 12 de M. Bouloux et l'amendement identique suivant à l'article 2 du projet de loi de finances de fin des gestion pour 2024 (première lecture).",
+        "dateScrutin": "2024-11-19",
+        "position": "contre",
+        "tags": [
+          "budget"
+        ],
+        "sortCode": "adopté"
+      },
+      {
+        "scrutinId": "VTANR5L17V443",
+        "scrutinNumero": 443,
+        "titre": "l'amendement n° 25 de M. Renault à l'article 3 et ÉTAT A du projet de loi de finances de fin des gestion pour 2024 (première lecture).",
+        "dateScrutin": "2024-11-19",
+        "position": "contre",
+        "tags": [
+          "budget"
+        ],
+        "sortCode": "rejeté"
+      },
+      {
+        "scrutinId": "VTANR5L17V438",
+        "scrutinNumero": 438,
+        "titre": "la première partie du projet de loi de finances pour 2025 (première lecture).",
+        "dateScrutin": "2024-11-12",
+        "position": "contre",
+        "tags": [
+          "budget"
+        ],
+        "sortCode": "rejeté"
+      }
+    ]
+  },
+  {
+    "slug": "stephanie-rist",
+    "ministerName": "Stéphanie Rist",
+    "ministereCode": "SANTE_FAMILLE",
+    "relevantTags": [
+      "sante"
+    ],
+    "deputeId": "PA720066",
+    "totalVotesOnPortfolio": 395,
+    "contreVotes": 67,
+    "abstentionVotes": 1,
+    "contreRate": 0.16962025316455695,
+    "examples": [
+      {
+        "scrutinId": "VTANR5L17V2684",
+        "scrutinNumero": 2684,
+        "titre": "la motion de rejet préalable, déposée par Mme Mathilde Panot, de la proposition de loi visant à renforcer la sécurité des professionnels de santé (texte de la commission mixte paritaire).",
+        "dateScrutin": "2025-06-25",
+        "position": "contre",
+        "tags": [
+          "sante"
+        ],
+        "sortCode": "rejeté"
+      },
+      {
+        "scrutinId": "VTANR5L17V2277",
+        "scrutinNumero": 2277,
+        "titre": "la motion de rejet préalable, déposée par Mme Mathilde Panot, du projet de loi portant approbation des comptes de la sécurité sociale de l'année 2024 (première lecture).",
+        "dateScrutin": "2025-06-10",
+        "position": "contre",
+        "tags": [
+          "sante"
+        ],
+        "sortCode": "adopté"
+      },
+      {
+        "scrutinId": "VTANR5L17V2257",
+        "scrutinNumero": 2257,
+        "titre": "la proposition de résolution visant à abroger la loi n° 2023-270 du 14 avril 2023 de financement rectificative de la sécurité sociale pour 2023 dite réforme des retraites.",
+        "dateScrutin": "2025-06-05",
+        "position": "contre",
+        "tags": [
+          "sante"
+        ],
+        "sortCode": "adopté"
+      },
+      {
+        "scrutinId": "VTANR5L17V911",
+        "scrutinNumero": 911,
+        "titre": "l'amendement n° 11 de Mme Erodi après l'article 7 bis de la proposition de loi relative à l'organisation et aux missions des personnels de santé professionnels et volontaires des services d'incendie et de secours (première lecture).",
+        "dateScrutin": "2025-03-06",
+        "position": "contre",
+        "tags": [
+          "sante"
+        ],
+        "sortCode": "rejeté"
+      },
+      {
+        "scrutinId": "VTANR5L17V900",
+        "scrutinNumero": 900,
+        "titre": "le sous-amendement n° 82 de M. Rancoule à l'amendement n° 75 rectifié de M. Grelier à l'article premier de la proposition de loi relative à l'organisation et aux missions des personnels de santé professionnels et volontaires des services d'incendie et de secours (première lecture).",
+        "dateScrutin": "2025-03-06",
+        "position": "contre",
+        "tags": [
+          "sante"
+        ],
+        "sortCode": "rejeté"
+      },
+      {
+        "scrutinId": "VTANR5L17V903",
+        "scrutinNumero": 903,
+        "titre": "l'amendement n° 55 de M. Rancoule à l'article 2 de la proposition de loi relative à l'organisation et aux missions des personnels de santé professionnels et volontaires des services d'incendie et de secours (première lecture).",
+        "dateScrutin": "2025-03-06",
+        "position": "contre",
+        "tags": [
+          "sante"
+        ],
+        "sortCode": "rejeté"
+      },
+      {
+        "scrutinId": "VTANR5L17V904",
+        "scrutinNumero": 904,
+        "titre": "l'amendement n° 41 de M. Rancoule à l'article 2 de la proposition de loi relative à l'organisation et aux missions des personnels de santé professionnels et volontaires des services d'incendie et de secours (première lecture).",
+        "dateScrutin": "2025-03-06",
+        "position": "contre",
+        "tags": [
+          "sante"
+        ],
+        "sortCode": "rejeté"
+      },
+      {
+        "scrutinId": "VTANR5L17V905",
+        "scrutinNumero": 905,
+        "titre": "l'amendement n° 51 de M. Rancoule à l'article 2 de la proposition de loi relative à l'organisation et aux missions des personnels de santé professionnels et volontaires des services d'incendie et de secours (première lecture).",
+        "dateScrutin": "2025-03-06",
+        "position": "contre",
+        "tags": [
+          "sante"
+        ],
+        "sortCode": "rejeté"
+      },
+      {
+        "scrutinId": "VTANR5L17V910",
+        "scrutinNumero": 910,
+        "titre": "l'amendement n° 49 de M. Rancoule après l'article 7 bis de la proposition de loi relative à l'organisation et aux missions des personnels de santé professionnels et volontaires des services d'incendie et de secours (première lecture).",
+        "dateScrutin": "2025-03-06",
+        "position": "contre",
+        "tags": [
+          "sante"
+        ],
+        "sortCode": "rejeté"
+      },
+      {
+        "scrutinId": "VTANR5L17V909",
+        "scrutinNumero": 909,
+        "titre": "l'amendement n° 43 de M. Rancoule à l'article 3 de la proposition de loi relative à l'organisation et aux missions des personnels de santé professionnels et volontaires des services d'incendie et de secours (première lecture).",
+        "dateScrutin": "2025-03-06",
+        "position": "contre",
+        "tags": [
+          "sante"
+        ],
+        "sortCode": "rejeté"
+      }
+    ]
+  },
+  {
+    "slug": "anne-le-henanff",
+    "ministerName": "Anne Le Hénanff",
+    "ministereCode": "INDUSTRIE_NUMERIQUE",
+    "relevantTags": [
+      "budget"
+    ],
+    "deputeId": "PA794426",
+    "totalVotesOnPortfolio": 373,
+    "contreVotes": 46,
+    "abstentionVotes": 0,
+    "contreRate": 0.12332439678284182,
+    "examples": [
+      {
+        "scrutinId": "VTANR5L17V443",
+        "scrutinNumero": 443,
+        "titre": "l'amendement n° 25 de M. Renault à l'article 3 et ÉTAT A du projet de loi de finances de fin des gestion pour 2024 (première lecture).",
+        "dateScrutin": "2024-11-19",
+        "position": "contre",
+        "tags": [
+          "budget"
+        ],
+        "sortCode": "rejeté"
+      },
+      {
+        "scrutinId": "VTANR5L17V438",
+        "scrutinNumero": 438,
+        "titre": "la première partie du projet de loi de finances pour 2025 (première lecture).",
+        "dateScrutin": "2024-11-12",
+        "position": "contre",
+        "tags": [
+          "budget"
+        ],
+        "sortCode": "rejeté"
+      },
+      {
+        "scrutinId": "VTANR5L17V305",
+        "scrutinNumero": 305,
+        "titre": "l'amendement n° 2947 de M. Dessigny après l'article 16 du projet de loi de finances pour 2025 (première lecture).",
+        "dateScrutin": "2024-11-07",
+        "position": "contre",
+        "tags": [
+          "budget"
+        ],
+        "sortCode": "rejeté"
+      },
+      {
+        "scrutinId": "VTANR5L17V300",
+        "scrutinNumero": 300,
+        "titre": "l'amendement n° 2216 de Mme Pirès Beaune après l'article 14 du projet de loi de finances pour 2025 (première lecture).",
+        "dateScrutin": "2024-11-07",
+        "position": "contre",
+        "tags": [
+          "budget"
+        ],
+        "sortCode": "adopté"
+      },
+      {
+        "scrutinId": "VTANR5L17V301",
+        "scrutinNumero": 301,
+        "titre": "l'amendement n° 732 de M. Allisio après l'article 14 du projet de loi de finances pour 2025 (première lecture).",
+        "dateScrutin": "2024-11-07",
+        "position": "contre",
+        "tags": [
+          "budget"
+        ],
+        "sortCode": "rejeté"
+      },
+      {
+        "scrutinId": "VTANR5L17V302",
+        "scrutinNumero": 302,
+        "titre": "l'amendement n° 2568 de Mme Pantel après l'article 16 du projet de loi de finances pour 2025 (première lecture).",
+        "dateScrutin": "2024-11-07",
+        "position": "contre",
+        "tags": [
+          "budget"
+        ],
+        "sortCode": "rejeté"
+      },
+      {
+        "scrutinId": "VTANR5L17V304",
+        "scrutinNumero": 304,
+        "titre": "l'amendement n° 626 de Mme Regol après l'article 16 du projet de loi de finances pour 2025 (première lecture).",
+        "dateScrutin": "2024-11-07",
+        "position": "contre",
+        "tags": [
+          "budget"
+        ],
+        "sortCode": "rejeté"
+      },
+      {
+        "scrutinId": "VTANR5L17V298",
+        "scrutinNumero": 298,
+        "titre": "l'amendement n° 859 de Mme Sas après l'article 13 du projet de loi de finances pour 2025 (première lecture).",
+        "dateScrutin": "2024-11-07",
+        "position": "contre",
+        "tags": [
+          "budget"
+        ],
+        "sortCode": "rejeté"
+      },
+      {
+        "scrutinId": "VTANR5L17V297",
+        "scrutinNumero": 297,
+        "titre": "l'amendement n° 862 de Mme Sas après l'article 13 du projet de loi de finances pour 2025 (première lecture).",
+        "dateScrutin": "2024-11-07",
+        "position": "contre",
+        "tags": [
+          "budget"
+        ],
+        "sortCode": "rejeté"
+      },
+      {
+        "scrutinId": "VTANR5L17V307",
+        "scrutinNumero": 307,
+        "titre": "l'amendement n° 497 de M. Sansu et les amendements identiques suivants après l'article 16 du projet de loi de finances pour 2025 (première lecture).",
+        "dateScrutin": "2024-11-07",
+        "position": "contre",
+        "tags": [
+          "budget"
+        ],
+        "sortCode": "rejeté"
+      }
+    ]
+  },
+  {
+    "slug": "nicolas-forissier",
+    "ministerName": "Nicolas Forissier",
+    "ministereCode": "ECONOMIE_FINANCES",
+    "relevantTags": [
+      "budget",
+      "fiscalite"
+    ],
+    "deputeId": "PA1327",
+    "totalVotesOnPortfolio": 338,
+    "contreVotes": 13,
+    "abstentionVotes": 2,
+    "contreRate": 0.038461538461538464,
+    "examples": [
+      {
+        "scrutinId": "VTANR5L17V439",
+        "scrutinNumero": 439,
+        "titre": "la motion de rejet préalable, déposée par Mme Mathilde Panot, du projet de loi de finances de fin des gestion pour 2024 (première lecture).",
+        "dateScrutin": "2024-11-19",
+        "position": "contre",
+        "tags": [
+          "budget"
+        ],
+        "sortCode": "rejeté"
+      },
+      {
+        "scrutinId": "VTANR5L17V438",
+        "scrutinNumero": 438,
+        "titre": "la première partie du projet de loi de finances pour 2025 (première lecture).",
+        "dateScrutin": "2024-11-12",
+        "position": "contre",
+        "tags": [
+          "budget"
+        ],
+        "sortCode": "rejeté"
+      },
+      {
+        "scrutinId": "VTANR5L17V57",
+        "scrutinNumero": 57,
+        "titre": "l'amendement n° 2044 de Mme Chatelain après l'article 3 du projet de loi de finances pour 2025 (première lecture).",
+        "dateScrutin": "2024-10-24",
+        "position": "contre",
+        "tags": [
+          "budget"
+        ],
+        "sortCode": "rejeté"
+      },
+      {
+        "scrutinId": "VTANR5L17V61",
+        "scrutinNumero": 61,
+        "titre": "l'amendement n° 2552 de Mme Pirès Beaune et l'amendement identique suivant après l'article 3 du projet de loi de finances pour 2025 (première lecture).",
+        "dateScrutin": "2024-10-24",
+        "position": "contre",
+        "tags": [
+          "budget"
+        ],
+        "sortCode": "rejeté"
+      },
+      {
+        "scrutinId": "VTANR5L17V62",
+        "scrutinNumero": 62,
+        "titre": "l'amendement n° 853 de Mme Pirès Beaune et l'amendement identique suivant après l'article 3 du projet de loi de finances pour 2025 (première lecture).",
+        "dateScrutin": "2024-10-24",
+        "position": "contre",
+        "tags": [
+          "budget"
+        ],
+        "sortCode": "adopté"
+      },
+      {
+        "scrutinId": "VTANR5L17V53",
+        "scrutinNumero": 53,
+        "titre": "l'amendement n° 2424 de Mme Maximi après l'article 3 du projet de loi de finances pour 2025 (première lecture).",
+        "dateScrutin": "2024-10-24",
+        "position": "contre",
+        "tags": [
+          "budget"
+        ],
+        "sortCode": "rejeté"
+      },
+      {
+        "scrutinId": "VTANR5L17V55",
+        "scrutinNumero": 55,
+        "titre": "l'amendement n° 3572 de Mme Arrighi après l'article 3 du projet de loi de finances pour 2025 (première lecture).",
+        "dateScrutin": "2024-10-24",
+        "position": "contre",
+        "tags": [
+          "budget"
+        ],
+        "sortCode": "rejeté"
+      },
+      {
+        "scrutinId": "VTANR5L17V56",
+        "scrutinNumero": 56,
+        "titre": "l'amendement n° 2694 (rect.) de M. Castellani après l'article 3 du projet de loi de finances pour 2025 (première lecture).",
+        "dateScrutin": "2024-10-24",
+        "position": "contre",
+        "tags": [
+          "budget"
+        ],
+        "sortCode": "rejeté"
+      },
+      {
+        "scrutinId": "VTANR5L17V59",
+        "scrutinNumero": 59,
+        "titre": "l'amendement n° 2210 de M. Frébault après l'article 3 du projet de loi de finances pour 2025 (première lecture).",
+        "dateScrutin": "2024-10-24",
+        "position": "contre",
+        "tags": [
+          "budget"
+        ],
+        "sortCode": "adopté"
+      },
+      {
+        "scrutinId": "VTANR5L17V48",
+        "scrutinNumero": 48,
+        "titre": "l'amendement n° 785 de Mme Sas après l'article 3 du projet de loi de finances pour 2025 (première lecture).",
+        "dateScrutin": "2024-10-23",
+        "position": "contre",
+        "tags": [
+          "budget"
+        ],
+        "sortCode": "rejeté"
+      }
+    ]
+  },
+  {
+    "slug": "naima-moutchou",
+    "ministerName": "Naïma Moutchou",
+    "ministereCode": "OUTREMER",
+    "relevantTags": [
+      "budget"
+    ],
+    "deputeId": "PA720908",
+    "totalVotesOnPortfolio": 420,
+    "contreVotes": 12,
+    "abstentionVotes": 1,
+    "contreRate": 0.02857142857142857,
+    "examples": [
+      {
+        "scrutinId": "VTANR5L17V517",
+        "scrutinNumero": 517,
+        "titre": "la motion de rejet préalable, déposée par Mme Mathilde Panot, du projet de loi de finances de fin de gestion pour 2024 (texte de la commission mixte paritaire).",
+        "dateScrutin": "2024-12-04",
+        "position": "contre",
+        "tags": [
+          "budget"
+        ],
+        "sortCode": "rejeté"
+      },
+      {
+        "scrutinId": "VTANR5L17V438",
+        "scrutinNumero": 438,
+        "titre": "la première partie du projet de loi de finances pour 2025 (première lecture).",
+        "dateScrutin": "2024-11-12",
+        "position": "contre",
+        "tags": [
+          "budget"
+        ],
+        "sortCode": "rejeté"
+      },
+      {
+        "scrutinId": "VTANR5L17V305",
+        "scrutinNumero": 305,
+        "titre": "l'amendement n° 2947 de M. Dessigny après l'article 16 du projet de loi de finances pour 2025 (première lecture).",
+        "dateScrutin": "2024-11-07",
+        "position": "contre",
+        "tags": [
+          "budget"
+        ],
+        "sortCode": "rejeté"
+      },
+      {
+        "scrutinId": "VTANR5L17V304",
+        "scrutinNumero": 304,
+        "titre": "l'amendement n° 626 de Mme Regol après l'article 16 du projet de loi de finances pour 2025 (première lecture).",
+        "dateScrutin": "2024-11-07",
+        "position": "contre",
+        "tags": [
+          "budget"
+        ],
+        "sortCode": "rejeté"
+      },
+      {
+        "scrutinId": "VTANR5L17V90",
+        "scrutinNumero": 90,
+        "titre": "l'amendement n° 865 de Mme Sas après l'article 3 du projet de loi de finances pour 2025 (première lecture).",
+        "dateScrutin": "2024-10-25",
+        "position": "contre",
+        "tags": [
+          "budget"
+        ],
+        "sortCode": "rejeté"
+      },
+      {
+        "scrutinId": "VTANR5L17V91",
+        "scrutinNumero": 91,
+        "titre": "l'amendement n° 835 de M. Jean-Philippe Tanguy après l'article 3 du projet de loi de finances pour 2025 (première lecture).",
+        "dateScrutin": "2024-10-25",
+        "position": "contre",
+        "tags": [
+          "budget"
+        ],
+        "sortCode": "rejeté"
+      },
+      {
+        "scrutinId": "VTANR5L17V92",
+        "scrutinNumero": 92,
+        "titre": "l'amendement n° 2623 de M. Philippe Brun après l'article 3 du projet de loi de finances pour 2025 (première lecture).",
+        "dateScrutin": "2024-10-25",
+        "position": "contre",
+        "tags": [
+          "budget"
+        ],
+        "sortCode": "rejeté"
+      },
+      {
+        "scrutinId": "VTANR5L17V93",
+        "scrutinNumero": 93,
+        "titre": "l'amendement n° 1855 de M. Guiraud après l'article 3 du projet de loi de finances pour 2025 (première lecture).",
+        "dateScrutin": "2024-10-25",
+        "position": "contre",
+        "tags": [
+          "budget"
+        ],
+        "sortCode": "rejeté"
+      },
+      {
+        "scrutinId": "VTANR5L17V96",
+        "scrutinNumero": 96,
+        "titre": "l'amendement n° 3407 de M. Dufau après l'article 3 du projet de loi de finances pour 2025 (première lecture).",
+        "dateScrutin": "2024-10-25",
+        "position": "contre",
+        "tags": [
+          "budget"
+        ],
+        "sortCode": "rejeté"
+      },
+      {
+        "scrutinId": "VTANR5L17V62",
+        "scrutinNumero": 62,
+        "titre": "l'amendement n° 853 de Mme Pirès Beaune et l'amendement identique suivant après l'article 3 du projet de loi de finances pour 2025 (première lecture).",
+        "dateScrutin": "2024-10-24",
+        "position": "contre",
+        "tags": [
+          "budget"
+        ],
+        "sortCode": "adopté"
+      }
+    ]
+  },
+  {
+    "slug": "roland-lescure",
+    "ministerName": "Roland Lescure",
+    "ministereCode": "ECONOMIE_FINANCES",
+    "relevantTags": [
+      "budget",
+      "fiscalite"
+    ],
+    "deputeId": "PA721134",
+    "totalVotesOnPortfolio": 346,
+    "contreVotes": 8,
+    "abstentionVotes": 0,
+    "contreRate": 0.023121387283236993,
+    "examples": [
+      {
+        "scrutinId": "VTANR5L17V867",
+        "scrutinNumero": 867,
+        "titre": "le sous-amendement n° 61 de M. Jean-Philippe Tanguy à l'amendement n° 53 de M. Lefèvre à l'article unique de la proposition de loi instaurant un impôt plancher de 2 % sur le patrimoine des ultra riches (première lecture).",
+        "dateScrutin": "2025-02-20",
+        "position": "contre",
+        "tags": [
+          "fiscalite"
+        ],
+        "sortCode": "rejeté"
+      },
+      {
+        "scrutinId": "VTANR5L17V881",
+        "scrutinNumero": 881,
+        "titre": "l'ensemble de la proposition de loi instaurant un impôt plancher de 2 % sur le patrimoine des ultra riches (première lecture).",
+        "dateScrutin": "2025-02-20",
+        "position": "contre",
+        "tags": [
+          "fiscalite"
+        ],
+        "sortCode": "adopté"
+      },
+      {
+        "scrutinId": "VTANR5L17V878",
+        "scrutinNumero": 878,
+        "titre": "l'article unique de la proposition de loi instaurant un impôt plancher de 2 % sur le patrimoine des ultra riches (première lecture).",
+        "dateScrutin": "2025-02-20",
+        "position": "contre",
+        "tags": [
+          "fiscalite"
+        ],
+        "sortCode": "adopté"
+      },
+      {
+        "scrutinId": "VTANR5L17V517",
+        "scrutinNumero": 517,
+        "titre": "la motion de rejet préalable, déposée par Mme Mathilde Panot, du projet de loi de finances de fin de gestion pour 2024 (texte de la commission mixte paritaire).",
+        "dateScrutin": "2024-12-04",
+        "position": "contre",
+        "tags": [
+          "budget"
+        ],
+        "sortCode": "rejeté"
+      },
+      {
+        "scrutinId": "VTANR5L17V438",
+        "scrutinNumero": 438,
+        "titre": "la première partie du projet de loi de finances pour 2025 (première lecture).",
+        "dateScrutin": "2024-11-12",
+        "position": "contre",
+        "tags": [
+          "budget"
+        ],
+        "sortCode": "rejeté"
+      },
+      {
+        "scrutinId": "VTANR5L17V297",
+        "scrutinNumero": 297,
+        "titre": "l'amendement n° 862 de Mme Sas après l'article 13 du projet de loi de finances pour 2025 (première lecture).",
+        "dateScrutin": "2024-11-07",
+        "position": "contre",
+        "tags": [
+          "budget"
+        ],
+        "sortCode": "rejeté"
+      },
+      {
+        "scrutinId": "VTANR5L17V298",
+        "scrutinNumero": 298,
+        "titre": "l'amendement n° 859 de Mme Sas après l'article 13 du projet de loi de finances pour 2025 (première lecture).",
+        "dateScrutin": "2024-11-07",
+        "position": "contre",
+        "tags": [
+          "budget"
+        ],
+        "sortCode": "rejeté"
+      },
+      {
+        "scrutinId": "VTANR5L17V296",
+        "scrutinNumero": 296,
+        "titre": "l'amendement n° 495 de M. Maurel et les amendements identiques suivants après l'article 13 du projet de loi de finances pour 2025 (première lecture).",
+        "dateScrutin": "2024-11-07",
+        "position": "contre",
+        "tags": [
+          "budget"
+        ],
+        "sortCode": "adopté"
+      }
+    ]
+  },
+  {
+    "slug": "laurent-panifous",
+    "ministerName": "Laurent Panifous",
+    "ministereCode": "MATIGNON",
+    "relevantTags": [
+      "budget",
+      "fiscalite"
+    ],
+    "deputeId": "PA793210",
+    "totalVotesOnPortfolio": 324,
+    "contreVotes": 0,
+    "abstentionVotes": 2,
+    "contreRate": 0,
+    "examples": []
+  }
+]

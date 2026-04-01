@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/db";
+import { matchRevolvingDoor } from "@/lib/signal-types";
 import type { CategorieCarriere, SourceCarriere } from "@prisma/client";
 
 const CATEGORIE_LABEL: Record<CategorieCarriere, string> = {
@@ -34,8 +35,12 @@ function formatDate(d: Date | null): string {
 
 export async function CareerSection({
   personnaliteId,
+  ministereCode,
+  portefeuille,
 }: {
   personnaliteId: string;
+  ministereCode?: string | null;
+  portefeuille?: string | null;
 }) {
   const entries = await prisma.entreeCarriere.findMany({
     where: { personnaliteId },
@@ -70,6 +75,14 @@ export async function CareerSection({
                 return start ? `${start} – ${end}` : end;
               })();
 
+              // Revolving door detection for private-sector entries
+              const revolvingKeywords =
+                entry.categorie === "CARRIERE_PRIVEE" &&
+                ministereCode &&
+                entry.organisation
+                  ? matchRevolvingDoor(ministereCode, portefeuille ?? null, entry.organisation)
+                  : [];
+
               return (
                 <div
                   key={entry.id}
@@ -78,7 +91,11 @@ export async function CareerSection({
                   {/* Dot */}
                   <div className="relative z-10 mt-1 shrink-0">
                     <div
-                      className={`h-2.5 w-2.5 rounded-full ring-2 ring-bureau-900 ${CATEGORIE_DOT[entry.categorie]}`}
+                      className={`h-2.5 w-2.5 rounded-full ring-2 ring-bureau-900 ${
+                        revolvingKeywords.length > 0
+                          ? "bg-amber-500 ring-amber-500/20"
+                          : CATEGORIE_DOT[entry.categorie]
+                      }`}
                     />
                   </div>
 
@@ -89,6 +106,11 @@ export async function CareerSection({
                       <span className="rounded border border-bureau-700/30 bg-bureau-800/30 px-1 py-px text-[10px] text-bureau-500">
                         {CATEGORIE_LABEL[entry.categorie]}
                       </span>
+                      {revolvingKeywords.length > 0 && (
+                        <span className="rounded border border-amber-500/30 bg-amber-500/10 px-1.5 py-px text-[10px] font-medium text-amber-400">
+                          Porte tournante
+                        </span>
+                      )}
                     </div>
 
                     {entry.organisation && (

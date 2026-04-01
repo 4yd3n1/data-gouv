@@ -2,7 +2,7 @@
   "slug": "roland-lescure",
   "nom": "Lescure",
   "prenom": "Roland",
-  "researched_at": "2026-03-05",
+  "researched_at": "2026-03-27",
   "sources_used": [
     "Wikimonde (Roland Lescure article)",
     "Assemblee nationale (assemblee-nationale.fr)",
@@ -204,5 +204,44 @@
     }
   ],
   "judicial_events": [],
-  "conflict_flags": []
+  "conflict_flags": [
+    {
+      "type": "PORTE_TOURNANTE",
+      "description": "Ancien DG délégué de Natixis AM, DGA de Groupama AM, puis premier VP et CIO de la CDPQ (250 Mds$ gérés). Nommé ministre de l'Économie et des Finances. Natixis IM (3 actions) et Groupama (30 actions) figurent parmi les lobbyistes déclarés ciblant son ministère.",
+      "sourceUrl": "https://www.lefigaro.fr/politique/qui-est-roland-lescure-le-nouveau-ministre-de-l-economie-20251012",
+      "sourcePrincipale": "Le Figaro / AGORA HATVP",
+      "severity": "notable",
+      "data": {
+        "careerOrg": "Natixis AM / Groupama AM / CDPQ",
+        "portfolio": "Économie & Finances",
+        "lobbyOrg": "Natixis IM + Groupama",
+        "lobbyCount": 33
+      },
+      "_ingested": false
+    },
+    {
+      "type": "VOTE_CONTRADICTION",
+      "description": "En tant que député(e), a voté contre 8 scrutin(s) sur 346 portant sur les thématiques budget, fiscalite — domaine(s) relevant de son portefeuille ministériel actuel (taux d'opposition : 2 %).",
+      "severity": "informatif",
+      "data": {
+        "totalVotes": 346,
+        "contreVotes": 8,
+        "contreRate": 2,
+        "tags": [
+          "budget",
+          "fiscalite"
+        ],
+        "topExamples": "le sous-amendement n° 61 de M. Jean-Philippe Tanguy à l'amendement n° 53 de M. L; l'ensemble de la proposition de loi instaurant un impôt plancher de 2 % sur le p; l'article unique de la proposition de loi instaurant un impôt plancher de 2 % su"
+      },
+      "_ingested": false
+    },
+    {
+      "type": "PARADIS_FISCAUX",
+      "description": "En tant que premier VP et CIO de la CDPQ (2009-2017), Lescure a doublé les investissements dans les paradis fiscaux. En 2016 : 14 Mds$ aux Îles Caïmans, 3,3 Mds$ en Suisse, 2,5 Mds$ aux Bermudes. Il est désormais ministre de l'Économie et des Finances — le ministère qui définit la politique fiscale française, y compris la lutte contre l'évasion fiscale.",
+      "sourceUrl": "https://ici.radio-canada.ca/nouvelle/1063046/cdpq-paradis-fiscaux-augmentation",
+      "sourcePrincipale": "Radio-Canada / Mediapart",
+      "severity": "critique",
+      "_ingested": false
+    }
+  ]
 }

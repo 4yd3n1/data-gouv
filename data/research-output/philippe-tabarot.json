@@ -2,7 +2,7 @@
   "slug": "philippe-tabarot",
   "nom": "Tabarot",
   "prenom": "Philippe",
-  "researched_at": "2026-03-05",
+  "researched_at": "2026-03-27",
   "sources_used": [
     "France Info",
     "France Bleu",
@@ -127,6 +127,13 @@
     {
       "description": "Le GIP tourisme-culture au coeur de l'enquête PNF a été créé par sa soeur Michèle Tabarot, maire du Cannet. Cumul de rémunérations entre le GIP, la mairie du Cannet et le Conseil régional PACA en 2018-2020.",
       "sourceUrl": "https://www.franceinfo.fr/enquetes-franceinfo/le-ministre-des-transports-philippe-tabarot-vise-par-une-enquete-pour-detournement-de-fonds-publics-et-prise-illegale-d-interets_7011494.html",
+      "_ingested": false
+    },
+    {
+      "type": "PRIVATISATION_TRANSPORT",
+      "description": "En tant que VP de la Région PACA chargé des transports (2015-2021), Tabarot a piloté la première privatisation de TER en France (ligne Marseille-Toulon-Nice, attribuée à Transdev). Il est désormais ministre des Transports avec autorité sur le cadre national de mise en concurrence ferroviaire.",
+      "sourcePrincipale": "France Bleu / Public Sénat",
+      "severity": "notable",
       "_ingested": false
     }
   ]
