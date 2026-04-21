@@ -8,6 +8,7 @@
 import "dotenv/config";
 import { prisma } from "../src/lib/db";
 import { TypeMandat } from "@prisma/client";
+import { normalizeName } from "../src/lib/normalize-name";
 import type { GovernmentConfig, MemberSeed } from "./data/types";
 import { LECORNU_CONFIG, LECORNU_RESHUFFLE_DEPARTURES } from "./data/gouvernement-lecornu";
 import { BORNE_CONFIG } from "./data/gouvernement-borne";
@@ -63,11 +64,16 @@ async function seedGovernment(config: GovernmentConfig) {
       if (senateur) senateurId = senateur.id;
     }
 
+    const nomNormalise = normalizeName(member.nom);
+    const prenomNormalise = normalizeName(member.prenom);
+
     const personnalite = await prisma.personnalitePublique.upsert({
       where: { slug: member.slug },
       create: {
         nom: member.nom,
         prenom: member.prenom,
+        nomNormalise,
+        prenomNormalise,
         civilite: member.civilite,
         slug: member.slug,
         photoUrl: member.photoUrl ?? null,
@@ -80,6 +86,8 @@ async function seedGovernment(config: GovernmentConfig) {
       update: {
         nom: member.nom,
         prenom: member.prenom,
+        nomNormalise,
+        prenomNormalise,
         civilite: member.civilite,
         ...(member.photoUrl && { photoUrl: member.photoUrl }),
         ...(member.bioCourte && { bioCourte: member.bioCourte }),

@@ -1,0 +1,68 @@
+{
+  "slug": "elisabeth-borne",
+  "nom": "Borne",
+  "prenom": "Elisabeth",
+  "civilite": "Mme",
+  "researched_at": "2026-04-01",
+  "_ingested": false,
+  "sources_used": [
+    "https://www.lemonde.fr/politique/",
+    "https://www.vie-publique.fr/"
+  ],
+  "notes": "X (Polytechnique), Ponts et Chaussees. Haute fonctionnaire: directrice de l'urbanisme (Mairie de Paris), directrice de cabinet de Segolene Royal, prefete de Vienne, presidente de la RATP. Ministre des Transports 2017, de la Transition ecologique 2019, du Travail 2020, Premiere ministre 2022-2024, puis ministre de l'Education sous Bayrou.",
+  "career_entries": [
+    {
+      "dateDebut": "1981",
+      "dateFin": "1986",
+      "categorie": "FORMATION",
+      "titre": "Ecole polytechnique + Ecole des Ponts et Chaussees",
+      "organisation": "Polytechnique / ENPC",
+      "description": "X 1981. Ingenieure des Ponts et Chaussees.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "1986",
+      "dateFin": "2002",
+      "categorie": "FONCTION_PUBLIQUE",
+      "titre": "Haute fonctionnaire (urbanisme, equipement)",
+      "organisation": "Ministeres / Mairie de Paris",
+      "description": "Direction de l'urbanisme a la Mairie de Paris (sous Chirac puis Delanoe).",
+      "sourceUrl": "https://www.vie-publique.fr/",
+      "sourcePrincipale": "Vie publique",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2014",
+      "dateFin": "2015",
+      "categorie": "FONCTION_PUBLIQUE",
+      "titre": "Directrice de cabinet de Segolene Royal",
+      "organisation": "Ministere de l'Ecologie",
+      "description": "Directrice de cabinet de la ministre de l'Ecologie.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2015",
+      "dateFin": "2017",
+      "categorie": "FONCTION_PUBLIQUE",
+      "titre": "Prefete de la region Poitou-Charentes / Presidente de la RATP",
+      "organisation": "Prefecture / RATP",
+      "description": "Prefete puis presidente-directrice generale de la RATP.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": []
+}

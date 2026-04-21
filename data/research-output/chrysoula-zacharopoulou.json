@@ -1,0 +1,56 @@
+{
+  "slug": "chrysoula-zacharopoulou",
+  "nom": "Zacharopoulou",
+  "prenom": "Chrysoula",
+  "civilite": "Mme",
+  "researched_at": "2026-04-01",
+  "_ingested": false,
+  "sources_used": [
+    "https://www.lemonde.fr/politique/",
+    "https://www.mediapart.fr/"
+  ],
+  "notes": "Medecin gynecologue d'origine grecque. Specialiste de l'endometriose. Secretaire d'Etat chargee du Developpement et de la Francophonie sous Borne. Visee par une enquete pour violences gynecologiques.",
+  "career_entries": [
+    {
+      "dateDebut": "1995",
+      "dateFin": "2002",
+      "categorie": "FORMATION",
+      "titre": "Etudes de medecine en Grece puis en France",
+      "organisation": "Universite d'Athenes / Universites parisiennes",
+      "description": "Doctorat en medecine, specialisation en gynecologie.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2002",
+      "dateFin": "2022",
+      "categorie": "CARRIERE_PRIVEE",
+      "titre": "Chirurgienne gynecologue",
+      "organisation": "Hopitaux parisiens",
+      "description": "Specialiste de l'endometriose. Militante pour la reconnaissance de cette maladie.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": [
+    {
+      "date": "2022-06-01",
+      "type": "ENQUETE_PRELIMINAIRE",
+      "nature": "violences par personne chargee d'une mission de service public",
+      "juridiction": "Parquet de Paris",
+      "statut": "EN_COURS",
+      "resume": "Enquete ouverte apres des plaintes de patientes pour des examens gynecologiques effectues sans consentement. Zacharopoulou conteste les allegations.",
+      "sourcePrincipale": "Mediapart",
+      "sourceUrl": "https://www.mediapart.fr/journal/politique/",
+      "sourceDate": "2022-06",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "slug": "thomas-cazenave",
+  "nom": "Cazenave",
+  "prenom": "Thomas",
+  "civilite": "M.",
+  "researched_at": "2026-04-01",
+  "_ingested": false,
+  "sources_used": [
+    "https://www.assemblee-nationale.fr/"
+  ],
+  "notes": "ENS, Sciences Po, ENA. IGF. Orange (strategy). Pole emploi (DG). Conseiller economique de Macron a l'Elysee. Depute de Gironde 2022. Ministre des Comptes publics sous Borne et Attal.",
+  "career_entries": [
+    {
+      "dateDebut": "2000",
+      "dateFin": "2008",
+      "categorie": "FORMATION",
+      "titre": "ENS + Sciences Po + ENA",
+      "organisation": "ENS / Sciences Po / ENA",
+      "description": "Triple formation.",
+      "sourceUrl": "https://www.assemblee-nationale.fr/",
+      "sourcePrincipale": "Assemblee nationale",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2008",
+      "dateFin": "2012",
+      "categorie": "FONCTION_PUBLIQUE",
+      "titre": "Inspecteur des finances",
+      "organisation": "IGF",
+      "description": "Inspecteur des finances.",
+      "sourceUrl": "https://www.assemblee-nationale.fr/",
+      "sourcePrincipale": "Assemblee nationale",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2012",
+      "dateFin": "2017",
+      "categorie": "CARRIERE_PRIVEE",
+      "titre": "Directeur strategie chez Orange puis DG adjoint Pole emploi",
+      "organisation": "Orange / Pole emploi",
+      "description": "Secteur prive puis etablissement public.",
+      "sourceUrl": "https://www.assemblee-nationale.fr/",
+      "sourcePrincipale": "Assemblee nationale",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2017",
+      "dateFin": "2022",
+      "categorie": "FONCTION_PUBLIQUE",
+      "titre": "Conseiller economique du President Macron",
+      "organisation": "Elysee",
+      "description": "Conseiller a la cellule economique de l'Elysee.",
+      "sourceUrl": "https://www.assemblee-nationale.fr/",
+      "sourcePrincipale": "Assemblee nationale",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": []
+}

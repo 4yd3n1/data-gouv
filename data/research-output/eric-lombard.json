@@ -1,0 +1,81 @@
+{
+  "slug": "eric-lombard",
+  "nom": "Lombard",
+  "prenom": "Eric",
+  "civilite": "M.",
+  "researched_at": "2026-04-01",
+  "_ingested": false,
+  "sources_used": [
+    "https://www.lemonde.fr/politique/",
+    "https://www.challenges.fr/"
+  ],
+  "notes": "HEC, ENA. Inspecteur des finances. Carriere bancaire: BNP Paribas (directeur general), Generali France. Directeur general de la Caisse des depots 2017-2024. Ministre de l'Economie sous Bayrou.",
+  "career_entries": [
+    {
+      "dateDebut": "1978",
+      "dateFin": "1982",
+      "categorie": "FORMATION",
+      "titre": "HEC Paris + ENA",
+      "organisation": "HEC / ENA",
+      "description": "HEC puis ENA.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "1982",
+      "dateFin": "1990",
+      "categorie": "FONCTION_PUBLIQUE",
+      "titre": "Inspecteur des finances",
+      "organisation": "Inspection generale des finances",
+      "description": "Debut de carriere dans la haute administration.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "1990",
+      "dateFin": "2013",
+      "categorie": "CARRIERE_PRIVEE",
+      "titre": "Directeur general de BNP Paribas Cardif",
+      "organisation": "BNP Paribas",
+      "description": "Differents postes de direction au sein de BNP Paribas, dont DG de BNP Paribas Cardif (assurance).",
+      "sourceUrl": "https://www.challenges.fr/",
+      "sourcePrincipale": "Challenges",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2013",
+      "dateFin": "2017",
+      "categorie": "CARRIERE_PRIVEE",
+      "titre": "PDG de Generali France",
+      "organisation": "Generali France",
+      "description": "President-directeur general de la filiale francaise de l'assureur italien.",
+      "sourceUrl": "https://www.challenges.fr/",
+      "sourcePrincipale": "Challenges",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2017",
+      "dateFin": "2024",
+      "categorie": "FONCTION_PUBLIQUE",
+      "titre": "Directeur general de la Caisse des depots",
+      "organisation": "Caisse des depots et consignations",
+      "description": "DG de la CDC. A pilote la fusion avec La Poste et CNP Assurances.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": []
+}

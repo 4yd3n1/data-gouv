@@ -1,0 +1,68 @@
+{
+  "slug": "didier-migaud",
+  "nom": "Migaud",
+  "prenom": "Didier",
+  "civilite": "M.",
+  "researched_at": "2026-04-01",
+  "_ingested": false,
+  "sources_used": [
+    "https://www.lemonde.fr/politique/",
+    "https://www.vie-publique.fr/"
+  ],
+  "notes": "IEP Grenoble, DEA droit public. Depute de l'Isere 1988-2010. Rapporteur general du budget. Premier president de la Cour des comptes 2010-2020. President de la HATVP 2020-2024. Garde des Sceaux sous Barnier.",
+  "career_entries": [
+    {
+      "dateDebut": "1975",
+      "dateFin": "1980",
+      "categorie": "FORMATION",
+      "titre": "IEP Grenoble + DEA droit public",
+      "organisation": "IEP Grenoble / Universite",
+      "description": "Etudes de sciences politiques et de droit.",
+      "sourceUrl": "https://www.vie-publique.fr/",
+      "sourcePrincipale": "Vie publique",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "1988",
+      "dateFin": "2010",
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Depute de l'Isere (4e circ.)",
+      "organisation": "Assemblee nationale",
+      "description": "Depute PS. Rapporteur general du budget. President de la commission des finances.",
+      "sourceUrl": "https://www.assemblee-nationale.fr/",
+      "sourcePrincipale": "Assemblee nationale",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2010",
+      "dateFin": "2020",
+      "categorie": "FONCTION_PUBLIQUE",
+      "titre": "Premier president de la Cour des comptes",
+      "organisation": "Cour des comptes",
+      "description": "A la tete de la juridiction financiere pendant 10 ans.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2020",
+      "dateFin": "2024",
+      "categorie": "FONCTION_PUBLIQUE",
+      "titre": "President de la HATVP",
+      "organisation": "Haute Autorite pour la transparence de la vie publique",
+      "description": "President de la HATVP.",
+      "sourceUrl": "https://www.vie-publique.fr/",
+      "sourcePrincipale": "Vie publique",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": []
+}

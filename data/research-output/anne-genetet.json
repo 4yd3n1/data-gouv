@@ -1,0 +1,68 @@
+{
+  "slug": "anne-genetet",
+  "nom": "Genetet",
+  "prenom": "Anne",
+  "civilite": "Mme",
+  "researched_at": "2026-04-01",
+  "_ingested": false,
+  "sources_used": [
+    "https://www.assemblee-nationale.fr/",
+    "https://www.lemonde.fr/politique/"
+  ],
+  "notes": "Medecin de formation (1984-1994). Journaliste medicale. Expatriee a Singapour 2005, fondatrice de Help Agency 2009. Deputee des Francais de l'etranger (11e circ.) 2017-2024. Ministre de l'Education nationale sous Barnier.",
+  "career_entries": [
+    {
+      "dateDebut": "1984",
+      "dateFin": "1994",
+      "categorie": "FORMATION",
+      "titre": "Etudes de medecine",
+      "organisation": "Universite de Paris",
+      "description": "Doctorat en medecine.",
+      "sourceUrl": "https://www.assemblee-nationale.fr/",
+      "sourcePrincipale": "Assemblee nationale",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "1994",
+      "dateFin": "2005",
+      "categorie": "CARRIERE_PRIVEE",
+      "titre": "Journaliste medicale",
+      "organisation": "Presse medicale",
+      "description": "Journaliste specialisee en sante.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "medium",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2009",
+      "dateFin": "2017",
+      "categorie": "CARRIERE_PRIVEE",
+      "titre": "Fondatrice de Help Agency",
+      "organisation": "Help Agency (Singapour)",
+      "description": "Agence d'aide aux expatries a Singapour.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "medium",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2017",
+      "dateFin": "2024",
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Deputee des Francais de l'etranger (11e circ.)",
+      "organisation": "Assemblee nationale",
+      "description": "Elue deputee LREM.",
+      "sourceUrl": "https://www.assemblee-nationale.fr/",
+      "sourcePrincipale": "Assemblee nationale",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": []
+}

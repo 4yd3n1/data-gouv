@@ -1,0 +1,69 @@
+{
+  "slug": "damien-abad",
+  "nom": "Abad",
+  "prenom": "Damien",
+  "civilite": "M.",
+  "researched_at": "2026-04-01",
+  "_ingested": false,
+  "sources_used": [
+    "https://www.mediapart.fr/",
+    "https://www.lemonde.fr/politique/"
+  ],
+  "notes": "Sciences Po, HEC. Depute de l'Ain 2012-2024, president du groupe LR 2019-2022. Ministre des Solidarites sous Borne (mai-juil 2022, tres bref). Accuse d'agressions sexuelles (Mediapart), enquete classee sans suite.",
+  "career_entries": [
+    {
+      "dateDebut": "2001",
+      "dateFin": "2004",
+      "categorie": "FORMATION",
+      "titre": "Sciences Po Paris + HEC",
+      "organisation": "Sciences Po / HEC Paris",
+      "description": "Double cursus.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2009",
+      "dateFin": "2012",
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Depute europeen",
+      "organisation": "Parlement europeen",
+      "description": "Plus jeune depute europeen francais a 29 ans.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2012",
+      "dateFin": "2024",
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Depute de l'Ain (5e circ.)",
+      "organisation": "Assemblee nationale",
+      "description": "Depute UMP/LR. President du groupe LR 2019-2022.",
+      "sourceUrl": "https://www.assemblee-nationale.fr/",
+      "sourcePrincipale": "Assemblee nationale",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": [
+    {
+      "date": "2022-06-01",
+      "type": "ENQUETE_PRELIMINAIRE",
+      "nature": "tentatives d'agression sexuelle",
+      "juridiction": "Parquet de Paris",
+      "statut": "CLOS",
+      "resume": "Enquete ouverte apres des revelations de Mediapart sur des accusations de deux femmes. Classee sans suite en decembre 2023 pour insuffisance de preuves.",
+      "sourcePrincipale": "Mediapart",
+      "sourceUrl": "https://www.mediapart.fr/journal/france/",
+      "sourceDate": "2022-06",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ]
+}

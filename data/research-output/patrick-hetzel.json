@@ -1,0 +1,67 @@
+{
+  "slug": "patrick-hetzel",
+  "nom": "Hetzel",
+  "prenom": "Patrick",
+  "civilite": "M.",
+  "researched_at": "2026-04-01",
+  "_ingested": false,
+  "sources_used": [
+    "https://www.assemblee-nationale.fr/"
+  ],
+  "notes": "ESSEC, EM Strasbourg, doctorat sciences de gestion. Professeur des universites. Recteur de Limoges. Directeur de la DGESIP. Depute du Bas-Rhin 2012. Ministre de l'Enseignement superieur sous Barnier et Bayrou.",
+  "career_entries": [
+    {
+      "dateDebut": "1990",
+      "dateFin": "2000",
+      "categorie": "FORMATION",
+      "titre": "ESSEC + EM Strasbourg + doctorat gestion",
+      "organisation": "ESSEC / EM Strasbourg",
+      "description": "Formation en gestion et doctorat.",
+      "sourceUrl": "https://www.assemblee-nationale.fr/",
+      "sourcePrincipale": "Assemblee nationale",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2000",
+      "dateFin": "2008",
+      "categorie": "CARRIERE_PRIVEE",
+      "titre": "Professeur des universites",
+      "organisation": "Universites",
+      "description": "Professeur en sciences de gestion.",
+      "sourceUrl": "https://www.assemblee-nationale.fr/",
+      "sourcePrincipale": "Assemblee nationale",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2008",
+      "dateFin": "2012",
+      "categorie": "FONCTION_PUBLIQUE",
+      "titre": "Recteur de Limoges puis DGESIP",
+      "organisation": "Education nationale / Enseignement superieur",
+      "description": "Recteur d'academie puis directeur de la DGESIP.",
+      "sourceUrl": "https://www.assemblee-nationale.fr/",
+      "sourcePrincipale": "Assemblee nationale",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2012",
+      "dateFin": null,
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Depute du Bas-Rhin (7e circ.)",
+      "organisation": "Assemblee nationale",
+      "description": "Depute LR.",
+      "sourceUrl": "https://www.assemblee-nationale.fr/",
+      "sourcePrincipale": "Assemblee nationale",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": []
+}

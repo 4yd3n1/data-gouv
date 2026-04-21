@@ -22,6 +22,16 @@ const CATEGORIE_DOT: Record<CategorieCarriere, string> = {
   AUTRE: "bg-bureau-600",
 };
 
+const CATEGORIE_BAND: Record<CategorieCarriere, string> = {
+  MANDAT_GOUVERNEMENTAL: "bg-teal-500/70",
+  MANDAT_ELECTIF: "bg-blue-500/70",
+  CARRIERE_PRIVEE: "bg-rose-500/50",
+  FONCTION_PUBLIQUE: "bg-amber-500/60",
+  FORMATION: "bg-purple-500/60",
+  ORGANISME: "bg-bureau-500/50",
+  AUTRE: "bg-bureau-600/50",
+};
+
 const SOURCE_LABEL: Partial<Record<SourceCarriere, string>> = {
   HATVP: "HATVP",
   ASSEMBLEE: "Assemblée nationale",
@@ -49,9 +59,115 @@ export async function CareerSection({
 
   const hasPresseSource = entries.some((e) => e.source === "PRESSE");
 
+  // Build the horizontal frieze data:
+  // pick a start year (earliest known dateDebut) and end year (latest known or today)
+  const entriesWithDates = entries.filter((e) => e.dateDebut);
+  const now = new Date();
+  const minYear = entriesWithDates.length
+    ? Math.min(
+        ...entriesWithDates.map((e) => (e.dateDebut as Date).getFullYear()),
+      )
+    : null;
+  const maxYear = entriesWithDates.length
+    ? Math.max(
+        ...entriesWithDates.map((e) =>
+          e.dateFin
+            ? (e.dateFin as Date).getFullYear()
+            : now.getFullYear(),
+        ),
+      )
+    : null;
+  const span = minYear != null && maxYear != null ? maxYear - minYear : 0;
+
+  const friezeSegments =
+    minYear != null && maxYear != null && span > 0
+      ? entriesWithDates.map((e) => {
+          const startY = (e.dateDebut as Date).getFullYear();
+          const endY = e.dateFin
+            ? (e.dateFin as Date).getFullYear()
+            : now.getFullYear();
+          const leftPct = ((startY - minYear) / span) * 100;
+          const widthPct = Math.max(0.8, ((endY - startY) / span) * 100);
+          return {
+            id: e.id,
+            leftPct,
+            widthPct,
+            categorie: e.categorie,
+            titre: e.titre,
+            years: `${startY}–${e.dateFin ? endY : "…"}`,
+          };
+        })
+      : [];
+
+  // Simple tick years every 5y
+  const tickYears =
+    minYear != null && maxYear != null
+      ? Array.from(
+          { length: Math.floor(span / 5) + 1 },
+          (_, i) => minYear + i * 5,
+        ).filter((y) => y <= maxYear)
+      : [];
+
   return (
     <section>
       <SectionHeader title="Parcours" />
+
+      {/* Horizontal frieze */}
+      {friezeSegments.length > 0 && span > 0 && (
+        <div className="mb-8 rounded-xl border border-bureau-700/20 bg-bureau-800/20 p-4">
+          <div className="mb-2 flex items-baseline justify-between text-[10px] uppercase tracking-[0.15em] text-bureau-600">
+            <span>Frise chronologique</span>
+            <span className="tabular-nums text-bureau-500">
+              {minYear} → {maxYear}
+            </span>
+          </div>
+
+          {/* Bar */}
+          <div className="relative h-7 rounded-md bg-bureau-900/50">
+            {friezeSegments.map((seg) => (
+              <div
+                key={seg.id}
+                title={`${seg.titre} · ${seg.years}`}
+                className={`absolute top-0 bottom-0 ${CATEGORIE_BAND[seg.categorie]} rounded-[3px] hover:ring-2 hover:ring-bureau-100/40 transition-shadow`}
+                style={{
+                  left: `${seg.leftPct}%`,
+                  width: `${seg.widthPct}%`,
+                }}
+              />
+            ))}
+          </div>
+
+          {/* Year ticks */}
+          {tickYears.length > 0 && (
+            <div className="mt-1.5 flex justify-between text-[10px] tabular-nums text-bureau-600">
+              {tickYears.map((y) => (
+                <span key={y}>{y}</span>
+              ))}
+            </div>
+          )}
+
+          {/* Legend */}
+          <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1.5 text-[10px] text-bureau-500">
+            {(
+              [
+                "MANDAT_GOUVERNEMENTAL",
+                "MANDAT_ELECTIF",
+                "CARRIERE_PRIVEE",
+                "FONCTION_PUBLIQUE",
+                "FORMATION",
+                "ORGANISME",
+              ] as CategorieCarriere[]
+            )
+              .filter((c) => entries.some((e) => e.categorie === c))
+              .map((c) => (
+                <span key={c} className="inline-flex items-center gap-1.5">
+                  <span className={`h-2 w-2 rounded-sm ${CATEGORIE_BAND[c]}`} />
+                  {CATEGORIE_LABEL[c]}
+                </span>
+              ))}
+          </div>
+        </div>
+      )}
 
       {entries.length === 0 ? (
         <Placeholder text="Données de parcours en cours de collecte." />

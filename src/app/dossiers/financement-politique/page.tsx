@@ -117,7 +117,7 @@ export default async function FinancementPolitiquePage() {
       <DossierHero dossier={dossier} />
       <DossierNav currentSlug="financement-politique" />
 
-      <div className="mx-auto max-w-4xl px-6 py-8 space-y-10">
+      <div className="mx-auto max-w-5xl px-6 py-8 space-y-10">
         {/* Section 1: Cost per seat */}
         {costRows.length > 0 && (
           <section>

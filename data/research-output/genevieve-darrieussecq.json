@@ -1,0 +1,55 @@
+{
+  "slug": "genevieve-darrieussecq",
+  "nom": "Darrieussecq",
+  "prenom": "Genevieve",
+  "civilite": "Mme",
+  "researched_at": "2026-04-01",
+  "_ingested": false,
+  "sources_used": [
+    "https://www.lemonde.fr/politique/",
+    "https://www.assemblee-nationale.fr/"
+  ],
+  "notes": "Medecin allergologue (1983-2008). Maire de Mont-de-Marsan 2008-2017. Deputee des Landes 2017. Secretaire d'Etat aux Armees 2017-2022, ministre du Handicap 2022-2023, ministre de la Sante sous Barnier.",
+  "career_entries": [
+    {
+      "dateDebut": "1977",
+      "dateFin": "1983",
+      "categorie": "FORMATION",
+      "titre": "Doctorat en medecine, specialisation allergologie",
+      "organisation": "Universite de Bordeaux",
+      "description": "Etudes de medecine et specialisation en allergologie.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "1983",
+      "dateFin": "2008",
+      "categorie": "CARRIERE_PRIVEE",
+      "titre": "Medecin allergologue",
+      "organisation": "Cabinet medical a Mont-de-Marsan",
+      "description": "Medecin allergologue en exercice liberal pendant 25 ans.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2008",
+      "dateFin": "2017",
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Maire de Mont-de-Marsan",
+      "organisation": "Mairie de Mont-de-Marsan",
+      "description": "Premiere femme elue maire de Mont-de-Marsan.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": []
+}

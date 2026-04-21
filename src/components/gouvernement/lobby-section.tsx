@@ -10,8 +10,8 @@ export async function LobbySection({
   if (!ministereCode) {
     return (
       <section>
-        <SectionHeader title="Lobbying déclaré" />
-        <Placeholder text="Code ministère non référencé." />
+        <SectionHeader title="Lobbying déclaré ciblant ce portefeuille" />
+        <Placeholder text="Aucune action de lobby enregistrée par la HATVP pour ce portefeuille." />
       </section>
     );
   }

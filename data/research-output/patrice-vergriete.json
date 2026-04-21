@@ -1,0 +1,54 @@
+{
+  "slug": "patrice-vergriete",
+  "nom": "Vergriete",
+  "prenom": "Patrice",
+  "civilite": "M.",
+  "researched_at": "2026-04-01",
+  "_ingested": false,
+  "sources_used": [
+    "https://www.lemonde.fr/politique/"
+  ],
+  "notes": "Polytechnique (X89), Ponts et Chaussees. Cabinet d'Aubry. Directeur de l'AGUR. Maire de Dunkerque 2014. Ministre du Logement sous Borne, des Transports sous Attal. President de l'ANRU.",
+  "career_entries": [
+    {
+      "dateDebut": "1989",
+      "dateFin": "1994",
+      "categorie": "FORMATION",
+      "titre": "Polytechnique (X89) + Ponts et Chaussees",
+      "organisation": "Polytechnique / ENPC",
+      "description": "X89. Ingenieur des Ponts.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "1994",
+      "dateFin": "2014",
+      "categorie": "FONCTION_PUBLIQUE",
+      "titre": "Ingenieur territorial et directeur d'agence d'urbanisme",
+      "organisation": "AGUR / Dunkerque",
+      "description": "Directeur de l'agence d'urbanisme de Dunkerque.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2014",
+      "dateFin": null,
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Maire de Dunkerque",
+      "organisation": "Mairie de Dunkerque",
+      "description": "Maire sans etiquette.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": []
+}

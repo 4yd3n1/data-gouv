@@ -1,0 +1,54 @@
+{
+  "slug": "sylvie-retailleau",
+  "nom": "Retailleau",
+  "prenom": "Sylvie",
+  "civilite": "Mme",
+  "researched_at": "2026-04-01",
+  "_ingested": false,
+  "sources_used": [
+    "https://www.lemonde.fr/politique/"
+  ],
+  "notes": "ENS Cachan, doctorat en physique (Paris-Sud). Professeure des universites. Presidente de l'universite Paris-Saclay 2020. Ministre de l'Enseignement superieur sous Borne et Attal.",
+  "career_entries": [
+    {
+      "dateDebut": "1985",
+      "dateFin": "1993",
+      "categorie": "FORMATION",
+      "titre": "ENS Cachan + doctorat physique",
+      "organisation": "ENS Cachan / Universite Paris-Sud",
+      "description": "Normalienne, docteure en physique.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "1993",
+      "dateFin": "2020",
+      "categorie": "CARRIERE_PRIVEE",
+      "titre": "Professeure des universites",
+      "organisation": "Universite Paris-Sud / Paris-Saclay",
+      "description": "Enseignante-chercheuse en electronique et physique.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2020",
+      "dateFin": "2022",
+      "categorie": "ORGANISME",
+      "titre": "Presidente de l'universite Paris-Saclay",
+      "organisation": "Universite Paris-Saclay",
+      "description": "Premiere presidente de Paris-Saclay (1ere universite francaise au classement de Shanghai).",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": []
+}

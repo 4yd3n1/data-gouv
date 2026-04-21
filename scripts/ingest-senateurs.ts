@@ -15,6 +15,7 @@ import {
   buildDepartementLookup,
   resolveDepartementCode,
 } from "./lib/departement-lookup";
+import { normalizeName } from "../src/lib/normalize-name";
 
 const BASE = "https://data.senat.fr/data/senateurs";
 
@@ -86,13 +87,17 @@ export async function ingestSenateurs() {
     for (const s of generals) {
       const isActif = s["État"] === "ACTIF";
       const deptCode = resolveDepartementCode(deptLookup, s.Circonscription);
+      const nom = s["Nom usuel"];
+      const prenom = s["Prénom usuel"];
 
       await prisma.senateur.upsert({
         where: { id: s.Matricule },
         update: {
           civilite: s["Qualité"] || null,
-          nom: s["Nom usuel"],
-          prenom: s["Prénom usuel"],
+          nom,
+          prenom,
+          nomNormalise: normalizeName(nom),
+          prenomNormalise: normalizeName(prenom),
           dateNaissance: parseDateSafe(s["Date naissance"]),
           groupe: s["Groupe politique"] || null,
           departement: s.Circonscription || null,
@@ -103,8 +108,10 @@ export async function ingestSenateurs() {
         create: {
           id: s.Matricule,
           civilite: s["Qualité"] || null,
-          nom: s["Nom usuel"],
-          prenom: s["Prénom usuel"],
+          nom,
+          prenom,
+          nomNormalise: normalizeName(nom),
+          prenomNormalise: normalizeName(prenom),
           dateNaissance: parseDateSafe(s["Date naissance"]),
           groupe: s["Groupe politique"] || null,
           departement: s.Circonscription || null,

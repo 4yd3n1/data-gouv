@@ -1,0 +1,54 @@
+{
+  "slug": "nathalie-delattre",
+  "nom": "Delattre",
+  "prenom": "Nathalie",
+  "civilite": "Mme",
+  "researched_at": "2026-04-01",
+  "_ingested": false,
+  "sources_used": [
+    "https://www.senat.fr/"
+  ],
+  "notes": "Licence de droit. Assistante juridique. Vigneronne en Gironde. Conseillere regionale 2010-2014. Senatrice de Gironde 2014. Vice-presidente du Senat. Ministre de l'Education sous Barnier.",
+  "career_entries": [
+    {
+      "dateDebut": "1990",
+      "dateFin": "2000",
+      "categorie": "CARRIERE_PRIVEE",
+      "titre": "Assistante juridique",
+      "organisation": "Secteur prive",
+      "description": "Assistante juridique.",
+      "sourceUrl": "https://www.senat.fr/",
+      "sourcePrincipale": "Senat",
+      "sourceDate": "2024",
+      "confidence": "medium",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2000",
+      "dateFin": "2014",
+      "categorie": "CARRIERE_PRIVEE",
+      "titre": "Vigneronne",
+      "organisation": "Domaine viticole (Gironde)",
+      "description": "Exploitante viticole en Gironde.",
+      "sourceUrl": "https://www.senat.fr/",
+      "sourcePrincipale": "Senat",
+      "sourceDate": "2024",
+      "confidence": "medium",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2014",
+      "dateFin": null,
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Senatrice de la Gironde",
+      "organisation": "Senat",
+      "description": "Senatrice RDSE. Vice-presidente du Senat.",
+      "sourceUrl": "https://www.senat.fr/",
+      "sourcePrincipale": "Senat",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": []
+}

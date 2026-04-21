@@ -13,6 +13,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { prisma } from "../src/lib/db";
 import { logIngestion } from "./lib/ingestion-log";
+import { normalizeName } from "../src/lib/normalize-name";
 import {
   splitDeclarations,
   parseDeclaration,
@@ -227,12 +228,17 @@ export async function ingestDeclarations() {
         where: { declarationId: decl.uuid },
       });
 
+      const nomNormalise = normalizeName(decl.nom);
+      const prenomNormalise = normalizeName(decl.prenom);
+
       await prisma.declarationInteret.upsert({
         where: { id: decl.uuid },
         update: {
           civilite: decl.civilite,
           nom: decl.nom,
           prenom: decl.prenom,
+          nomNormalise,
+          prenomNormalise,
           dateNaissance: decl.dateNaissance,
           typeDeclaration: decl.typeDeclaration,
           typeMandat: decl.typeMandat,
@@ -266,6 +272,8 @@ export async function ingestDeclarations() {
           civilite: decl.civilite,
           nom: decl.nom,
           prenom: decl.prenom,
+          nomNormalise,
+          prenomNormalise,
           dateNaissance: decl.dateNaissance,
           typeDeclaration: decl.typeDeclaration,
           typeMandat: decl.typeMandat,

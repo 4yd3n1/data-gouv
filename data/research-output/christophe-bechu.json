@@ -1,0 +1,68 @@
+{
+  "slug": "christophe-bechu",
+  "nom": "Bechu",
+  "prenom": "Christophe",
+  "civilite": "M.",
+  "researched_at": "2026-04-01",
+  "_ingested": false,
+  "sources_used": [
+    "https://www.lemonde.fr/politique/",
+    "https://www.senat.fr/"
+  ],
+  "notes": "Droit (Angers), Sciences Po. Plus jeune senateur de France en 2004 (30 ans). Maire d'Angers 2014-2022. Ministre de la Transition ecologique sous Borne puis Attal.",
+  "career_entries": [
+    {
+      "dateDebut": "1994",
+      "dateFin": "1998",
+      "categorie": "FORMATION",
+      "titre": "Licence de droit + Sciences Po Paris",
+      "organisation": "Universite d'Angers / Sciences Po",
+      "description": "Etudes de droit et de sciences politiques.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2001",
+      "dateFin": "2004",
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Conseiller general de Maine-et-Loire",
+      "organisation": "Conseil general",
+      "description": "Plus jeune conseiller general du departement.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2004",
+      "dateFin": "2014",
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Senateur de Maine-et-Loire",
+      "organisation": "Senat",
+      "description": "Plus jeune senateur de France a 30 ans.",
+      "sourceUrl": "https://www.senat.fr/",
+      "sourcePrincipale": "Senat",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2014",
+      "dateFin": "2022",
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Maire d'Angers",
+      "organisation": "Mairie d'Angers",
+      "description": "Elu maire en 2014, reelu en 2020.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": []
+}

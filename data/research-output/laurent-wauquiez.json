@@ -1,0 +1,95 @@
+{
+  "slug": "laurent-wauquiez",
+  "nom": "Wauquiez",
+  "prenom": "Laurent",
+  "civilite": "M.",
+  "researched_at": "2026-04-01",
+  "_ingested": false,
+  "sources_used": [
+    "https://www.lemonde.fr/politique/",
+    "https://www.mediapart.fr/"
+  ],
+  "notes": "ENS, agrege d'histoire, ENA (major). Conseil d'Etat. Depute, maire du Puy-en-Velay, president d'Auvergne-Rhone-Alpes, president des LR 2017-2019. Ministre des Affaires etrangeres sous Bayrou. Deux enquetes PNF en cours.",
+  "career_entries": [
+    {
+      "dateDebut": "1995",
+      "dateFin": "2000",
+      "categorie": "FORMATION",
+      "titre": "ENS + agregation d'histoire + ENA (major)",
+      "organisation": "ENS / ENA",
+      "description": "Normalien, agrege d'histoire, major de l'ENA.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2000",
+      "dateFin": "2004",
+      "categorie": "FONCTION_PUBLIQUE",
+      "titre": "Auditeur au Conseil d'Etat",
+      "organisation": "Conseil d'Etat",
+      "description": "Auditeur au Conseil d'Etat.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2004",
+      "dateFin": "2017",
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Depute de Haute-Loire + maire du Puy-en-Velay",
+      "organisation": "Assemblee nationale / Mairie du Puy-en-Velay",
+      "description": "Depute 2004-2017, maire 2008-2016. Plusieurs postes ministeriels (Emploi 2008, Enseignement superieur 2011).",
+      "sourceUrl": "https://www.assemblee-nationale.fr/",
+      "sourcePrincipale": "Assemblee nationale",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2016",
+      "dateFin": null,
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "President de la region Auvergne-Rhone-Alpes",
+      "organisation": "Region Auvergne-Rhone-Alpes",
+      "description": "Elu president de la region. Reelu en 2021.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": [
+    {
+      "date": "2024-01-01",
+      "type": "ENQUETE_PRELIMINAIRE",
+      "nature": "favoritisme, detournement de fonds publics (diners des sommets)",
+      "juridiction": "Parquet national financier",
+      "statut": "EN_COURS",
+      "resume": "Enquete du PNF sur les 'diners des sommets' organises par la region, soupcons de favoritisme et detournement de fonds publics (plus de 100 000 euros).",
+      "sourcePrincipale": "Mediapart",
+      "sourceUrl": "https://www.mediapart.fr/journal/politique/",
+      "sourceDate": "2024-01",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "date": "2024-06-01",
+      "type": "ENQUETE_PRELIMINAIRE",
+      "nature": "soupcons d'emplois fictifs a la region",
+      "juridiction": "Parquet national financier",
+      "statut": "EN_COURS",
+      "resume": "Enquete du PNF pour soupcons d'emplois fictifs au sein de la region Auvergne-Rhone-Alpes.",
+      "sourcePrincipale": "Mediapart",
+      "sourceUrl": "https://www.mediapart.fr/journal/politique/",
+      "sourceDate": "2024-06",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ]
+}

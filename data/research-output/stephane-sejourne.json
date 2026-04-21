@@ -1,0 +1,54 @@
+{
+  "slug": "stephane-sejourne",
+  "nom": "Sejourne",
+  "prenom": "Stephane",
+  "civilite": "M.",
+  "researched_at": "2026-04-01",
+  "_ingested": false,
+  "sources_used": [
+    "https://www.lemonde.fr/politique/"
+  ],
+  "notes": "Droit (Poitiers). UNEF. Conseiller de Macron a l'Elysee. Depute europeen, president du groupe Renew Europe. Plus jeune ministre des Affaires etrangeres sous Attal.",
+  "career_entries": [
+    {
+      "dateDebut": "2008",
+      "dateFin": "2012",
+      "categorie": "FORMATION",
+      "titre": "Droit a l'universite de Poitiers",
+      "organisation": "Universite de Poitiers",
+      "description": "Etudes de droit.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2012",
+      "dateFin": "2017",
+      "categorie": "FONCTION_PUBLIQUE",
+      "titre": "Conseiller politique et communication de Macron",
+      "organisation": "En Marche / Elysee",
+      "description": "Conseiller de Macron pendant la campagne 2017 puis a l'Elysee.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2019",
+      "dateFin": "2024",
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Depute europeen, president de Renew Europe",
+      "organisation": "Parlement europeen",
+      "description": "Elu depute europeen. President du groupe Renew Europe.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": []
+}

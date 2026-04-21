@@ -1,0 +1,54 @@
+{
+  "slug": "sophie-primas",
+  "nom": "Primas",
+  "prenom": "Sophie",
+  "civilite": "Mme",
+  "researched_at": "2026-04-01",
+  "_ingested": false,
+  "sources_used": [
+    "https://www.senat.fr/"
+  ],
+  "notes": "Ingenieure agronome. ESSEC. Auchan, Kantar (ex-TNS Sofres). Senatrice des Yvelines 2011. Presidente de la commission des affaires economiques du Senat. Ministre sous Barnier.",
+  "career_entries": [
+    {
+      "dateDebut": "1985",
+      "dateFin": "1990",
+      "categorie": "FORMATION",
+      "titre": "Ingenieur agronome + ESSEC",
+      "organisation": "Ecole agronomique / ESSEC",
+      "description": "Double formation ingenieur et commerce.",
+      "sourceUrl": "https://www.senat.fr/",
+      "sourcePrincipale": "Senat",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "1990",
+      "dateFin": "2011",
+      "categorie": "CARRIERE_PRIVEE",
+      "titre": "Cadre chez Auchan puis Kantar",
+      "organisation": "Auchan / Kantar (TNS Sofres)",
+      "description": "Carriere dans la grande distribution puis les etudes de marche.",
+      "sourceUrl": "https://www.senat.fr/",
+      "sourcePrincipale": "Senat",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2011",
+      "dateFin": null,
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Senatrice des Yvelines",
+      "organisation": "Senat",
+      "description": "Senatrice LR. Presidente de la commission des affaires economiques.",
+      "sourceUrl": "https://www.senat.fr/",
+      "sourcePrincipale": "Senat",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": []
+}

@@ -1,0 +1,55 @@
+{
+  "slug": "clara-chappaz",
+  "nom": "Chappaz",
+  "prenom": "Clara",
+  "civilite": "Mme",
+  "researched_at": "2026-04-01",
+  "_ingested": false,
+  "sources_used": [
+    "https://www.lemonde.fr/politique/",
+    "https://www.usinenouvelle.com/"
+  ],
+  "notes": "HEC, ex-Google, directrice de la French Tech 2021-2024. Ministre deleguee a l'IA et au Numerique sous Barnier. La plus jeune membre du gouvernement Barnier.",
+  "career_entries": [
+    {
+      "dateDebut": "2010",
+      "dateFin": "2013",
+      "categorie": "FORMATION",
+      "titre": "HEC Paris",
+      "organisation": "HEC Paris",
+      "description": "Diplome d'HEC.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2013",
+      "dateFin": "2018",
+      "categorie": "CARRIERE_PRIVEE",
+      "titre": "Manager chez Google",
+      "organisation": "Google France",
+      "description": "Differentes responsabilites chez Google.",
+      "sourceUrl": "https://www.usinenouvelle.com/",
+      "sourcePrincipale": "L'Usine Nouvelle",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2021",
+      "dateFin": "2024",
+      "categorie": "FONCTION_PUBLIQUE",
+      "titre": "Directrice de la Mission French Tech",
+      "organisation": "Mission French Tech / BPI France",
+      "description": "Direction de la strategie French Tech.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": []
+}

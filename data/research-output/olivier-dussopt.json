@@ -1,0 +1,82 @@
+{
+  "slug": "olivier-dussopt",
+  "nom": "Dussopt",
+  "prenom": "Olivier",
+  "civilite": "M.",
+  "researched_at": "2026-04-01",
+  "_ingested": false,
+  "sources_used": [
+    "https://www.lemonde.fr/politique/",
+    "https://www.francetvinfo.fr/"
+  ],
+  "notes": "Sciences Po Grenoble, DESS. Conseiller general de l'Ardeche, depute, maire d'Annonay. Ministre du Travail sous Borne 2022-2024. Condamne en appel pour favoritisme (fevrier 2025).",
+  "career_entries": [
+    {
+      "dateDebut": "1995",
+      "dateFin": "2000",
+      "categorie": "FORMATION",
+      "titre": "Sciences Po Grenoble + DESS",
+      "organisation": "IEP Grenoble",
+      "description": "Etudes de sciences politiques.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2004",
+      "dateFin": "2008",
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Conseiller general de l'Ardeche",
+      "organisation": "Conseil general de l'Ardeche",
+      "description": "Elu conseiller general.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2007",
+      "dateFin": "2022",
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Depute de l'Ardeche (2e circ.)",
+      "organisation": "Assemblee nationale",
+      "description": "Depute PS puis LREM. Maire d'Annonay 2008-2017.",
+      "sourceUrl": "https://www.assemblee-nationale.fr/",
+      "sourcePrincipale": "Assemblee nationale",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": [
+    {
+      "date": "2024-01-01",
+      "type": "RELAXE",
+      "nature": "favoritisme",
+      "juridiction": "Tribunal correctionnel de Paris",
+      "statut": "CLOS",
+      "resume": "Relaxe en premiere instance en janvier 2024 des accusations de favoritisme dans l'attribution d'un marche public.",
+      "sourcePrincipale": "Le Monde",
+      "sourceUrl": "https://www.lemonde.fr/societe/",
+      "sourceDate": "2024-01",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "date": "2025-02-01",
+      "type": "CONDAMNATION",
+      "nature": "favoritisme (en appel)",
+      "juridiction": "Cour d'appel de Paris",
+      "statut": "CLOS",
+      "resume": "Condamne en appel a 15 000 euros d'amende pour favoritisme dans l'attribution d'un marche public. Infirmation de la relaxe de premiere instance.",
+      "sourcePrincipale": "France Info",
+      "sourceUrl": "https://www.francetvinfo.fr/",
+      "sourceDate": "2025-02",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "slug": "salima-saa",
+  "nom": "Saa",
+  "prenom": "Salima",
+  "civilite": "Mme",
+  "researched_at": "2026-04-01",
+  "_ingested": false,
+  "sources_used": [
+    "https://www.lemonde.fr/politique/"
+  ],
+  "notes": "Biologie (universites britanniques). Saur, Veolia, Transdev. Prefete de Correze. Secretaire d'Etat chargee des Quartiers sous Barnier.",
+  "career_entries": [
+    {
+      "dateDebut": "1990",
+      "dateFin": "1995",
+      "categorie": "FORMATION",
+      "titre": "Etudes de biologie au Royaume-Uni",
+      "organisation": "Universites britanniques",
+      "description": "Formation scientifique au Royaume-Uni.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "medium",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "1995",
+      "dateFin": "2015",
+      "categorie": "CARRIERE_PRIVEE",
+      "titre": "Cadre dans les services publics privatises",
+      "organisation": "Saur / Veolia / Transdev",
+      "description": "Carriere dans les entreprises de services urbains.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "medium",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2020",
+      "dateFin": "2024",
+      "categorie": "FONCTION_PUBLIQUE",
+      "titre": "Prefete de Correze",
+      "organisation": "Prefecture de Correze",
+      "description": "Prefete.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": []
+}

@@ -1,0 +1,55 @@
+{
+  "slug": "gabriel-attal",
+  "nom": "Attal",
+  "prenom": "Gabriel",
+  "civilite": "M.",
+  "researched_at": "2026-04-01",
+  "_ingested": false,
+  "sources_used": [
+    "https://www.lemonde.fr/politique/",
+    "https://www.vie-publique.fr/"
+  ],
+  "notes": "Ecole alsacienne, Sciences Po. PS puis En Marche. Cabinet de Marisol Touraine 2012-2017. Depute des Hauts-de-Seine 2017. Secretaire d'Etat Jeunesse 2018, ministre du Budget 2023, ministre de l'Education 2023, Premier ministre 2024 (le plus jeune de la Ve Republique a 34 ans).",
+  "career_entries": [
+    {
+      "dateDebut": "2007",
+      "dateFin": "2012",
+      "categorie": "FORMATION",
+      "titre": "Sciences Po Paris",
+      "organisation": "Sciences Po Paris",
+      "description": "Master affaires publiques.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2012",
+      "dateFin": "2017",
+      "categorie": "FONCTION_PUBLIQUE",
+      "titre": "Collaborateur au cabinet de Marisol Touraine",
+      "organisation": "Ministere de la Sante",
+      "description": "Conseiller au cabinet de la ministre des Affaires sociales et de la Sante.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2017",
+      "dateFin": null,
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Depute des Hauts-de-Seine (10e circ.)",
+      "organisation": "Assemblee nationale",
+      "description": "Elu depute LREM a 28 ans.",
+      "sourceUrl": "https://www.assemblee-nationale.fr/",
+      "sourcePrincipale": "Assemblee nationale",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": []
+}

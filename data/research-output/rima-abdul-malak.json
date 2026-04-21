@@ -1,0 +1,54 @@
+{
+  "slug": "rima-abdul-malak",
+  "nom": "Abdul Malak",
+  "prenom": "Rima",
+  "civilite": "Mme",
+  "researched_at": "2026-04-01",
+  "_ingested": false,
+  "sources_used": [
+    "https://www.lemonde.fr/politique/"
+  ],
+  "notes": "Sciences Po Lyon. Clowns sans frontieres. Vie culturelle a New York. Conseillere culture a l'Elysee sous Macron. Ministre de la Culture sous Borne 2022-2024.",
+  "career_entries": [
+    {
+      "dateDebut": "1998",
+      "dateFin": "2002",
+      "categorie": "FORMATION",
+      "titre": "Sciences Po Lyon",
+      "organisation": "IEP Lyon",
+      "description": "Sciences politiques.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2002",
+      "dateFin": "2007",
+      "categorie": "ORGANISME",
+      "titre": "Directrice de Clowns sans frontieres",
+      "organisation": "Clowns sans frontieres",
+      "description": "Direction de l'ONG d'action artistique humanitaire.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2017",
+      "dateFin": "2022",
+      "categorie": "FONCTION_PUBLIQUE",
+      "titre": "Conseillere culture et communication de l'Elysee",
+      "organisation": "Presidence de la Republique",
+      "description": "Conseillere culture et communication du president Macron.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": []
+}

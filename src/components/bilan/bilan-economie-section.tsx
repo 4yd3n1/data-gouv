@@ -5,6 +5,7 @@ import {
   DEBT_FISCAL_DATA,
   FISCAL_GIFTS,
   EMPLOYMENT_DATA,
+  EMPLOYMENT_METHODOLOGY,
 } from "@/data/bilan-macron";
 
 const severityColor = {
@@ -147,8 +148,14 @@ export function BilanEconomieSection() {
 
       <BeforeAfterTable
         title="Emploi"
-        subtitle="Taux de chomage en baisse, mais qualite de l'emploi en question"
+        subtitle="Le taux officiel (BIT) masque 8,4 millions de personnes en difficult&eacute; d'emploi"
         rows={EMPLOYMENT_DATA}
+      />
+
+      <FactList
+        title="M&eacute;thodologie : ce que le taux officiel ne dit pas"
+        subtitle="Changements de d&eacute;finition, nouvelles cat&eacute;gories, radiations"
+        facts={EMPLOYMENT_METHODOLOGY}
       />
     </section>
   );

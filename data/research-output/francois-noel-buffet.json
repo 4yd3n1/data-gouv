@@ -1,0 +1,68 @@
+{
+  "slug": "francois-noel-buffet",
+  "nom": "Buffet",
+  "prenom": "Francois-Noel",
+  "civilite": "M.",
+  "researched_at": "2026-04-01",
+  "_ingested": false,
+  "sources_used": [
+    "https://www.senat.fr/",
+    "https://www.lemonde.fr/politique/"
+  ],
+  "notes": "Avocat au barreau de Lyon. Maire d'Oullins 1997-2017. Senateur du Rhone depuis 2004. President de la commission des lois du Senat. Ministre de l'Outre-mer sous Barnier puis de l'Interieur sous Bayrou.",
+  "career_entries": [
+    {
+      "dateDebut": "1985",
+      "dateFin": "1990",
+      "categorie": "FORMATION",
+      "titre": "Etudes de droit",
+      "organisation": "Universite Lyon III",
+      "description": "Diplome de droit, CAPA.",
+      "sourceUrl": "https://www.senat.fr/",
+      "sourcePrincipale": "Senat",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "1990",
+      "dateFin": "2004",
+      "categorie": "CARRIERE_PRIVEE",
+      "titre": "Avocat au barreau de Lyon",
+      "organisation": "Cabinet d'avocat (Joseph Aguera puis independant)",
+      "description": "Avocat specialise.",
+      "sourceUrl": "https://www.senat.fr/",
+      "sourcePrincipale": "Senat",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "1997",
+      "dateFin": "2017",
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Maire d'Oullins",
+      "organisation": "Mairie d'Oullins",
+      "description": "Maire pendant 20 ans.",
+      "sourceUrl": "https://www.senat.fr/",
+      "sourcePrincipale": "Senat",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2004",
+      "dateFin": null,
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Senateur du Rhone",
+      "organisation": "Senat",
+      "description": "Senateur LR. President de la commission des lois.",
+      "sourceUrl": "https://www.senat.fr/",
+      "sourcePrincipale": "Senat",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": []
+}

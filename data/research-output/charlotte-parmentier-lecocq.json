@@ -1,0 +1,42 @@
+{
+  "slug": "charlotte-parmentier-lecocq",
+  "nom": "Parmentier-Lecocq",
+  "prenom": "Charlotte",
+  "civilite": "Mme",
+  "researched_at": "2026-04-01",
+  "_ingested": false,
+  "sources_used": [
+    "https://www.assemblee-nationale.fr/",
+    "https://www.lemonde.fr/politique/"
+  ],
+  "notes": "Specialiste de la sante au travail. Deputee du Nord 2017-2024. Auteure du rapport Lecocq sur la sante au travail (2018). Ministre chargee du Handicap sous Barnier.",
+  "career_entries": [
+    {
+      "dateDebut": "2000",
+      "dateFin": "2017",
+      "categorie": "CARRIERE_PRIVEE",
+      "titre": "Consultante en sante au travail",
+      "organisation": "Secteur prive",
+      "description": "Specialiste de la prevention et de la sante au travail.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "medium",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2017",
+      "dateFin": "2024",
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Deputee du Nord (6e circ.)",
+      "organisation": "Assemblee nationale",
+      "description": "Deputee LREM. Auteure du rapport Lecocq-Dupuis-Forest sur la sante au travail (2018).",
+      "sourceUrl": "https://www.assemblee-nationale.fr/",
+      "sourcePrincipale": "Assemblee nationale",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": []
+}

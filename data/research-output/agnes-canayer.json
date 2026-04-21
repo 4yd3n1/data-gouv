@@ -1,0 +1,68 @@
+{
+  "slug": "agnes-canayer",
+  "nom": "Canayer",
+  "prenom": "Agnes",
+  "civilite": "Mme",
+  "researched_at": "2026-04-01",
+  "_ingested": false,
+  "sources_used": [
+    "https://www.senat.fr/senateur/canayer_agnes14231l.html",
+    "https://www.lemonde.fr/politique/"
+  ],
+  "notes": "Juriste de formation (Paris I, Paris II). Collaboratrice au Senat. Premiere adjointe du Havre. Senatrice de Seine-Maritime depuis 2014. Ministre de la Famille sous Barnier.",
+  "career_entries": [
+    {
+      "dateDebut": "1990",
+      "dateFin": "1995",
+      "categorie": "FORMATION",
+      "titre": "Maitrise de droit",
+      "organisation": "Universite Paris I Pantheon-Sorbonne",
+      "description": "Etudes de droit.",
+      "sourceUrl": "https://www.senat.fr/senateur/canayer_agnes14231l.html",
+      "sourcePrincipale": "Senat",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "1995",
+      "dateFin": "2005",
+      "categorie": "FONCTION_PUBLIQUE",
+      "titre": "Collaboratrice parlementaire au Senat",
+      "organisation": "Senat",
+      "description": "Collaboratrice de senateurs.",
+      "sourceUrl": "https://www.senat.fr/senateur/canayer_agnes14231l.html",
+      "sourcePrincipale": "Senat",
+      "sourceDate": "2024",
+      "confidence": "medium",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2008",
+      "dateFin": "2014",
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Premiere adjointe au maire du Havre",
+      "organisation": "Mairie du Havre",
+      "description": "Premiere adjointe au maire.",
+      "sourceUrl": "https://www.paris-normandie.fr/",
+      "sourcePrincipale": "Paris-Normandie",
+      "sourceDate": "2024",
+      "confidence": "medium",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2014",
+      "dateFin": null,
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Senatrice de Seine-Maritime",
+      "organisation": "Senat",
+      "description": "Elue senatrice en 2014, reelue en 2020.",
+      "sourceUrl": "https://www.senat.fr/senateur/canayer_agnes14231l.html",
+      "sourcePrincipale": "Senat",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": []
+}

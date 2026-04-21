@@ -9,6 +9,7 @@ import { prisma } from "../src/lib/db";
 import { fetchAllRows } from "./lib/api-client";
 import { parseDateSafe, parseIntSafe, parseFloatSafe } from "./lib/csv-parser";
 import { logIngestion } from "./lib/ingestion-log";
+import { normalizeName } from "../src/lib/normalize-name";
 
 const ACTIVE_RESOURCE = "092bd7bb-1543-405b-b53c-932ebb49bb8e";
 const HISTORIC_RESOURCE = "817fda38-d616-43e9-852f-790510f4d157";
@@ -23,12 +24,16 @@ function normalizeDeptCode(raw: string): string {
 }
 
 function mapRow(row: Record<string, unknown>, actif: boolean) {
+  const nom = String(row.nom ?? "");
+  const prenom = String(row.prenom ?? "");
   return {
     id: String(row.id ?? row.__id),
     legislature: parseIntSafe(row.legislature) ?? 0,
     civilite: String(row.civ ?? ""),
-    nom: String(row.nom ?? ""),
-    prenom: String(row.prenom ?? ""),
+    nom,
+    prenom,
+    nomNormalise: normalizeName(nom),
+    prenomNormalise: normalizeName(prenom),
     villeNaissance: row.villeNaissance ? String(row.villeNaissance) : null,
     dateNaissance: parseDateSafe(row.naissance),
     age: parseIntSafe(row.age),

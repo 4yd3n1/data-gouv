@@ -45,7 +45,7 @@ export function ProfileHero({
   return (
     <div className="border-b border-bureau-700/30 bg-bureau-900/60">
       {/* Breadcrumbs */}
-      <div className="mx-auto max-w-4xl px-6 pt-6">
+      <div className="mx-auto max-w-6xl px-6 pt-6">
         <nav className="flex items-center gap-1.5 text-xs text-bureau-500">
           {breadcrumbs.map((crumb, i) => (
             <span key={crumb.label} className="flex items-center gap-1.5">
@@ -66,7 +66,7 @@ export function ProfileHero({
       </div>
 
       {/* Hero content */}
-      <div className="mx-auto max-w-4xl px-6 pb-0 pt-6">
+      <div className="mx-auto max-w-6xl px-6 pb-0 pt-6">
         <div className="flex flex-col items-center gap-5 sm:flex-row sm:items-start sm:gap-6">
           {/* Large avatar */}
           <Avatar src={avatar.src} initials={avatar.initials} size="lg" />
@@ -169,6 +169,7 @@ export function ProfileHero({
                 value={s.value}
                 label={s.label}
                 color={s.color}
+                showContext
               />
             ))}
           </div>

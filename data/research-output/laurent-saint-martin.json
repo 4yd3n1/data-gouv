@@ -1,0 +1,41 @@
+{
+  "slug": "laurent-saint-martin",
+  "nom": "Saint-Martin",
+  "prenom": "Laurent",
+  "civilite": "M.",
+  "researched_at": "2026-04-01",
+  "_ingested": false,
+  "sources_used": [
+    "https://www.assemblee-nationale.fr/"
+  ],
+  "notes": "EDHEC. Oseo/Bpifrance, Euronext. Plus jeune rapporteur general du budget. DG Business France. Ministre du Budget sous Barnier, Commerce exterieur sous Bayrou.",
+  "career_entries": [
+    {
+      "dateDebut": "2005",
+      "dateFin": "2008",
+      "categorie": "FORMATION",
+      "titre": "EDHEC Business School",
+      "organisation": "EDHEC",
+      "description": "Diplome EDHEC.",
+      "sourceUrl": "https://www.assemblee-nationale.fr/",
+      "sourcePrincipale": "Assemblee nationale",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2008",
+      "dateFin": "2017",
+      "categorie": "CARRIERE_PRIVEE",
+      "titre": "Finance publique et marches",
+      "organisation": "Oseo/Bpifrance / Euronext",
+      "description": "Carriere dans la finance publique et les marches financiers.",
+      "sourceUrl": "https://www.assemblee-nationale.fr/",
+      "sourcePrincipale": "Assemblee nationale",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": []
+}

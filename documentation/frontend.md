@@ -1,6 +1,6 @@
 # Frontend Implementation
 
-> Last updated: Mar 27, 2026 — Session 45 (Bilan Macron Dossier). ~26 active routes + 6 OG image routes, 49 components (42 + 7 bilan), 14 client components.
+> Last updated: Apr 21, 2026 — Session 46 (HATVP normalization + re-ingestion). ~26 active routes + 6 OG image routes, 49 components (42 + 7 bilan), 14 client components.
 
 Complete reference for all UI pages, components, styling, and patterns.
 
@@ -297,13 +297,26 @@ Unique dossier page with dedicated components for media ownership visualization.
 
 ---
 
-### `/representants/deputes/[id]` — Deputy Detail (Enhanced)
+### `/profils/deputes/[id]` — Deputy Detail (Enhanced)
 
-**File**: [page.tsx](../src/app/representants/deputes/[id]/page.tsx)
+**File**: [page.tsx](../src/app/profils/deputes/[id]/page.tsx) — canonical since Session 43 (legacy `/representants/deputes/[id]` was deleted + redirected).
 
 **Tabs**: Activité / Déclarations / **Transparence** / Informations
 
-**Declaration matching** (Session 38 fix, extended Session 42): `DeclarationInteret` query uses `mode: "insensitive" as const` for `nom`/`prenom` on ALL routes (deputies + senators + gouvernance). Session 42 audit found 471 senator declarations and 517 deputy declarations unreachable due to missing `mode: "insensitive"` on senator routes and `/gouvernance/deputes/`. Now fixed on all 6 profile routes.
+**Declaration matching** (Session 46 — supersedes Session 38/42 `mode: "insensitive"` approach): `DeclarationInteret` is joined by `nomNormalise` + `prenomNormalise` equality on deputy, senator, president, and minister profile pages. These indexed columns hold `normalizeName()` output from [`src/lib/normalize-name.ts`](../src/lib/normalize-name.ts) — NFD + strip accents + lowercase + trim. This is the only pattern that handles both case (HATVP often uses UPPERCASE) and diacritics (HATVP often drops accents: `"NUNEZ"` vs DB `"Nuñez"`). **Never use** `{ equals, mode: "insensitive" }` for name-based joins — it misses ~30% of matches.
+
+```ts
+// Pattern for any declaration join in app code
+const declarations = await prisma.declarationInteret.findMany({
+  where: {
+    nomNormalise: depute.nomNormalise,
+    prenomNormalise: depute.prenomNormalise,
+    typeMandat: "Député",
+  },
+  include: { participations: true, revenus: true },
+  orderBy: { dateDepot: "desc" }, // latest declaration first — InteretsSection groups by declarationRef
+});
+```
 
 **Transparence tab** (Phase 3 + Session 37 `ConflictDrilldown`):
 - Stat cards: total participations déclarées (€), votes sur textes thématiques, déports count

@@ -1,0 +1,68 @@
+{
+  "slug": "bruno-retailleau",
+  "nom": "Retailleau",
+  "prenom": "Bruno",
+  "civilite": "M.",
+  "researched_at": "2026-04-01",
+  "_ingested": false,
+  "sources_used": [
+    "https://www.lemonde.fr/politique/",
+    "https://www.senat.fr/"
+  ],
+  "notes": "Maitrise d'economie (Nantes), Sciences Po. Proche de Philippe de Villiers et du Puy du Fou. Senateur de Vendee depuis 2004, president du groupe LR au Senat 2014-2024. Ministre de l'Interieur sous Barnier puis Bayrou.",
+  "career_entries": [
+    {
+      "dateDebut": "1980",
+      "dateFin": "1984",
+      "categorie": "FORMATION",
+      "titre": "Maitrise d'economie",
+      "organisation": "Universite de Nantes",
+      "description": "Etudes d'economie.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "1984",
+      "dateFin": "1986",
+      "categorie": "FORMATION",
+      "titre": "Sciences Po Paris",
+      "organisation": "Sciences Po Paris",
+      "description": "Formation a l'IEP.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "1988",
+      "dateFin": "2004",
+      "categorie": "AUTRE",
+      "titre": "Collaborateur de Philippe de Villiers",
+      "organisation": "Conseil general de Vendee / Puy du Fou",
+      "description": "Directeur de cabinet de Villiers au conseil general. Implique dans le developpement du Puy du Fou.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2004",
+      "dateFin": null,
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Senateur de Vendee",
+      "organisation": "Senat",
+      "description": "Elu senateur en 2004. President du groupe LR au Senat de 2014 a 2024.",
+      "sourceUrl": "https://www.senat.fr/",
+      "sourcePrincipale": "Senat",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": []
+}

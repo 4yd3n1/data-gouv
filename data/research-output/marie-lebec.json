@@ -1,0 +1,41 @@
+{
+  "slug": "marie-lebec",
+  "nom": "Lebec",
+  "prenom": "Marie",
+  "civilite": "Mme",
+  "researched_at": "2026-04-01",
+  "_ingested": false,
+  "sources_used": [
+    "https://www.assemblee-nationale.fr/"
+  ],
+  "notes": "Sciences Po Bordeaux, Cardiff University. Deputee des Yvelines 2017. Premiere femme ministre des Relations avec le Parlement sous Attal.",
+  "career_entries": [
+    {
+      "dateDebut": "2008",
+      "dateFin": "2012",
+      "categorie": "FORMATION",
+      "titre": "Sciences Po Bordeaux + Cardiff University",
+      "organisation": "Sciences Po Bordeaux / Cardiff",
+      "description": "Double diplome.",
+      "sourceUrl": "https://www.assemblee-nationale.fr/",
+      "sourcePrincipale": "Assemblee nationale",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2017",
+      "dateFin": null,
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Deputee des Yvelines",
+      "organisation": "Assemblee nationale",
+      "description": "Deputee LREM/Renaissance.",
+      "sourceUrl": "https://www.assemblee-nationale.fr/",
+      "sourcePrincipale": "Assemblee nationale",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": []
+}

@@ -1,0 +1,54 @@
+{
+  "slug": "sarah-el-hairy",
+  "nom": "El Hairy",
+  "prenom": "Sarah",
+  "civilite": "Mme",
+  "researched_at": "2026-04-01",
+  "_ingested": false,
+  "sources_used": [
+    "https://www.assemblee-nationale.fr/"
+  ],
+  "notes": "Droit (Nantes), UP cooperative. Deputee de Loire-Atlantique 2017. MoDem. Secretaire d'Etat Jeunesse puis ministre de l'Enfance sous Borne et Attal.",
+  "career_entries": [
+    {
+      "dateDebut": "2008",
+      "dateFin": "2013",
+      "categorie": "FORMATION",
+      "titre": "Master de droit",
+      "organisation": "Universite de Nantes",
+      "description": "Etudes de droit.",
+      "sourceUrl": "https://www.assemblee-nationale.fr/",
+      "sourcePrincipale": "Assemblee nationale",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2013",
+      "dateFin": "2017",
+      "categorie": "CARRIERE_PRIVEE",
+      "titre": "Responsable chez UP cooperative",
+      "organisation": "UP cooperative (Cheque Dejeuner)",
+      "description": "Responsable du developpement.",
+      "sourceUrl": "https://www.assemblee-nationale.fr/",
+      "sourcePrincipale": "Assemblee nationale",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2017",
+      "dateFin": null,
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Deputee de Loire-Atlantique (5e circ.)",
+      "organisation": "Assemblee nationale",
+      "description": "Deputee MoDem.",
+      "sourceUrl": "https://www.assemblee-nationale.fr/",
+      "sourcePrincipale": "Assemblee nationale",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": []
+}

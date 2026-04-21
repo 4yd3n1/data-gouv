@@ -111,12 +111,16 @@ model Depute {
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
 
+  nomNormalise    String @default("") // normalizeName(nom) — see src/lib/normalize-name.ts
+  prenomNormalise String @default("") // normalizeName(prenom)
+
   departement   Departement? @relation(fields: [departementRefCode], references: [code])
   votes         VoteRecord[]
   deports       Deport[]
   personnalites PersonnalitePublique[]
 
   @@index([nom, prenom])
+  @@index([nomNormalise, prenomNormalise])
   @@index([groupeAbrev])
   @@index([departementCode])
   @@index([departementRefCode])
@@ -142,12 +146,16 @@ model Senateur {
 
   photoUrl       String? // Official Sénat photo URL
 
+  nomNormalise    String @default("") // normalizeName(nom) — see src/lib/normalize-name.ts
+  prenomNormalise String @default("") // normalizeName(prenom)
+
   departementRef Departement? @relation(fields: [departementCode], references: [code])
   mandats        MandatSenateur[]
   commissions    CommissionSenateur[]
   personnalites  PersonnalitePublique[]
 
   @@index([nom, prenom])
+  @@index([nomNormalise, prenomNormalise])
   @@index([groupe])
   @@index([departementCode])
   @@index([actif])
@@ -358,10 +366,14 @@ model DeclarationInteret {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  nomNormalise    String @default("") // normalizeName(nom) — see src/lib/normalize-name.ts
+  prenomNormalise String @default("") // normalizeName(prenom)
+
   participations ParticipationFinanciere[]
   revenus        RevenuDeclaration[]
 
   @@index([nom, prenom])
+  @@index([nomNormalise, prenomNormalise])
   @@index([typeMandat])
   @@index([totalParticipations])
 }
@@ -946,6 +958,9 @@ model PersonnalitePublique {
   derniereMaj     DateTime        @default(now()) @updatedAt
   createdAt       DateTime        @default(now())
 
+  nomNormalise    String @default("") // normalizeName(nom) — see src/lib/normalize-name.ts
+  prenomNormalise String @default("") // normalizeName(prenom)
+
   depute   Depute?   @relation(fields: [deputeId], references: [id])
   senateur Senateur? @relation(fields: [senateurId], references: [id])
 
@@ -956,6 +971,7 @@ model PersonnalitePublique {
   mediaOwnership MediaProprietaire[]
 
   @@index([nom, prenom])
+  @@index([nomNormalise, prenomNormalise])
   @@index([deputeId])
   @@index([senateurId])
 }

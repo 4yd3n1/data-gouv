@@ -1,0 +1,42 @@
+{
+  "slug": "gisele-jourda",
+  "nom": "Jourda",
+  "prenom": "Gisele",
+  "civilite": "Mme",
+  "researched_at": "2026-04-01",
+  "_ingested": false,
+  "sources_used": [
+    "https://www.senat.fr/",
+    "https://www.lemonde.fr/politique/"
+  ],
+  "notes": "Militante PS depuis 1974. Fonction publique territoriale depuis 1982. Premiere femme senatrice de l'Aude (2014). Ministre sous Barnier.",
+  "career_entries": [
+    {
+      "dateDebut": "1982",
+      "dateFin": "2014",
+      "categorie": "FONCTION_PUBLIQUE",
+      "titre": "Fonctionnaire territoriale",
+      "organisation": "Collectivites territoriales de l'Aude",
+      "description": "Carriere dans la fonction publique territoriale.",
+      "sourceUrl": "https://www.senat.fr/",
+      "sourcePrincipale": "Senat",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2014",
+      "dateFin": null,
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Senatrice de l'Aude",
+      "organisation": "Senat",
+      "description": "Premiere femme elue senatrice de l'Aude. PS.",
+      "sourceUrl": "https://www.senat.fr/",
+      "sourcePrincipale": "Senat",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": []
+}

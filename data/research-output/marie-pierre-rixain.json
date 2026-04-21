@@ -1,0 +1,54 @@
+{
+  "slug": "marie-pierre-rixain",
+  "nom": "Rixain",
+  "prenom": "Marie-Pierre",
+  "civilite": "Mme",
+  "researched_at": "2026-04-01",
+  "_ingested": false,
+  "sources_used": [
+    "https://www.assemblee-nationale.fr/"
+  ],
+  "notes": "Sciences Po Toulouse. Consultante en sante perinatale. Deputee de l'Essonne 2017. Auteure de la loi Rixain 2021 (egalite economique et professionnelle).",
+  "career_entries": [
+    {
+      "dateDebut": "2005",
+      "dateFin": "2010",
+      "categorie": "FORMATION",
+      "titre": "Sciences Po Toulouse",
+      "organisation": "Sciences Po Toulouse",
+      "description": "Sciences politiques.",
+      "sourceUrl": "https://www.assemblee-nationale.fr/",
+      "sourcePrincipale": "Assemblee nationale",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2010",
+      "dateFin": "2017",
+      "categorie": "CARRIERE_PRIVEE",
+      "titre": "Consultante en sante perinatale",
+      "organisation": "Secteur prive",
+      "description": "Consultante en sante perinatale.",
+      "sourceUrl": "https://www.assemblee-nationale.fr/",
+      "sourcePrincipale": "Assemblee nationale",
+      "sourceDate": "2024",
+      "confidence": "medium",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2017",
+      "dateFin": null,
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Deputee de l'Essonne",
+      "organisation": "Assemblee nationale",
+      "description": "Deputee LREM. Auteure de la loi Rixain.",
+      "sourceUrl": "https://www.assemblee-nationale.fr/",
+      "sourcePrincipale": "Assemblee nationale",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": []
+}

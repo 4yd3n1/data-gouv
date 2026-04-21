@@ -15,7 +15,7 @@ import { TAG_LABELS_SHORT as TAG_LABELS } from "@/lib/vote-tags";
 // ── Data ─────────────────────────────────────────────────────────────────────
 
 async function getDeputeData(id: string) {
-  const [depute, scrutinTagCounts, declarationCount, conflictCount, deportCount, voteCount] =
+  const [depute, scrutinTagCounts, conflictCount, deportCount, voteCount] =
     await Promise.all([
       prisma.depute.findUnique({
         where: { id },
@@ -28,18 +28,18 @@ async function getDeputeData(id: string) {
         orderBy: { _count: { tag: "desc" } },
         take: 13,
       }),
-      prisma.declarationInteret.count({
-        where: { nom: { mode: "insensitive", equals: "" }, typeMandat: "Député" },
-      }),
       prisma.conflictSignal.count({ where: { deputeId: id } }),
       prisma.deport.count({ where: { deputeId: id } }),
       prisma.voteRecord.count({ where: { deputeId: id } }),
     ]);
 
-  // Re-fetch declarations by name (need depute first)
   const declCount = depute
     ? await prisma.declarationInteret.count({
-        where: { nom: depute.nom, prenom: depute.prenom, typeMandat: "Député" },
+        where: {
+          nomNormalise: depute.nomNormalise,
+          prenomNormalise: depute.prenomNormalise,
+          typeMandat: "Député",
+        },
       })
     : 0;
 

@@ -1,0 +1,94 @@
+{
+  "slug": "amelie-oudea-castera",
+  "nom": "Oudea-Castera",
+  "prenom": "Amelie",
+  "civilite": "Mme",
+  "researched_at": "2026-04-01",
+  "_ingested": false,
+  "sources_used": [
+    "https://www.lemonde.fr/politique/",
+    "https://www.lequipe.fr/"
+  ],
+  "notes": "Championne de tennis junior. Sciences Po, ESSEC, ENA (promotion Macron). Cour des comptes, AXA (directrice), FFT (directrice generale), ministre des Sports 2022-2024, presidente du CNOSF 2025. Controverse sur Stanislas (ecole privee).",
+  "career_entries": [
+    {
+      "dateDebut": "1990",
+      "dateFin": "1993",
+      "categorie": "FORMATION",
+      "titre": "Sciences Po Paris",
+      "organisation": "Sciences Po Paris",
+      "description": "Diplome de l'IEP.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "1993",
+      "dateFin": "1995",
+      "categorie": "FORMATION",
+      "titre": "ESSEC",
+      "organisation": "ESSEC Business School",
+      "description": "Diplome de l'ESSEC.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "1999",
+      "dateFin": "2001",
+      "categorie": "FORMATION",
+      "titre": "ENA (promotion Leopold Sedar Senghor)",
+      "organisation": "ENA",
+      "description": "Meme promotion qu'Emmanuel Macron.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2001",
+      "dateFin": "2005",
+      "categorie": "FONCTION_PUBLIQUE",
+      "titre": "Auditrice a la Cour des comptes",
+      "organisation": "Cour des comptes",
+      "description": "Magistrate financiere.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2008",
+      "dateFin": "2018",
+      "categorie": "CARRIERE_PRIVEE",
+      "titre": "Directrice chez AXA",
+      "organisation": "AXA",
+      "description": "Differentes responsabilites au sein du groupe AXA, dont la direction de la marque et de la communication.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2021",
+      "dateFin": "2022",
+      "categorie": "CARRIERE_PRIVEE",
+      "titre": "Directrice generale de la FFT",
+      "organisation": "Federation francaise de tennis",
+      "description": "DG de la FFT, en charge de Roland-Garros.",
+      "sourceUrl": "https://www.lequipe.fr/",
+      "sourcePrincipale": "L'Equipe",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": []
+}

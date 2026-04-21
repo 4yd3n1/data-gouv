@@ -1,0 +1,54 @@
+{
+  "slug": "olga-givernet",
+  "nom": "Givernet",
+  "prenom": "Olga",
+  "civilite": "Mme",
+  "researched_at": "2026-04-01",
+  "_ingested": false,
+  "sources_used": [
+    "https://www.assemblee-nationale.fr/"
+  ],
+  "notes": "Ingenieure en aeronautique. 10+ ans dans l'industrie aeronautique. Conseillere municipale de Miribel. Deputee de l'Ain 2017. Ministre deleguee a l'Energie sous Barnier.",
+  "career_entries": [
+    {
+      "dateDebut": "2003",
+      "dateFin": "2007",
+      "categorie": "FORMATION",
+      "titre": "Diplome d'ingenieur en aeronautique",
+      "organisation": "Ecole d'ingenieur",
+      "description": "Formation d'ingenieur aeronautique.",
+      "sourceUrl": "https://www.assemblee-nationale.fr/",
+      "sourcePrincipale": "Assemblee nationale",
+      "sourceDate": "2024",
+      "confidence": "medium",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2007",
+      "dateFin": "2017",
+      "categorie": "CARRIERE_PRIVEE",
+      "titre": "Ingenieure en aeronautique",
+      "organisation": "Industrie aeronautique",
+      "description": "Ingenieure dans le secteur aeronautique.",
+      "sourceUrl": "https://www.assemblee-nationale.fr/",
+      "sourcePrincipale": "Assemblee nationale",
+      "sourceDate": "2024",
+      "confidence": "medium",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2017",
+      "dateFin": null,
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Deputee de l'Ain (2e circ.)",
+      "organisation": "Assemblee nationale",
+      "description": "Deputee LREM/Renaissance.",
+      "sourceUrl": "https://www.assemblee-nationale.fr/",
+      "sourcePrincipale": "Assemblee nationale",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": []
+}

@@ -1,0 +1,69 @@
+{
+  "slug": "francois-sauvadet",
+  "nom": "Sauvadet",
+  "prenom": "Francois",
+  "civilite": "M.",
+  "researched_at": "2026-04-01",
+  "_ingested": false,
+  "sources_used": [
+    "https://www.lemonde.fr/politique/",
+    "https://www.assemblee-nationale.fr/"
+  ],
+  "notes": "Journaliste au Bien Public (1977-1993). Depute de Cote-d'Or 1993-2016. Ministre de la Fonction publique sous Fillon 2011-2012. Auteur de la 'loi Sauvadet'. Enquete PNF pour detournement classee sans suite.",
+  "career_entries": [
+    {
+      "dateDebut": "1977",
+      "dateFin": "1993",
+      "categorie": "CARRIERE_PRIVEE",
+      "titre": "Journaliste au Bien Public",
+      "organisation": "Le Bien Public (Dijon)",
+      "description": "Journaliste de presse quotidienne regionale.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "1993",
+      "dateFin": "2016",
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Depute de Cote-d'Or",
+      "organisation": "Assemblee nationale",
+      "description": "Depute UDF puis Nouveau Centre.",
+      "sourceUrl": "https://www.assemblee-nationale.fr/",
+      "sourcePrincipale": "Assemblee nationale",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2015",
+      "dateFin": null,
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "President du conseil departemental de Cote-d'Or",
+      "organisation": "Departement de Cote-d'Or",
+      "description": "Elu president du departement.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": [
+    {
+      "date": "2017-01-01",
+      "type": "ENQUETE_PRELIMINAIRE",
+      "nature": "detournement de fonds publics",
+      "juridiction": "Parquet national financier",
+      "statut": "CLOS",
+      "resume": "Enquete du PNF pour soupcons de detournement de fonds publics. Classee sans suite.",
+      "sourcePrincipale": "Le Monde",
+      "sourceUrl": "https://www.lemonde.fr/politique/",
+      "sourceDate": "2017",
+      "confidence": "medium",
+      "_ingested": true
+    }
+  ]
+}

@@ -254,9 +254,7 @@ export default async function MediasPage() {
   }
 
   // Data enrichment counts
-  const govLinkedCount = groupesRaw.filter((g) =>
-    g.participations.some((p) => p.proprietaire.personnalite?.slug),
-  ).length;
+  const govLinkedCount = politicalOwners.length;
 
   // ARCOM aggregate stats
   const totalAmendes = signalements.reduce(

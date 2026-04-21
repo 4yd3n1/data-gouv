@@ -108,7 +108,7 @@ export default async function PartiDetailPage({ params }: { params: Promise<{ id
         ]}
       />
 
-      <div className="mx-auto max-w-4xl px-6 py-8">
+      <div className="mx-auto max-w-6xl px-6 py-8">
         {/* Top-level financial summary */}
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 mb-8">
           <div className="rounded-lg border border-bureau-700/20 bg-bureau-800/20 p-4">

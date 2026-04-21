@@ -1,0 +1,107 @@
+{
+  "slug": "charlotte-caubel",
+  "nom": "Caubel",
+  "prenom": "Charlotte",
+  "civilite": "Mme",
+  "researched_at": "2026-04-01",
+  "_ingested": false,
+  "sources_used": [
+    "https://www.lemonde.fr/politique/",
+    "https://www.vie-publique.fr/"
+  ],
+  "notes": "Sciences Po, DEA de droit public, ENM. Magistrate: substitut a Meaux, juge a Bobigny, Tracfin, VP procureur a Paris. Conseillere justice du Premier ministre Philippe 2017, directrice de la DPJJ 2020. Secretaire d'Etat a l'Enfance sous Borne 2022-2024.",
+  "career_entries": [
+    {
+      "dateDebut": "1990",
+      "dateFin": "1993",
+      "categorie": "FORMATION",
+      "titre": "Sciences Po Paris + DEA droit public",
+      "organisation": "Sciences Po / Universite Paris",
+      "description": "Formation initiale.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "1993",
+      "dateFin": "1995",
+      "categorie": "FORMATION",
+      "titre": "Ecole nationale de la magistrature",
+      "organisation": "ENM",
+      "description": "Formation de magistrat.",
+      "sourceUrl": "https://www.vie-publique.fr/",
+      "sourcePrincipale": "Vie publique",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "1998",
+      "dateFin": "2005",
+      "categorie": "FONCTION_PUBLIQUE",
+      "titre": "Substitut du procureur a Meaux",
+      "organisation": "Tribunal de Meaux",
+      "description": "Premier poste de magistrat.",
+      "sourceUrl": "https://www.vie-publique.fr/",
+      "sourcePrincipale": "Vie publique",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2005",
+      "dateFin": "2009",
+      "categorie": "FONCTION_PUBLIQUE",
+      "titre": "Juge puis vice-presidente au tribunal de Bobigny",
+      "organisation": "Tribunal de Bobigny",
+      "description": "Juge des enfants puis vice-presidente.",
+      "sourceUrl": "https://www.vie-publique.fr/",
+      "sourcePrincipale": "Vie publique",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2009",
+      "dateFin": "2014",
+      "categorie": "FONCTION_PUBLIQUE",
+      "titre": "Tracfin puis vice-procureure a Paris",
+      "organisation": "Tracfin / Tribunal de Paris",
+      "description": "Lutte anti-blanchiment puis parquet de Paris.",
+      "sourceUrl": "https://www.vie-publique.fr/",
+      "sourcePrincipale": "Vie publique",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2017",
+      "dateFin": "2020",
+      "categorie": "FONCTION_PUBLIQUE",
+      "titre": "Conseillere justice du Premier ministre",
+      "organisation": "Cabinet du Premier ministre (Philippe)",
+      "description": "Conseillere en charge de la justice.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2020",
+      "dateFin": "2022",
+      "categorie": "FONCTION_PUBLIQUE",
+      "titre": "Directrice de la DPJJ",
+      "organisation": "Direction de la protection judiciaire de la jeunesse",
+      "description": "Directrice de la PJJ.",
+      "sourceUrl": "https://www.vie-publique.fr/",
+      "sourcePrincipale": "Vie publique",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": []
+}

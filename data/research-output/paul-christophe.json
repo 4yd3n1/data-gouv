@@ -1,0 +1,54 @@
+{
+  "slug": "paul-christophe",
+  "nom": "Christophe",
+  "prenom": "Paul",
+  "civilite": "M.",
+  "researched_at": "2026-04-01",
+  "_ingested": false,
+  "sources_used": [
+    "https://www.assemblee-nationale.fr/"
+  ],
+  "notes": "Tresor public. DGS de Teteghem. Maire de Zuydcoote. Depute du Nord 2017. 6 propositions de loi adoptees a l'unanimite. Ministre des Solidarites sous Barnier et Bayrou.",
+  "career_entries": [
+    {
+      "dateDebut": "1990",
+      "dateFin": "2005",
+      "categorie": "FONCTION_PUBLIQUE",
+      "titre": "Fonctionnaire au Tresor public",
+      "organisation": "Tresor public",
+      "description": "Agent du Tresor public.",
+      "sourceUrl": "https://www.assemblee-nationale.fr/",
+      "sourcePrincipale": "Assemblee nationale",
+      "sourceDate": "2024",
+      "confidence": "medium",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2005",
+      "dateFin": "2017",
+      "categorie": "FONCTION_PUBLIQUE",
+      "titre": "DGS de Teteghem + maire de Zuydcoote",
+      "organisation": "Commune de Teteghem / Zuydcoote",
+      "description": "Directeur general des services puis maire.",
+      "sourceUrl": "https://www.assemblee-nationale.fr/",
+      "sourcePrincipale": "Assemblee nationale",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2017",
+      "dateFin": null,
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Depute du Nord (14e circ.)",
+      "organisation": "Assemblee nationale",
+      "description": "Depute Horizons. 6 PPL adoptees a l'unanimite.",
+      "sourceUrl": "https://www.assemblee-nationale.fr/",
+      "sourcePrincipale": "Assemblee nationale",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": []
+}

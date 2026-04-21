@@ -23,6 +23,7 @@ export async function generateMetadata({
 }
 import { ProfileHero } from "@/components/profile-hero";
 import { ProfileTabs } from "@/components/profile-tabs";
+import { ProfileSignalBanner } from "@/components/profile-signal-banner";
 import { DeclarationSection } from "@/components/declaration-section";
 
 const COMMISSION_DOMAINS: Array<{ pattern: RegExp; keywords: string[] }> = [
@@ -62,8 +63,8 @@ export default async function SenateurDetailPage({
 
   const declarations = await prisma.declarationInteret.findMany({
     where: {
-      nom: { equals: s.nom, mode: "insensitive" as const },
-      prenom: { equals: s.prenom, mode: "insensitive" as const },
+      nomNormalise: s.nomNormalise,
+      prenomNormalise: s.prenomNormalise,
       typeMandat: "S\u00e9nateur",
     },
     include: { participations: true, revenus: true },
@@ -147,8 +148,12 @@ export default async function SenateurDetailPage({
         </Suspense>
       </ProfileHero>
 
+      <div className="px-6">
+        <ProfileSignalBanner keys={[`senateur:${s.id}`, `ministre:${s.id}`]} />
+      </div>
+
       {/* Tab content */}
-      <div className="mx-auto max-w-4xl px-6 py-8">
+      <div className="mx-auto max-w-6xl px-6 py-8">
         {/* ── Mandats & Commissions ── */}
         {tab === "mandats" && (
           <div className="space-y-8 fade-up">

@@ -28,6 +28,8 @@ import { VoteBadge } from "@/components/vote-badge";
 import { DeclarationSection } from "@/components/declaration-section";
 import { ConflictAlert } from "@/components/conflict-alert";
 import { ConflictDrilldown } from "@/components/conflict-drilldown";
+import { ProfileSignalBanner } from "@/components/profile-signal-banner";
+import { ShareButton } from "@/components/share-button";
 
 import { TAG_LABELS } from "@/lib/vote-tags";
 
@@ -54,21 +56,22 @@ export default async function DeputeDetailPage({
   });
   if (!d) notFound();
 
-  const [votes, deports, declarations, scrutinTagCounts, taggedVoteCount, conflictSignals] = await Promise.all([
+  const [votes, totalVoteCount, deports, declarations, scrutinTagCounts, taggedVoteCount, conflictSignals] = await Promise.all([
     prisma.voteRecord.findMany({
       where: { deputeId: id },
       include: { scrutin: true },
       orderBy: { scrutin: { dateScrutin: "desc" } },
-      take: 10,
+      take: 5,
     }),
+    prisma.voteRecord.count({ where: { deputeId: id } }),
     prisma.deport.findMany({
       where: { deputeId: id },
       orderBy: { dateCreation: "desc" },
     }),
     prisma.declarationInteret.findMany({
       where: {
-        nom: { equals: d.nom, mode: "insensitive" as const },
-        prenom: { equals: d.prenom, mode: "insensitive" as const },
+        nomNormalise: d.nomNormalise,
+        prenomNormalise: d.prenomNormalise,
         typeMandat: "Député",
       },
       include: { participations: true, revenus: true },
@@ -160,7 +163,7 @@ export default async function DeputeDetailPage({
         <Suspense>
           <ProfileTabs
             tabs={[
-              { key: "activite", label: "Activit\u00e9", count: votes.length + deports.length },
+              { key: "activite", label: "Activit\u00e9", count: totalVoteCount + deports.length },
               { key: "declarations", label: "D\u00e9clarations", count: declarations.length },
               { key: "transparence", label: "Transparence", count: conflictDeclarations.length || undefined },
               { key: "infos", label: "Informations" },
@@ -170,9 +173,14 @@ export default async function DeputeDetailPage({
         </Suspense>
       </ProfileHero>
 
+      <div className="px-6">
+        <ProfileSignalBanner keys={[`depute:${d.id}`]} />
+      </div>
+
       {/* Utility bar */}
       <div className="border-b border-bureau-700/20 bg-bureau-900/30">
-        <div className="mx-auto max-w-4xl px-6 py-2 flex justify-end">
+        <div className="mx-auto flex max-w-6xl items-center justify-end gap-3 px-6 py-2">
+          <ShareButton />
           <Link
             href={`/profils/comparer?a=${d.id}`}
             className="text-xs text-bureau-500 transition-colors hover:text-teal"
@@ -183,10 +191,43 @@ export default async function DeputeDetailPage({
       </div>
 
       {/* Tab content */}
-      <div className="mx-auto max-w-4xl px-6 py-8">
+      <div className="mx-auto max-w-6xl px-6 py-8">
         {/* ── Activité ── */}
         {tab === "activite" && (
           <div className="space-y-8 fade-up">
+            {/* Votes par thème */}
+            {scrutinTagCounts.length > 0 && (
+              <section>
+                <div className="mb-4 flex items-center justify-between">
+                  <h2 className="text-xs font-semibold uppercase tracking-[0.15em] text-bureau-500">
+                    Votes par th&egrave;me
+                  </h2>
+                  <span className="text-xs text-bureau-500">
+                    {fmt(taggedVoteCount)} votes th&eacute;matiques
+                  </span>
+                </div>
+                <div className="space-y-2 rounded-xl border border-bureau-700/20 overflow-hidden">
+                  {scrutinTagCounts.map((t) => (
+                    <div
+                      key={t.tag}
+                      className="flex items-center gap-4 bg-bureau-800/10 px-4 py-2.5 hover:bg-bureau-800/20 transition-colors"
+                    >
+                      <span className="w-40 shrink-0 text-sm text-bureau-300">
+                        {TAG_LABELS[t.tag] ?? t.tag}
+                      </span>
+                      <div className="flex-1 h-1.5 rounded-full bg-bureau-700/40 overflow-hidden">
+                        <div
+                          className="h-full bg-teal/50 rounded-full"
+                          style={{ width: `${Math.min(100, (t._count.tag / maxTagCount) * 100)}%` }}
+                        />
+                      </div>
+                      <span className="shrink-0 text-xs text-bureau-400">{fmt(t._count.tag)}</span>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
             {/* Recent votes */}
             {votes.length > 0 && (
               <section>
@@ -195,7 +236,7 @@ export default async function DeputeDetailPage({
                     Votes r&eacute;cents
                   </h2>
                   <Link
-                    href="/votes"
+                    href={`/votes/mon-depute?id=${d.id}`}
                     className="text-xs text-teal/70 transition-colors hover:text-teal"
                   >
                     Tous les scrutins &rarr;
@@ -343,34 +384,6 @@ export default async function DeputeDetailPage({
               )}
             </section>
 
-            {/* Vote theme breakdown */}
-            {scrutinTagCounts.length > 0 && (
-              <section>
-                <h2 className="mb-4 text-xs font-semibold uppercase tracking-[0.15em] text-bureau-500">
-                  Votes par th&egrave;me l&eacute;gislatif
-                </h2>
-                <div className="space-y-2 rounded-xl border border-bureau-700/20 overflow-hidden">
-                  {scrutinTagCounts.map((t) => (
-                    <div
-                      key={t.tag}
-                      className="flex items-center gap-4 bg-bureau-800/10 px-4 py-2.5 hover:bg-bureau-800/20 transition-colors"
-                    >
-                      <span className="w-40 shrink-0 text-sm text-bureau-300">
-                        {TAG_LABELS[t.tag] ?? t.tag}
-                      </span>
-                      <div className="flex-1 h-1.5 rounded-full bg-bureau-700/40 overflow-hidden">
-                        <div
-                          className="h-full bg-teal/50 rounded-full"
-                          style={{ width: `${Math.min(100, (t._count.tag / maxTagCount) * 100)}%` }}
-                        />
-                      </div>
-                      <span className="shrink-0 text-xs text-bureau-400">{fmt(t._count.tag)}</span>
-                    </div>
-                  ))}
-                </div>
-              </section>
-            )}
-
             {/* Déports */}
             {deports.length > 0 && (
               <section>
@@ -393,7 +406,7 @@ export default async function DeputeDetailPage({
               </section>
             )}
 
-            {conflictDeclarations.length === 0 && deports.length === 0 && scrutinTagCounts.length === 0 && (
+            {conflictDeclarations.length === 0 && deports.length === 0 && (
               <p className="py-8 text-center text-sm text-bureau-500 italic">
                 Aucune donn&eacute;e de transparence disponible pour cet &eacute;lu.
               </p>

@@ -16,6 +16,8 @@
  */
 
 import "dotenv/config";
+import { createReadStream, existsSync, statSync } from "node:fs";
+import { join } from "node:path";
 import { XMLParser } from "fast-xml-parser";
 import { prisma } from "../src/lib/db";
 import { logIngestion } from "./lib/ingestion-log";
@@ -25,6 +27,13 @@ import { RubriqueInteret } from "@prisma/client";
 
 const HATVP_CSV_URL = "https://www.hatvp.fr/livraison/opendata/liste.csv";
 const HATVP_XML_URL = "https://www.hatvp.fr/livraison/merge/declarations.xml";
+const LOCAL_CACHE_PATH = join(
+  import.meta.dirname ?? process.cwd(),
+  "..",
+  "documentation",
+  "hatvp-old-context",
+  "declarations.xml"
+);
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -203,27 +212,46 @@ function ensureArray<T>(val: T | T[] | undefined | null): T[] {
 }
 
 /**
- * Stream-fetch the merged XML and yield each <declaration> element as a raw string.
- * The file is ~143MB — we read it in 256KB chunks and extract complete <declaration> blocks.
+ * Stream the merged XML and yield each <declaration> block as a raw string.
+ * Prefers the local cached copy (documentation/hatvp-old-context/declarations.xml)
+ * because HATVP's live server is unreliable and frequently drops connections.
+ * Falls back to the public URL if the cache is missing.
  */
 async function* streamDeclarations(): AsyncGenerator<string> {
-  console.log("  Streaming declarations XML...");
-  const res = await fetch(HATVP_XML_URL);
-  if (!res.ok) throw new Error(`XML fetch failed: ${res.status} ${res.statusText}`);
-  if (!res.body) throw new Error("XML response has no body");
-
-  const reader = res.body.getReader();
-  const decoder = new TextDecoder("utf-8");
-  let buffer = "";
+  const useLocal =
+    existsSync(LOCAL_CACHE_PATH) && statSync(LOCAL_CACHE_PATH).size > 10_000_000;
 
   const OPEN = "<declaration>";
   const CLOSE = "</declaration>";
+  const decoder = new TextDecoder("utf-8");
+  let buffer = "";
 
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
+  async function* chunks(): AsyncGenerator<Uint8Array> {
+    if (useLocal) {
+      console.log(
+        `  Reading cached XML: ${LOCAL_CACHE_PATH} (${(statSync(LOCAL_CACHE_PATH).size / 1024 / 1024).toFixed(1)}MB)`
+      );
+      const stream = createReadStream(LOCAL_CACHE_PATH, { highWaterMark: 256 * 1024 });
+      for await (const chunk of stream) {
+        yield chunk as Uint8Array;
+      }
+      return;
+    }
 
-    buffer += decoder.decode(value, { stream: true });
+    console.log("  Streaming declarations XML from URL...");
+    const res = await fetch(HATVP_XML_URL);
+    if (!res.ok) throw new Error(`XML fetch failed: ${res.status} ${res.statusText}`);
+    if (!res.body) throw new Error("XML response has no body");
+    const reader = res.body.getReader();
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      if (value) yield value;
+    }
+  }
+
+  for await (const chunk of chunks()) {
+    buffer += decoder.decode(chunk, { stream: true });
 
     let start: number;
     while ((start = buffer.indexOf(OPEN)) !== -1) {

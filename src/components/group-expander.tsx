@@ -35,9 +35,10 @@ interface Group {
 interface Props {
   groups: Group[];
   deputies: Deputy[];
+  isCensure?: boolean;
 }
 
-export function GroupExpander({ groups, deputies }: Props) {
+export function GroupExpander({ groups, deputies, isCensure = false }: Props) {
   const [expandedRef, setExpandedRef] = useState<string | null>(null);
 
   const deputiesByGroup = deputies.reduce<Record<string, Deputy[]>>((acc, d) => {
@@ -52,17 +53,26 @@ export function GroupExpander({ groups, deputies }: Props) {
       {groups.map((g) => {
         const isExpanded = expandedRef === g.organeRef;
         const groupDeputies = deputiesByGroup[g.libelleAbrege ?? ""] ?? [];
-        const total = g.pour + g.contre + g.abstentions + g.nonVotants;
+        const expressed = g.pour + g.contre + g.abstentions;
+        const total = expressed + g.nonVotants;
         const pPct = total > 0 ? (g.pour / total) * 100 : 0;
         const cPct = total > 0 ? (g.contre / total) * 100 : 0;
         const aPct = total > 0 ? (g.abstentions / total) * 100 : 0;
 
-        const positionColor =
-          g.positionMajoritaire === "pour"
+        const didNotParticipate = expressed === 0;
+        const displayPosition = didNotParticipate
+          ? isCensure
+            ? "n'a pas voté"
+            : "non voté"
+          : g.positionMajoritaire;
+
+        const positionColor = didNotParticipate
+          ? "text-bureau-600"
+          : g.positionMajoritaire === "pour"
             ? "text-teal"
             : g.positionMajoritaire === "contre"
-            ? "text-rose"
-            : "text-amber";
+              ? "text-rose"
+              : "text-amber";
 
         return (
           <div key={g.organeRef} className="bg-bureau-800/20">
@@ -83,21 +93,39 @@ export function GroupExpander({ groups, deputies }: Props) {
 
               {/* Position badge */}
               <span className={`text-xs font-semibold uppercase tracking-wide ${positionColor}`}>
-                {g.positionMajoritaire}
+                {displayPosition}
               </span>
 
-              {/* Mini bar */}
-              <div className="hidden w-24 sm:block">
-                <div className="flex h-1.5 w-full overflow-hidden rounded-full bg-bureau-700/40">
-                  <div className="bg-teal/60" style={{ width: `${pPct}%` }} />
-                  <div className="bg-rose/60" style={{ width: `${cPct}%` }} />
-                  <div className="bg-amber/40" style={{ width: `${aPct}%` }} />
+              {/* Mini bar — hidden on censure (only POUR exists, so the bar is meaningless) */}
+              {!isCensure && (
+                <div className="hidden w-24 sm:block">
+                  <div className="flex h-1.5 w-full overflow-hidden rounded-full bg-bureau-700/40">
+                    <div className="bg-teal/60" style={{ width: `${pPct}%` }} />
+                    <div className="bg-rose/60" style={{ width: `${cPct}%` }} />
+                    <div className="bg-amber/40" style={{ width: `${aPct}%` }} />
+                  </div>
                 </div>
-              </div>
+              )}
+              {isCensure && (
+                <div className="hidden w-24 sm:block">
+                  <div className="h-1.5 w-full overflow-hidden rounded-full bg-bureau-700/40">
+                    <div
+                      className="h-full bg-rose/60"
+                      style={{
+                        width: `${g.nombreMembresGroupe > 0 ? Math.min(100, (g.pour / g.nombreMembresGroupe) * 100) : 0}%`,
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
 
               {/* Counts */}
-              <span className="w-20 shrink-0 text-right text-xs text-bureau-500">
-                {g.pour}p · {g.contre}c · {g.abstentions}a
+              <span className="w-24 shrink-0 text-right text-xs tabular-nums text-bureau-500">
+                {isCensure
+                  ? g.pour > 0
+                    ? `${g.pour} / ${g.nombreMembresGroupe} voix`
+                    : "—"
+                  : `${g.pour}p · ${g.contre}c · ${g.abstentions}a`}
               </span>
 
               {/* Chevron */}
@@ -110,7 +138,9 @@ export function GroupExpander({ groups, deputies }: Props) {
             {isExpanded && (
               <div className="border-t border-bureau-700/20 px-4 pb-4 pt-3">
                 <p className="mb-3 text-xs text-bureau-500">
-                  {g.nombreMembresGroupe} membres · {g.pour} pour · {g.contre} contre · {g.abstentions} abstentions
+                  {isCensure
+                    ? `${g.nombreMembresGroupe} membres · ${g.pour} voix pour la motion · ${g.nombreMembresGroupe - g.pour} non votants`
+                    : `${g.nombreMembresGroupe} membres · ${g.pour} pour · ${g.contre} contre · ${g.abstentions} abstentions`}
                 </p>
                 {groupDeputies.length > 0 ? (
                   <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">

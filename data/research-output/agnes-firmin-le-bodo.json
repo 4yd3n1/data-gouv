@@ -1,0 +1,69 @@
+{
+  "slug": "agnes-firmin-le-bodo",
+  "nom": "Firmin Le Bodo",
+  "prenom": "Agnes",
+  "civilite": "Mme",
+  "researched_at": "2026-04-01",
+  "_ingested": false,
+  "sources_used": [
+    "https://www.francetvinfo.fr/",
+    "https://www.lemonde.fr/politique/"
+  ],
+  "notes": "Pharmacienne de profession. Deputee de Seine-Maritime 2017-2022. Membre d'Horizons. Ministre deleguee chargee de l'Organisation territoriale et des Professions de sante sous Borne. Condamnee en 2024 pour non-declaration de cadeaux du laboratoire Urgo.",
+  "career_entries": [
+    {
+      "dateDebut": "1985",
+      "dateFin": "1990",
+      "categorie": "FORMATION",
+      "titre": "Doctorat en pharmacie",
+      "organisation": "Universite de Rouen",
+      "description": "Etudes de pharmacie.",
+      "sourceUrl": "https://www.assemblee-nationale.fr/",
+      "sourcePrincipale": "Assemblee nationale",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "1990",
+      "dateFin": "2017",
+      "categorie": "CARRIERE_PRIVEE",
+      "titre": "Pharmacienne titulaire",
+      "organisation": "Pharmacie au Havre",
+      "description": "Pharmacienne d'officine au Havre pendant pres de 30 ans.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2017",
+      "dateFin": "2022",
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Deputee de Seine-Maritime (9e circ.)",
+      "organisation": "Assemblee nationale",
+      "description": "Elue deputee sous l'etiquette Agir.",
+      "sourceUrl": "https://www.assemblee-nationale.fr/",
+      "sourcePrincipale": "Assemblee nationale",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": [
+    {
+      "date": "2024-10-15",
+      "type": "CONDAMNATION",
+      "nature": "non-declaration de cadeaux d'un laboratoire pharmaceutique",
+      "juridiction": "Tribunal judiciaire de Paris (CRPC)",
+      "statut": "CLOS",
+      "resume": "Condamnee a 8 000 euros d'amende pour avoir recu plus de 20 000 euros de cadeaux du laboratoire Urgo entre 2015 et 2020 sans les declarer, alors qu'elle etait deputee.",
+      "sourcePrincipale": "France Info",
+      "sourceUrl": "https://www.francetvinfo.fr/politique/gouvernement/agnes-firmin-le-bodo/",
+      "sourceDate": "2024-10",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ]
+}

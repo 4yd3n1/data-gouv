@@ -1,0 +1,41 @@
+{
+  "slug": "marc-ferracci",
+  "nom": "Ferracci",
+  "prenom": "Marc",
+  "civilite": "M.",
+  "researched_at": "2026-04-01",
+  "_ingested": false,
+  "sources_used": [
+    "https://www.lemonde.fr/politique/"
+  ],
+  "notes": "HEC, Sciences Po, PhD economie Paris 1. Economiste du travail. Temoin de mariage de Macron. Chercheur au CREST/LIEPP. Depute des Francais de l'etranger. Ministre de l'Industrie sous Barnier.",
+  "career_entries": [
+    {
+      "dateDebut": "1997",
+      "dateFin": "2005",
+      "categorie": "FORMATION",
+      "titre": "HEC + Sciences Po + doctorat economie",
+      "organisation": "HEC / Sciences Po / Paris 1",
+      "description": "Triple formation, doctorat en economie du travail.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2005",
+      "dateFin": "2022",
+      "categorie": "CARRIERE_PRIVEE",
+      "titre": "Economiste et chercheur",
+      "organisation": "CREST / LIEPP / Sciences Po",
+      "description": "Chercheur en economie du travail. Membre du conseil scientifique de Pole emploi.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": []
+}

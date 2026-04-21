@@ -1,0 +1,81 @@
+{
+  "slug": "antoine-armand",
+  "nom": "Armand",
+  "prenom": "Antoine",
+  "civilite": "M.",
+  "researched_at": "2026-04-01",
+  "_ingested": false,
+  "sources_used": [
+    "https://www.lemonde.fr/politique/",
+    "https://www.assemblee-nationale.fr/"
+  ],
+  "notes": "Philosophie (Sorbonne), economie (Paris School of Economics), ENA. Inspecteur general des finances. Depute de Haute-Savoie 2022. Ministre de l'Economie sous Barnier a 33 ans. Arriere-petit-fils de Louis Armand (SNCF).",
+  "career_entries": [
+    {
+      "dateDebut": "2010",
+      "dateFin": "2013",
+      "categorie": "FORMATION",
+      "titre": "Licence de philosophie",
+      "organisation": "Universite Paris-Sorbonne",
+      "description": "Etudes de philosophie.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2013",
+      "dateFin": "2015",
+      "categorie": "FORMATION",
+      "titre": "Master d'economie",
+      "organisation": "Paris School of Economics",
+      "description": "Master en economie.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2017",
+      "dateFin": "2019",
+      "categorie": "FORMATION",
+      "titre": "ENA",
+      "organisation": "Ecole nationale d'administration",
+      "description": "Promotion Moliere.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2019",
+      "dateFin": "2022",
+      "categorie": "FONCTION_PUBLIQUE",
+      "titre": "Inspecteur des finances",
+      "organisation": "Inspection generale des finances",
+      "description": "Inspecteur des finances au sein de l'IGF.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2022",
+      "dateFin": null,
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Depute de Haute-Savoie (2e circ.)",
+      "organisation": "Assemblee nationale",
+      "description": "Elu depute Renaissance.",
+      "sourceUrl": "https://www.assemblee-nationale.fr/",
+      "sourcePrincipale": "Assemblee nationale",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": []
+}

@@ -27,7 +27,7 @@ export function ProfileTabs({
   return (
     <div className="border-b border-bureau-700/30">
       <nav
-        className="mx-auto flex max-w-4xl gap-0 overflow-x-auto px-6 scrollbar-hide"
+        className="mx-auto flex max-w-6xl gap-0 overflow-x-auto px-6 scrollbar-hide"
         aria-label="Profile tabs"
       >
         {tabs.map((tab) => {

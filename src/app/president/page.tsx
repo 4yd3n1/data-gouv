@@ -93,12 +93,7 @@ export default async function PresidentPage({
     await Promise.all([
       // HATVP declarations (Macron has entries under several mandates)
       prisma.declarationInteret.findMany({
-        where: {
-          OR: [
-            { nom: { contains: "Macron", mode: "insensitive" } },
-            { nom: { contains: "MACRON", mode: "insensitive" } },
-          ],
-        },
+        where: { nomNormalise: "macron" },
         include: { participations: true, revenus: true },
         orderBy: { dateDepot: "desc" },
       }),
@@ -318,7 +313,7 @@ export default async function PresidentPage({
       </ProfileHero>
 
       {/* ── Tab content ── */}
-      <div className="mx-auto max-w-4xl px-6 py-8">
+      <div className="mx-auto max-w-6xl px-6 py-8">
 
         {/* ══════════════ TAB: Promesses ══════════════ */}
         {tab === "promesses" && (

@@ -1,0 +1,54 @@
+{
+  "slug": "stanislas-guerini",
+  "nom": "Guerini",
+  "prenom": "Stanislas",
+  "civilite": "M.",
+  "researched_at": "2026-04-01",
+  "_ingested": false,
+  "sources_used": [
+    "https://www.lemonde.fr/politique/"
+  ],
+  "notes": "HEC. Fondateur de Watt & Home (panneaux solaires). Directeur chez Elis. Delegue general de LREM/Renaissance. Ministre de la Fonction publique sous Borne.",
+  "career_entries": [
+    {
+      "dateDebut": "2000",
+      "dateFin": "2003",
+      "categorie": "FORMATION",
+      "titre": "HEC Paris",
+      "organisation": "HEC Paris",
+      "description": "Diplome HEC.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2003",
+      "dateFin": "2008",
+      "categorie": "CARRIERE_PRIVEE",
+      "titre": "Co-fondateur de Watt & Home",
+      "organisation": "Watt & Home",
+      "description": "Start-up de panneaux solaires.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2008",
+      "dateFin": "2018",
+      "categorie": "CARRIERE_PRIVEE",
+      "titre": "Directeur chez Elis",
+      "organisation": "Elis",
+      "description": "Direction au sein du groupe de services.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": []
+}

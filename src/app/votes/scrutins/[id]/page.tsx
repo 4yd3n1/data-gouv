@@ -7,12 +7,30 @@ import { PageHeader } from "@/components/page-header";
 import { ScrutinResultBadge } from "@/components/scrutin-result-badge";
 import { VoteBadge } from "@/components/vote-badge";
 
+async function resolveScrutinId(idOrNumero: string): Promise<string | null> {
+  const direct = await prisma.scrutin.findUnique({
+    where: { id: idOrNumero },
+    select: { id: true },
+  });
+  if (direct) return direct.id;
+  const asNumero = Number.parseInt(idOrNumero, 10);
+  if (!Number.isFinite(asNumero)) return null;
+  const byNumero = await prisma.scrutin.findFirst({
+    where: { numero: asNumero },
+    orderBy: { legislature: "desc" },
+    select: { id: true },
+  });
+  return byNumero?.id ?? null;
+}
+
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
-  const { id } = await params;
+  const { id: raw } = await params;
+  const id = await resolveScrutinId(raw);
+  if (!id) return { title: "Scrutin introuvable — L'Observatoire Citoyen" };
   const s = await prisma.scrutin.findUnique({
     where: { id },
     select: { titre: true, numero: true, sortCode: true },
@@ -25,7 +43,9 @@ export async function generateMetadata({
 }
 
 export default async function ScrutinDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
+  const { id: raw } = await params;
+  const id = await resolveScrutinId(raw);
+  if (!id) notFound();
 
   const [scrutin, parentLois] = await Promise.all([
     prisma.scrutin.findUnique({

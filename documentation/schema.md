@@ -1,6 +1,6 @@
 # Database Schema Reference
 
-> Last updated: Mar 6, 2026 (Session 35)
+> Last updated: Apr 21, 2026 (Session 46)
 
 Complete reference for all Prisma models, fields, relations, indexes, and ingestion sources.
 
@@ -22,7 +22,7 @@ Complete reference for all Prisma models, fields, relations, indexes, and ingest
 | Governance | Depute, Senateur, MandatSenateur, CommissionSenateur, Lobbyiste, ActionLobbyiste | ~106,500 |
 | Economy | Indicateur, Observation | ~717 |
 | Culture | Musee, FrequentationMusee, Monument | ~60,071 |
-| Declarations | DeclarationInteret, ParticipationFinanciere, RevenuDeclaration | varies |
+| Declarations | DeclarationInteret, ParticipationFinanciere, RevenuDeclaration | 10,226 decl + 10,936 part + 381,088 rev (Session 46 refresh) |
 | Parliament | Organe, Scrutin, GroupeVote, VoteRecord, Deport | varies |
 | Parliamentary Laws | LoiParlementaire, ScrutinLoi | 19 lois, 2,589 links |
 | Elections & RNE | Elu, ElectionLegislative, CandidatLegislatif, PartiPolitique | ~601,514 |
@@ -30,11 +30,30 @@ Complete reference for all Prisma models, fields, relations, indexes, and ingest
 | Vote Tags | ScrutinTag | ~3,170 |
 | Safety & Health | StatCriminalite, DensiteMedicale | varies |
 | Cross-reference | ConflictSignal | populated by `pnpm compute:conflicts` |
-| Government Profiles (Phase 9) | PersonnalitePublique, MandatGouvernemental, EntreeCarriere, InteretDeclare, EvenementJudiciaire, ActionLobby | 44 persons, 49 mandats, 474 EntreeCarriere, **14 EvenementJudiciaire**, 184 InteretDeclare, 131,842 ActionLobby |
+| Government Profiles (Phase 9) | PersonnalitePublique, MandatGouvernemental, EntreeCarriere, InteretDeclare, EvenementJudiciaire, ActionLobby | 110 persons, 49 mandats, 474 EntreeCarriere, **15 EvenementJudiciaire**, 1,988 InteretDeclare (Session 46 re-ingest), 131,842 ActionLobby |
 | Media Ownership (Session 35) | GroupeMedia, MediaProprietaire, ParticipationMedia, Filiale | 10 groups, 10 owners, 10 participations, 72 filiales |
 | System | IngestionLog | grows over time |
 
 **Total models**: 42 + IngestionLog
+
+### Name normalization (Session 46)
+
+Four models carry `nomNormalise` + `prenomNormalise` columns plus a compound btree index on the pair: `Depute`, `Senateur`, `DeclarationInteret`, `PersonnalitePublique`. These hold the output of `normalizeName()` from [`src/lib/normalize-name.ts`](../src/lib/normalize-name.ts) — NFD decomposition, strip U+0300–U+036F combining marks, lowercase, collapse whitespace, trim.
+
+Use them for every cross-dataset name join. Prisma `{ equals: X, mode: "insensitive" }` handles case but **not** accents (`Nuñez ≠ NUNEZ`, `Éléonore ≠ Eléonore`), which was silently dropping ~30% of minister-to-declaration joins before the fix.
+
+```ts
+// Correct pattern
+prisma.declarationInteret.findMany({
+  where: {
+    nomNormalise: depute.nomNormalise,
+    prenomNormalise: depute.prenomNormalise,
+    typeMandat: "Député",
+  },
+});
+```
+
+Ingestion scripts populate the columns on every write. Backfill for pre-existing rows: `pnpm tsx scripts/backfill-normalized-names.ts` (idempotent).
 
 ---
 
@@ -138,6 +157,8 @@ Members of the Assemblée Nationale. Source: Datan dataset via data.gouv.fr Tabu
 | `civilite` | String | `"M."` / `"Mme"` |
 | `nom` | String | Family name |
 | `prenom` | String | Given name |
+| `nomNormalise` | String | `normalizeName(nom)` — accent/case-insensitive join key (Session 46) |
+| `prenomNormalise` | String | `normalizeName(prenom)` — accent/case-insensitive join key (Session 46) |
 | `villeNaissance` | String? | City of birth |
 | `dateNaissance` | DateTime? | Date of birth |
 | `age` | Int? | Age (at ingestion) |
@@ -171,7 +192,7 @@ Members of the Assemblée Nationale. Source: Datan dataset via data.gouv.fr Tabu
 - `deports Deport[]`
 - `personnalites PersonnalitePublique[]` — Phase 9 cross-reference
 
-**Indexes**: `nom+prenom`, `groupeAbrev`, `departementCode`, `departementRefCode`, `actif`
+**Indexes**: `nom+prenom`, `nomNormalise+prenomNormalise`, `groupeAbrev`, `departementCode`, `departementRefCode`, `actif`
 
 **Row count**: ~2,101 (570 active — 7 corrected to `actif=false` after joining Bayrou government)
 
@@ -187,6 +208,8 @@ Members of the French Senate. Source: official Sénat open data CSVs (ISO-8859-1
 | `civilite` | String? | `"M."` / `"Mme"` |
 | `nom` | String | Family name |
 | `prenom` | String | Given name |
+| `nomNormalise` | String | `normalizeName(nom)` — accent/case-insensitive join key (Session 46) |
+| `prenomNormalise` | String | `normalizeName(prenom)` — accent/case-insensitive join key (Session 46) |
 | `dateNaissance` | DateTime? | Date of birth |
 | `groupe` | String? | Political group |
 | `departement` | String? | Department name from source |
@@ -205,7 +228,7 @@ Members of the French Senate. Source: official Sénat open data CSVs (ISO-8859-1
 - `commissions CommissionSenateur[]`
 - `personnalites PersonnalitePublique[]` — Phase 9 cross-reference
 
-**Indexes**: `nom+prenom`, `groupe`, `departementCode`, `actif`
+**Indexes**: `nom+prenom`, `nomNormalise+prenomNormalise`, `groupe`, `departementCode`, `actif`
 
 **Row count**: ~1,943
 
@@ -458,8 +481,10 @@ Interest and activity declarations filed by elected officials. Source: HATVP XML
 |-------|------|-------------|
 | `id` | String PK | UUID from HATVP XML |
 | `civilite` | String? | `"M."` / `"Mme"` |
-| `nom` | String | Family name |
-| `prenom` | String | Given name |
+| `nom` | String | Family name (HATVP mixes cases: `"NUNEZ"`, `"Caroit"`) |
+| `prenom` | String | Given name (HATVP often drops accents: `"Eleonore"`) |
+| `nomNormalise` | String | `normalizeName(nom)` — primary join key to `Depute`/`Senateur`/`PersonnalitePublique` (Session 46) |
+| `prenomNormalise` | String | `normalizeName(prenom)` — primary join key (Session 46) |
 | `dateNaissance` | DateTime? | Date of birth |
 | `typeDeclaration` | String | `"DI"` (intérêts) / `"DIA"` (intérêts et activités) / `"DIM"` (modification) |
 | `typeMandat` | String | `"Député"`, `"Sénateur"`, `"Ministre"`, `"Maire ou adjoint municipal"`, etc. |
@@ -474,7 +499,9 @@ Interest and activity declarations filed by elected officials. Source: HATVP XML
 
 **Relations**: `participations ParticipationFinanciere[]`, `revenus RevenuDeclaration[]`
 
-**Indexes**: `nom+prenom`, `typeMandat`, `totalParticipations`
+**Indexes**: `nom+prenom`, `nomNormalise+prenomNormalise`, `typeMandat`, `totalParticipations`
+
+**Row count**: ~10,226 (Session 46 re-ingestion — HATVP merged XML shrunk from 149MB to 120MB after they dropped retired officials, so this is lower than the Session 42 count of 12,756 but covers current ministers much better)
 
 ---
 
@@ -1174,6 +1201,8 @@ Core profile record for each government official. One row per person (not per ma
 | `id` | String PK | cuid() |
 | `nom` | String | Family name |
 | `prenom` | String | Given name |
+| `nomNormalise` | String | `normalizeName(nom)` — join key to `DeclarationInteret` (Session 46) |
+| `prenomNormalise` | String | `normalizeName(prenom)` — join key to `DeclarationInteret` (Session 46) |
 | `civilite` | String? | `"M."` / `"Mme"` |
 | `dateNaissance` | DateTime? | Date of birth |
 | `lieuNaissance` | String? | City of birth |
@@ -1190,9 +1219,9 @@ Core profile record for each government official. One row per person (not per ma
 
 **Relations**: `depute Depute?`, `senateur Senateur?`, `mandats MandatGouvernemental[]`, `carriere EntreeCarriere[]`, `interets InteretDeclare[]`, `evenements EvenementJudiciaire[]`
 
-**Indexes**: `nom+prenom`, `deputeId`, `senateurId`
+**Indexes**: `nom+prenom`, `nomNormalise+prenomNormalise`, `deputeId`, `senateurId`
 
-**Row count**: 44 (Lecornu II government — 37 current members + Macron + 6 former Bayrou-only members)
+**Row count**: 110 (Lecornu II + 4 historical govts — Session 37 seed files for Borne/Attal/Barnier prepared but final seed TBD)
 
 ---
 
@@ -1264,7 +1293,7 @@ Interest declaration items parsed from HATVP XML. One row per item per declarati
 
 **Indexes**: `personnaliteId`, `declarationRef`, `rubrique`, `alerteConflit`
 
-**Row count**: 184 (Bayrou, Oct 2025 declaration). Lecornu II ministers' HATVP XML not yet published — re-running `npx tsx scripts/ingest-hatvp.ts` picks them up automatically when available.
+**Row count**: 1,988 across 67 personnalites (Session 46 — after HATVP XML refresh + normalized-name matching). **29 of 37 active Lecornu II ministers** now have parsed interests (the remaining 8 genuinely haven't filed: Macron as President is expected; Agresti-Roubache, Amiel, Berger J-D, Bregeon, Galliard-Minier, Pégard, Vedrenne have no published declaration yet). Before Session 46: only 184 rows for 2 personnalites due to accent mismatch in name matching.
 
 **HATVP XML → `rubrique` mapping**:
 

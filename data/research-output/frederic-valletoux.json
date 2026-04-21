@@ -1,0 +1,68 @@
+{
+  "slug": "frederic-valletoux",
+  "nom": "Valletoux",
+  "prenom": "Frederic",
+  "civilite": "M.",
+  "researched_at": "2026-04-01",
+  "_ingested": false,
+  "sources_used": [
+    "https://www.lemonde.fr/politique/",
+    "https://www.assemblee-nationale.fr/"
+  ],
+  "notes": "Journaliste (Les Echos, Gazette des communes). Maire de Fontainebleau 2005-2022. President de la FHF (Federation hospitaliere de France) 2010-2022. Depute 2022. Ministre de la Sante sous Attal.",
+  "career_entries": [
+    {
+      "dateDebut": "1988",
+      "dateFin": "2005",
+      "categorie": "CARRIERE_PRIVEE",
+      "titre": "Journaliste",
+      "organisation": "Les Echos / La Gazette des communes",
+      "description": "Journaliste specialise en politique locale et sante.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2005",
+      "dateFin": "2022",
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Maire de Fontainebleau",
+      "organisation": "Mairie de Fontainebleau",
+      "description": "Maire pendant 17 ans.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2010",
+      "dateFin": "2022",
+      "categorie": "ORGANISME",
+      "titre": "President de la FHF",
+      "organisation": "Federation hospitaliere de France",
+      "description": "President de la FHF, representant les hopitaux publics.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2022",
+      "dateFin": null,
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Depute de Seine-et-Marne (2e circ.)",
+      "organisation": "Assemblee nationale",
+      "description": "Elu depute Horizons.",
+      "sourceUrl": "https://www.assemblee-nationale.fr/",
+      "sourcePrincipale": "Assemblee nationale",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": []
+}

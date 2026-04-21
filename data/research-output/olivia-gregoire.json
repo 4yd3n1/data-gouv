@@ -1,0 +1,54 @@
+{
+  "slug": "olivia-gregoire",
+  "nom": "Gregoire",
+  "prenom": "Olivia",
+  "civilite": "Mme",
+  "researched_at": "2026-04-01",
+  "_ingested": false,
+  "sources_used": [
+    "https://www.assemblee-nationale.fr/"
+  ],
+  "notes": "Sciences Po, ESSEC. Attachee de presse de Raffarin. DDB, Havas, Saint-Gobain. Fondatrice d'Olicare. Deputee de Paris 2017. Ministre des PME/Entreprises sous Borne et Attal.",
+  "career_entries": [
+    {
+      "dateDebut": "1998",
+      "dateFin": "2003",
+      "categorie": "FORMATION",
+      "titre": "Sciences Po Paris + ESSEC",
+      "organisation": "Sciences Po / ESSEC",
+      "description": "Double cursus.",
+      "sourceUrl": "https://www.assemblee-nationale.fr/",
+      "sourcePrincipale": "Assemblee nationale",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2003",
+      "dateFin": "2017",
+      "categorie": "CARRIERE_PRIVEE",
+      "titre": "Communication et conseil",
+      "organisation": "DDB / Havas / Saint-Gobain / Olicare",
+      "description": "Carriere dans la communication puis fondatrice d'Olicare (sante).",
+      "sourceUrl": "https://www.assemblee-nationale.fr/",
+      "sourcePrincipale": "Assemblee nationale",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2017",
+      "dateFin": null,
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Deputee de Paris (12e circ.)",
+      "organisation": "Assemblee nationale",
+      "description": "Deputee LREM/Renaissance.",
+      "sourceUrl": "https://www.assemblee-nationale.fr/",
+      "sourcePrincipale": "Assemblee nationale",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": []
+}

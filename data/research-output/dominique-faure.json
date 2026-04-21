@@ -1,0 +1,55 @@
+{
+  "slug": "dominique-faure",
+  "nom": "Faure",
+  "prenom": "Dominique",
+  "civilite": "Mme",
+  "researched_at": "2026-04-01",
+  "_ingested": false,
+  "sources_used": [
+    "https://www.lemonde.fr/politique/",
+    "https://www.assemblee-nationale.fr/"
+  ],
+  "notes": "ENSIMAG (ingenieure informatique), DESS finance. Carriere dans le secteur prive (Siemens, Bull). Maire de Saint-Orens 2020. Deputee Haute-Garonne 2022. Ministre des Collectivites territoriales sous Borne et Attal.",
+  "career_entries": [
+    {
+      "dateDebut": "1980",
+      "dateFin": "1984",
+      "categorie": "FORMATION",
+      "titre": "ENSIMAG + DESS Finance",
+      "organisation": "ENSIMAG / Universite",
+      "description": "Ingenieure en informatique et mathematiques appliquees.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "1984",
+      "dateFin": "2020",
+      "categorie": "CARRIERE_PRIVEE",
+      "titre": "Ingenieure et cadre dans le secteur technologique",
+      "organisation": "Siemens, Bull, secteur prive",
+      "description": "Carriere d'ingenieure puis cadre dirigeante dans le secteur technologique.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "medium",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2020",
+      "dateFin": null,
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Maire de Saint-Orens-de-Gameville",
+      "organisation": "Mairie de Saint-Orens",
+      "description": "Elue maire.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": []
+}

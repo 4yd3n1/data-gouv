@@ -1,0 +1,68 @@
+{
+  "slug": "alexandre-portier",
+  "nom": "Portier",
+  "prenom": "Alexandre",
+  "civilite": "M.",
+  "researched_at": "2026-04-01",
+  "_ingested": false,
+  "sources_used": [
+    "https://www.lemonde.fr/politique/",
+    "https://www.assemblee-nationale.fr/"
+  ],
+  "notes": "Diplome de philosophie (Institut catholique de Paris), ENS, Sciences Po. Professeur de philosophie. Depute LR du Rhone 2022. Ministre de la Reussite scolaire sous Barnier.",
+  "career_entries": [
+    {
+      "dateDebut": "2010",
+      "dateFin": "2014",
+      "categorie": "FORMATION",
+      "titre": "Licence et master de philosophie",
+      "organisation": "Institut catholique de Paris / ENS",
+      "description": "Etudes de philosophie.",
+      "sourceUrl": "https://www.assemblee-nationale.fr/",
+      "sourcePrincipale": "Assemblee nationale",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2014",
+      "dateFin": "2015",
+      "categorie": "FORMATION",
+      "titre": "Sciences Po Paris",
+      "organisation": "Sciences Po Paris",
+      "description": "Formation complementaire.",
+      "sourceUrl": "https://www.assemblee-nationale.fr/",
+      "sourcePrincipale": "Assemblee nationale",
+      "sourceDate": "2024",
+      "confidence": "medium",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2015",
+      "dateFin": "2022",
+      "categorie": "CARRIERE_PRIVEE",
+      "titre": "Professeur de philosophie",
+      "organisation": "Lycee",
+      "description": "Enseignant de philosophie dans le secondaire.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "medium",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2022",
+      "dateFin": null,
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Depute du Rhone (6e circ.)",
+      "organisation": "Assemblee nationale",
+      "description": "Elu depute LR.",
+      "sourceUrl": "https://www.assemblee-nationale.fr/",
+      "sourcePrincipale": "Assemblee nationale",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": []
+}

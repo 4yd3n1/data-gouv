@@ -1,0 +1,56 @@
+{
+  "slug": "fadila-khattabi",
+  "nom": "Khattabi",
+  "prenom": "Fadila",
+  "civilite": "Mme",
+  "researched_at": "2026-04-01",
+  "_ingested": false,
+  "sources_used": [
+    "https://www.francetvinfo.fr/",
+    "https://www.assemblee-nationale.fr/"
+  ],
+  "notes": "Enseignante de formation. Deputee de Cote-d'Or 2017-2024. Ministre deleguee aux Personnes handicapees sous Borne et Attal. Condamnee aux prud'hommes en 2023 pour heures supplementaires impayees.",
+  "career_entries": [
+    {
+      "dateDebut": "1990",
+      "dateFin": "2017",
+      "categorie": "CARRIERE_PRIVEE",
+      "titre": "Enseignante",
+      "organisation": "Education nationale",
+      "description": "Enseignante dans le secondaire.",
+      "sourceUrl": "https://www.assemblee-nationale.fr/",
+      "sourcePrincipale": "Assemblee nationale",
+      "sourceDate": "2024",
+      "confidence": "medium",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2017",
+      "dateFin": "2024",
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Deputee de Cote-d'Or (3e circ.)",
+      "organisation": "Assemblee nationale",
+      "description": "Deputee LREM/Renaissance.",
+      "sourceUrl": "https://www.assemblee-nationale.fr/",
+      "sourcePrincipale": "Assemblee nationale",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": [
+    {
+      "date": "2023-06-01",
+      "type": "CONDAMNATION",
+      "nature": "heures supplementaires impayees a une collaboratrice",
+      "juridiction": "Conseil de prud'hommes de Dijon",
+      "statut": "CLOS",
+      "resume": "Condamnee par les prud'hommes pour heures supplementaires non remunerees a une collaboratrice parlementaire.",
+      "sourcePrincipale": "France Info",
+      "sourceUrl": "https://www.francetvinfo.fr/",
+      "sourceDate": "2023-06",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "slug": "marie-guevenoux",
+  "nom": "Guevenoux",
+  "prenom": "Marie",
+  "civilite": "Mme",
+  "researched_at": "2026-04-01",
+  "_ingested": false,
+  "sources_used": [
+    "https://www.assemblee-nationale.fr/"
+  ],
+  "notes": "Master communication. Assistante parlementaire (Alain Madelin). Cabinets Borloo, Darcos. Deputee de l'Essonne 2017-2024. Secretaire d'Etat / ministre sous Attal et Borne.",
+  "career_entries": [
+    {
+      "dateDebut": "2000",
+      "dateFin": "2017",
+      "categorie": "FONCTION_PUBLIQUE",
+      "titre": "Collaboratrice parlementaire et de cabinets ministeriels",
+      "organisation": "Assemblee nationale / cabinets ministeriels",
+      "description": "Assistante d'Alain Madelin, puis cabinets Borloo et Darcos.",
+      "sourceUrl": "https://www.assemblee-nationale.fr/",
+      "sourcePrincipale": "Assemblee nationale",
+      "sourceDate": "2024",
+      "confidence": "medium",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2017",
+      "dateFin": "2024",
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Deputee de l'Essonne",
+      "organisation": "Assemblee nationale",
+      "description": "Deputee LREM.",
+      "sourceUrl": "https://www.assemblee-nationale.fr/",
+      "sourcePrincipale": "Assemblee nationale",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": []
+}

@@ -1,0 +1,107 @@
+{
+  "slug": "catherine-colonna",
+  "nom": "Colonna",
+  "prenom": "Catherine",
+  "civilite": "Mme",
+  "researched_at": "2026-04-01",
+  "_ingested": false,
+  "sources_used": [
+    "https://www.lemonde.fr/politique/",
+    "https://www.diplomatie.gouv.fr/"
+  ],
+  "notes": "Juriste (Tours), Sciences Po, ENA. Diplomate de carriere: porte-parole de l'Elysee 1995-2004, ministre des Affaires europeennes 2005-2007, ambassadrice en Italie, a l'OCDE et au Royaume-Uni. Brunswick Group 2010-2014. Ministre des Affaires etrangeres sous Borne 2022-2024.",
+  "career_entries": [
+    {
+      "dateDebut": "1978",
+      "dateFin": "1982",
+      "categorie": "FORMATION",
+      "titre": "Licence de droit",
+      "organisation": "Universite de Tours",
+      "description": "Etudes de droit.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "1982",
+      "dateFin": "1984",
+      "categorie": "FORMATION",
+      "titre": "Sciences Po Paris + ENA",
+      "organisation": "Sciences Po / ENA",
+      "description": "Formation a Sciences Po puis a l'ENA.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "1984",
+      "dateFin": "1995",
+      "categorie": "FONCTION_PUBLIQUE",
+      "titre": "Diplomate au Quai d'Orsay",
+      "organisation": "Ministere des Affaires etrangeres",
+      "description": "Debut de carriere diplomatique.",
+      "sourceUrl": "https://www.diplomatie.gouv.fr/",
+      "sourcePrincipale": "MAE",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "1995",
+      "dateFin": "2004",
+      "categorie": "FONCTION_PUBLIQUE",
+      "titre": "Porte-parole de la presidence de la Republique",
+      "organisation": "Elysee",
+      "description": "Porte-parole sous Jacques Chirac.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2010",
+      "dateFin": "2014",
+      "categorie": "CARRIERE_PRIVEE",
+      "titre": "Associee chez Brunswick Group",
+      "organisation": "Brunswick Group",
+      "description": "Cabinet de conseil en communication strategique.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2014",
+      "dateFin": "2017",
+      "categorie": "FONCTION_PUBLIQUE",
+      "titre": "Ambassadrice de France a l'OCDE",
+      "organisation": "OCDE",
+      "description": "Representante permanente de la France aupres de l'OCDE.",
+      "sourceUrl": "https://www.diplomatie.gouv.fr/",
+      "sourcePrincipale": "MAE",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2017",
+      "dateFin": "2022",
+      "categorie": "FONCTION_PUBLIQUE",
+      "titre": "Ambassadrice de France au Royaume-Uni",
+      "organisation": "Ambassade de France a Londres",
+      "description": "Ambassadrice pendant le Brexit.",
+      "sourceUrl": "https://www.diplomatie.gouv.fr/",
+      "sourcePrincipale": "MAE",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": []
+}

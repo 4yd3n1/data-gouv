@@ -1,0 +1,81 @@
+{
+  "slug": "michel-barnier",
+  "nom": "Barnier",
+  "prenom": "Michel",
+  "civilite": "M.",
+  "researched_at": "2026-04-01",
+  "_ingested": false,
+  "sources_used": [
+    "https://www.lemonde.fr/politique/",
+    "https://www.vie-publique.fr/"
+  ],
+  "notes": "ESCP. 50 ans de carriere politique. Depute de Savoie, 4 fois ministre, 2 fois commissaire europeen. Negociateur en chef du Brexit. Premier ministre sept-dec 2024 (le plus court de la Ve Republique).",
+  "career_entries": [
+    {
+      "dateDebut": "1972",
+      "dateFin": "1975",
+      "categorie": "FORMATION",
+      "titre": "ESCP (Ecole superieure de commerce de Paris)",
+      "organisation": "ESCP",
+      "description": "Diplome de commerce.",
+      "sourceUrl": "https://www.vie-publique.fr/",
+      "sourcePrincipale": "Vie publique",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "1978",
+      "dateFin": "1999",
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Depute de Savoie",
+      "organisation": "Assemblee nationale",
+      "description": "Depute RPR/UMP. Elu a 27 ans.",
+      "sourceUrl": "https://www.assemblee-nationale.fr/",
+      "sourcePrincipale": "Assemblee nationale",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "1993",
+      "dateFin": "2004",
+      "categorie": "FONCTION_PUBLIQUE",
+      "titre": "Ministre (Environnement, Affaires europeennes, Affaires etrangeres, Agriculture)",
+      "organisation": "Gouvernement",
+      "description": "4 postes ministeriels sous Balladur, Juppe et Raffarin.",
+      "sourceUrl": "https://www.vie-publique.fr/",
+      "sourcePrincipale": "Vie publique",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2010",
+      "dateFin": "2014",
+      "categorie": "ORGANISME",
+      "titre": "Commissaire europeen au Marche interieur",
+      "organisation": "Commission europeenne",
+      "description": "Commissaire europeen. A gere la regulation financiere post-2008.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2016",
+      "dateFin": "2021",
+      "categorie": "ORGANISME",
+      "titre": "Negociateur en chef du Brexit pour l'UE",
+      "organisation": "Commission europeenne",
+      "description": "Negociateur en chef du Brexit. A conduit les negociations de l'accord de retrait.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": []
+}

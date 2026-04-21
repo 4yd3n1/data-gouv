@@ -1,0 +1,107 @@
+{
+  "slug": "agnes-pannier-runacher",
+  "nom": "Pannier-Runacher",
+  "prenom": "Agnes",
+  "civilite": "Mme",
+  "researched_at": "2026-04-01",
+  "_ingested": false,
+  "sources_used": [
+    "https://www.lemonde.fr/politique/",
+    "https://www.mediapart.fr/"
+  ],
+  "notes": "HEC, Sciences Po, ENA. Inspectrice generale des finances. Parcours public-prive (AP-HP, Caisse des depots, Compagnie des Alpes). En gouvernement depuis 2018. Pere = ancien PDG de Perenco (petrole). Decret de deport pour conflit d'interets.",
+  "career_entries": [
+    {
+      "dateDebut": "1991",
+      "dateFin": "1994",
+      "categorie": "FORMATION",
+      "titre": "Diplome HEC Paris",
+      "organisation": "HEC Paris",
+      "description": "Ecole des hautes etudes commerciales.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "1994",
+      "dateFin": "1995",
+      "categorie": "FORMATION",
+      "titre": "Diplome Sciences Po Paris",
+      "organisation": "Sciences Po Paris",
+      "description": "Institut d'etudes politiques de Paris.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "1997",
+      "dateFin": "1999",
+      "categorie": "FORMATION",
+      "titre": "ENA (promotion Averroes)",
+      "organisation": "Ecole nationale d'administration",
+      "description": "Promotion Averroes.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "1999",
+      "dateFin": "2002",
+      "categorie": "FONCTION_PUBLIQUE",
+      "titre": "Inspectrice des finances",
+      "organisation": "Inspection generale des finances",
+      "description": "Inspectrice des finances.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2002",
+      "dateFin": "2007",
+      "categorie": "FONCTION_PUBLIQUE",
+      "titre": "Directrice generale adjointe de l'AP-HP",
+      "organisation": "AP-HP",
+      "description": "Direction generale adjointe de l'Assistance publique - Hopitaux de Paris.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2007",
+      "dateFin": "2014",
+      "categorie": "CARRIERE_PRIVEE",
+      "titre": "Directrice a la Caisse des depots",
+      "organisation": "Caisse des depots et consignations",
+      "description": "Directrice du developpement territorial et du reseau.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2014",
+      "dateFin": "2018",
+      "categorie": "CARRIERE_PRIVEE",
+      "titre": "Directrice generale de la Compagnie des Alpes",
+      "organisation": "Compagnie des Alpes",
+      "description": "DG du groupe de loisirs et domaines skiables.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": []
+}

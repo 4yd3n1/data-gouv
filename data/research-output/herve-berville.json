@@ -1,0 +1,68 @@
+{
+  "slug": "herve-berville",
+  "nom": "Berville",
+  "prenom": "Herve",
+  "civilite": "M.",
+  "researched_at": "2026-04-01",
+  "_ingested": false,
+  "sources_used": [
+    "https://www.lemonde.fr/politique/",
+    "https://www.assemblee-nationale.fr/"
+  ],
+  "notes": "Survivant du genocide rwandais, adopte par une famille bretonne. Sciences Po Lille, LSE. Economiste a l'AFD. Stanford. Depute des Cotes-d'Armor 2017. Secretaire d'Etat a la Mer sous Borne 2022-2024.",
+  "career_entries": [
+    {
+      "dateDebut": "2007",
+      "dateFin": "2012",
+      "categorie": "FORMATION",
+      "titre": "Sciences Po Lille + London School of Economics",
+      "organisation": "Sciences Po Lille / LSE",
+      "description": "Etudes de sciences politiques et d'economie.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2012",
+      "dateFin": "2016",
+      "categorie": "CARRIERE_PRIVEE",
+      "titre": "Economiste a l'AFD",
+      "organisation": "Agence francaise de developpement",
+      "description": "Economiste specialise dans le developpement.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2016",
+      "dateFin": "2017",
+      "categorie": "FORMATION",
+      "titre": "Programme a Stanford",
+      "organisation": "Stanford University",
+      "description": "Formation a Stanford.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "medium",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2017",
+      "dateFin": null,
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Depute des Cotes-d'Armor (1ere circ.)",
+      "organisation": "Assemblee nationale",
+      "description": "Elu depute LREM.",
+      "sourceUrl": "https://www.assemblee-nationale.fr/",
+      "sourcePrincipale": "Assemblee nationale",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": []
+}

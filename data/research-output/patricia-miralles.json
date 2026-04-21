@@ -1,0 +1,41 @@
+{
+  "slug": "patricia-miralles",
+  "nom": "Miralles",
+  "prenom": "Patricia",
+  "civilite": "Mme",
+  "researched_at": "2026-04-01",
+  "_ingested": false,
+  "sources_used": [
+    "https://www.assemblee-nationale.fr/"
+  ],
+  "notes": "Commerce puis engagement militaire reserve. Adjointe au maire de Montpellier. Deputee de l'Herault 2017. Secretaire d'Etat aux Anciens combattants sous Borne.",
+  "career_entries": [
+    {
+      "dateDebut": "1990",
+      "dateFin": "2017",
+      "categorie": "CARRIERE_PRIVEE",
+      "titre": "Activite dans le commerce + reserviste militaire",
+      "organisation": "Secteur prive / Armee",
+      "description": "Carriere dans le commerce. Reserviste citoyenne.",
+      "sourceUrl": "https://www.assemblee-nationale.fr/",
+      "sourcePrincipale": "Assemblee nationale",
+      "sourceDate": "2024",
+      "confidence": "medium",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2017",
+      "dateFin": null,
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Deputee de l'Herault (8e circ.)",
+      "organisation": "Assemblee nationale",
+      "description": "Deputee LREM.",
+      "sourceUrl": "https://www.assemblee-nationale.fr/",
+      "sourcePrincipale": "Assemblee nationale",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": []
+}

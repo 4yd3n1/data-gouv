@@ -1,0 +1,68 @@
+{
+  "slug": "olivier-veran",
+  "nom": "Veran",
+  "prenom": "Olivier",
+  "civilite": "M.",
+  "researched_at": "2026-04-01",
+  "_ingested": false,
+  "sources_used": [
+    "https://www.lemonde.fr/politique/"
+  ],
+  "notes": "Medecin neurologue. Depute de l'Isere 2017. Ministre de la Sante 2020-2022 (gestion COVID). Ministre du Renouveau democratique et porte-parole du gouvernement sous Borne. Non-lieu CJR pour la gestion COVID.",
+  "career_entries": [
+    {
+      "dateDebut": "2000",
+      "dateFin": "2010",
+      "categorie": "FORMATION",
+      "titre": "Doctorat en medecine, specialisation neurologie",
+      "organisation": "Universite de Grenoble",
+      "description": "Medecin neurologue au CHU de Grenoble.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2010",
+      "dateFin": "2017",
+      "categorie": "CARRIERE_PRIVEE",
+      "titre": "Medecin neurologue hospitalier + master Sciences Po",
+      "organisation": "CHU Grenoble / Sciences Po",
+      "description": "Praticien hospitalier et engagement politique.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2017",
+      "dateFin": null,
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Depute de l'Isere (1ere circ.)",
+      "organisation": "Assemblee nationale",
+      "description": "Depute LREM.",
+      "sourceUrl": "https://www.assemblee-nationale.fr/",
+      "sourcePrincipale": "Assemblee nationale",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": [
+    {
+      "date": "2024-01-01",
+      "type": "NON_LIEU",
+      "nature": "gestion de la crise COVID-19",
+      "juridiction": "Cour de justice de la Republique",
+      "statut": "CLOS",
+      "resume": "Plainte devant la CJR pour la gestion de la crise sanitaire COVID-19. Non-lieu prononce.",
+      "sourcePrincipale": "Le Monde",
+      "sourceUrl": "https://www.lemonde.fr/politique/",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ]
+}

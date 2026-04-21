@@ -1,0 +1,56 @@
+{
+  "slug": "eric-dupond-moretti",
+  "nom": "Dupond-Moretti",
+  "prenom": "Eric",
+  "civilite": "M.",
+  "researched_at": "2026-04-01",
+  "_ingested": false,
+  "sources_used": [
+    "https://www.lemonde.fr/politique/",
+    "https://www.francetvinfo.fr/"
+  ],
+  "notes": "Avocat penaliste celebre. Parcours atypique: fils d'immigres italiens, manutentionnaire avant le droit. Plus de 140 acquittements au penal. Garde des Sceaux sous Castex, Borne et Attal (2020-2024). Juge et acquitte par la CJR pour prise illegale d'interets (nov 2023).",
+  "career_entries": [
+    {
+      "dateDebut": "1980",
+      "dateFin": "1984",
+      "categorie": "FORMATION",
+      "titre": "Licence de droit",
+      "organisation": "Universite de Lille II",
+      "description": "Etudes de droit a Lille. A travaille comme manutentionnaire pour financer ses etudes.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "1984",
+      "dateFin": "2020",
+      "categorie": "CARRIERE_PRIVEE",
+      "titre": "Avocat penaliste",
+      "organisation": "Barreau de Lille puis de Paris",
+      "description": "Avocat penaliste surnomme 'Acquittator'. Plus de 140 acquittements. A defendu des affaires mediatiques majeures.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": [
+    {
+      "date": "2021-07-16",
+      "type": "COUR_JUSTICE_REPUBLIQUE",
+      "nature": "prise illegale d'interets",
+      "juridiction": "Cour de justice de la Republique",
+      "statut": "CLOS",
+      "resume": "Juge par la CJR pour avoir use de ses fonctions de ministre pour regler des comptes avec des magistrats (PNF). Acquitte le 29 novembre 2023.",
+      "sourcePrincipale": "Le Monde",
+      "sourceUrl": "https://www.lemonde.fr/societe/article/2023/11/29/",
+      "sourceDate": "2023-11",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ]
+}

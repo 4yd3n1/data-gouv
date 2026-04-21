@@ -1,0 +1,41 @@
+{
+  "slug": "valerie-letard",
+  "nom": "Letard",
+  "prenom": "Valerie",
+  "civilite": "Mme",
+  "researched_at": "2026-04-01",
+  "_ingested": false,
+  "sources_used": [
+    "https://www.senat.fr/"
+  ],
+  "notes": "Assistante sociale de formation. Engagement dans l'action sociale. Senatrice du Nord 2001. Secretaire d'Etat Solidarites 2007-2010. Ministre du Logement sous Barnier et Bayrou.",
+  "career_entries": [
+    {
+      "dateDebut": "1985",
+      "dateFin": "2001",
+      "categorie": "CARRIERE_PRIVEE",
+      "titre": "Assistante sociale et cadre dans l'action sociale",
+      "organisation": "Secteur social",
+      "description": "Assistante sociale puis responsable d'action sociale.",
+      "sourceUrl": "https://www.senat.fr/",
+      "sourcePrincipale": "Senat",
+      "sourceDate": "2024",
+      "confidence": "medium",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2001",
+      "dateFin": null,
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Senatrice du Nord",
+      "organisation": "Senat",
+      "description": "Senatrice UDI/centriste. Vice-presidente du Senat.",
+      "sourceUrl": "https://www.senat.fr/",
+      "sourcePrincipale": "Senat",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": []
+}

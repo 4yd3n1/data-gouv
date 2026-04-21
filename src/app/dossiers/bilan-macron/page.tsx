@@ -19,7 +19,7 @@ export default async function BilanMacronPage() {
       <BilanHeroSection />
       <DossierNav currentSlug="bilan-macron" />
 
-      <div className="mx-auto max-w-4xl px-6 py-8 space-y-16">
+      <div className="mx-auto max-w-5xl px-6 py-8 space-y-16">
         <BilanEconomieSection />
 
         <div className="border-t border-bureau-700/20" />

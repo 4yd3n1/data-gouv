@@ -1,0 +1,94 @@
+{
+  "slug": "astrid-panosyan-bouvet",
+  "nom": "Panosyan-Bouvet",
+  "prenom": "Astrid",
+  "civilite": "Mme",
+  "researched_at": "2026-04-01",
+  "_ingested": false,
+  "sources_used": [
+    "https://www.lemonde.fr/politique/",
+    "https://www.challenges.fr/"
+  ],
+  "notes": "HEC, Sciences Po, Harvard Kennedy School. Consultante (A.T. Kearney), AXA, Groupama (secretaire generale), Unibail-Rodamco-Westfield (DG). Co-fondatrice d'En Marche. Deputee de Paris 2022. Ministre du Travail sous Barnier.",
+  "career_entries": [
+    {
+      "dateDebut": "1993",
+      "dateFin": "1996",
+      "categorie": "FORMATION",
+      "titre": "HEC Paris",
+      "organisation": "HEC Paris",
+      "description": "Ecole des hautes etudes commerciales.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "1996",
+      "dateFin": "1998",
+      "categorie": "FORMATION",
+      "titre": "Sciences Po Paris + Harvard Kennedy School",
+      "organisation": "Sciences Po / Harvard",
+      "description": "Double formation.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "1998",
+      "dateFin": "2003",
+      "categorie": "CARRIERE_PRIVEE",
+      "titre": "Consultante en strategie",
+      "organisation": "A.T. Kearney",
+      "description": "Consultante en strategie.",
+      "sourceUrl": "https://www.challenges.fr/",
+      "sourcePrincipale": "Challenges",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2003",
+      "dateFin": "2008",
+      "categorie": "CARRIERE_PRIVEE",
+      "titre": "Directrice chez AXA",
+      "organisation": "AXA",
+      "description": "Direction strategie et partenariats.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2008",
+      "dateFin": "2014",
+      "categorie": "CARRIERE_PRIVEE",
+      "titre": "Secretaire generale de Groupama",
+      "organisation": "Groupama",
+      "description": "Secretaire generale du groupe d'assurance.",
+      "sourceUrl": "https://www.challenges.fr/",
+      "sourcePrincipale": "Challenges",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2014",
+      "dateFin": "2022",
+      "categorie": "CARRIERE_PRIVEE",
+      "titre": "Directrice generale chez Unibail-Rodamco-Westfield",
+      "organisation": "Unibail-Rodamco-Westfield",
+      "description": "DG du leader mondial de l'immobilier commercial.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": []
+}

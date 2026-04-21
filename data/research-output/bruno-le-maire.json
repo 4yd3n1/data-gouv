@@ -1,0 +1,109 @@
+{
+  "slug": "bruno-le-maire",
+  "nom": "Le Maire",
+  "prenom": "Bruno",
+  "civilite": "M.",
+  "researched_at": "2026-04-01",
+  "_ingested": false,
+  "sources_used": [
+    "https://www.lemonde.fr/politique/",
+    "https://www.mediapart.fr/",
+    "https://www.francetvinfo.fr/"
+  ],
+  "notes": "ENS, agrege de lettres modernes, Sciences Po, ENA. Diplomate au MAE 1998-2004, cabinet Villepin, depute de l'Eure 2007, ministre de l'Agriculture 2009-2012, ministre de l'Economie 2017-2024 (7 ans, record). Enquete preliminaire pour faux en ecriture publique (autoroutes) et micro-parti.",
+  "career_entries": [
+    {
+      "dateDebut": "1989",
+      "dateFin": "1993",
+      "categorie": "FORMATION",
+      "titre": "Ecole normale superieure (Ulm)",
+      "organisation": "ENS Ulm",
+      "description": "Normalien, agrege de lettres modernes.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "1993",
+      "dateFin": "1995",
+      "categorie": "FORMATION",
+      "titre": "Sciences Po Paris + ENA",
+      "organisation": "Sciences Po / ENA",
+      "description": "Sciences Po puis ENA.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "1998",
+      "dateFin": "2004",
+      "categorie": "FONCTION_PUBLIQUE",
+      "titre": "Diplomate au Quai d'Orsay",
+      "organisation": "Ministere des Affaires etrangeres",
+      "description": "Premier secretaire d'ambassade.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2004",
+      "dateFin": "2007",
+      "categorie": "FONCTION_PUBLIQUE",
+      "titre": "Conseiller de Dominique de Villepin",
+      "organisation": "Cabinet du Premier ministre",
+      "description": "Conseiller diplomatique puis directeur de cabinet adjoint.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2007",
+      "dateFin": null,
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Depute de l'Eure (1ere circ.)",
+      "organisation": "Assemblee nationale",
+      "description": "Elu depute UMP puis LR.",
+      "sourceUrl": "https://www.assemblee-nationale.fr/",
+      "sourcePrincipale": "Assemblee nationale",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": [
+    {
+      "date": "2024-06-01",
+      "type": "ENQUETE_PRELIMINAIRE",
+      "nature": "faux en ecriture publique (concessions autoroutieres)",
+      "juridiction": "Parquet national financier",
+      "statut": "EN_COURS",
+      "resume": "Enquete preliminaire ouverte pour faux en ecriture publique dans le cadre de la prolongation des concessions autoroutieres signee en 2015.",
+      "sourcePrincipale": "Mediapart",
+      "sourceUrl": "https://www.mediapart.fr/journal/economie-et-social/",
+      "sourceDate": "2024-06",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "date": "2023-01-01",
+      "type": "ENQUETE_PRELIMINAIRE",
+      "nature": "financement de micro-parti (Avec BLM)",
+      "juridiction": "Parquet de Paris",
+      "statut": "CLOS",
+      "resume": "Enquete sur le micro-parti 'Avec BLM' pour soupcons de financement irregulier. Classee sans suite.",
+      "sourcePrincipale": "Le Monde",
+      "sourceUrl": "https://www.lemonde.fr/politique/",
+      "sourceDate": "2023",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ]
+}

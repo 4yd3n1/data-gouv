@@ -15,6 +15,8 @@ import { PresidentPromessesSection } from "@/components/gouvernement/president-p
 import { PresidentLobbyingSection } from "@/components/gouvernement/president-lobbying-section";
 import { PresidentDeclarationsSection } from "@/components/gouvernement/president-declarations-section";
 import { MediaTutelleSection } from "@/components/gouvernement/media-tutelle-section";
+import { ProfileSignalBanner } from "@/components/profile-signal-banner";
+import { ShareButton } from "@/components/share-button";
 import { getPromesseSummary, BIO, PROMESSES } from "@/data/president-macron";
 
 export const revalidate = 3600;
@@ -45,7 +47,7 @@ export default async function GouvernementProfilePage({
   searchParams: Promise<Record<string, string>>;
 }) {
   const { slug } = await params;
-  const { tab = "parcours", election = "2022" } = await searchParams;
+  const { tab: rawTab, election = "2022" } = await searchParams;
   const electionYear: 2017 | 2022 = election === "2017" ? 2017 : 2022;
 
   const personnalite = await prisma.personnalitePublique.findUnique({
@@ -67,7 +69,15 @@ export default async function GouvernementProfilePage({
 
   if (!personnalite) notFound();
 
-  const currentMandat = personnalite.mandats.find((m) => m.dateFin === null);
+  const activeMandat = personnalite.mandats.find((m) => m.dateFin === null);
+  const lastMandatWithCode = [...personnalite.mandats]
+    .filter((m) => m.ministereCode)
+    .sort((a, b) => {
+      const aEnd = a.dateFin?.getTime() ?? Number.POSITIVE_INFINITY;
+      const bEnd = b.dateFin?.getTime() ?? Number.POSITIVE_INFINITY;
+      return bEnd - aEnd;
+    })[0];
+  const currentMandat = activeMandat ?? lastMandatWithCode;
   const initials = `${personnalite.prenom[0] ?? ""}${personnalite.nom[0] ?? ""}`.toUpperCase();
   const hasConflictAlert = personnalite.interets.length > 0;
   const interetCount = personnalite._count.interets;
@@ -80,7 +90,7 @@ export default async function GouvernementProfilePage({
   // Additional count for president hero score
   const presidentDeclCount = isPresident
     ? await prisma.declarationInteret.count({
-        where: { nom: { contains: "Macron", mode: "insensitive" } },
+        where: { nomNormalise: "macron" },
       })
     : 0;
 
@@ -111,11 +121,13 @@ export default async function GouvernementProfilePage({
           ? [{ key: "judiciaire", label: "Affaires judiciaires", count: judiciaireCount }]
           : []),
         ...(hasParlementaire
-          ? [{ key: "parlement", label: "Activité parlementaire" }]
+          ? [{ key: "parlementaire", label: "Activité parlementaire" }]
           : []),
       ];
 
   const defaultTab = isPresident ? "promesses" : "parcours";
+  const validTabKeys = tabs.map((t) => t.key);
+  const tab = rawTab && validTabKeys.includes(rawTab) ? rawTab : defaultTab;
 
   const promesseSummary = isPresident ? getPromesseSummary(2022) : null;
 
@@ -132,10 +144,10 @@ export default async function GouvernementProfilePage({
               "Membre du gouvernement")
         }
         status={{
-          active: currentMandat !== undefined,
+          active: activeMandat !== undefined,
           label: isPresident
             ? "En fonction depuis le 14 mai 2017"
-            : currentMandat
+            : activeMandat
               ? "En exercice"
               : "Ancien membre du gouvernement",
         }}
@@ -171,7 +183,17 @@ export default async function GouvernementProfilePage({
         </Suspense>
       </ProfileHero>
 
-      <div className="mx-auto max-w-4xl px-6 py-8">
+      <div className="px-6">
+        <ProfileSignalBanner keys={[`ministre:${personnalite.slug}`]} />
+      </div>
+
+      <div className="border-b border-bureau-700/20 bg-bureau-900/30">
+        <div className="mx-auto flex max-w-6xl items-center justify-end gap-3 px-6 py-2">
+          <ShareButton />
+        </div>
+      </div>
+
+      <div className="mx-auto max-w-6xl px-6 py-8">
         {/* ── Parcours ── */}
         {tab === "parcours" && (
           <div className="fade-up">
@@ -240,7 +262,7 @@ export default async function GouvernementProfilePage({
         )}
 
         {/* ── Activité parlementaire (standard profiles only) ── */}
-        {tab === "parlement" && hasParlementaire && !isPresident && (
+        {tab === "parlementaire" && hasParlementaire && !isPresident && (
           <div className="fade-up">
             <ParliamentarySection
               deputeId={personnalite.deputeId}
@@ -252,7 +274,7 @@ export default async function GouvernementProfilePage({
       </div>
 
       {/* Source footer */}
-      <div className="mx-auto max-w-4xl px-6 pb-10">
+      <div className="mx-auto max-w-6xl px-6 pb-10">
         <p className="text-xs text-bureau-600">
           Dernière mise à jour :{" "}
           {personnalite.derniereMaj.toLocaleDateString("fr-FR", {

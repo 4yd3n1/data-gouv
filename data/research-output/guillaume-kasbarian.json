@@ -1,0 +1,55 @@
+{
+  "slug": "guillaume-kasbarian",
+  "nom": "Kasbarian",
+  "prenom": "Guillaume",
+  "civilite": "M.",
+  "researched_at": "2026-04-01",
+  "_ingested": false,
+  "sources_used": [
+    "https://www.assemblee-nationale.fr/",
+    "https://www.lemonde.fr/politique/"
+  ],
+  "notes": "ESSEC 2010. Consultant en strategie (Monitor/PMP). Depute d'Eure-et-Loir 2017. Ministre du Logement sous Attal, puis de la Fonction publique sous Barnier.",
+  "career_entries": [
+    {
+      "dateDebut": "2007",
+      "dateFin": "2010",
+      "categorie": "FORMATION",
+      "titre": "ESSEC Business School",
+      "organisation": "ESSEC",
+      "description": "Diplome de l'ESSEC.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2010",
+      "dateFin": "2017",
+      "categorie": "CARRIERE_PRIVEE",
+      "titre": "Consultant en strategie",
+      "organisation": "Monitor Group / PMP Conseil",
+      "description": "Consultant en strategie.",
+      "sourceUrl": "https://www.lemonde.fr/",
+      "sourcePrincipale": "Le Monde",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    },
+    {
+      "dateDebut": "2017",
+      "dateFin": null,
+      "categorie": "MANDAT_ELECTIF",
+      "titre": "Depute d'Eure-et-Loir (1ere circ.)",
+      "organisation": "Assemblee nationale",
+      "description": "Elu depute LREM/Renaissance.",
+      "sourceUrl": "https://www.assemblee-nationale.fr/",
+      "sourcePrincipale": "Assemblee nationale",
+      "sourceDate": "2024",
+      "confidence": "high",
+      "_ingested": true
+    }
+  ],
+  "judicial_events": []
+}

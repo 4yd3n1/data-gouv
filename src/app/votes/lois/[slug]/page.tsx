@@ -179,7 +179,104 @@ export default async function LoiDetailPage({
       </div>
 
       {/* Global vote stats (from VOTE_FINAL) */}
-      {voteFinal && (
+      {voteFinal && loi.type === "MOTION_CENSURE" ? (
+        <div className="mb-8 space-y-4">
+          <div className="rounded-xl border border-rose/20 bg-bureau-800/30 p-5">
+            <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
+              <p className="text-xs font-medium uppercase tracking-[0.15em] text-bureau-500">
+                Seuil d&apos;adoption — majorité absolue
+              </p>
+              <p className="text-xs text-bureau-500">
+                577 députés · seuil 289
+              </p>
+            </div>
+            <p className="mb-4 text-sm leading-relaxed text-bureau-300">
+              <span className="font-medium text-bureau-200">Procédure exceptionnelle (art. 49 al. 2 de la Constitution) :</span>{" "}
+              seules les voix <span className="text-rose">« pour »</span> sont enregistrées. Il n&apos;existe ni vote « contre », ni abstention — qui ne vote pas soutient de facto le gouvernement. Pour renverser celui-ci, la motion doit recueillir au moins <span className="text-amber">289 voix</span> (majorité absolue des 577 députés).
+            </p>
+            {(() => {
+              const seuil = 289;
+              const total = 577;
+              const pourPct = Math.min(100, (voteFinal.pour / total) * 100);
+              const seuilPct = (seuil / total) * 100;
+              return (
+                <>
+                  <div className="relative h-7 rounded-md bg-bureau-900/60 ring-1 ring-bureau-700/30">
+                    <div
+                      className="absolute inset-y-0 left-0 rounded-md bg-rose/70"
+                      style={{ width: `${pourPct}%` }}
+                    />
+                    <div
+                      className="absolute inset-y-[-4px] w-px bg-amber shadow-[0_0_4px_currentColor]"
+                      style={{ left: `${seuilPct}%` }}
+                      title="Seuil requis : 289"
+                    />
+                    <span
+                      className="absolute -top-5 -translate-x-1/2 text-[10px] font-medium text-amber"
+                      style={{ left: `${seuilPct}%` }}
+                    >
+                      Seuil 289
+                    </span>
+                  </div>
+                  <div className="mt-3 flex flex-wrap items-baseline justify-between gap-2 text-sm text-bureau-300">
+                    <span>
+                      <span className="text-2xl font-semibold text-rose tabular-nums">
+                        {fmt(voteFinal.pour)}
+                      </span>{" "}
+                      voix en faveur
+                      <span className="ml-1 text-xs text-bureau-500">
+                        (motion du {fmtDate(voteFinal.dateScrutin)})
+                      </span>
+                    </span>
+                    <span className="text-xs text-bureau-500 tabular-nums">
+                      {fmt(seuil - voteFinal.pour)} voix manquantes
+                    </span>
+                  </div>
+                </>
+              );
+            })()}
+          </div>
+
+          {(() => {
+            const motionRows = scrutinRows.filter((s) => s.role === "MOTION");
+            if (motionRows.length < 2) return null;
+            const pourValues = motionRows.map((s) => s.pour);
+            const maxPour = Math.max(...pourValues);
+            const minPour = Math.min(...pourValues);
+            const adopted = motionRows.filter((s) =>
+              s.sortCode.toLowerCase().includes("adopt"),
+            ).length;
+            return (
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                <div className="rounded-xl border border-bureau-700/30 bg-bureau-800/20 p-4 text-center">
+                  <p className="text-xl font-semibold text-bureau-100 tabular-nums">
+                    {motionRows.length}
+                  </p>
+                  <p className="mt-1 text-xs text-bureau-500">Motions déposées</p>
+                </div>
+                <div className="rounded-xl border border-bureau-700/30 bg-bureau-800/20 p-4 text-center">
+                  <p className={`text-xl font-semibold tabular-nums ${adopted > 0 ? "text-teal" : "text-rose"}`}>
+                    {adopted}
+                  </p>
+                  <p className="mt-1 text-xs text-bureau-500">Adoptées</p>
+                </div>
+                <div className="rounded-xl border border-bureau-700/30 bg-bureau-800/20 p-4 text-center">
+                  <p className="text-xl font-semibold text-bureau-200 tabular-nums">
+                    {fmt(maxPour)}
+                  </p>
+                  <p className="mt-1 text-xs text-bureau-500">Voix max recueillies</p>
+                </div>
+                <div className="rounded-xl border border-bureau-700/30 bg-bureau-800/20 p-4 text-center">
+                  <p className="text-xl font-semibold text-bureau-200 tabular-nums">
+                    {fmt(minPour)}
+                  </p>
+                  <p className="mt-1 text-xs text-bureau-500">Voix min recueillies</p>
+                </div>
+              </div>
+            );
+          })()}
+        </div>
+      ) : voteFinal ? (
         <div className="mb-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
           <div className="rounded-xl border border-bureau-700/30 bg-bureau-800/30 p-4 text-center">
             <p className="text-xl font-semibold text-bureau-100">{fmt(voteFinal.nombreVotants)}</p>
@@ -198,13 +295,13 @@ export default async function LoiDetailPage({
             <p className="mt-1 text-xs text-amber/70">Abstentions</p>
           </div>
         </div>
-      )}
+      ) : null}
 
       {/* Vote final detail */}
       {voteFinal && (
         <section className="mb-8">
           <h2 className="mb-1 text-xs font-medium uppercase tracking-[0.15em] text-bureau-500">
-            Vote de la loi
+            {loi.type === "MOTION_CENSURE" ? "Dernière motion — détail par groupe" : "Vote de la loi"}
           </h2>
           <p className="mb-4 text-sm text-bureau-400">
             {voteFinal.libelleTypeVote}
@@ -218,9 +315,15 @@ export default async function LoiDetailPage({
           {groups.length > 0 ? (
             <div className="space-y-3">
               <p className="text-xs text-bureau-500">
-                Cliquez sur un groupe pour voir le vote de chacun de ses membres.
+                {loi.type === "MOTION_CENSURE"
+                  ? "Les groupes qui n'apparaissent pas comme « pour » n'ont pas voté — c'est la règle de la procédure, pas une donnée manquante."
+                  : "Cliquez sur un groupe pour voir le vote de chacun de ses membres."}
               </p>
-              <GroupExpander groups={groups} deputies={deputies} />
+              <GroupExpander
+                groups={groups}
+                deputies={deputies}
+                isCensure={loi.type === "MOTION_CENSURE"}
+              />
             </div>
           ) : (
             <p className="text-sm text-bureau-500">Détail par groupe non disponible pour ce texte.</p>
