@@ -30,11 +30,11 @@ Complete reference for all Prisma models, fields, relations, indexes, and ingest
 | Vote Tags | ScrutinTag | ~3,170 |
 | Safety & Health | StatCriminalite, DensiteMedicale | varies |
 | Cross-reference | ConflictSignal | populated by `pnpm compute:conflicts` |
-| Government Profiles (Phase 9) | PersonnalitePublique, MandatGouvernemental, EntreeCarriere, InteretDeclare, EvenementJudiciaire, ActionLobby | 110 persons, 49 mandats, 474 EntreeCarriere, **15 EvenementJudiciaire**, 1,988 InteretDeclare (Session 46 re-ingest), 131,842 ActionLobby |
+| Government Profiles (Phase 9) | PersonnalitePublique, MandatGouvernemental, EntreeCarriere, InteretDeclare, EvenementJudiciaire, ActionLobby, **DecretDeport** | 110 persons, 49 mandats, 474 EntreeCarriere, **15 EvenementJudiciaire**, 1,988 InteretDeclare (Session 46 re-ingest), 131,842 ActionLobby, **11 DecretDeport** (Session 47) |
 | Media Ownership (Session 35) | GroupeMedia, MediaProprietaire, ParticipationMedia, Filiale | 10 groups, 10 owners, 10 participations, 72 filiales |
 | System | IngestionLog | grows over time |
 
-**Total models**: 42 + IngestionLog
+**Total models**: 43 + IngestionLog
 
 ### Name normalization (Session 46)
 
@@ -1217,7 +1217,7 @@ Core profile record for each government official. One row per person (not per ma
 | `derniereMaj` | DateTime | Last updated (auto `@updatedAt`) |
 | `createdAt` | DateTime | Auto |
 
-**Relations**: `depute Depute?`, `senateur Senateur?`, `mandats MandatGouvernemental[]`, `carriere EntreeCarriere[]`, `interets InteretDeclare[]`, `evenements EvenementJudiciaire[]`
+**Relations**: `depute Depute?`, `senateur Senateur?`, `mandats MandatGouvernemental[]`, `carriere EntreeCarriere[]`, `interets InteretDeclare[]`, `evenements EvenementJudiciaire[]`, `deports DecretDeport[]`, `mediaOwnership MediaProprietaire[]`
 
 **Indexes**: `nom+prenom`, `nomNormalise+prenomNormalise`, `deputeId`, `senateurId`
 
@@ -1339,6 +1339,42 @@ Judicial proceedings linked to a public figure.
 - **Bergé** (`aurore-berge`): `type` changed from `ENQUETE_PRELIMINAIRE` → `COUR_JUSTICE_REPUBLIQUE`. Date: `2025-01-31`. Juridiction: `Cour de justice de la République`. Nature: `faux témoignage`. Affair: crèches privées (Les Petits Chaperons Rouges).
 - **Jeanbrun entry 1** (`vincent-jeanbrun`): nature field corrected to `prise illégale d'intérêts, recel, concussion, soustraction et détournement de biens d'un dépôt public` (was incorrectly including "extorsion/recel d'extorsion").
 - **Jeanbrun entry 2** (NEW): `ENQUETE_PRELIMINAIRE`, PNF (Parquet National Financier), information judiciaire opened June 2022. Nature: `favoritisme, marchés publics`. Affair: CITALLIOS urban development contracts in L'Haÿ-les-Roses (Centre-Ville + Locarno). Anticor partie civile Jan 2022. `verifie = true`.
+
+---
+
+### `DecretDeport` (Session 47)
+
+Ministerial recusal decrees (décrets de déport) issued by the Prime Minister under articles 2 / 2-1 / 2-2 of décret n° 59-178 du 22 janvier 1959. Authoritative source: `https://www.info.gouv.fr/publications-officielles/registre-de-prevention-des-conflits-dinterets` — *not* HATVP. HATVP reviews the declaration confidentially and issues a recommendation; the PM signs + publishes the décret to JORF; `info.gouv.fr` mirrors the registre.
+
+Distinct from the legacy `Deport` model (per-instance AN deputy recusals inside parliamentary bodies) — this one is ministerial.
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | String PK | cuid() |
+| `personnaliteId` | String FK | References `PersonnalitePublique.id` (cascade delete) |
+| `dateDecret` | DateTime? | JORF publication date |
+| `jorfRef` | String? | Décret number, e.g. `"2025-1027"` |
+| `jorfUrl` | String? | Légifrance direct URL (currently unpopulated — to derive from `jorfRef`) |
+| `perimetre` | String | Free-text scope of recusal — what the minister can't decide on |
+| `basis` | BasisDeport | Nature of the conflict (enum below) |
+| `basisDetail` | String? | 1–2 sentence narrative explaining the link |
+| `sourceUrl` | String? | Press or registre URL |
+| `sourceOutlet` | String? | `"info.gouv.fr"`, `"LCP"`, `"RTL"`, etc. |
+| `verifie` | Boolean | `true` when confirmed against info.gouv.fr registre |
+| `createdAt` | DateTime | Auto |
+| `updatedAt` | DateTime | Auto `@updatedAt` |
+
+**Unique constraint**: `(personnaliteId, perimetre)` — idempotent upserts via `seed-decrets-deport.ts`.
+
+**Indexes**: `personnaliteId`, `dateDecret`, `basis`.
+
+**Enum `BasisDeport`**: `ANCIEN_EMPLOYEUR | PARTICIPATION_FINANCIERE | FAMILLE_CONJOINT | MANDAT_ANTERIEUR | ACTIVITE_BENEVOLE | PROCEDURE_JUDICIAIRE | AUTRE`
+
+**Display rule**: `DeportBanner` renders below the `ProfileHero` on every tab when `deports.length > 0`. Full detail via `DeportSection` inside the Déclarations HATVP tab (`#deports` anchor).
+
+**Row count**: 11 (Session 47 seed from info.gouv.fr registre — HATVP press release cited 14, 3 décrets likely signed but not yet in the registre).
+
+Seeded ministers: Lecornu, Darmanin, Papin, Barrot, Rist, Amiel, Baptiste, Tabarot, Bergé, Chabaud, Forissier.
 
 ---
 

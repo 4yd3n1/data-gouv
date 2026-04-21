@@ -15,6 +15,8 @@ import { PresidentPromessesSection } from "@/components/gouvernement/president-p
 import { PresidentLobbyingSection } from "@/components/gouvernement/president-lobbying-section";
 import { PresidentDeclarationsSection } from "@/components/gouvernement/president-declarations-section";
 import { MediaTutelleSection } from "@/components/gouvernement/media-tutelle-section";
+import { DeportBanner } from "@/components/gouvernement/deport-banner";
+import { DeportSection } from "@/components/gouvernement/deport-section";
 import { ProfileSignalBanner } from "@/components/profile-signal-banner";
 import { ShareButton } from "@/components/share-button";
 import { getPromesseSummary, BIO, PROMESSES } from "@/data/president-macron";
@@ -59,7 +61,7 @@ export default async function GouvernementProfilePage({
         take: 1,
         select: { id: true },
       },
-      _count: { select: { interets: true, carriere: true } },
+      _count: { select: { interets: true, carriere: true, deports: true } },
       evenements: {
         where: { verifie: true },
         select: { id: true },
@@ -85,6 +87,7 @@ export default async function GouvernementProfilePage({
 
   const hasParlementaire = !!(personnalite.deputeId || personnalite.senateurId);
   const judiciaireCount = personnalite.evenements.length;
+  const deportCount = personnalite._count.deports;
   const isPresident = personnalite.mandats.some((m) => m.type === "PRESIDENT");
 
   // Additional count for president hero score
@@ -177,20 +180,34 @@ export default async function GouvernementProfilePage({
           { label: "Ministres", href: "/profils/ministres" },
           { label: `${personnalite.prenom} ${personnalite.nom}` },
         ]}
+        stats={
+          isPresident
+            ? undefined
+            : [
+                { label: "Mandats", value: personnalite.mandats.length || null },
+                { label: "Parcours", value: carriereCount || null },
+                { label: "Intérêts HATVP", value: interetCount || null },
+                { label: "Affaires", value: judiciaireCount || null },
+              ]
+        }
+        actions={<ShareButton />}
       >
         <Suspense>
           <ProfileTabs tabs={tabs} defaultTab={defaultTab} />
         </Suspense>
       </ProfileHero>
 
-      <div className="px-6">
-        <ProfileSignalBanner keys={[`ministre:${personnalite.slug}`]} />
-      </div>
-
-      <div className="border-b border-bureau-700/20 bg-bureau-900/30">
-        <div className="mx-auto flex max-w-6xl items-center justify-end gap-3 px-6 py-2">
-          <ShareButton />
+      {deportCount > 0 && !isPresident && (
+        <div className="mt-5">
+          <DeportBanner
+            personnaliteId={personnalite.id}
+            hatvpTabHref={`/profils/${personnalite.slug}?tab=hatvp#deports`}
+          />
         </div>
+      )}
+
+      <div className="mt-5">
+        <ProfileSignalBanner keys={[`ministre:${personnalite.slug}`]} />
       </div>
 
       <div className="mx-auto max-w-6xl px-6 py-8">
@@ -223,7 +240,7 @@ export default async function GouvernementProfilePage({
 
         {/* ── Déclarations HATVP (standard ministers — uses InteretDeclare model) ── */}
         {tab === "hatvp" && !isPresident && (
-          <div className="space-y-6 fade-up">
+          <div className="space-y-8 fade-up">
             {hasConflictAlert && (
               <div className="flex items-start gap-3 rounded-xl border border-amber-600/30 bg-amber-950/20 px-4 py-3 text-sm text-amber-300">
                 <span className="shrink-0 font-semibold">Alerte :</span>
@@ -231,6 +248,11 @@ export default async function GouvernementProfilePage({
                   Des conflits d&apos;intérêts potentiels ont été identifiés
                   dans les déclarations HATVP.
                 </span>
+              </div>
+            )}
+            {deportCount > 0 && (
+              <div id="deports">
+                <DeportSection personnaliteId={personnalite.id} />
               </div>
             )}
             <InteretsSection

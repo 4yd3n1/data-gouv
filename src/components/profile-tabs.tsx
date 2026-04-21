@@ -25,9 +25,9 @@ export function ProfileTabs({
   );
 
   return (
-    <div className="border-b border-bureau-700/30">
+    <div className="border-t border-bureau-800/60">
       <nav
-        className="mx-auto flex max-w-6xl gap-0 overflow-x-auto px-6 scrollbar-hide"
+        className="mx-auto flex max-w-6xl gap-1 overflow-x-auto px-4 scrollbar-hide"
         aria-label="Profile tabs"
       >
         {tabs.map((tab) => {
@@ -36,24 +36,22 @@ export function ProfileTabs({
             <button
               key={tab.key}
               onClick={() => handleTab(tab.key)}
-              className={`relative whitespace-nowrap px-4 py-3.5 text-sm font-medium transition-colors ${
-                active
-                  ? "text-teal"
-                  : "text-bureau-500 hover:text-bureau-300"
+              className={`relative whitespace-nowrap px-3 py-3.5 text-[13px] font-medium tracking-tight transition-colors ${
+                active ? "text-bureau-50" : "text-bureau-500 hover:text-bureau-300"
               }`}
             >
               {tab.label}
-              {tab.count != null && (
+              {tab.count != null && tab.count > 0 && (
                 <span
-                  className={`ml-1.5 text-xs ${
-                    active ? "text-teal/60" : "text-bureau-600"
+                  className={`ml-1.5 text-[11px] tabular-nums ${
+                    active ? "text-bureau-400" : "text-bureau-700"
                   }`}
                 >
                   {tab.count}
                 </span>
               )}
               {active && (
-                <span className="absolute inset-x-1 bottom-0 h-0.5 rounded-full bg-teal" />
+                <span className="absolute inset-x-3 -bottom-px h-0.5 bg-teal" />
               )}
             </button>
           );

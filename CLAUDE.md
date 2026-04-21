@@ -13,8 +13,9 @@ Architectural blueprint: [`ARCHITECTURAL-PLAN.md`](ARCHITECTURAL-PLAN.md) — ne
 - **Next.js 16** (App Router, TypeScript), **Tailwind CSS 4**
 - **PostgreSQL 14** + **Prisma 7** ORM (with `@prisma/adapter-pg` driver)
 - **pnpm** / **Node.js 20.19.2+** (minimum for Prisma 7)
-- ~800K rows across 30 models + IngestionLog. Full schema: [`documentation/schema.md`](documentation/schema.md)
+- ~800K rows across 43 models + IngestionLog. Full schema: [`documentation/schema.md`](documentation/schema.md)
 - Full frontend reference: [`documentation/frontend.md`](documentation/frontend.md)
+- Ingestion pipeline reference: [`documentation/data-ingestion.md`](documentation/data-ingestion.md); data-source catalog: [`data-cat.md`](data-cat.md); blueprint index: [`documentation/blueprint.md`](documentation/blueprint.md)
 
 ## MCP Integration
 
@@ -52,12 +53,22 @@ Detailed ingest scripts, wave ordering, and API URLs: `.claude/rules/ingestion.m
 
 ## Phase 9 — Government Profiles
 
-Currently building. Reference docs (load on demand, not always):
+Phases 9A–9H complete. Reference docs (load on demand, not always):
 - Plan: `@documentation/phases/phase9-plan.md`
 - Checklists: `@documentation/phases/PHASE-9-CHECKLISTS.md`
 - Workflow: `@documentation/phases/PHASE-9-WORKFLOW.md`
 
-**Component rule**: New `/gouvernement` profile sections must be self-contained components (`<InteretsSection />`, `<LobbySection />`, `<CareerTimeline />`, etc.) imported into `page.tsx`. Never inline section logic directly in `page.tsx`.
+**Component rule**: New `/profils/[slug]` (ex-`/gouvernement`) sections must be self-contained components (`<InteretsSection />`, `<LobbySection />`, `<DeportSection />`, `<CareerSection />`, etc.) imported into `page.tsx`. Never inline section logic directly in `page.tsx`.
+
+### Session 47 — Décrets de déport (ministerial conflict of interest)
+
+- New model: `DecretDeport` + enum `BasisDeport` (7 categories). Migration `20260421165309_add_decret_deport`.
+- **Source of truth**: `https://www.info.gouv.fr/publications-officielles/registre-de-prevention-des-conflits-dinterets` — registre du Premier ministre. **Not HATVP** — HATVP reviews privately and issues recommendations; the PM signs the décret and publishes to JORF.
+- Registre page is Cloudflare-protected; fetch via browser automation (claude-in-chrome), encode as typed `DeportSeed[]` in `scripts/seed-decrets-deport.ts`.
+- Idempotent upsert on `(personnaliteId, perimetre)` composite unique.
+- 11 décrets seeded (Lecornu II). HATVP cited 14; 3 signed but not yet in the registre — re-check weekly.
+- UI: `<DeportBanner />` (cross-tab red alert below `ProfileHero`) + `<DeportSection />` (inside Déclarations HATVP tab, `#deports` anchor).
+- Distinct from the legacy `Deport` model (AN per-instance deputy recusals — different thing).
 
 ## Rules Files (auto-loaded by Claude Code)
 

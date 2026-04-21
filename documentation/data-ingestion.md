@@ -2,7 +2,7 @@
 
 ## The Big Picture
 
-The platform ingests data from **15+ French government open data sources** through a **10-wave pipeline** of 25+ idempotent scripts, populating **42 Prisma models** (~800K rows). Every page is a server-rendered transparency lens — no client-side data fetching. The architecture guarantees that raw government data flows through a single path: **Source → Ingest → PostgreSQL → Server Component → Transparency Metrics → Render**.
+The platform ingests data from **15+ French government open data sources** through a **10-wave pipeline** of 25+ idempotent scripts, populating **43 Prisma models** (~800K rows). Every page is a server-rendered transparency lens — no client-side data fetching. The architecture guarantees that raw government data flows through a single path: **Source → Ingest → PostgreSQL → Server Component → Transparency Metrics → Render**.
 
 ---
 
@@ -27,6 +27,7 @@ The platform ingests data from **15+ French government open data sources** throu
 | **Party finances** | CNCCFP CSV | Revenue/expense accounts for ~35 parties, 2021–2024 | ~140 rows |
 | **Culture** | Ministry Tabular API | 3K museums + attendance, 46K monuments | ~65K rows |
 | **Government** | Manual research + seed + deep investigation | 44 members (current); 148 across 4 govts after historical seed. Career timelines, **15 judicial events** (Darmanin CJR added Session 44), lobby targeting, **24 conflict flags** (revolving doors, vote contradictions, HATVP gaps, lobby-career overlaps) | ~600 rows (current), ~2K after full seed |
+| **Décrets de déport** *(Session 47)* | `info.gouv.fr/publications-officielles/registre-de-prevention-des-conflits-dinterets` (PM's registre, Cloudflare-protected — extracted via browser automation) | Ministerial recusal decrees: JORF décret number, date, `perimetre` (what the minister can't decide), `BasisDeport` enum (ANCIEN_EMPLOYEUR / PARTICIPATION_FINANCIERE / FAMILLE_CONJOINT / MANDAT_ANTERIEUR / ACTIVITE_BENEVOLE / PROCEDURE_JUDICIAIRE / AUTRE) | 11 décrets (Lecornu II; HATVP cited 14 but 3 not yet published) |
 | **Media** | Manual seed | 10 groups, 10 owners, 72 subsidiaries, ARCOM signalements, political connections | ~100 rows |
 | **Party-Election** | Nuance-party mapping | Election results cross-referenced with CNCCFP party finances via nuance codes | static mapping (23 nuances) |
 | **Bilan Macron** *(Session 45)* | Deep web research (4 parallel agents, 150+ searches) + official sources (INSEE, Eurostat, DREES, France Stratégie, Oxfam, CEVIPOF, Amnesty, RSF, EIU). All key claims independently fact-checked (3 verification agents, 30+ searches). | Structured static data covering 7 dimensions: poverty/inequality (6 before/after metrics), purchasing power (4), debt/fiscal (5 + 5 fiscal gifts), employment (3), healthcare (6 + 4 social cuts + 4 education + 3 public services), human rights (police violence stats + 5 democratic erosion + 3 labor rights + 5 environment + 5 social fabric), elite enrichment (3 billionaire metrics + 5 facts + 4 revolving door cases + 8 contrast rows). Verified figures: billionaires x2.15 (Challenges: 571→1,228 Md), 49.3 Borne 23x (France Info), deficit 5.1% (INSEE Mar 27 2026), youth unemp ~24%→21.5%, dividends source Vernimmen/CAC 40, hospital beds trend since ~2003 (DREES/IRDES). | static data file (`src/data/bilan-macron.ts`) — no new DB models |
@@ -84,6 +85,7 @@ pnpm ingest:agora              # Phase 9: AGORA lobby targeting ministries
 pnpm generate:carriere         # Phase 9: Generate government career timelines
 pnpm seed:medias               # Phase 8: Seed media ownership data
 pnpm seed:gouvernement         # Phase 9: Seed 4 governments (Borne/Attal/Barnier/Lecornu)
+pnpm tsx scripts/seed-decrets-deport.ts  # Session 47: 11 ministerial déport decrees from info.gouv.fr registre
 pnpm audit:declarations        # Audit: verify HATVP XML vs DB vs display (read-only)
 
 # Session 44: Analysis scripts (read-only, produce JSON reports)
@@ -650,6 +652,15 @@ npx tsx scripts/update-wave2-findings.ts        # Add wave 2 findings (Tabarot P
 - Source: `scripts/data/gouvernement-{lecornu,borne,attal,barnier}.ts`
 - Volume: 44 PersonnalitePublique total (37 Lecornu II + historical)
 - **Formation data reconciled** (Session 41): All 20 minister `formation` fields verified against `data/research-output/*.json` (Tier 1-2 press sources). 20 errors corrected, including 3 wholly fabricated entries (Barbut, Ferrari, Papin). `LECORNU_RESHUFFLE_DEPARTURES` updated to include `charlotte-parmentier-lecocq`.
+
+**Décrets de déport (Session 47)** (`scripts/seed-decrets-deport.ts`):
+- Prisma Model: `DecretDeport` (enum `BasisDeport`)
+- Source of truth: `https://www.info.gouv.fr/publications-officielles/registre-de-prevention-des-conflits-dinterets` — the Premier ministre's registre de prévention des conflits d'intérêts (authoritative, not HATVP — HATVP issues private recommendations; the PM signs the décret and publishes it to JORF, mirrored at info.gouv.fr).
+- Volume: 11 décrets for Lecornu II government (HATVP press release cited 14; 3 likely signed but not yet in the registre — check again in a week).
+- Idempotency: upsert on `(personnaliteId, perimetre)` composite unique.
+- Manual data capture: the registre page is Cloudflare-protected; fetch via claude-in-chrome browser automation, extract `jorfRef`/`dateDecret`/`perimetre`/`basisDetail` by hand, encode as typed `DeportSeed[]` in the seed script.
+- Distinct from `Deport` (AN per-instance deputy recusals) — different model, different source.
+- Cadence: re-run after every government reshuffle or when new décrets appear on info.gouv.fr.
 
 ---
 

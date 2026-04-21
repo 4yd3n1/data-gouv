@@ -196,6 +196,49 @@ Election data is highly distributed — each commune/city publishes its own resu
 
 ---
 
+## 4bis. GOVERNANCE — CONFLICTS OF INTEREST (Session 47)
+
+**Note**: not on data.gouv.fr MCP. These two sources are scraped/parsed out-of-band from ministerial websites.
+
+### 4bis.1 Ministerial Déport Registry
+
+| Field | Value |
+|-------|-------|
+| **Source** | Registre de prévention des conflits d'intérêts — services du Premier ministre |
+| **URL** | https://www.info.gouv.fr/publications-officielles/registre-de-prevention-des-conflits-dinterets |
+| **Publisher** | Premier ministre (services) |
+| **Format** | HTML (Cloudflare-protected — must use browser automation, not curl/WebFetch) |
+| **Rows** | 11 décrets de déport (Lecornu II, as of 2026-04-21) |
+| **Fields extracted** | Minister name, portfolio, JORF décret number, JORF date, perimetre (scope of recusal), basis detail |
+| **Legal basis** | Article 2 / 2-1 / 2-2 du décret n° 59-178 du 22 janvier 1959 |
+| **DB target** | `DecretDeport` model (+ `BasisDeport` enum) |
+| **Ingestion** | `pnpm tsx scripts/seed-decrets-deport.ts` — idempotent upsert on `(personnaliteId, perimetre)` |
+| **Cadence** | Re-scrape weekly (new décrets appear after each reshuffle) |
+
+**Current seeded ministers:**
+
+| Minister | JORF ref | Date | Scope |
+|----------|----------|------|-------|
+| Sébastien Lecornu | 2025-1027 | 2025-10-31 | Magistrats PNF + procédures le concernant |
+| Gérald Darmanin | 2025-1034 | 2025-10-31 | Magistrats mis en cause / le mettant en cause |
+| Aurore Bergé | 2025-1028 | 2025-10-31 | Société Victory |
+| Jean-Noël Barrot | 2025-1039 | 2025-10-31 | Groupe Uber ; société eXplain |
+| Philippe Baptiste | 2025-1042 | 2025-10-31 | CNES Participations |
+| Catherine Chabaud | 2025-1104 | 2025-11-21 | Yacht Club de France ; Institut français de la mer ; Académie de marine |
+| Serge Papin | 2025-1160 | 2025-12-05 | Groupe Auchan + clients conseil stratégie |
+| Stéphanie Rist | 2025-1337 | 2025-12-26 | CHU d'Orléans |
+| Philippe Tabarot | 2026-165 | 2026-03-04 | Association Avenir Transports |
+| David Amiel | 2026-173 | 2026-03-10 | Groupe La Poste |
+| Nicolas Forissier | 2026-279 | 2026-04-14 | Société Cap Coreli |
+
+**Cross-reference**: HATVP press release [publication-des-declarations-de-30-membres-du-gouvernement-de-m-sebastien-lecornu](https://www.hatvp.fr/presse/publication-des-declarations-de-30-membres-du-gouvernement-de-m-sebastien-lecornu/) cites 14 décrets — 3 are signed but not yet visible on the info.gouv.fr registre (publication lag).
+
+### 4bis.2 HATVP Interest Declarations (reference)
+
+Already documented in [`documentation/data-ingestion.md`](documentation/data-ingestion.md) § Wave 4. Distinct pipeline: HATVP XML → `DeclarationInteret` / `InteretDeclare` models. HATVP and the Registre PM are independent systems — HATVP issues private recommendations; the PM signs the décret and publishes to JORF.
+
+---
+
 ## 5. PUBLIC FINANCES
 
 ### 5.1 State Budget Execution
@@ -410,6 +453,7 @@ search_datasets → get_dataset_info → list_dataset_resources →
 | Deputies (historic) | Datan deputes-historique | ~2100 | CSV | **Yes** | **Yes** |
 | Senators | Sénat ODSEN_GENERAL | ~348 | CSV | No | Yes (direct URL) |
 | Elections | 484+ datasets | Varies | CSV | Varies | Varies |
+| Déports ministériels *(Session 47)* | info.gouv.fr registre PM | 11 | HTML (Cloudflare) | No | Yes (browser automation) |
 | State Budget | Min. Armées | — | XLS | No | No |
 | Public Debt | Cour des comptes | 1 report | — | No | No |
 | Public Sector Jobs | DGAFP effectifs | — | CSV | No (empty) | Untested |

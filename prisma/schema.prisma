@@ -928,6 +928,16 @@ enum TypeSignalement {
   AMENDE
 }
 
+enum BasisDeport {
+  ANCIEN_EMPLOYEUR
+  PARTICIPATION_FINANCIERE
+  FAMILLE_CONJOINT
+  MANDAT_ANTERIEUR
+  ACTIVITE_BENEVOLE
+  PROCEDURE_JUDICIAIRE
+  AUTRE
+}
+
 enum OrientationEditoriale {
   DROITE
   CENTRE_DROIT
@@ -968,6 +978,7 @@ model PersonnalitePublique {
   carriere       EntreeCarriere[]
   interets       InteretDeclare[]
   evenements     EvenementJudiciaire[]
+  deports        DecretDeport[]
   mediaOwnership MediaProprietaire[]
 
   @@index([nom, prenom])
@@ -1060,6 +1071,29 @@ model EvenementJudiciaire {
   @@index([personnaliteId])
   @@index([verifie])
   @@index([type])
+}
+
+model DecretDeport {
+  id             String      @id @default(cuid())
+  personnaliteId String
+  dateDecret     DateTime? // JORF publication date
+  jorfRef        String? // NOR code or JORF identifier
+  jorfUrl        String? // Légifrance direct link
+  perimetre      String // free text scope: "Groupe Auchan", "Dossiers Uber"
+  basis          BasisDeport
+  basisDetail    String? // e.g. "Ancien président non-exécutif", "Sœur directrice Europe Uber"
+  sourceUrl      String?
+  sourceOutlet   String? // "HATVP", "LCP", "RTL"
+  verifie        Boolean     @default(false)
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  personnalite PersonnalitePublique @relation(fields: [personnaliteId], references: [id], onDelete: Cascade)
+
+  @@unique([personnaliteId, perimetre])
+  @@index([personnaliteId])
+  @@index([dateDecret])
+  @@index([basis])
 }
 
 model ActionLobby {
