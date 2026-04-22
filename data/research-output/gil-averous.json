@@ -1,6 +1,6 @@
 {
   "slug": "gil-averous",
-  "nom": "Averous",
+  "nom": "Avérous",
   "prenom": "Gil",
   "civilite": "M.",
   "researched_at": "2026-04-01",
@@ -8,15 +8,15 @@
   "sources_used": [
     "https://www.lemonde.fr/politique/"
   ],
-  "notes": "Maire de Chateauroux depuis 2014. Ministre des Sports sous Barnier. Controverses autour de son conseiller Elbaz (affaire de chantage) et conflit d'interets (casse automobile), mais pas de procedure judiciaire personnelle verifiee.",
+  "notes": "Maire de Châteauroux depuis 2014. Ministre des Sports sous Barnier. Controverses autour de son conseiller Elbaz (affaire de chantage) et conflit d'intérêts (casse automobile), mais pas de procédure judiciaire personnelle vérifiée.",
   "career_entries": [
     {
       "dateDebut": "2014",
       "dateFin": null,
       "categorie": "MANDAT_ELECTIF",
-      "titre": "Maire de Chateauroux",
-      "organisation": "Mairie de Chateauroux",
-      "description": "Elu maire de Chateauroux. Divers.",
+      "titre": "Maire de Châteauroux",
+      "organisation": "Mairie de Châteauroux",
+      "description": "Élu maire de Châteauroux. Divers.",
       "sourceUrl": "https://www.lemonde.fr/",
       "sourcePrincipale": "Le Monde",
       "sourceDate": "2024",

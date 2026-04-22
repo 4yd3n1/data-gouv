@@ -8,17 +8,17 @@
   "sources_used": [
     "https://www.senat.fr/"
   ],
-  "notes": "Ingenieure agronome. ESSEC. Auchan, Kantar (ex-TNS Sofres). Senatrice des Yvelines 2011. Presidente de la commission des affaires economiques du Senat. Ministre sous Barnier.",
+  "notes": "Ingénieure agronome. ESSEC. Auchan, Kantar (ex-TNS Sofres). Sénatrice des Yvelines 2011. Présidente de la commission des affaires économiques du Sénat. Ministre sous Barnier.",
   "career_entries": [
     {
       "dateDebut": "1985",
       "dateFin": "1990",
       "categorie": "FORMATION",
-      "titre": "Ingenieur agronome + ESSEC",
-      "organisation": "Ecole agronomique / ESSEC",
-      "description": "Double formation ingenieur et commerce.",
+      "titre": "Ingénieur agronome + ESSEC",
+      "organisation": "École agronomique / ESSEC",
+      "description": "Double formation ingénieur et commerce.",
       "sourceUrl": "https://www.senat.fr/",
-      "sourcePrincipale": "Senat",
+      "sourcePrincipale": "Sénat",
       "sourceDate": "2024",
       "confidence": "high",
       "_ingested": true
@@ -29,9 +29,9 @@
       "categorie": "CARRIERE_PRIVEE",
       "titre": "Cadre chez Auchan puis Kantar",
       "organisation": "Auchan / Kantar (TNS Sofres)",
-      "description": "Carriere dans la grande distribution puis les etudes de marche.",
+      "description": "Carrière dans la grande distribution puis les études de marché.",
       "sourceUrl": "https://www.senat.fr/",
-      "sourcePrincipale": "Senat",
+      "sourcePrincipale": "Sénat",
       "sourceDate": "2024",
       "confidence": "high",
       "_ingested": true
@@ -40,11 +40,11 @@
       "dateDebut": "2011",
       "dateFin": null,
       "categorie": "MANDAT_ELECTIF",
-      "titre": "Senatrice des Yvelines",
-      "organisation": "Senat",
-      "description": "Senatrice LR. Presidente de la commission des affaires economiques.",
+      "titre": "Sénatrice des Yvelines",
+      "organisation": "Sénat",
+      "description": "Sénatrice LR. Présidente de la commission des affaires économiques.",
       "sourceUrl": "https://www.senat.fr/",
-      "sourcePrincipale": "Senat",
+      "sourcePrincipale": "Sénat",
       "sourceDate": "2024",
       "confidence": "high",
       "_ingested": true

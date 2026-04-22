@@ -8,7 +8,7 @@
   "sources_used": [
     "https://www.assemblee-nationale.fr/"
   ],
-  "notes": "Avocat au barreau d'Ajaccio. Maire d'Ajaccio 2015-2022. Depute de Corse-du-Sud. Ministre de la Fonction publique sous Bayrou.",
+  "notes": "Avocat au barreau d'Ajaccio. Maire d'Ajaccio 2015-2022. Député de Corse-du-Sud. Ministre de la Fonction publique sous Bayrou.",
   "career_entries": [
     {
       "dateDebut": "2000",
@@ -18,7 +18,7 @@
       "organisation": "Barreau d'Ajaccio",
       "description": "Avocat.",
       "sourceUrl": "https://www.assemblee-nationale.fr/",
-      "sourcePrincipale": "Assemblee nationale",
+      "sourcePrincipale": "Assemblée nationale",
       "sourceDate": "2024",
       "confidence": "high",
       "_ingested": true
@@ -29,9 +29,9 @@
       "categorie": "MANDAT_ELECTIF",
       "titre": "Maire d'Ajaccio",
       "organisation": "Mairie d'Ajaccio",
-      "description": "Elu maire.",
+      "description": "Élu maire.",
       "sourceUrl": "https://www.assemblee-nationale.fr/",
-      "sourcePrincipale": "Assemblee nationale",
+      "sourcePrincipale": "Assemblée nationale",
       "sourceDate": "2024",
       "confidence": "high",
       "_ingested": true

@@ -8,15 +8,15 @@
   "sources_used": [
     "https://www.lemonde.fr/politique/"
   ],
-  "notes": "Polytechnique (X89), Ponts et Chaussees. Cabinet d'Aubry. Directeur de l'AGUR. Maire de Dunkerque 2014. Ministre du Logement sous Borne, des Transports sous Attal. President de l'ANRU.",
+  "notes": "Polytechnique (X89), Ponts et Chaussées. Cabinet d'Aubry. Directeur de l'AGUR. Maire de Dunkerque 2014. Ministre du Logement sous Borne, des Transports sous Attal. Président de l'ANRU.",
   "career_entries": [
     {
       "dateDebut": "1989",
       "dateFin": "1994",
       "categorie": "FORMATION",
-      "titre": "Polytechnique (X89) + Ponts et Chaussees",
+      "titre": "Polytechnique (X89) + Ponts et Chaussées",
       "organisation": "Polytechnique / ENPC",
-      "description": "X89. Ingenieur des Ponts.",
+      "description": "X89. Ingénieur des Ponts.",
       "sourceUrl": "https://www.lemonde.fr/",
       "sourcePrincipale": "Le Monde",
       "sourceDate": "2024",
@@ -27,7 +27,7 @@
       "dateDebut": "1994",
       "dateFin": "2014",
       "categorie": "FONCTION_PUBLIQUE",
-      "titre": "Ingenieur territorial et directeur d'agence d'urbanisme",
+      "titre": "Ingénieur territorial et directeur d'agence d'urbanisme",
       "organisation": "AGUR / Dunkerque",
       "description": "Directeur de l'agence d'urbanisme de Dunkerque.",
       "sourceUrl": "https://www.lemonde.fr/",
@@ -42,7 +42,7 @@
       "categorie": "MANDAT_ELECTIF",
       "titre": "Maire de Dunkerque",
       "organisation": "Mairie de Dunkerque",
-      "description": "Maire sans etiquette.",
+      "description": "Maire sans étiquette.",
       "sourceUrl": "https://www.lemonde.fr/",
       "sourcePrincipale": "Le Monde",
       "sourceDate": "2024",

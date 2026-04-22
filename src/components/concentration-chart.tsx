@@ -1,9 +1,9 @@
 const TYPE_LABELS: Record<string, string> = {
-  TELEVISION: "Television",
+  TELEVISION: "Télévision",
   RADIO: "Radio",
   PRESSE_QUOTIDIENNE: "Presse quot.",
   PRESSE_MAGAZINE: "Magazines",
-  NUMERIQUE: "Numerique",
+  NUMERIQUE: "Numérique",
 };
 
 const TYPES_ORDER = ["TELEVISION", "RADIO", "PRESSE_QUOTIDIENNE", "PRESSE_MAGAZINE", "NUMERIQUE"];

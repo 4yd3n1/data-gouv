@@ -122,7 +122,7 @@ export function BilanSanteSection() {
       {/* Healthcare */}
       <div>
         <h3 className="text-xs font-semibold uppercase tracking-[0.15em] text-bureau-500 mb-1">
-          Systeme hospitalier
+          Système hospitalier
         </h3>
         <p className="text-xs text-bureau-500 mb-4">
           Lits, urgences, personnel, d&eacute;serts m&eacute;dicaux &mdash; sources : DREES,
@@ -145,10 +145,10 @@ export function BilanSanteSection() {
       {/* Education */}
       <div>
         <h3 className="text-xs font-semibold uppercase tracking-[0.15em] text-bureau-500 mb-1">
-          Education
+          Éducation
         </h3>
         <p className="text-xs text-bureau-500 mb-4">
-          Postes, resultats PISA, Parcoursup, salaires
+          Postes, résultats PISA, Parcoursup, salaires
         </p>
         <FactBlock facts={EDUCATION_DATA} color="amber" />
       </div>

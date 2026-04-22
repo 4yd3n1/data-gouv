@@ -67,7 +67,7 @@ const DEPORTS: DeportSeed[] = [
       "Sociétés du groupe Auchan ; clients de son activité de conseil en stratégie durant les 5 dernières années",
     basis: BasisDeport.ANCIEN_EMPLOYEUR,
     basisDetail:
-      "Ancien président non-exécutif du groupe Auchan ; activité de conseil en stratégie d'entreprise durant les 5 années précédant sa nomination.",
+      "Ancien président non exécutif du groupe Auchan ; activité de conseil en stratégie d'entreprise durant les 5 années précédant sa nomination.",
     dateDecret: new Date("2025-12-05"),
     jorfRef: "2025-1160",
     sourceUrl: REGISTRE_URL,
@@ -79,7 +79,7 @@ const DEPORTS: DeportSeed[] = [
     perimetre: "Groupe Uber ; société eXplain",
     basis: BasisDeport.FAMILLE_CONJOINT,
     basisDetail:
-      "Sœur Hélène Barrot, directrice de la communication Uber Europe (Uber). Intérêts familiaux sur la société eXplain.",
+      "Sœur Hélène Barrot, directrice de la communication d'Uber Europe. Intérêts familiaux dans la société eXplain.",
     dateDecret: new Date("2025-10-31"),
     jorfRef: "2025-1039",
     sourceUrl: REGISTRE_URL,
@@ -102,7 +102,7 @@ const DEPORTS: DeportSeed[] = [
     slug: "david-amiel",
     perimetre: "Sociétés du groupe La Poste",
     basis: BasisDeport.ANCIEN_EMPLOYEUR,
-    basisDetail: "Ancien directeur de la stratégie de La Poste.",
+    basisDetail: "Ancien directeur de la stratégie du groupe La Poste.",
     dateDecret: new Date("2026-03-10"),
     jorfRef: "2026-173",
     sourceUrl: REGISTRE_URL,
@@ -113,7 +113,8 @@ const DEPORTS: DeportSeed[] = [
     slug: "philippe-baptiste",
     perimetre: "Société CNES Participations",
     basis: BasisDeport.ANCIEN_EMPLOYEUR,
-    basisDetail: "Ancien président du CNES, tutelle indirecte de CNES Participations.",
+    basisDetail:
+      "Ancien président du CNES, exerçant une tutelle indirecte sur CNES Participations.",
     dateDecret: new Date("2025-10-31"),
     jorfRef: "2025-1042",
     sourceUrl: REGISTRE_URL,
@@ -147,7 +148,7 @@ const DEPORTS: DeportSeed[] = [
     perimetre: "Yacht Club de France ; Institut français de la mer ; Académie de marine",
     basis: BasisDeport.ACTIVITE_BENEVOLE,
     basisDetail:
-      "Mandats associatifs et académiques dans les trois structures. Attributions exercées par la ministre de la Transition écologique.",
+      "Mandats associatifs et académiques au sein de ces trois structures. Attributions exercées par la ministre de la Transition écologique.",
     dateDecret: new Date("2025-11-21"),
     jorfRef: "2025-1104",
     sourceUrl: REGISTRE_URL,

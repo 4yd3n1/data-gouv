@@ -1,14 +1,14 @@
 {
   "slug": "valerie-hayer",
   "nom": "Hayer",
-  "prenom": "Valerie",
+  "prenom": "Valérie",
   "civilite": "Mme",
   "researched_at": "2026-04-01",
   "_ingested": false,
   "sources_used": [
     "https://www.lemonde.fr/politique/"
   ],
-  "notes": "Droit (Paris I), Sciences Po Rennes. Conseillere municipale de Laval. Deputee europeenne Renaissance. Presidente du groupe Renew Europe apres Sejourne. Ministre de l'Europe sous Barnier.",
+  "notes": "Droit (Paris I), Sciences Po Rennes. Conseillère municipale de Laval. Députée européenne Renaissance. Présidente du groupe Renew Europe après Séjourné. Ministre de l'Europe sous Barnier.",
   "career_entries": [
     {
       "dateDebut": "2005",
@@ -27,9 +27,9 @@
       "dateDebut": "2019",
       "dateFin": null,
       "categorie": "MANDAT_ELECTIF",
-      "titre": "Deputee europeenne",
-      "organisation": "Parlement europeen",
-      "description": "Deputee europeenne Renaissance. Presidente du groupe Renew Europe.",
+      "titre": "Députée européenne",
+      "organisation": "Parlement européen",
+      "description": "Députée européenne Renaissance. Présidente du groupe Renew Europe.",
       "sourceUrl": "https://www.lemonde.fr/",
       "sourcePrincipale": "Le Monde",
       "sourceDate": "2024",

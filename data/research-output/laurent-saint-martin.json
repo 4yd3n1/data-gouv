@@ -8,7 +8,7 @@
   "sources_used": [
     "https://www.assemblee-nationale.fr/"
   ],
-  "notes": "EDHEC. Oseo/Bpifrance, Euronext. Plus jeune rapporteur general du budget. DG Business France. Ministre du Budget sous Barnier, Commerce exterieur sous Bayrou.",
+  "notes": "EDHEC. Oseo/Bpifrance, Euronext. Plus jeune rapporteur général du budget. DG Business France. Ministre du Budget sous Barnier, Commerce extérieur sous Bayrou.",
   "career_entries": [
     {
       "dateDebut": "2005",
@@ -16,9 +16,9 @@
       "categorie": "FORMATION",
       "titre": "EDHEC Business School",
       "organisation": "EDHEC",
-      "description": "Diplome EDHEC.",
+      "description": "Diplômé EDHEC.",
       "sourceUrl": "https://www.assemblee-nationale.fr/",
-      "sourcePrincipale": "Assemblee nationale",
+      "sourcePrincipale": "Assemblée nationale",
       "sourceDate": "2024",
       "confidence": "high",
       "_ingested": true
@@ -27,11 +27,11 @@
       "dateDebut": "2008",
       "dateFin": "2017",
       "categorie": "CARRIERE_PRIVEE",
-      "titre": "Finance publique et marches",
+      "titre": "Finance publique et marchés",
       "organisation": "Oseo/Bpifrance / Euronext",
-      "description": "Carriere dans la finance publique et les marches financiers.",
+      "description": "Carrière dans la finance publique et les marchés financiers.",
       "sourceUrl": "https://www.assemblee-nationale.fr/",
-      "sourcePrincipale": "Assemblee nationale",
+      "sourcePrincipale": "Assemblée nationale",
       "sourceDate": "2024",
       "confidence": "high",
       "_ingested": true

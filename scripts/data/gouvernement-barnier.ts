@@ -256,7 +256,7 @@ export const BARNIER_CONFIG: GovernmentConfig = {
       titreCourt: "Travail",
       ministereCode: "TRAVAIL_SOLIDARITES",
       bioCourte:
-        "Astrid Panosyan-Bouvet est une députée Renaissance de Paris, entrepreneuse et cofondatrice de En Marche.",
+        "Astrid Panosyan-Bouvet est une députée Renaissance de Paris, entrepreneuse et cofondatrice d'En Marche.",
       deputeNom: "Panosyan-Bouvet",
       deputePrenom: "Astrid",
     },
@@ -509,7 +509,7 @@ export const BARNIER_CONFIG: GovernmentConfig = {
     },
     {
       nom: "Avia",
-      prenom: "Laetitia",
+      prenom: "Lætitia",
       civilite: "Mme",
       slug: "laetitia-avia",
       rang: 35,
@@ -518,7 +518,7 @@ export const BARNIER_CONFIG: GovernmentConfig = {
       titreCourt: "Citoyenneté",
       ministereCode: "INTERIEUR",
       bioCourte:
-        "Laetitia Avia est une ancienne députée Renaissance de Paris, avocate de formation, connue pour sa proposition de loi contre la haine en ligne.",
+        "Lætitia Avia est une ancienne députée Renaissance de Paris, avocate de formation, connue pour sa proposition de loi contre la haine en ligne.",
     },
     {
       nom: "Chappaz",

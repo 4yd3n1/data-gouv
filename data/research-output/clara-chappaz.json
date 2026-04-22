@@ -9,7 +9,7 @@
     "https://www.lemonde.fr/politique/",
     "https://www.usinenouvelle.com/"
   ],
-  "notes": "HEC, ex-Google, directrice de la French Tech 2021-2024. Ministre deleguee a l'IA et au Numerique sous Barnier. La plus jeune membre du gouvernement Barnier.",
+  "notes": "HEC, ex-Google, directrice de la French Tech 2021-2024. Ministre déléguée à l'IA et au Numérique sous Barnier. La plus jeune membre du gouvernement Barnier.",
   "career_entries": [
     {
       "dateDebut": "2010",
@@ -17,7 +17,7 @@
       "categorie": "FORMATION",
       "titre": "HEC Paris",
       "organisation": "HEC Paris",
-      "description": "Diplome d'HEC.",
+      "description": "Diplôme d'HEC.",
       "sourceUrl": "https://www.lemonde.fr/",
       "sourcePrincipale": "Le Monde",
       "sourceDate": "2024",
@@ -30,7 +30,7 @@
       "categorie": "CARRIERE_PRIVEE",
       "titre": "Manager chez Google",
       "organisation": "Google France",
-      "description": "Differentes responsabilites chez Google.",
+      "description": "Différentes responsabilités chez Google.",
       "sourceUrl": "https://www.usinenouvelle.com/",
       "sourcePrincipale": "L'Usine Nouvelle",
       "sourceDate": "2024",
@@ -43,7 +43,7 @@
       "categorie": "FONCTION_PUBLIQUE",
       "titre": "Directrice de la Mission French Tech",
       "organisation": "Mission French Tech / BPI France",
-      "description": "Direction de la strategie French Tech.",
+      "description": "Direction de la stratégie French Tech.",
       "sourceUrl": "https://www.lemonde.fr/",
       "sourcePrincipale": "Le Monde",
       "sourceDate": "2024",

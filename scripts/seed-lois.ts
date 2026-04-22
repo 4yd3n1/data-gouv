@@ -53,7 +53,7 @@ const LOIS: LoiDef[] = [
     titre: "Motions de censure contre le gouvernement Bayrou",
     titreCourt: "Censures Bayrou",
     resumeSimple:
-      "Depuis janvier 2025, six motions de censure ont été déposées contre le gouvernement Bayrou, notamment après l'utilisation de l'article 49 alinéa 3 pour passer le budget. Toutes ont été rejetées, le gouvernement ne disposant pas d'une majorité absolue mais survivant faute de coalition d'opposition suffisante.",
+      "Depuis janvier 2025, six motions de censure ont été déposées contre le gouvernement Bayrou, notamment après l'utilisation de l'article 49 alinéa 3 pour faire adopter le budget. Toutes ont été rejetées, le gouvernement ne disposant pas d'une majorité absolue mais survivant faute de coalition d'opposition suffisante.",
     type: "MOTION_CENSURE",
     statut: "rejete",
     legislature: 17,
@@ -96,7 +96,7 @@ const LOIS: LoiDef[] = [
     titre: "Loi spéciale budgétaire de décembre 2024",
     titreCourt: "Loi spéciale budget",
     resumeSimple:
-      "Après la chute du gouvernement Barnier et le rejet du PLF 2025, une loi spéciale a été votée le 16 décembre 2024 pour autoriser l'État à continuer à percevoir les impôts et à payer ses dépenses au-delà du 1er janvier 2025. C'est un dispositif d'urgence constitutionnelle sans précédent sous la Ve République.",
+      "Après la chute du gouvernement Barnier et le rejet du PLF 2025, une loi spéciale a été votée le 16 décembre 2024 pour autoriser l'État à continuer à percevoir les impôts et à régler ses dépenses au-delà du 1ᵉʳ janvier 2025. C'est un dispositif d'urgence constitutionnelle sans précédent sous la Ve République.",
     type: "PROJET_LOI",
     statut: "adopte",
     legislature: 17,
@@ -196,7 +196,7 @@ const LOIS: LoiDef[] = [
     titre: "Proposition de loi sur la sûreté dans les transports",
     titreCourt: "Sûreté transports",
     resumeSimple:
-      "Adoptée le 18 mars 2025 après commission mixte paritaire, cette loi renforce les pouvoirs des forces de sécurité dans les transports en commun : extension des fouilles, vidéoprotection, et sanctions accrues pour les infractions commises dans les réseaux de transport. Elle fait suite à une hausse significative des violences dans le métro et le RER.",
+      "Adoptée le 18 mars 2025 après commission mixte paritaire, cette loi renforce les pouvoirs des forces de sécurité dans les transports en commun : extension des fouilles, vidéoprotection et sanctions accrues pour les infractions commises dans les réseaux de transport. Elle fait suite à une hausse significative des violences dans le métro et le RER.",
     type: "PROPOSITION_LOI",
     statut: "adopte",
     legislature: 17,
@@ -245,7 +245,7 @@ const LOIS: LoiDef[] = [
     titre: "Projet de loi d'orientation pour la souveraineté alimentaire et agricole",
     titreCourt: "Souveraineté agricole",
     resumeSimple:
-      "Adoptée le 19 février 2025, cette loi de programmation agricole fixe des objectifs de souveraineté alimentaire pour la France à horizon 2035. Elle prévoit des mesures pour faciliter l'installation de nouveaux agriculteurs, accélérer la transmission des exploitations, et mieux indemniser les agriculteurs face aux aléas climatiques et sanitaires.",
+      "Adoptée le 19 février 2025, cette loi de programmation agricole fixe des objectifs de souveraineté alimentaire pour la France à l'horizon 2035. Elle prévoit des mesures pour faciliter l'installation de nouveaux agriculteurs, accélérer la transmission des exploitations et mieux indemniser les agriculteurs face aux aléas climatiques et sanitaires.",
     type: "PROJET_LOI",
     statut: "adopte",
     legislature: 17,
@@ -260,7 +260,7 @@ const LOIS: LoiDef[] = [
     titre: "Proposition de loi levant les contraintes à l'exercice du métier d'agriculteur",
     titreCourt: "Simplification agricole",
     resumeSimple:
-      "Adoptée le 8 juillet 2025 après commission mixte paritaire, cette proposition de loi simplifie les obligations administratives des agriculteurs, notamment en matière environnementale. Elle réduit les contrôles sur les haies, assouplit les règles d'épandage et crée une présomption de bonne foi pour les agriculteurs de bonne foi ayant commis des infractions mineures.",
+      "Adoptée le 8 juillet 2025 après commission mixte paritaire, cette proposition de loi simplifie les obligations administratives des agriculteurs, notamment en matière environnementale. Elle réduit les contrôles sur les haies, assouplit les règles d'épandage et crée une présomption de bonne foi pour les agriculteurs ayant commis des infractions mineures.",
     type: "PROPOSITION_LOI",
     statut: "adopte",
     legislature: 17,

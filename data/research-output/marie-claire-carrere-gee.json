@@ -1,6 +1,6 @@
 {
   "slug": "marie-claire-carrere-gee",
-  "nom": "Carrere-Gee",
+  "nom": "Carrère-Gée",
   "prenom": "Marie-Claire",
   "civilite": "Mme",
   "researched_at": "2026-04-01",
@@ -8,7 +8,7 @@
   "sources_used": [
     "https://www.lemonde.fr/politique/"
   ],
-  "notes": "IEP Bordeaux, administratrice du Senat. Conseillere sociale de Chirac. Presidente du Conseil d'orientation pour l'emploi 2007-2018. Cour des comptes. Ministre de la Coordination gouvernementale sous Barnier.",
+  "notes": "IEP Bordeaux, administratrice du Sénat. Conseillère sociale de Chirac. Présidente du Conseil d'orientation pour l'emploi 2007-2018. Cour des comptes. Ministre de la Coordination gouvernementale sous Barnier.",
   "career_entries": [
     {
       "dateDebut": "1985",
@@ -27,9 +27,9 @@
       "dateDebut": "1995",
       "dateFin": "2007",
       "categorie": "FONCTION_PUBLIQUE",
-      "titre": "Conseillere sociale du President Chirac",
-      "organisation": "Elysee",
-      "description": "Conseillere en charge du social a l'Elysee.",
+      "titre": "Conseillère sociale du Président Chirac",
+      "organisation": "Élysée",
+      "description": "Conseillère en charge du social à l'Élysée.",
       "sourceUrl": "https://www.lemonde.fr/",
       "sourcePrincipale": "Le Monde",
       "sourceDate": "2024",
@@ -40,9 +40,9 @@
       "dateDebut": "2007",
       "dateFin": "2018",
       "categorie": "ORGANISME",
-      "titre": "Presidente du COE",
+      "titre": "Présidente du COE",
       "organisation": "Conseil d'orientation pour l'emploi",
-      "description": "Presidente du COE.",
+      "description": "Présidente du COE.",
       "sourceUrl": "https://www.lemonde.fr/",
       "sourcePrincipale": "Le Monde",
       "sourceDate": "2024",

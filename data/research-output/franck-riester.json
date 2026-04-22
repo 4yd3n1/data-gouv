@@ -9,7 +9,7 @@
     "https://www.lemonde.fr/politique/",
     "https://www.assemblee-nationale.fr/"
   ],
-  "notes": "ESSEC. Ex-Arthur Andersen, puis entreprise familiale (concessions Peugeot). Depute de Seine-et-Marne 2007-2018, maire de Coulommiers 2008-2017. Ministre de la Culture 2018-2020, Commerce exterieur 2020-2024.",
+  "notes": "ESSEC. Ex-Arthur Andersen, puis entreprise familiale (concessions Peugeot). Député de Seine-et-Marne 2007-2018, maire de Coulommiers 2008-2017. Ministre de la Culture 2018-2020, Commerce extérieur 2020-2024.",
   "career_entries": [
     {
       "dateDebut": "1990",
@@ -17,7 +17,7 @@
       "categorie": "FORMATION",
       "titre": "ESSEC",
       "organisation": "ESSEC Business School",
-      "description": "Diplome de l'ESSEC.",
+      "description": "Diplômé de l'ESSEC.",
       "sourceUrl": "https://www.lemonde.fr/",
       "sourcePrincipale": "Le Monde",
       "sourceDate": "2024",
@@ -54,11 +54,11 @@
       "dateDebut": "2007",
       "dateFin": "2018",
       "categorie": "MANDAT_ELECTIF",
-      "titre": "Depute de Seine-et-Marne (5e circ.)",
-      "organisation": "Assemblee nationale",
-      "description": "Depute UMP puis Agir. Fondateur du parti Agir.",
+      "titre": "Député de Seine-et-Marne (5e circ.)",
+      "organisation": "Assemblée nationale",
+      "description": "Député UMP puis Agir. Fondateur du parti Agir.",
       "sourceUrl": "https://www.assemblee-nationale.fr/",
-      "sourcePrincipale": "Assemblee nationale",
+      "sourcePrincipale": "Assemblée nationale",
       "sourceDate": "2024",
       "confidence": "high",
       "_ingested": true

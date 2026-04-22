@@ -8,17 +8,17 @@
   "sources_used": [
     "https://www.assemblee-nationale.fr/"
   ],
-  "notes": "DEUG Sciences, Sciences Po. Chambre d'agriculture du Loir-et-Cher. Secretaire general du MoDem. Depute puis ministre de l'Agriculture sous Borne et Attal.",
+  "notes": "DEUG Sciences, Sciences Po. Chambre d'agriculture du Loir-et-Cher. Secrétaire général du MoDem. Député puis ministre de l'Agriculture sous Borne et Attal.",
   "career_entries": [
     {
       "dateDebut": "1990",
       "dateFin": "1995",
       "categorie": "FORMATION",
       "titre": "DEUG Sciences + Sciences Po",
-      "organisation": "Universite / Sciences Po",
+      "organisation": "Université / Sciences Po",
       "description": "Formation en sciences et sciences politiques.",
       "sourceUrl": "https://www.assemblee-nationale.fr/",
-      "sourcePrincipale": "Assemblee nationale",
+      "sourcePrincipale": "Assemblée nationale",
       "sourceDate": "2024",
       "confidence": "high",
       "_ingested": true
@@ -29,9 +29,9 @@
       "categorie": "CARRIERE_PRIVEE",
       "titre": "Directeur de la chambre d'agriculture du Loir-et-Cher",
       "organisation": "Chambre d'agriculture du Loir-et-Cher",
-      "description": "Direction de la chambre d'agriculture. Secretaire general du MoDem.",
+      "description": "Direction de la chambre d'agriculture. Secrétaire général du MoDem.",
       "sourceUrl": "https://www.assemblee-nationale.fr/",
-      "sourcePrincipale": "Assemblee nationale",
+      "sourcePrincipale": "Assemblée nationale",
       "sourceDate": "2024",
       "confidence": "high",
       "_ingested": true

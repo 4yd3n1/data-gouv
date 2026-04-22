@@ -9,7 +9,7 @@
     "https://www.lemonde.fr/politique/",
     "https://www.assemblee-nationale.fr/"
   ],
-  "notes": "Diplome de philosophie (Institut catholique de Paris), ENS, Sciences Po. Professeur de philosophie. Depute LR du Rhone 2022. Ministre de la Reussite scolaire sous Barnier.",
+  "notes": "Diplômé de philosophie (Institut catholique de Paris), ENS, Sciences Po. Professeur de philosophie. Député LR du Rhône 2022. Ministre de la Réussite scolaire sous Barnier.",
   "career_entries": [
     {
       "dateDebut": "2010",
@@ -17,9 +17,9 @@
       "categorie": "FORMATION",
       "titre": "Licence et master de philosophie",
       "organisation": "Institut catholique de Paris / ENS",
-      "description": "Etudes de philosophie.",
+      "description": "Études de philosophie.",
       "sourceUrl": "https://www.assemblee-nationale.fr/",
-      "sourcePrincipale": "Assemblee nationale",
+      "sourcePrincipale": "Assemblée nationale",
       "sourceDate": "2024",
       "confidence": "high",
       "_ingested": true
@@ -30,9 +30,9 @@
       "categorie": "FORMATION",
       "titre": "Sciences Po Paris",
       "organisation": "Sciences Po Paris",
-      "description": "Formation complementaire.",
+      "description": "Formation complémentaire.",
       "sourceUrl": "https://www.assemblee-nationale.fr/",
-      "sourcePrincipale": "Assemblee nationale",
+      "sourcePrincipale": "Assemblée nationale",
       "sourceDate": "2024",
       "confidence": "medium",
       "_ingested": true
@@ -42,7 +42,7 @@
       "dateFin": "2022",
       "categorie": "CARRIERE_PRIVEE",
       "titre": "Professeur de philosophie",
-      "organisation": "Lycee",
+      "organisation": "Lycée",
       "description": "Enseignant de philosophie dans le secondaire.",
       "sourceUrl": "https://www.lemonde.fr/",
       "sourcePrincipale": "Le Monde",
@@ -54,11 +54,11 @@
       "dateDebut": "2022",
       "dateFin": null,
       "categorie": "MANDAT_ELECTIF",
-      "titre": "Depute du Rhone (6e circ.)",
-      "organisation": "Assemblee nationale",
-      "description": "Elu depute LR.",
+      "titre": "Député du Rhône (6e circ.)",
+      "organisation": "Assemblée nationale",
+      "description": "Élu député LR.",
       "sourceUrl": "https://www.assemblee-nationale.fr/",
-      "sourcePrincipale": "Assemblee nationale",
+      "sourcePrincipale": "Assemblée nationale",
       "sourceDate": "2024",
       "confidence": "high",
       "_ingested": true

@@ -75,7 +75,7 @@ export const ATTAL_CONFIG: GovernmentConfig = {
       slug: "eric-dupond-moretti",
       rang: 5,
       type: TypeMandat.MINISTRE,
-      titre: "Ministre de la Justice, Garde des Sceaux",
+      titre: "Ministre de la Justice, garde des Sceaux",
       titreCourt: "Justice",
       ministereCode: "JUSTICE",
       bioCourte:
@@ -368,7 +368,7 @@ export const ATTAL_CONFIG: GovernmentConfig = {
     },
     // ─── Secrétaires d'État ───
     {
-      nom: "Thevenot",
+      nom: "Thévenot",
       prenom: "Prisca",
       civilite: "Mme",
       slug: "prisca-thevenot",
@@ -378,8 +378,8 @@ export const ATTAL_CONFIG: GovernmentConfig = {
       titreCourt: "Porte-parole",
       ministereCode: "MATIGNON",
       bioCourte:
-        "Prisca Thevenot est députée des Hauts-de-Seine, porte-parole du gouvernement Attal.",
-      deputeNom: "Thevenot",
+        "Prisca Thévenot est députée des Hauts-de-Seine, porte-parole du gouvernement Attal.",
+      deputeNom: "Thévenot",
       deputePrenom: "Prisca",
     },
     {
@@ -487,7 +487,7 @@ export const ATTAL_CONFIG: GovernmentConfig = {
     },
     {
       nom: "Avia",
-      prenom: "Laetitia",
+      prenom: "Lætitia",
       civilite: "Mme",
       slug: "laetitia-avia",
       rang: 34,
@@ -496,7 +496,7 @@ export const ATTAL_CONFIG: GovernmentConfig = {
       titreCourt: "Citoyenneté et Ville",
       ministereCode: "VILLE_LOGEMENT",
       bioCourte:
-        "Laetitia Avia est avocate et ancienne députée de Paris, connue pour la loi contre la haine en ligne.",
+        "Lætitia Avia est avocate et ancienne députée de Paris, connue pour la loi contre la haine en ligne.",
     },
     {
       nom: "Rixain",

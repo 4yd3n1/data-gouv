@@ -78,7 +78,7 @@ export function PowerMap({ groups }: PowerMapProps) {
         viewBox={`0 0 ${svgW} ${svgH}`}
         className="w-full h-auto"
         role="img"
-        aria-label="Carte de propriete des medias francais"
+        aria-label="Carte de propriété des médias français"
       >
         <defs>
           <pattern id="pm-grid" width="40" height="40" patternUnits="userSpaceOnUse">

@@ -9,15 +9,15 @@
     "https://www.lemonde.fr/politique/",
     "https://www.ouest-france.fr/"
   ],
-  "notes": "Boulanger de profession. Maire de Lorient depuis 2020. Ministre de la Mer et de la Biodiversite sous Barnier. Parcours atypique: artisan devenu maire.",
+  "notes": "Boulanger de profession. Maire de Lorient depuis 2020. Ministre de la Mer et de la Biodiversité sous Barnier. Parcours atypique : artisan devenu maire.",
   "career_entries": [
     {
       "dateDebut": "1990",
       "dateFin": "2020",
       "categorie": "CARRIERE_PRIVEE",
       "titre": "Artisan boulanger",
-      "organisation": "Boulangerie a Lorient",
-      "description": "Artisan boulanger a Lorient pendant 30 ans.",
+      "organisation": "Boulangerie à Lorient",
+      "description": "Artisan boulanger à Lorient pendant 30 ans.",
       "sourceUrl": "https://www.ouest-france.fr/",
       "sourcePrincipale": "Ouest-France",
       "sourceDate": "2024",
@@ -30,7 +30,7 @@
       "categorie": "MANDAT_ELECTIF",
       "titre": "Maire de Lorient",
       "organisation": "Mairie de Lorient",
-      "description": "Elu maire de Lorient en 2020. Sans etiquette.",
+      "description": "Élu maire de Lorient en 2020. Sans étiquette.",
       "sourceUrl": "https://www.ouest-france.fr/",
       "sourcePrincipale": "Ouest-France",
       "sourceDate": "2024",

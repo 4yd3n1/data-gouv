@@ -680,8 +680,8 @@ export const ELITE_FACTS: SourcedFact[] = [
 
 export const REVOLVING_DOOR_CASES = [
   { name: "Édouard Philippe", from: "Premier ministre", to: "Conseil d'administration Atos (2020-2023)" },
-  { name: "Brune Poirson", from: "Secrétaire d'Etat Ecologie", to: "Accor (groupe hôtelier)" },
-  { name: "Cédric O", from: "Secrétaire d'Etat Numérique", to: "Mistral AI (puis lobbying IA Act à Bruxelles)" },
+  { name: "Brune Poirson", from: "Secrétaire d'État Écologie", to: "Accor (groupe hôtelier)" },
+  { name: "Cédric O", from: "Secrétaire d'État Numérique", to: "Mistral AI (puis lobbying IA Act à Bruxelles)" },
   { name: "Éléonore Leprettre", from: "Cheffe de cabinet de Marc Fesneau (Relations avec le Parlement)", to: "Phyteis (lobby agrochimique)" },
 ];
 

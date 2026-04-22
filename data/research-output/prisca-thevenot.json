@@ -1,6 +1,6 @@
 {
   "slug": "prisca-thevenot",
-  "nom": "Thevenot",
+  "nom": "Thévenot",
   "prenom": "Prisca",
   "civilite": "Mme",
   "researched_at": "2026-04-01",
@@ -8,7 +8,7 @@
   "sources_used": [
     "https://www.assemblee-nationale.fr/"
   ],
-  "notes": "EM Lyon. BearingPoint, Webhelp, Beauty@home (fondatrice). Deputee des Hauts-de-Seine 2022. Porte-parole du gouvernement et secretaire d'Etat Jeunesse sous Attal.",
+  "notes": "EM Lyon. BearingPoint, Webhelp, Beauty@home (fondatrice). Députée des Hauts-de-Seine 2022. Porte-parole du gouvernement et secrétaire d'État Jeunesse sous Attal.",
   "career_entries": [
     {
       "dateDebut": "2005",
@@ -16,9 +16,9 @@
       "categorie": "FORMATION",
       "titre": "EM Lyon Business School",
       "organisation": "EM Lyon",
-      "description": "Diplome de commerce.",
+      "description": "Diplôme de commerce.",
       "sourceUrl": "https://www.assemblee-nationale.fr/",
-      "sourcePrincipale": "Assemblee nationale",
+      "sourcePrincipale": "Assemblée nationale",
       "sourceDate": "2024",
       "confidence": "high",
       "_ingested": true
@@ -29,9 +29,9 @@
       "categorie": "CARRIERE_PRIVEE",
       "titre": "Consultante et entrepreneuse",
       "organisation": "BearingPoint / Webhelp / Beauty@home",
-      "description": "Consultante en strategie puis fondatrice de Beauty@home.",
+      "description": "Consultante en stratégie puis fondatrice de Beauty@home.",
       "sourceUrl": "https://www.assemblee-nationale.fr/",
-      "sourcePrincipale": "Assemblee nationale",
+      "sourcePrincipale": "Assemblée nationale",
       "sourceDate": "2024",
       "confidence": "high",
       "_ingested": true
@@ -40,11 +40,11 @@
       "dateDebut": "2022",
       "dateFin": null,
       "categorie": "MANDAT_ELECTIF",
-      "titre": "Deputee des Hauts-de-Seine (8e circ.)",
-      "organisation": "Assemblee nationale",
-      "description": "Deputee Renaissance.",
+      "titre": "Députée des Hauts-de-Seine (8e circ.)",
+      "organisation": "Assemblée nationale",
+      "description": "Députée Renaissance.",
       "sourceUrl": "https://www.assemblee-nationale.fr/",
-      "sourcePrincipale": "Assemblee nationale",
+      "sourcePrincipale": "Assemblée nationale",
       "sourceDate": "2024",
       "confidence": "high",
       "_ingested": true

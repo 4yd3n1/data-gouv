@@ -8,7 +8,7 @@
   "sources_used": [
     "https://www.assemblee-nationale.fr/"
   ],
-  "notes": "ESSEC, EM Strasbourg, doctorat sciences de gestion. Professeur des universites. Recteur de Limoges. Directeur de la DGESIP. Depute du Bas-Rhin 2012. Ministre de l'Enseignement superieur sous Barnier et Bayrou.",
+  "notes": "ESSEC, EM Strasbourg, doctorat sciences de gestion. Professeur des universités. Recteur de Limoges. Directeur de la DGESIP. Député du Bas-Rhin 2012. Ministre de l'Enseignement supérieur sous Barnier et Bayrou.",
   "career_entries": [
     {
       "dateDebut": "1990",
@@ -18,7 +18,7 @@
       "organisation": "ESSEC / EM Strasbourg",
       "description": "Formation en gestion et doctorat.",
       "sourceUrl": "https://www.assemblee-nationale.fr/",
-      "sourcePrincipale": "Assemblee nationale",
+      "sourcePrincipale": "Assemblée nationale",
       "sourceDate": "2024",
       "confidence": "high",
       "_ingested": true
@@ -27,11 +27,11 @@
       "dateDebut": "2000",
       "dateFin": "2008",
       "categorie": "CARRIERE_PRIVEE",
-      "titre": "Professeur des universites",
-      "organisation": "Universites",
+      "titre": "Professeur des universités",
+      "organisation": "Universités",
       "description": "Professeur en sciences de gestion.",
       "sourceUrl": "https://www.assemblee-nationale.fr/",
-      "sourcePrincipale": "Assemblee nationale",
+      "sourcePrincipale": "Assemblée nationale",
       "sourceDate": "2024",
       "confidence": "high",
       "_ingested": true
@@ -41,10 +41,10 @@
       "dateFin": "2012",
       "categorie": "FONCTION_PUBLIQUE",
       "titre": "Recteur de Limoges puis DGESIP",
-      "organisation": "Education nationale / Enseignement superieur",
-      "description": "Recteur d'academie puis directeur de la DGESIP.",
+      "organisation": "Éducation nationale / Enseignement supérieur",
+      "description": "Recteur d'académie puis directeur de la DGESIP.",
       "sourceUrl": "https://www.assemblee-nationale.fr/",
-      "sourcePrincipale": "Assemblee nationale",
+      "sourcePrincipale": "Assemblée nationale",
       "sourceDate": "2024",
       "confidence": "high",
       "_ingested": true
@@ -53,11 +53,11 @@
       "dateDebut": "2012",
       "dateFin": null,
       "categorie": "MANDAT_ELECTIF",
-      "titre": "Depute du Bas-Rhin (7e circ.)",
-      "organisation": "Assemblee nationale",
-      "description": "Depute LR.",
+      "titre": "Député du Bas-Rhin (7e circ.)",
+      "organisation": "Assemblée nationale",
+      "description": "Député LR.",
       "sourceUrl": "https://www.assemblee-nationale.fr/",
-      "sourcePrincipale": "Assemblee nationale",
+      "sourcePrincipale": "Assemblée nationale",
       "sourceDate": "2024",
       "confidence": "high",
       "_ingested": true

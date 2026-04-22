@@ -8,17 +8,17 @@
   "sources_used": [
     "https://www.assemblee-nationale.fr/"
   ],
-  "notes": "Doctorat en pharmacie. Directeur de laboratoire 35 ans. Conseiller regional, depute d'Eure-et-Loir. Vice-president du MoDem. Ministre des Outre-mer sous Borne.",
+  "notes": "Doctorat en pharmacie. Directeur de laboratoire 35 ans. Conseiller régional, député d'Eure-et-Loir. Vice-président du MoDem. Ministre des Outre-mer sous Borne.",
   "career_entries": [
     {
       "dateDebut": "1980",
       "dateFin": "1985",
       "categorie": "FORMATION",
       "titre": "Doctorat en pharmacie",
-      "organisation": "Universite",
+      "organisation": "Université",
       "description": "Pharmacien-biologiste.",
       "sourceUrl": "https://www.assemblee-nationale.fr/",
-      "sourcePrincipale": "Assemblee nationale",
+      "sourcePrincipale": "Assemblée nationale",
       "sourceDate": "2024",
       "confidence": "high",
       "_ingested": true
@@ -28,10 +28,10 @@
       "dateFin": "2020",
       "categorie": "CARRIERE_PRIVEE",
       "titre": "Directeur de laboratoire d'analyses",
-      "organisation": "Laboratoire de biologie medicale",
+      "organisation": "Laboratoire de biologie médicale",
       "description": "Directeur de laboratoire pendant 35 ans.",
       "sourceUrl": "https://www.assemblee-nationale.fr/",
-      "sourcePrincipale": "Assemblee nationale",
+      "sourcePrincipale": "Assemblée nationale",
       "sourceDate": "2024",
       "confidence": "high",
       "_ingested": true
@@ -40,11 +40,11 @@
       "dateDebut": "2002",
       "dateFin": null,
       "categorie": "MANDAT_ELECTIF",
-      "titre": "Depute d'Eure-et-Loir (4e circ.)",
-      "organisation": "Assemblee nationale",
-      "description": "Depute UDF puis MoDem.",
+      "titre": "Député d'Eure-et-Loir (4e circ.)",
+      "organisation": "Assemblée nationale",
+      "description": "Député UDF puis MoDem.",
       "sourceUrl": "https://www.assemblee-nationale.fr/",
-      "sourcePrincipale": "Assemblee nationale",
+      "sourcePrincipale": "Assemblée nationale",
       "sourceDate": "2024",
       "confidence": "high",
       "_ingested": true

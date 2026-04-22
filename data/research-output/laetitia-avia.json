@@ -9,7 +9,7 @@
     "https://www.lemonde.fr/politique/",
     "https://www.mediapart.fr/"
   ],
-  "notes": "Avocate (Darrois Villey, APE Avocats). Deputee de Paris 2017-2022. Auteure de la loi Avia contre la haine en ligne. Condamnee pour harcelement moral de ses assistants parlementaires.",
+  "notes": "Avocate (Darrois Villey, APE Avocats). Députée de Paris 2017-2022. Auteure de la loi Avia contre la haine en ligne. Condamnée pour harcèlement moral de ses assistants parlementaires.",
   "career_entries": [
     {
       "dateDebut": "2008",
@@ -17,7 +17,7 @@
       "categorie": "CARRIERE_PRIVEE",
       "titre": "Avocate",
       "organisation": "Darrois Villey Maillot Brochier / APE Avocats",
-      "description": "Avocate en droit des affaires et droit penal.",
+      "description": "Avocate en droit des affaires et droit pénal.",
       "sourceUrl": "https://www.lemonde.fr/",
       "sourcePrincipale": "Le Monde",
       "sourceDate": "2024",
@@ -28,11 +28,11 @@
       "dateDebut": "2017",
       "dateFin": "2022",
       "categorie": "MANDAT_ELECTIF",
-      "titre": "Deputee de Paris (8e circ.)",
-      "organisation": "Assemblee nationale",
-      "description": "Deputee LREM. Auteure de la loi contre la haine en ligne.",
+      "titre": "Députée de Paris (8e circ.)",
+      "organisation": "Assemblée nationale",
+      "description": "Députée LREM. Auteure de la loi contre la haine en ligne.",
       "sourceUrl": "https://www.assemblee-nationale.fr/",
-      "sourcePrincipale": "Assemblee nationale",
+      "sourcePrincipale": "Assemblée nationale",
       "sourceDate": "2024",
       "confidence": "high",
       "_ingested": true
@@ -42,10 +42,10 @@
     {
       "date": "2023-07-01",
       "type": "CONDAMNATION",
-      "nature": "harcelement moral sur assistants parlementaires",
+      "nature": "harcèlement moral sur assistants parlementaires",
       "juridiction": "Tribunal correctionnel de Paris",
       "statut": "CLOS",
-      "resume": "Condamnee a 6 mois de prison avec sursis et 2 ans d'ineligibilite pour harcelement moral de ses collaborateurs parlementaires. Confirmee en appel en juillet 2025.",
+      "resume": "Condamnée à 6 mois de prison avec sursis et 2 ans d'inéligibilité pour harcèlement moral de ses collaborateurs parlementaires. Confirmée en appel en juillet 2025.",
       "sourcePrincipale": "Le Monde",
       "sourceUrl": "https://www.lemonde.fr/politique/",
       "sourceDate": "2023-07",

@@ -69,7 +69,7 @@ export function BilanElitesSection() {
 
         <div className="mt-4 rounded-xl border border-rose/20 bg-rose/5 px-5 py-4">
           <p className="text-sm font-medium text-rose">
-            53 milliardaires possedent plus que les 32 millions de Francais les
+            53 milliardaires possèdent plus que les 32 millions de Français les
             plus pauvres
           </p>
           <p className="mt-1 text-xs text-bureau-400">

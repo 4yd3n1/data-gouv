@@ -55,22 +55,22 @@ export function ArcomSection({ signalements, totalAmendes, channelCount }: Arcom
       <div className="grid gap-3 sm:grid-cols-3">
         <div className="glass-panel rounded-lg px-4 py-3">
           <p className="text-2xl font-bold data-value text-rose">{signalements.length}</p>
-          <p className="text-[11px] text-bureau-500">signalements recenses</p>
+          <p className="text-[11px] text-bureau-500">signalements recensés</p>
         </div>
         <div className="glass-panel rounded-lg px-4 py-3">
           <p className="text-2xl font-bold data-value text-amber">{fmtEuro(totalAmendes)}</p>
-          <p className="text-[11px] text-bureau-500">total des amendes prononcees</p>
+          <p className="text-[11px] text-bureau-500">total des amendes prononcées</p>
         </div>
         <div className="glass-panel rounded-lg px-4 py-3">
           <p className="text-2xl font-bold data-value text-bureau-200">{channelCount}</p>
-          <p className="text-[11px] text-bureau-500">chaines concernees</p>
+          <p className="text-[11px] text-bureau-500">chaînes concernées</p>
         </div>
       </div>
 
       {/* Timeline */}
       <div className="glass-panel rounded-xl p-6">
         <p className="text-[9px] uppercase tracking-[0.2em] text-bureau-600 mb-4">
-          Chronologie des decisions
+          Chronologie des décisions
         </p>
 
         <div className="space-y-6">
@@ -80,7 +80,7 @@ export function ArcomSection({ signalements, totalAmendes, channelCount }: Arcom
                 <span className="text-sm font-bold data-value text-bureau-300">{year}</span>
                 <span className="h-[1px] flex-1 bg-bureau-700/30" />
                 <span className="text-[10px] data-value text-bureau-600">
-                  {byYear[year].length} decision{byYear[year].length > 1 ? "s" : ""}
+                  {byYear[year].length} décision{byYear[year].length > 1 ? "s" : ""}
                 </span>
               </div>
 

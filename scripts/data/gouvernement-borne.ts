@@ -2,11 +2,11 @@ import { TypeMandat } from "@prisma/client";
 import { GovernmentConfig } from "./types";
 
 /**
- * Gouvernement Élisabeth Borne — final composition (after July 20, 2023 reshuffle).
- * In office May 20, 2022 — January 8, 2024.
+ * Gouvernement Élisabeth Borne — composition finale (après le remaniement du 20 juillet 2023).
+ * En fonction du 20 mai 2022 au 8 janvier 2024.
  *
- * Data sourced from gouvernement.fr, vie-publique.fr, Légifrance (décrets de nomination).
- * President Macron is NOT included — added by the seed script separately.
+ * Données issues de gouvernement.fr, vie-publique.fr, Légifrance (décrets de nomination).
+ * Le président Macron n'est pas inclus — ajouté séparément par le script de seed.
  */
 export const BORNE_CONFIG: GovernmentConfig = {
   gouvernement: "Gouvernement Élisabeth Borne",
@@ -240,7 +240,7 @@ export const BORNE_CONFIG: GovernmentConfig = {
       titreCourt: "Comptes publics",
       ministereCode: "ECONOMIE_FINANCES",
       bioCourte:
-        "Thomas Cazenave est un haut fonctionnaire et député de Gironde, nommé ministre délégué aux Comptes publics en juillet 2023.",
+        "Thomas Cazenave est un haut fonctionnaire et député de la Gironde, nommé ministre délégué aux Comptes publics en juillet 2023.",
       deputeNom: "Cazenave",
       deputePrenom: "Thomas",
     },
@@ -270,7 +270,7 @@ export const BORNE_CONFIG: GovernmentConfig = {
       titreCourt: "Europe",
       ministereCode: "AFFAIRES_ETRANGERES",
       bioCourte:
-        "Jean-Noël Barrot est un économiste et député MoDem des Yvelines, promu ministre délégué à l'Europe en juillet 2023 après avoir été au Numérique.",
+        "Jean-Noël Barrot est un économiste et député MoDem des Yvelines, promu ministre délégué à l'Europe en juillet 2023 après avoir été chargé du Numérique.",
       deputeNom: "Barrot",
       deputePrenom: "Jean-Noël",
     },
@@ -341,7 +341,7 @@ export const BORNE_CONFIG: GovernmentConfig = {
       titreCourt: "Personnes handicapées",
       ministereCode: "SANTE_FAMILLE",
       bioCourte:
-        "Fadila Khattabi est une femme politique Renaissance, députée de Côte-d'Or, nommée ministre déléguée aux Personnes handicapées en juillet 2023.",
+        "Fadila Khattabi est une femme politique Renaissance, députée de la Côte-d'Or, nommée ministre déléguée aux Personnes handicapées en juillet 2023.",
       deputeNom: "Khattabi",
       deputePrenom: "Fadila",
     },
@@ -401,7 +401,7 @@ export const BORNE_CONFIG: GovernmentConfig = {
       titreCourt: "Renouveau démocratique",
       ministereCode: "MATIGNON",
       bioCourte:
-        "Olivier Véran est un neurologue et homme politique, ancien ministre de la Santé pendant la crise Covid, porte-parole du gouvernement Borne.",
+        "Olivier Véran est un neurologue et homme politique, ancien ministre de la Santé pendant la crise du Covid, porte-parole du gouvernement Borne.",
       deputeNom: "Véran",
       deputePrenom: "Olivier",
     },
@@ -448,7 +448,7 @@ export const BORNE_CONFIG: GovernmentConfig = {
       titreCourt: "Europe",
       ministereCode: "AFFAIRES_ETRANGERES",
       bioCourte:
-        "Laurence Boone est une économiste, ancienne chef économiste de l'OCDE, nommée secrétaire d'État à l'Europe en mai 2022.",
+        "Laurence Boone est une économiste, ancienne cheffe économiste de l'OCDE, nommée secrétaire d'État à l'Europe en mai 2022.",
     },
     {
       nom: "Caubel",
@@ -489,7 +489,7 @@ export const BORNE_CONFIG: GovernmentConfig = {
       titreCourt: "Numérique",
       ministereCode: "INDUSTRIE_NUMERIQUE",
       bioCourte:
-        "Marina Ferrari est une femme politique, députée de Savoie, nommée secrétaire d'État au Numérique en juillet 2023.",
+        "Marina Ferrari est une femme politique, députée de la Savoie, nommée secrétaire d'État au Numérique en juillet 2023.",
       deputeNom: "Ferrari",
       deputePrenom: "Marina",
     },

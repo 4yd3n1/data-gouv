@@ -9,7 +9,7 @@
     "https://www.lemonde.fr/politique/",
     "https://www.vie-publique.fr/"
   ],
-  "notes": "Ecole alsacienne, Sciences Po. PS puis En Marche. Cabinet de Marisol Touraine 2012-2017. Depute des Hauts-de-Seine 2017. Secretaire d'Etat Jeunesse 2018, ministre du Budget 2023, ministre de l'Education 2023, Premier ministre 2024 (le plus jeune de la Ve Republique a 34 ans).",
+  "notes": "École alsacienne, Sciences Po. PS puis En Marche. Cabinet de Marisol Touraine 2012-2017. Député des Hauts-de-Seine 2017. Secrétaire d'État Jeunesse 2018, ministre du Budget 2023, ministre de l'Éducation 2023, Premier ministre 2024 (le plus jeune de la Ve République à 34 ans).",
   "career_entries": [
     {
       "dateDebut": "2007",
@@ -29,8 +29,8 @@
       "dateFin": "2017",
       "categorie": "FONCTION_PUBLIQUE",
       "titre": "Collaborateur au cabinet de Marisol Touraine",
-      "organisation": "Ministere de la Sante",
-      "description": "Conseiller au cabinet de la ministre des Affaires sociales et de la Sante.",
+      "organisation": "Ministère de la Santé",
+      "description": "Conseiller au cabinet de la ministre des Affaires sociales et de la Santé.",
       "sourceUrl": "https://www.lemonde.fr/",
       "sourcePrincipale": "Le Monde",
       "sourceDate": "2024",
@@ -41,11 +41,11 @@
       "dateDebut": "2017",
       "dateFin": null,
       "categorie": "MANDAT_ELECTIF",
-      "titre": "Depute des Hauts-de-Seine (10e circ.)",
-      "organisation": "Assemblee nationale",
-      "description": "Elu depute LREM a 28 ans.",
+      "titre": "Député des Hauts-de-Seine (10e circ.)",
+      "organisation": "Assemblée nationale",
+      "description": "Élu député LREM à 28 ans.",
       "sourceUrl": "https://www.assemblee-nationale.fr/",
-      "sourcePrincipale": "Assemblee nationale",
+      "sourcePrincipale": "Assemblée nationale",
       "sourceDate": "2024",
       "confidence": "high",
       "_ingested": true

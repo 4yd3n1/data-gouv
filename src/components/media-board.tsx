@@ -14,21 +14,21 @@ const TYPE_COLORS: Record<string, string> = {
 };
 
 const TYPE_LABELS: Record<string, string> = {
-  TELEVISION: "Television",
+  TELEVISION: "Télévision",
   RADIO: "Radio",
   PRESSE_QUOTIDIENNE: "Presse quotidienne",
   PRESSE_MAGAZINE: "Presse magazine",
-  NUMERIQUE: "Numerique",
+  NUMERIQUE: "Numérique",
   AGENCE: "Agence",
 };
 
 const FILTER_TYPES = [
   { key: null, label: "Tous" },
-  { key: "TELEVISION", label: "Television" },
+  { key: "TELEVISION", label: "Télévision" },
   { key: "RADIO", label: "Radio" },
   { key: "PRESSE_QUOTIDIENNE", label: "Presse" },
   { key: "PRESSE_MAGAZINE", label: "Magazines" },
-  { key: "NUMERIQUE", label: "Numerique" },
+  { key: "NUMERIQUE", label: "Numérique" },
 ] as const;
 
 interface Proprietaire {
@@ -65,10 +65,10 @@ const ORIENTATION_LABELS: Record<string, string> = {
   CENTRE: "Centre",
   CENTRE_GAUCHE: "Centre-gauche",
   GAUCHE: "Gauche",
-  GENERALISTE: "Generaliste",
+  GENERALISTE: "Généraliste",
   SERVICE_PUBLIC: "Service public",
   DIVERTISSEMENT: "Divertissement",
-  THEMATIQUE: "Thematique",
+  THEMATIQUE: "Thématique",
 };
 
 interface FilialeItem {
@@ -432,7 +432,7 @@ export function MediaBoard({ groups }: MediaBoardProps) {
                           letterSpacing: "0.1em",
                         }}
                       >
-                        controle
+                        contrôle
                       </span>
                     </div>
                   )}
@@ -497,7 +497,7 @@ export function MediaBoard({ groups }: MediaBoardProps) {
                               marginBottom: 8,
                             }}
                           >
-                            Fiche proprietaire
+                            Fiche propriétaire
                           </p>
                           {owner && (
                             <h3
@@ -570,7 +570,7 @@ export function MediaBoard({ groups }: MediaBoardProps) {
                                   fontSize: "var(--fs-mono-xs)",
                                 }}
                               >
-                                Activite
+                                Activité
                               </dt>
                               <dd style={{ color: "var(--color-fg-mute)", margin: 0 }}>
                                 {owner.activitePrincipale}
@@ -588,7 +588,7 @@ export function MediaBoard({ groups }: MediaBoardProps) {
                                   fontSize: "var(--fs-mono-xs)",
                                 }}
                               >
-                                Controle
+                                Contrôle
                               </dt>
                               <dd style={{ color: "var(--color-fg-mute)", margin: 0 }}>
                                 {owner.partCapital}% · {owner.typeControle}
@@ -739,7 +739,7 @@ export function MediaBoard({ groups }: MediaBoardProps) {
                               textTransform: "uppercase",
                             }}
                           >
-                            Actifs media · {g.filiales.length}
+                            Actifs média · {g.filiales.length}
                           </p>
                           <span
                             className="obs-mono"

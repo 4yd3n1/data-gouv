@@ -8,17 +8,17 @@
   "sources_used": [
     "https://www.senat.fr/"
   ],
-  "notes": "Licence de droit. Assistante juridique. Vigneronne en Gironde. Conseillere regionale 2010-2014. Senatrice de Gironde 2014. Vice-presidente du Senat. Ministre de l'Education sous Barnier.",
+  "notes": "Licence de droit. Assistante juridique. Vigneronne en Gironde. Conseillère régionale 2010-2014. Sénatrice de Gironde 2014. Vice-présidente du Sénat. Ministre de l'Éducation sous Barnier.",
   "career_entries": [
     {
       "dateDebut": "1990",
       "dateFin": "2000",
       "categorie": "CARRIERE_PRIVEE",
       "titre": "Assistante juridique",
-      "organisation": "Secteur prive",
+      "organisation": "Secteur privé",
       "description": "Assistante juridique.",
       "sourceUrl": "https://www.senat.fr/",
-      "sourcePrincipale": "Senat",
+      "sourcePrincipale": "Sénat",
       "sourceDate": "2024",
       "confidence": "medium",
       "_ingested": true
@@ -31,7 +31,7 @@
       "organisation": "Domaine viticole (Gironde)",
       "description": "Exploitante viticole en Gironde.",
       "sourceUrl": "https://www.senat.fr/",
-      "sourcePrincipale": "Senat",
+      "sourcePrincipale": "Sénat",
       "sourceDate": "2024",
       "confidence": "medium",
       "_ingested": true
@@ -40,11 +40,11 @@
       "dateDebut": "2014",
       "dateFin": null,
       "categorie": "MANDAT_ELECTIF",
-      "titre": "Senatrice de la Gironde",
-      "organisation": "Senat",
-      "description": "Senatrice RDSE. Vice-presidente du Senat.",
+      "titre": "Sénatrice de la Gironde",
+      "organisation": "Sénat",
+      "description": "Sénatrice RDSE. Vice-présidente du Sénat.",
       "sourceUrl": "https://www.senat.fr/",
-      "sourcePrincipale": "Senat",
+      "sourcePrincipale": "Sénat",
       "sourceDate": "2024",
       "confidence": "high",
       "_ingested": true
