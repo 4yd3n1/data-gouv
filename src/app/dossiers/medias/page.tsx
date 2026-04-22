@@ -1,9 +1,9 @@
-import { Suspense } from "react";
+import { Suspense, type ReactNode } from "react";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { getDossier } from "@/lib/dossier-config";
 import { fmt, fmtDate, fmtEuro } from "@/lib/format";
-import { DossierHero } from "@/components/dossier-hero";
 import { DossierNav } from "@/components/dossier-nav";
 import { TopicVoteList } from "@/components/topic-vote-list";
 import { LobbyingDensity } from "@/components/lobbying-density";
@@ -12,6 +12,82 @@ import { ConcentrationChart } from "@/components/concentration-chart";
 import { PowerMap } from "@/components/power-map";
 import { MediaTreemap } from "@/components/media-treemap";
 import { ArcomSection } from "@/components/arcom-section";
+import { SrcChip } from "@/components/investigative/src-chip";
+import { Eyebrow } from "@/components/investigative/eyebrow";
+import { BarRows } from "@/components/investigative/bar-rows";
+
+// Shared section header — matches Variant A register (eyebrow + .hd title + serif subtitle)
+function SectionHeader({
+  kicker,
+  figNumber,
+  title,
+  subtitle,
+  meta,
+}: {
+  kicker: string;
+  figNumber?: string;
+  title: string;
+  subtitle?: ReactNode;
+  meta?: ReactNode;
+}) {
+  return (
+    <div
+      className="mb-6"
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "flex-end",
+        gap: 24,
+        flexWrap: "wrap",
+      }}
+    >
+      <div style={{ maxWidth: 720 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
+          <Eyebrow tone="red" size="sm">◆ {kicker}</Eyebrow>
+          {figNumber && (
+            <>
+              <span
+                className="obs-mono"
+                style={{ color: "var(--color-fg-dim)", fontSize: "var(--fs-mono-xs)" }}
+                aria-hidden
+              >
+                //
+              </span>
+              <Eyebrow>{figNumber}</Eyebrow>
+            </>
+          )}
+        </div>
+        <h2
+          className="hd"
+          style={{
+            fontSize: "clamp(24px, 2.4vw, 32px)",
+            lineHeight: 1.12,
+            letterSpacing: "-0.015em",
+            margin: 0,
+            color: "var(--color-fg)",
+          }}
+        >
+          {title}
+        </h2>
+        {subtitle && (
+          <p
+            className="obs-serif"
+            style={{
+              marginTop: 10,
+              color: "var(--color-fg-mute)",
+              fontSize: 14.5,
+              lineHeight: 1.55,
+              margin: "10px 0 0 0",
+            }}
+          >
+            {subtitle}
+          </p>
+        )}
+      </div>
+      {meta}
+    </div>
+  );
+}
 
 export const revalidate = 86400;
 
@@ -275,132 +351,597 @@ export default async function MediasPage() {
     },
   }));
 
+  const totalSignalements = signalements.length;
+  const topArcomAmende = Math.max(...signalements.map((s) => s.montant ?? 0), 0);
+
   return (
     <>
-      <DossierHero dossier={dossier} />
-      <DossierNav currentSlug="medias" />
+      {/* Dossier hero — investigative register, Variant A */}
+      <section
+        style={{
+          borderBottom: "1px solid var(--line)",
+          background: "var(--color-ink-0)",
+        }}
+      >
+        <div
+          className="mx-auto max-w-7xl px-6"
+          style={{ paddingTop: 40, paddingBottom: 32 }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
+            <Eyebrow tone="red" size="sm">◆ Dossier · Médias</Eyebrow>
+            <span
+              className="obs-mono"
+              style={{ color: "var(--color-fg-dim)", fontSize: "var(--fs-mono-xs)" }}
+              aria-hidden
+            >
+              //
+            </span>
+            <Eyebrow>Mise à jour {fmtDate(new Date())}</Eyebrow>
+          </div>
 
-      {/* Section 0 — SIGINT Header */}
-      <section className="sigint-section border-b border-bureau-700/20 bg-bureau-950">
-        <div className="mx-auto max-w-7xl px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <span className="live-dot" />
-              <span className="classification-badge">Surveillance active</span>
-              <span className="hidden text-[10px] text-bureau-600 tracking-wider uppercase sm:inline">
-                Dernière mise à jour : {fmtDate(new Date())}
-              </span>
-            </div>
-            <div className="flex items-center gap-4 text-[11px] data-value text-bureau-500">
-              <span>{groupesRaw.length} cibles</span>
-              <span className="text-bureau-700">|</span>
-              <span>{fmt(filialeCount)} actifs</span>
-              <span className="hidden text-bureau-700 sm:inline">|</span>
-              <span className="hidden text-amber sm:inline">{govLinkedCount} liens politiques</span>
-            </div>
+          <h1
+            className="hd"
+            style={{
+              fontSize: "clamp(36px, 4.1vw, 56px)",
+              lineHeight: 1.02,
+              letterSpacing: "-0.02em",
+              margin: 0,
+              maxWidth: 960,
+              fontWeight: 400,
+            }}
+          >
+            Concentration des médias : <em>neuf milliardaires,</em> 80 % du paysage.
+          </h1>
+
+          <p
+            className="obs-serif"
+            style={{
+              marginTop: 18,
+              maxWidth: 720,
+              fontSize: 18,
+              lineHeight: 1.55,
+              color: "var(--color-fg)",
+            }}
+          >
+            Cartographie des dix groupes dominants, leurs propriétaires, leurs filiales et les
+            liens avec l&apos;État. Données ARCOM croisées avec HATVP (déclarations d&apos;intérêts)
+            et AGORA (lobbying déclaré).
+          </p>
+
+          <div style={{ marginTop: 22, display: "flex", gap: 8, flexWrap: "wrap" }}>
+            <SrcChip items={["ARCOM", "HATVP", "AGORA", "Cour des comptes"]} />
+          </div>
+
+          {/* Hero stat strip */}
+          <div
+            className="medias-hero-stats"
+            style={{
+              marginTop: 32,
+              display: "grid",
+              gap: 1,
+              background: "var(--line)",
+              border: "1px solid var(--line)",
+            }}
+          >
+            {[
+              {
+                v: String(groupesRaw.length),
+                label: "Groupes cartographiés",
+                sub: "Privés + service public",
+              },
+              {
+                v: fmt(filialeCount),
+                label: "Titres recensés",
+                sub: "TV · Radio · Presse · Numérique",
+              },
+              {
+                v: `${govLinkedCount}`,
+                label: "Liens politiques déclarés",
+                sub: "Propriétaires concernés",
+              },
+              {
+                v: totalSignalements > 0 ? String(totalSignalements) : "—",
+                label: "Signalements ARCOM",
+                sub:
+                  topArcomAmende > 0
+                    ? `Plus forte amende : ${fmtEuro(topArcomAmende)}`
+                    : "Mises en demeure et sanctions",
+              },
+            ].map((s, i) => (
+              <div
+                key={i}
+                style={{
+                  background: "var(--color-ink-1)",
+                  padding: "18px 20px",
+                }}
+              >
+                <div
+                  className="obs-serif"
+                  style={{
+                    fontSize: 30,
+                    lineHeight: 1,
+                    color: "var(--color-fg)",
+                    fontVariantNumeric: "tabular-nums",
+                    letterSpacing: "-0.01em",
+                  }}
+                >
+                  {s.v}
+                </div>
+                <div
+                  className="obs-mono"
+                  style={{
+                    marginTop: 8,
+                    fontSize: 10,
+                    letterSpacing: "0.14em",
+                    color: "var(--color-fg-mute)",
+                    textTransform: "uppercase",
+                  }}
+                >
+                  {s.label}
+                </div>
+                <div
+                  style={{
+                    marginTop: 4,
+                    fontSize: 12,
+                    color: "var(--color-fg-dim)",
+                    lineHeight: 1.4,
+                  }}
+                >
+                  {s.sub}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      <div className="mx-auto max-w-7xl px-6 py-12 space-y-16">
-        {/* Section 1 — Context cards */}
-        <section>
-          <div className="grid gap-4 sm:grid-cols-3">
-            <div className="stat-card rounded-xl border border-rose/20 bg-rose/5 p-5">
-              <p className="stat-number-rose text-3xl font-bold">9</p>
-              <p className="mt-1 text-sm text-bureau-300">milliardaires contrôlent plus de 80 % des médias privés</p>
-            </div>
-            <div className="stat-card rounded-xl border border-amber/20 bg-amber/5 p-5">
-              <p className="stat-number-amber text-3xl font-bold">25<sup className="text-lg">e</sup></p>
-              <p className="mt-1 text-sm text-bureau-300">au classement RSF de la liberté de la presse (2025)</p>
-            </div>
-            <div className="stat-card rounded-xl border border-teal/20 bg-teal/5 p-5">
-              <p className="stat-number-teal text-3xl font-bold">{fmt(filialeCount)}</p>
-              <p className="mt-1 text-sm text-bureau-300">titres de presse, chaînes TV, radios et médias numériques recensés</p>
-            </div>
-          </div>
+      <DossierNav currentSlug="medias" />
 
-          <div className="desc-block mt-6 rounded-xl border border-rose/20 bg-bureau-800/40 p-6 pl-8">
-            <p className="text-sm text-bureau-300 leading-relaxed">
-              La concentration des médias en France est un enjeu démocratique majeur.
-              Une poignée de groupes industriels — dont les activités principales sont souvent
-              étrangères à l&apos;information — contrôlent la majorité des titres de presse,
-              chaînes de télévision et stations de radio. Cette page recense les structures
-              de propriété, les filiales et les liens entre propriétaires de médias et responsables
-              politiques, à partir de données publiques.
-            </p>
-          </div>
-        </section>
+      <div className="mx-auto max-w-7xl px-6 py-12 space-y-16">
 
         {/* Section 2 — Power Map */}
-        <section className="sigint-section section-divider">
-          <div className="mb-6 flex items-center justify-between">
-            <div>
-              <h2 className="font-[family-name:var(--font-display)] text-2xl text-bureau-100">
-                Cartographie du pouvoir médiatique
-              </h2>
-              <p className="mt-1 text-sm text-bureau-500">
-                Chaque nœud représente un groupe — taille proportionnelle au nombre de médias contrôlés
-              </p>
-            </div>
-            <span className="classification-badge hidden sm:inline">Analyse structurelle</span>
-          </div>
+        <section id="cartographie" style={{ scrollMarginTop: 80 }}>
+          {(() => {
+            const ranked = [...powerMapData].sort((a, b) => b.filialeCount - a.filialeCount);
+            const top3 = ranked.slice(0, 3).reduce((s, g) => s + g.filialeCount, 0);
+            const top3Pct = filialeCount > 0 ? Math.round((top3 / filialeCount) * 100) : 0;
+            const hhi = ranked.reduce((s, g) => {
+              const share = filialeCount > 0 ? (g.filialeCount / filialeCount) * 100 : 0;
+              return s + share * share;
+            }, 0);
+            const govLinked = ranked.filter((g) => g.hasGovLink).length;
+            const flagged = ranked.filter((g) => g.signalementCount > 3).length;
+            const TYPE_LEGEND: Array<{ code: string; label: string; color: string }> = [
+              { code: "TELEVISION", label: "Télévision", color: "#60a5fa" },
+              { code: "RADIO", label: "Radio", color: "#fbbf24" },
+              { code: "PRESSE_QUOTIDIENNE", label: "Presse quotidienne", color: "#2dd4bf" },
+              { code: "PRESSE_MAGAZINE", label: "Presse magazine", color: "#0d9488" },
+              { code: "NUMERIQUE", label: "Numérique", color: "#fb7185" },
+              { code: "AGENCE", label: "Agence", color: "#94a3b8" },
+            ];
 
-          <div className="rounded-xl border border-bureau-700/20 bg-bureau-800/10 p-2 sm:p-4">
-            <PowerMap groups={powerMapData} />
-          </div>
+            return (
+              <>
+                {/* Header */}
+                <div
+                  className="mb-6"
+                  style={{
+                    display: "flex",
+                    alignItems: "flex-start",
+                    justifyContent: "space-between",
+                    gap: 24,
+                    flexWrap: "wrap",
+                  }}
+                >
+                  <div style={{ maxWidth: 640 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
+                      <span
+                        className="obs-mono"
+                        style={{
+                          fontSize: "var(--fs-mono-xs)",
+                          color: "var(--color-signal)",
+                          letterSpacing: "0.14em",
+                        }}
+                      >
+                        Analyse structurelle
+                      </span>
+                      <span
+                        className="obs-mono"
+                        style={{ color: "var(--color-fg-dim)", fontSize: "var(--fs-mono-xs)" }}
+                        aria-hidden
+                      >
+                        //
+                      </span>
+                      <span
+                        className="obs-mono"
+                        style={{
+                          fontSize: "var(--fs-mono-xs)",
+                          color: "var(--color-fg-mute)",
+                          letterSpacing: "0.14em",
+                        }}
+                      >
+                        Fig. 1 · {groupesRaw.length} groupes
+                      </span>
+                    </div>
+                    <h2
+                      className="hd"
+                      style={{
+                        fontSize: "clamp(26px, 2.6vw, 36px)",
+                        lineHeight: 1.1,
+                        letterSpacing: "-0.015em",
+                        margin: 0,
+                        color: "var(--color-fg)",
+                      }}
+                    >
+                      Cartographie du pouvoir médiatique
+                    </h2>
+                    <p
+                      className="obs-serif"
+                      style={{
+                        marginTop: 10,
+                        color: "var(--color-fg-mute)",
+                        fontSize: 15,
+                        lineHeight: 1.55,
+                      }}
+                    >
+                      Chaque nœud représente un groupe. Taille proportionnelle au nombre de médias
+                      contrôlés. Tirets = aucun lien gouvernemental déclaré ; ligne pleine = lien
+                      identifié via HATVP ou AGORA.
+                    </p>
+                  </div>
 
-          {/* Legend */}
-          <div className="mt-3 flex flex-wrap items-center gap-4 text-[11px] text-bureau-500">
-            <span className="flex items-center gap-1.5">
-              <span className="inline-block h-[1px] w-4 bg-bureau-400" />
-              Ligne pleine = lien gouvernemental
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="inline-block h-[1px] w-4 border-t border-dashed border-bureau-400" />
-              Tirets = pas de lien gouvernemental
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="inline-block h-2 w-2 rounded-full bg-amber" />
-              Connexion politique
-            </span>
-          </div>
+                  {/* Concentration metrics */}
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+                      gap: 12,
+                      minWidth: 280,
+                    }}
+                  >
+                    {[
+                      {
+                        k: "Top 3 contrôlent",
+                        v: `${top3Pct} %`,
+                        sub: `${top3}/${filialeCount} médias`,
+                      },
+                      {
+                        k: "Indice HHI",
+                        v: Math.round(hhi).toLocaleString("fr-FR"),
+                        sub: hhi > 1500 ? "Très concentré" : hhi > 1000 ? "Concentré" : "Modéré",
+                      },
+                      {
+                        k: "Liens politiques",
+                        v: `${govLinked}/${groupesRaw.length}`,
+                        sub: "groupes concernés",
+                      },
+                      {
+                        k: "Signalements ARCOM",
+                        v: String(flagged),
+                        sub: "groupes à +3 alertes",
+                      },
+                    ].map((m) => (
+                      <div
+                        key={m.k}
+                        style={{
+                          border: "1px solid var(--line)",
+                          background: "var(--color-ink-1)",
+                          padding: "10px 12px",
+                        }}
+                      >
+                        <div
+                          className="obs-mono"
+                          style={{
+                            fontSize: 9.5,
+                            color: "var(--color-fg-dim)",
+                            letterSpacing: "0.12em",
+                            textTransform: "uppercase",
+                          }}
+                        >
+                          {m.k}
+                        </div>
+                        <div
+                          className="obs-serif"
+                          style={{
+                            fontSize: 22,
+                            color: "var(--color-fg)",
+                            fontVariantNumeric: "tabular-nums",
+                            marginTop: 3,
+                            lineHeight: 1.1,
+                          }}
+                        >
+                          {m.v}
+                        </div>
+                        <div
+                          style={{
+                            fontSize: 11,
+                            color: "var(--color-fg-mute)",
+                            marginTop: 3,
+                          }}
+                        >
+                          {m.sub}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Viz + side panel */}
+                <div
+                  className="powermap-layout"
+                  style={{
+                    display: "grid",
+                    gap: 20,
+                    gridTemplateColumns: "1fr",
+                  }}
+                >
+                  <div
+                    style={{
+                      border: "1px solid var(--line)",
+                      background: "var(--color-ink-1)",
+                      padding: 12,
+                    }}
+                  >
+                    <PowerMap groups={powerMapData} />
+                  </div>
+
+                  <aside
+                    style={{
+                      border: "1px solid var(--line)",
+                      background: "var(--color-ink-1)",
+                      padding: 14,
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 12,
+                      minWidth: 0,
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                      }}
+                    >
+                      <span
+                        className="obs-mono"
+                        style={{
+                          fontSize: "var(--fs-mono-xs)",
+                          color: "var(--color-fg-mute)",
+                          letterSpacing: "0.14em",
+                        }}
+                      >
+                        Classement
+                      </span>
+                      <span
+                        className="obs-mono"
+                        style={{
+                          fontSize: "var(--fs-mono-xs)",
+                          color: "var(--color-fg-dim)",
+                        }}
+                      >
+                        par médias contrôlés
+                      </span>
+                    </div>
+                    <hr className="hair" />
+                    <ol
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: 8,
+                        margin: 0,
+                        padding: 0,
+                        listStyle: "none",
+                      }}
+                    >
+                      {ranked.map((g, i) => {
+                        const typeColor =
+                          TYPE_LEGEND.find((t) => t.code === g.dominantType)?.color ?? "#94a3b8";
+                        const pct =
+                          filialeCount > 0
+                            ? Math.round((g.filialeCount / filialeCount) * 100)
+                            : 0;
+                        return (
+                          <li
+                            key={g.slug}
+                            style={{
+                              display: "grid",
+                              gridTemplateColumns: "18px 1fr auto",
+                              gap: 10,
+                              alignItems: "center",
+                              fontSize: 13,
+                            }}
+                          >
+                            <span
+                              className="obs-mono"
+                              style={{
+                                fontSize: 10,
+                                color: "var(--color-fg-dim)",
+                                fontVariantNumeric: "tabular-nums",
+                              }}
+                            >
+                              {String(i + 1).padStart(2, "0")}
+                            </span>
+                            <span
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: 8,
+                                minWidth: 0,
+                              }}
+                            >
+                              <span
+                                aria-hidden
+                                style={{
+                                  width: 8,
+                                  height: 8,
+                                  borderRadius: "50%",
+                                  background: typeColor,
+                                  flexShrink: 0,
+                                }}
+                              />
+                              <span
+                                style={{
+                                  color: "var(--color-fg)",
+                                  overflow: "hidden",
+                                  textOverflow: "ellipsis",
+                                  whiteSpace: "nowrap",
+                                }}
+                              >
+                                {g.nomCourt}
+                              </span>
+                              {g.hasGovLink && (
+                                <span
+                                  aria-label="Lien politique"
+                                  title="Lien politique déclaré"
+                                  style={{
+                                    width: 5,
+                                    height: 5,
+                                    borderRadius: "50%",
+                                    background: "var(--color-warn)",
+                                    flexShrink: 0,
+                                  }}
+                                />
+                              )}
+                              {g.signalementCount > 3 && (
+                                <span
+                                  aria-label="Signalements ARCOM"
+                                  title={`${g.signalementCount} signalements ARCOM`}
+                                  style={{
+                                    width: 5,
+                                    height: 5,
+                                    borderRadius: "50%",
+                                    background: "var(--color-signal)",
+                                    flexShrink: 0,
+                                  }}
+                                />
+                              )}
+                            </span>
+                            <span
+                              className="obs-mono"
+                              style={{
+                                fontSize: 11,
+                                color: "var(--color-fg-mute)",
+                                fontVariantNumeric: "tabular-nums",
+                                letterSpacing: "0.05em",
+                              }}
+                            >
+                              {g.filialeCount} · {pct}%
+                            </span>
+                          </li>
+                        );
+                      })}
+                    </ol>
+                  </aside>
+                </div>
+
+                {/* Legend */}
+                <div
+                  style={{
+                    marginTop: 16,
+                    display: "flex",
+                    flexWrap: "wrap",
+                    gap: 20,
+                    paddingTop: 14,
+                    borderTop: "1px solid var(--line)",
+                    fontSize: 11,
+                    color: "var(--color-fg-mute)",
+                    alignItems: "center",
+                  }}
+                >
+                  <span
+                    className="obs-mono"
+                    style={{
+                      fontSize: 9.5,
+                      color: "var(--color-fg-dim)",
+                      letterSpacing: "0.12em",
+                      textTransform: "uppercase",
+                    }}
+                  >
+                    Secteur dominant
+                  </span>
+                  {TYPE_LEGEND.map((t) => (
+                    <span key={t.code} style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                      <span
+                        aria-hidden
+                        style={{
+                          width: 8,
+                          height: 8,
+                          borderRadius: "50%",
+                          background: t.color,
+                        }}
+                      />
+                      {t.label}
+                    </span>
+                  ))}
+                  <span style={{ flex: 1 }} />
+                  <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                    <span
+                      aria-hidden
+                      style={{
+                        width: 14,
+                        height: 1,
+                        background: "var(--color-fg-mute)",
+                      }}
+                    />
+                    Lien gouv. déclaré
+                  </span>
+                  <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                    <span
+                      aria-hidden
+                      style={{
+                        width: 14,
+                        height: 0,
+                        borderTop: "1px dashed var(--color-fg-mute)",
+                      }}
+                    />
+                    Aucun lien
+                  </span>
+                </div>
+              </>
+            );
+          })()}
         </section>
 
         {/* Section 3 — Dossier Grid (Intelligence Board) */}
-        <section className="sigint-section section-divider">
-          <div className="mb-6 flex items-center justify-between">
-            <div>
-              <h2 className="font-[family-name:var(--font-display)] text-2xl text-bureau-100">
-                Dossiers propriétaires
-              </h2>
-              <p className="mt-1 text-sm text-bureau-500">
-                {groupesRaw.length} groupes, leurs propriétaires et {fmt(filialeCount)} médias — cliquez pour explorer
-              </p>
-            </div>
-            <span className="classification-badge hidden sm:inline">Confidentiel</span>
-          </div>
-
-          <Suspense fallback={<div className="h-96 animate-pulse rounded-xl bg-bureau-800/20" />}>
+        <section>
+          <SectionHeader
+            kicker="Dossiers propriétaires"
+            figNumber={`Fig. 2 · ${groupesRaw.length} groupes`}
+            title="Propriétaires, fortunes, filiales"
+            subtitle={
+              <>
+                {groupesRaw.length} groupes, leurs propriétaires et {fmt(filialeCount)} médias
+                recensés. Cliquez pour déplier la composition, les participations et le contrôle
+                exercé.
+              </>
+            }
+          />
+          <Suspense
+            fallback={
+              <div
+                style={{
+                  height: 400,
+                  border: "1px solid var(--line)",
+                  background: "var(--color-ink-1)",
+                }}
+              />
+            }
+          >
             <MediaBoard groups={boardData} />
           </Suspense>
         </section>
 
         {/* Section 3.5 — Signalements ARCOM */}
         {signalements.length > 0 && (
-          <section className="sigint-section section-divider">
-            <div className="mb-6 flex items-center justify-between">
-              <div>
-                <h2 className="font-[family-name:var(--font-display)] text-2xl text-bureau-100">
-                  Signalements ARCOM
-                </h2>
-                <p className="mt-1 text-sm text-bureau-500">
-                  Mises en demeure, sanctions et amendes prononcées par le régulateur audiovisuel
-                </p>
-              </div>
-              <span className="classification-badge hidden sm:inline">Incidents régulatoires</span>
-            </div>
-
+          <section>
+            <SectionHeader
+              kicker="Signalements ARCOM"
+              figNumber={`Fig. 3 · ${signalements.length} décisions`}
+              title="Régulation audiovisuelle"
+              subtitle="Mises en demeure, sanctions et amendes prononcées par l'Autorité de régulation de la communication audiovisuelle et numérique."
+              meta={<SrcChip items={["ARCOM · décisions publiées"]} />}
+            />
             <ArcomSection
               signalements={arcomSectionData}
               totalAmendes={totalAmendes}
@@ -411,38 +952,87 @@ export default async function MediasPage() {
 
         {/* Section — Connexions politiques */}
         {politicalOwners.length > 0 && (
-          <section className="sigint-section section-divider">
-            <div className="mb-6 flex items-center justify-between">
-              <div>
-                <h2 className="font-[family-name:var(--font-display)] text-2xl text-bureau-100">
-                  Connexions politiques
-                </h2>
-                <p className="mt-1 text-sm text-bureau-500">
-                  Liens document&eacute;s entre propri&eacute;taires de m&eacute;dias et responsables politiques
-                </p>
-              </div>
-              <span className="classification-badge hidden sm:inline">Liens crois&eacute;s</span>
-            </div>
-            <div className="grid gap-3 sm:grid-cols-2">
+          <section>
+            <SectionHeader
+              kicker="Connexions politiques"
+              figNumber={`Fig. 4 · ${politicalOwners.length} propriétaires`}
+              title="Liens avec le pouvoir politique"
+              subtitle="Propriétaires de médias dont les contacts avec l'exécutif, les partis ou les cabinets ministériels ont été documentés par la presse institutionnelle ou les déclarations HATVP."
+            />
+            <div
+              className="grid gap-3"
+              style={{ gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))" }}
+            >
               {politicalOwners.map((o) => {
-                const groupNames = [...new Set(o.participations.map(p => p.groupe.nomCourt))].join(", ");
+                const groupNames = [...new Set(o.participations.map((p) => p.groupe.nomCourt))].join(", ");
                 return (
-                  <div key={o.slug} className="rounded-xl border border-amber/20 bg-amber/5 p-5">
-                    <div className="flex items-start justify-between gap-3 mb-2">
-                      <div>
-                        <p className="text-sm font-medium text-bureau-100">{o.prenom} {o.nom}</p>
-                        <p className="text-[10px] uppercase tracking-widest text-bureau-500">{groupNames}</p>
-                      </div>
+                  <article
+                    key={o.slug}
+                    style={{
+                      border: "1px solid var(--line)",
+                      background: "var(--color-ink-1)",
+                      padding: 18,
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 10,
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "baseline",
+                        justifyContent: "space-between",
+                        gap: 10,
+                        flexWrap: "wrap",
+                      }}
+                    >
+                      <span
+                        className="obs-serif"
+                        style={{
+                          fontSize: 17,
+                          color: "var(--color-fg)",
+                          letterSpacing: "-0.01em",
+                          lineHeight: 1.2,
+                        }}
+                      >
+                        {o.prenom} {o.nom}
+                      </span>
+                      <span
+                        className="obs-mono"
+                        style={{
+                          fontSize: 10,
+                          color: "var(--color-warn)",
+                          letterSpacing: "0.12em",
+                          textTransform: "uppercase",
+                        }}
+                      >
+                        {groupNames}
+                      </span>
                     </div>
-                    <p className="text-xs text-bureau-400 leading-relaxed line-clamp-3">
+                    <p
+                      style={{
+                        fontSize: 13,
+                        color: "var(--color-fg-mute)",
+                        lineHeight: 1.55,
+                        margin: 0,
+                      }}
+                    >
                       {o.contextePolitique}
                     </p>
                     {o.sourceContextePolitique && (
-                      <p className="mt-2 text-[10px] text-bureau-600">
-                        Source : {o.sourceContextePolitique}
-                      </p>
+                      <span
+                        className="obs-mono"
+                        style={{
+                          fontSize: 10,
+                          color: "var(--color-fg-dim)",
+                          letterSpacing: "0.1em",
+                          textTransform: "uppercase",
+                        }}
+                      >
+                        Source · {o.sourceContextePolitique}
+                      </span>
                     )}
-                  </div>
+                  </article>
                 );
               })}
             </div>
@@ -451,87 +1041,145 @@ export default async function MediasPage() {
 
         {/* Section — Lobbying Culture */}
         {cultureLobbyTotal > 0 && (
-          <section className="sigint-section section-divider">
-            <div className="mb-6 flex items-center justify-between">
-              <div>
-                <h2 className="font-[family-name:var(--font-display)] text-2xl text-bureau-100">
-                  Lobbying ciblant le minist&egrave;re de la Culture
-                </h2>
-                <p className="mt-1 text-sm text-bureau-500">
-                  {fmt(cultureLobbyTotal)} actions de lobbying d&eacute;clar&eacute;es au registre HATVP / AGORA
-                </p>
-              </div>
-              <span className="classification-badge hidden sm:inline">AGORA</span>
-            </div>
-
-            <div className="grid gap-4 sm:grid-cols-2">
-              {/* Top organisations */}
-              <div className="rounded-xl border border-bureau-700/20 bg-bureau-800/20 p-5">
-                <h3 className="text-xs font-semibold uppercase tracking-[0.15em] text-bureau-500 mb-3">
-                  Principaux repr&eacute;sentants
-                </h3>
-                <div className="space-y-2">
-                  {cultureLobbying.map((l) => (
-                    <div key={l.representantNom} className="flex items-center justify-between">
-                      <span className="text-xs text-bureau-300 line-clamp-1">{l.representantNom}</span>
-                      <span className="text-xs text-amber font-medium">{fmt(l._count.id)}</span>
-                    </div>
-                  ))}
+          <section>
+            <SectionHeader
+              kicker="Lobbying · Ministère de la Culture"
+              figNumber={`Fig. 5 · ${fmt(cultureLobbyTotal)} actions`}
+              title="Pressions déclarées sur la Culture"
+              subtitle={
+                <>
+                  {fmt(cultureLobbyTotal)} actions de lobbying déclarées au registre AGORA visant le
+                  ministère de la Culture et les administrations liées à l&apos;audiovisuel. Classement
+                  par représentant d&apos;intérêts et par domaine d&apos;action.
+                </>
+              }
+              meta={<SrcChip items={["AGORA · registre HATVP"]} />}
+            />
+            <div
+              style={{
+                display: "grid",
+                gap: 20,
+                gridTemplateColumns: "1fr",
+              }}
+              className="lobby-culture-grid"
+            >
+              <div
+                style={{
+                  border: "1px solid var(--line)",
+                  background: "var(--color-ink-1)",
+                  padding: 18,
+                }}
+              >
+                <div
+                  className="obs-mono"
+                  style={{
+                    fontSize: 10,
+                    letterSpacing: "0.14em",
+                    color: "var(--color-fg-mute)",
+                    textTransform: "uppercase",
+                    marginBottom: 12,
+                  }}
+                >
+                  Top 5 représentants d&apos;intérêts
                 </div>
+                <BarRows
+                  items={cultureLobbying.map((l) => ({
+                    label: l.representantNom,
+                    value: l._count.id,
+                    display: fmt(l._count.id),
+                  }))}
+                  labelWidth={220}
+                />
               </div>
 
-              {/* Domain breakdown */}
-              <div className="rounded-xl border border-bureau-700/20 bg-bureau-800/20 p-5">
-                <h3 className="text-xs font-semibold uppercase tracking-[0.15em] text-bureau-500 mb-3">
+              <div
+                style={{
+                  border: "1px solid var(--line)",
+                  background: "var(--color-ink-1)",
+                  padding: 18,
+                }}
+              >
+                <div
+                  className="obs-mono"
+                  style={{
+                    fontSize: 10,
+                    letterSpacing: "0.14em",
+                    color: "var(--color-fg-mute)",
+                    textTransform: "uppercase",
+                    marginBottom: 12,
+                  }}
+                >
                   Domaines d&apos;action
-                </h3>
-                <div className="space-y-2">
-                  {cultureDomains.map((d) => (
-                    <div key={d.domaine} className="flex items-center justify-between">
-                      <span className="text-xs text-bureau-300 line-clamp-1">{d.domaine}</span>
-                      <span className="text-xs text-bureau-400">{fmt(d._count.id)}</span>
-                    </div>
-                  ))}
                 </div>
+                <BarRows
+                  items={cultureDomains.map((d) => ({
+                    label: d.domaine ?? "—",
+                    value: d._count.id,
+                    display: fmt(d._count.id),
+                    color: "var(--color-warn)",
+                  }))}
+                  labelWidth={220}
+                />
               </div>
             </div>
           </section>
         )}
 
         {/* Section 4 — Matrice de concentration */}
-        <section className="sigint-section section-divider">
-          <div className="mb-6 flex items-center justify-between">
-            <div>
-              <h2 className="font-[family-name:var(--font-display)] text-2xl text-bureau-100">
-                Matrice de concentration
-              </h2>
-              <p className="mt-1 text-sm text-bureau-500">
-                Surface proportionnelle au nombre de titres contrôlés
-              </p>
-            </div>
-            <span className="classification-badge hidden sm:inline">Analyse structurelle</span>
+        <section>
+          <SectionHeader
+            kicker="Matrice de concentration"
+            figNumber="Fig. 6"
+            title="Surface du paysage médiatique"
+            subtitle="Chaque surface est proportionnelle au nombre de titres contrôlés. Les types dominants (TV, radio, presse) composent la diversité apparente."
+          />
+          <div
+            style={{
+              border: "1px solid var(--line)",
+              background: "var(--color-ink-1)",
+              padding: 14,
+            }}
+          >
+            <MediaTreemap groups={treemapData} />
           </div>
-
-          <MediaTreemap groups={treemapData} />
-
-          <div className="mt-6 grid gap-4 lg:grid-cols-[1fr_280px]">
+          <div
+            className="mt-6 grid gap-4"
+            style={{ gridTemplateColumns: "minmax(0, 1fr) 280px" }}
+          >
             <ConcentrationChart groups={chartData} />
-            <div className="space-y-2">
+            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
               {TYPE_STAT_CONFIG.map(({ type, label, color }) => (
                 <div
                   key={type}
-                  className="glass-panel rounded-lg px-4 py-3 flex items-center justify-between"
+                  style={{
+                    border: "1px solid var(--line)",
+                    background: "var(--color-ink-1)",
+                    padding: "10px 14px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }}
                 >
-                  <div className="flex items-center gap-2">
+                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                     <span
-                      className="h-2 w-2 rounded-full"
-                      style={{ background: color }}
+                      aria-hidden
+                      style={{
+                        width: 8,
+                        height: 8,
+                        borderRadius: "50%",
+                        background: color,
+                      }}
                     />
-                    <span className="text-xs text-bureau-300">{label}</span>
+                    <span style={{ fontSize: 12.5, color: "var(--color-fg)" }}>{label}</span>
                   </div>
                   <span
-                    className="text-sm font-bold data-value"
-                    style={{ color }}
+                    className="obs-mono"
+                    style={{
+                      fontSize: 13,
+                      fontVariantNumeric: "tabular-nums",
+                      color,
+                      letterSpacing: "0.05em",
+                    }}
                   >
                     {typeCounts[type] ?? 0}
                   </span>
@@ -542,29 +1190,24 @@ export default async function MediasPage() {
         </section>
 
         {/* Section 5 — Votes au Parlement */}
-        <section className="section-divider">
-          <div className="mb-6">
-            <h2 className="font-[family-name:var(--font-display)] text-2xl text-bureau-100">
-              Votes au Parlement
-            </h2>
-            <p className="mt-1 text-sm text-bureau-500">
-              Scrutins publics liés à la culture, l&apos;audiovisuel et la presse
-            </p>
-          </div>
-
+        <section>
+          <SectionHeader
+            kicker="Votes au Parlement"
+            figNumber={`Fig. 7 · ${scrutinsForList.length} scrutins`}
+            title="Quand le Parlement légifère sur l'audiovisuel"
+            subtitle="Scrutins publics tagués par sujet — culture, audiovisuel, presse. Position de chaque groupe politique et résultat final."
+          />
           <TopicVoteList scrutins={scrutinsForList} />
         </section>
 
         {/* Section 6 — Lobbying audiovisuel et presse */}
-        <section className="section-divider">
-          <div className="mb-6">
-            <h2 className="font-[family-name:var(--font-display)] text-2xl text-bureau-100">
-              Lobbying audiovisuel et presse
-            </h2>
-            <p className="mt-1 text-sm text-bureau-500">
-              Actions de lobbying dans les domaines audiovisuel, presse, télécommunications et édition — registre HATVP
-            </p>
-          </div>
+        <section>
+          <SectionHeader
+            kicker="Lobbying audiovisuel et presse"
+            figNumber="Fig. 8"
+            title="Représentants d'intérêts du secteur"
+            subtitle="Actions HATVP dans les domaines audiovisuel, presse, télécommunications et édition. Nombre d'actions déclarées, nombre de représentants actifs, principaux lobbyistes."
+          />
 
           <LobbyingDensity
             actionCount={mediaActionCount}

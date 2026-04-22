@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"/>
+<title>L’Observatoire — Front page</title>
+<meta name="viewport" content="width=1600"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="tokens.css"/>
+<style>
+  html, body { margin: 0; background: #0A0F1A; }
+  body { font-family: "Inter", system-ui, sans-serif; color: #E8EAF0; }
+
+  /* Tweaks panel (hidden by default) */
+  #tweaks {
+    display: none;
+    position: fixed;
+    right: 16px; bottom: 16px;
+    width: 280px;
+    background: #0F1624;
+    border: 1px solid rgba(200,215,240,0.14);
+    border-radius: 4px;
+    padding: 14px 16px;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    color: #E8EAF0;
+    z-index: 10000;
+    letter-spacing: 0.04em;
+    box-shadow: 0 20px 60px rgba(0,0,0,.5);
+  }
+  #tweaks.on { display: block; }
+  #tweaks h3 { margin: 0 0 12px; text-transform: uppercase; letter-spacing: 0.14em; font-size: 10.5px; color: #8A93A8; font-weight: 500; }
+  #tweaks .row { display: grid; grid-template-columns: 110px 1fr; gap: 10px; align-items: center; margin-bottom: 10px; }
+  #tweaks .row label { color: #8A93A8; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; }
+  #tweaks input[type=range] { width: 100%; }
+  #tweaks button {
+    background: transparent; color: #E8EAF0; border: 1px solid rgba(200,215,240,0.14);
+    padding: 5px 8px; font-family: inherit; font-size: 10px; cursor: pointer; letter-spacing: .08em;
+  }
+  #tweaks button.on { border-color: oklch(0.70 0.17 27); color: oklch(0.80 0.14 27); }
+  #tweaks .swatches { display:flex; gap:6px; }
+  #tweaks .sw { width: 22px; height: 22px; border-radius: 2px; cursor: pointer; border: 1px solid transparent; }
+  #tweaks .sw.on { border-color: #E8EAF0; }
+</style>
+</head>
+<body>
+
+<div id="root"></div>
+
+<div id="tweaks">
+  <h3>Tweaks</h3>
+  <div class="row">
+    <label>Accent</label>
+    <div class="swatches" id="tw-accent">
+      <div class="sw on" data-h="27"  style="background:oklch(0.70 0.17 27)"></div>
+      <div class="sw"    data-h="15"  style="background:oklch(0.70 0.17 15)"></div>
+      <div class="sw"    data-h="350" style="background:oklch(0.70 0.17 350)"></div>
+      <div class="sw"    data-h="80"  style="background:oklch(0.70 0.15 80)"></div>
+    </div>
+  </div>
+  <div class="row">
+    <label>Background</label>
+    <div class="swatches" id="tw-bg">
+      <div class="sw on" data-bg="#0A0F1A" style="background:#0A0F1A"></div>
+      <div class="sw"    data-bg="#0B0D12" style="background:#0B0D12"></div>
+      <div class="sw"    data-bg="#121018" style="background:#121018"></div>
+      <div class="sw"    data-bg="#0E1412" style="background:#0E1412"></div>
+    </div>
+  </div>
+  <div class="row">
+    <label>Density</label>
+    <input type="range" id="tw-density" min="1" max="10" step="1" value="6"/>
+  </div>
+  <div class="row">
+    <label>Grain</label>
+    <button id="tw-grain" class="on">ON</button>
+  </div>
+</div>
+
+<!-- React + Babel -->
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="design-canvas.jsx"></script>
+<script type="text/babel" src="chrome.jsx"></script>
+<script type="text/babel" src="signals.jsx"></script>
+<script type="text/babel" src="viz.jsx"></script>
+<script type="text/babel" src="variant-a.jsx"></script>
+<script type="text/babel" src="variant-b.jsx"></script>
+<script type="text/babel" src="variant-c.jsx"></script>
+
+<script type="text/babel">
+const { useEffect } = React;
+
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "accentHue": 80,
+  "bg": "#0A0F1A",
+  "density": 6,
+  "grain": true
+}/*EDITMODE-END*/;
+
+function applyTweaks(t) {
+  const r = document.documentElement;
+  r.style.setProperty('--red',       `oklch(0.70 0.17 ${t.accentHue})`);
+  r.style.setProperty('--red-soft',  `oklch(0.48 0.12 ${t.accentHue})`);
+  r.style.setProperty('--red-bg',    `oklch(0.34 0.10 ${t.accentHue} / 0.22)`);
+  r.style.setProperty('--ink-0',     t.bg);
+  const pad = 20 + (10 - t.density) * 3;
+  r.style.setProperty('--obs-pad', pad + 'px');
+  document.body.style.background = t.bg;
+  document.querySelectorAll('.obs-artboard').forEach(el => {
+    el.classList.toggle('obs-grain', !!t.grain);
+  });
+}
+
+function App() {
+  useEffect(() => { applyTweaks(TWEAK_DEFAULTS); }, []);
+  return (
+    <DesignCanvas>
+      <DCSection id="front-page" title="L’Observatoire · Front page" subtitle="Three directions — canvas to compare side-by-side">
+        <DCArtboard id="variant-a" label="A · Édition refined editorial" width={1440} height={1800}>
+          <VariantA />
+        </DCArtboard>
+        <DCArtboard id="variant-b" label="B · Salle de rédaction viz-forward" width={1440} height={1900}>
+          <VariantB />
+        </DCArtboard>
+        <DCArtboard id="variant-c" label="C · Bureau intelligence briefing" width={1440} height={1340}>
+          <VariantC />
+        </DCArtboard>
+      </DCSection>
+    </DesignCanvas>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+
+/* ── Tweaks bridge ─────────────────────────────────────────── */
+let tweaks = { ...TWEAK_DEFAULTS };
+const panel = document.getElementById('tweaks');
+
+function send(edits) {
+  tweaks = { ...tweaks, ...edits };
+  applyTweaks(tweaks);
+  try { window.parent.postMessage({type:'__edit_mode_set_keys', edits}, '*'); } catch(e){}
+}
+
+window.addEventListener('message', (e) => {
+  const d = e.data || {};
+  if (d.type === '__activate_edit_mode') panel.classList.add('on');
+  if (d.type === '__deactivate_edit_mode') panel.classList.remove('on');
+});
+try { window.parent.postMessage({type:'__edit_mode_available'}, '*'); } catch(e){}
+
+document.getElementById('tw-accent').addEventListener('click', (e) => {
+  const sw = e.target.closest('.sw'); if (!sw) return;
+  document.querySelectorAll('#tw-accent .sw').forEach(x => x.classList.remove('on'));
+  sw.classList.add('on');
+  send({ accentHue: parseFloat(sw.dataset.h) });
+});
+document.getElementById('tw-bg').addEventListener('click', (e) => {
+  const sw = e.target.closest('.sw'); if (!sw) return;
+  document.querySelectorAll('#tw-bg .sw').forEach(x => x.classList.remove('on'));
+  sw.classList.add('on');
+  send({ bg: sw.dataset.bg });
+});
+document.getElementById('tw-density').addEventListener('input', (e) => {
+  send({ density: parseInt(e.target.value, 10) });
+});
+document.getElementById('tw-grain').addEventListener('click', (e) => {
+  const on = !e.target.classList.contains('on');
+  e.target.classList.toggle('on', on);
+  e.target.textContent = on ? 'ON' : 'OFF';
+  send({ grain: on });
+});
+</script>
+
+</body>
+</html>

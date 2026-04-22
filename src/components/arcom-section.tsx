@@ -37,10 +37,11 @@ interface ArcomSectionProps {
 }
 
 export function ArcomSection({ signalements, totalAmendes, channelCount }: ArcomSectionProps) {
-  // Group by year for timeline
+  // Group by year for timeline — use UTC to avoid SSR/client timezone mismatch
+  // (a date near year boundary could bucket differently on server vs browser)
   const byYear: Record<number, Signalement[]> = {};
   for (const s of signalements) {
-    const y = new Date(s.date).getFullYear();
+    const y = new Date(s.date).getUTCFullYear();
     if (!byYear[y]) byYear[y] = [];
     byYear[y].push(s);
   }

@@ -5,12 +5,12 @@ import Link from "next/link";
 import { fmt } from "@/lib/format";
 
 const TYPE_COLORS: Record<string, string> = {
-  TELEVISION: "#60a5fa",
-  RADIO: "#fbbf24",
-  PRESSE_QUOTIDIENNE: "#2dd4bf",
-  PRESSE_MAGAZINE: "#0d9488",
-  NUMERIQUE: "#fb7185",
-  AGENCE: "#94a3b8",
+  TELEVISION: "var(--color-verified)",
+  RADIO: "var(--color-warn)",
+  PRESSE_QUOTIDIENNE: "var(--color-verified)",
+  PRESSE_MAGAZINE: "var(--color-fg-mute)",
+  NUMERIQUE: "var(--color-signal)",
+  AGENCE: "var(--color-fg-dim)",
 };
 
 const TYPE_LABELS: Record<string, string> = {
@@ -48,15 +48,15 @@ interface Proprietaire {
 }
 
 const ORIENTATION_COLORS: Record<string, string> = {
-  DROITE: "#f43f5e",
-  CENTRE_DROIT: "#f97316",
-  CENTRE: "#eab308",
-  CENTRE_GAUCHE: "#3b82f6",
+  DROITE: "var(--color-signal)",
+  CENTRE_DROIT: "var(--color-warn)",
+  CENTRE: "var(--color-fg-mute)",
+  CENTRE_GAUCHE: "var(--color-verified)",
   GAUCHE: "#8b5cf6",
-  GENERALISTE: "#94a3b8",
-  SERVICE_PUBLIC: "#2dd4bf",
-  DIVERTISSEMENT: "#64748b",
-  THEMATIQUE: "#06b6d4",
+  GENERALISTE: "var(--color-fg-dim)",
+  SERVICE_PUBLIC: "var(--color-verified)",
+  DIVERTISSEMENT: "var(--color-fg-faint)",
+  THEMATIQUE: "var(--color-fg-mute)",
 };
 
 const ORIENTATION_LABELS: Record<string, string> = {
@@ -96,9 +96,9 @@ interface MediaBoardProps {
   groups: GroupItem[];
 }
 
-function ChevronDown({ className }: { className?: string }) {
+function ChevronDown({ className, style }: { className?: string; style?: React.CSSProperties }) {
   return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
       <polyline points="6 9 12 15 18 9" />
     </svg>
   );
@@ -113,12 +113,23 @@ function TypeBar({ filiales }: { filiales: FilialeItem[] }) {
   if (total === 0) return null;
 
   return (
-    <div className="flex h-1.5 w-full overflow-hidden rounded-full bg-bureau-700/40">
+    <div
+      style={{
+        display: "flex",
+        height: 3,
+        width: "100%",
+        overflow: "hidden",
+        background: "var(--line)",
+      }}
+    >
       {Object.entries(counts).map(([type, count]) => (
         <div
           key={type}
-          style={{ width: `${(count / total) * 100}%`, backgroundColor: TYPE_COLORS[type] ?? "#64748b" }}
-          className="opacity-60"
+          style={{
+            width: `${(count / total) * 100}%`,
+            background: TYPE_COLORS[type] ?? "var(--color-fg-dim)",
+            opacity: 0.75,
+          }}
         />
       ))}
     </div>
@@ -135,7 +146,7 @@ function getDominantColor(filiales: FilialeItem[]): string {
   for (const [type, count] of Object.entries(counts)) {
     if (count > max) { max = count; dominant = type; }
   }
-  return TYPE_COLORS[dominant] ?? "#64748b";
+  return TYPE_COLORS[dominant] ?? "var(--color-fg-dim)";
 }
 
 function getInitials(prenom: string, nom: string): string {
@@ -159,19 +170,58 @@ export function MediaBoard({ groups }: MediaBoardProps) {
 
   return (
     <div>
-      {/* Filter bar */}
-      <div className="mb-6 flex flex-wrap items-center gap-2">
+      {/* Filter bar — mono-rectangular pills matching Variant A register */}
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          gap: 6,
+          marginBottom: 24,
+          alignItems: "center",
+        }}
+      >
+        <span
+          className="obs-mono"
+          style={{
+            fontSize: "var(--fs-mono-xs)",
+            letterSpacing: "0.14em",
+            color: "var(--color-fg-dim)",
+            marginRight: 6,
+          }}
+        >
+          Filtrer
+        </span>
         {FILTER_TYPES.map((ft) => {
           const isActive = activeFilter === ft.key;
           return (
             <button
               key={ft.key ?? "all"}
               onClick={() => setActiveFilter(isActive ? null : (ft.key ?? null))}
-              className={`rounded-full px-4 py-1.5 text-sm font-medium transition-all duration-200 ${
-                isActive
-                  ? "filter-active"
-                  : "bg-bureau-800/40 text-bureau-400 hover:bg-bureau-700/40 hover:text-bureau-200"
-              }`}
+              className="obs-mono"
+              style={{
+                fontSize: "var(--fs-mono-xs)",
+                letterSpacing: "0.14em",
+                textTransform: "uppercase",
+                padding: "6px 10px",
+                background: isActive ? "var(--signal-bg)" : "transparent",
+                color: isActive ? "var(--color-signal)" : "var(--color-fg-mute)",
+                border: `1px solid ${isActive ? "oklch(0.55 0.12 27 / 0.35)" : "var(--line)"}`,
+                borderRadius: 2,
+                cursor: "pointer",
+                transition: "color 120ms, background 120ms, border-color 120ms",
+              }}
+              onMouseEnter={(e) => {
+                if (!isActive) {
+                  e.currentTarget.style.color = "var(--color-fg)";
+                  e.currentTarget.style.borderColor = "var(--line-2)";
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!isActive) {
+                  e.currentTarget.style.color = "var(--color-fg-mute)";
+                  e.currentTarget.style.borderColor = "var(--line)";
+                }
+              }}
             >
               {ft.label}
             </button>
@@ -179,8 +229,15 @@ export function MediaBoard({ groups }: MediaBoardProps) {
         })}
       </div>
 
-      {/* Card grid */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {/* Card grid — 2 cols on md, 3 on lg. 10 items => 3+3+3+1; the orphan cell renders with same height (equal-height cards), no awkward gap. */}
+      <div
+        style={{
+          display: "grid",
+          gap: 10,
+          gridTemplateColumns: "1fr",
+        }}
+        className="media-board-grid"
+      >
         {groups.map((g) => {
           const isExpanded = expandedSlug === g.slug;
           const matchesFilter = !activeFilter || hasType(g, activeFilter);
@@ -192,249 +249,603 @@ export function MediaBoard({ groups }: MediaBoardProps) {
           return (
             <div
               key={g.slug}
-              className={`${isExpanded ? "col-span-full" : ""} transition-opacity duration-300 ${
-                activeFilter && !matchesFilter ? "opacity-40" : "opacity-100"
-              }`}
+              style={{
+                gridColumn: isExpanded ? "1 / -1" : undefined,
+                opacity: activeFilter && !matchesFilter ? 0.28 : 1,
+                transition: "opacity 220ms ease",
+              }}
             >
               {/* Collapsed card */}
               <button
                 onClick={() => setExpandedSlug(isExpanded ? null : g.slug)}
-                className={`dossier-card w-full rounded-xl text-left ${
-                  isExpanded ? "dossier-card-active" : ""
-                }`}
+                className="media-card"
+                style={{
+                  width: "100%",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 14,
+                  textAlign: "left",
+                  background: isExpanded ? "var(--color-ink-2)" : "var(--color-ink-1)",
+                  border: `1px solid ${isExpanded ? "var(--line-2)" : "var(--line)"}`,
+                  padding: "14px 16px",
+                  cursor: "pointer",
+                  minHeight: 112,
+                  transition: "border-color 140ms, background 140ms",
+                  borderRadius: 0,
+                }}
               >
-                <div className="px-5 py-4">
-                  {/* Row 1: Header */}
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <div
-                        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full"
+                {/* Header row */}
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "flex-start",
+                    justifyContent: "space-between",
+                    gap: 10,
+                    minHeight: 36,
+                  }}
+                >
+                  <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0, flex: 1 }}>
+                    <div
+                      style={{
+                        flexShrink: 0,
+                        width: 32,
+                        height: 32,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        background: "transparent",
+                        border: `1px solid ${dominantColor}`,
+                        color: dominantColor,
+                        fontFamily: "var(--font-mono)",
+                        fontSize: 10,
+                        fontWeight: 600,
+                        letterSpacing: "0.05em",
+                      }}
+                    >
+                      {initials}
+                    </div>
+                    <div style={{ minWidth: 0, flex: 1 }}>
+                      {owner && (
+                        <p
+                          style={{
+                            fontSize: 14,
+                            fontWeight: 500,
+                            color: "var(--color-fg)",
+                            lineHeight: 1.25,
+                            margin: 0,
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                          }}
+                        >
+                          {owner.prenom} {owner.nom}
+                        </p>
+                      )}
+                      <p
+                        className="obs-mono"
                         style={{
-                          background: `${dominantColor}15`,
-                          border: `1px solid ${dominantColor}30`,
+                          fontSize: 10,
+                          letterSpacing: "0.12em",
+                          color: "var(--color-fg-dim)",
+                          marginTop: 2,
+                          textTransform: "uppercase",
                         }}
                       >
-                        <span
-                          className="text-[10px] font-bold"
-                          style={{ color: dominantColor }}
-                        >
-                          {initials}
-                        </span>
-                      </div>
-                      <div className="min-w-0">
-                        {owner && (
-                          <p className="text-sm font-semibold text-bureau-100">
-                            {owner.prenom} {owner.nom}
-                          </p>
-                        )}
-                        <p className="text-[11px] text-bureau-500">{g.nomCourt}</p>
-                      </div>
+                        {g.nomCourt}
+                      </p>
                     </div>
+                  </div>
 
-                    <div className="flex shrink-0 items-center gap-2">
-                      {g.signalementCount > 0 && (
-                        <span className="flex items-center gap-1 rounded-sm bg-rose/10 px-1.5 py-0.5 text-[9px] font-medium text-rose border border-rose/20">
-                          {g.signalementCount} ARCOM
-                        </span>
-                      )}
-                      {owner?.gouvernementSlug && (
-                        <span className="flex items-center gap-1 rounded-sm bg-amber/10 px-1.5 py-0.5 text-[9px] font-medium text-amber border border-amber/20">
-                          GOV
-                        </span>
-                      )}
-                      <span className="rounded-sm bg-bureau-700/40 px-2 py-0.5 text-[10px] data-value text-bureau-400">
-                        {g.filiales.length}
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 6,
+                      flexShrink: 0,
+                    }}
+                  >
+                    {g.signalementCount > 0 && (
+                      <span className="sig-tag">{g.signalementCount} ARCOM</span>
+                    )}
+                    {owner?.gouvernementSlug && <span className="sig-tag sig-tag--amber">GOV</span>}
+                    <span
+                      className="obs-mono"
+                      style={{
+                        fontSize: 10,
+                        letterSpacing: "0.08em",
+                        color: "var(--color-fg-mute)",
+                        padding: "2px 6px",
+                        border: "1px solid var(--line)",
+                        borderRadius: 2,
+                      }}
+                    >
+                      {g.filiales.length}
+                    </span>
+                    <ChevronDown
+                      style={{
+                        width: 14,
+                        height: 14,
+                        color: "var(--color-fg-dim)",
+                        transition: "transform 200ms",
+                        transform: isExpanded ? "rotate(180deg)" : "rotate(0)",
+                      }}
+                    />
+                  </div>
+                </div>
+
+                {/* Metrics row — fixed height slot; if both missing (e.g. public service), shows a neutral "Service public" line so alignment holds */}
+                <div style={{ display: "flex", alignItems: "baseline", gap: 16, minHeight: 22 }}>
+                  {owner?.fortuneEstimee != null ? (
+                    <div style={{ display: "flex", alignItems: "baseline", gap: 4 }}>
+                      <span
+                        style={{
+                          fontSize: 18,
+                          fontWeight: 600,
+                          color: "var(--color-warn)",
+                          fontFamily: "var(--font-mono)",
+                          letterSpacing: "-0.01em",
+                        }}
+                      >
+                        {owner.fortuneEstimee}
                       </span>
-                      <ChevronDown
-                        className={`h-4 w-4 text-bureau-500 transition-transform duration-200 ${isExpanded ? "rotate-180" : ""}`}
-                      />
+                      <span
+                        className="obs-mono"
+                        style={{
+                          fontSize: 10,
+                          color: "var(--color-fg-dim)",
+                          letterSpacing: "0.1em",
+                        }}
+                      >
+                        Md EUR
+                      </span>
                     </div>
-                  </div>
+                  ) : (
+                    <span
+                      className="obs-mono"
+                      style={{
+                        fontSize: 10,
+                        letterSpacing: "0.14em",
+                        color: "var(--color-fg-dim)",
+                        textTransform: "uppercase",
+                      }}
+                    >
+                      Service public
+                    </span>
+                  )}
+                  {owner?.partCapital != null && (
+                    <div style={{ display: "flex", alignItems: "baseline", gap: 4 }}>
+                      <span
+                        style={{
+                          fontSize: 14,
+                          fontWeight: 500,
+                          color: "var(--color-fg-mute)",
+                          fontFamily: "var(--font-mono)",
+                        }}
+                      >
+                        {owner.partCapital}%
+                      </span>
+                      <span
+                        className="obs-mono"
+                        style={{
+                          fontSize: 10,
+                          color: "var(--color-fg-dim)",
+                          letterSpacing: "0.1em",
+                        }}
+                      >
+                        controle
+                      </span>
+                    </div>
+                  )}
+                </div>
 
-                  {/* Row 2: Fortune + inline metrics */}
-                  <div className="mt-3 flex items-center gap-4">
-                    {owner?.fortuneEstimee != null && (
-                      <div className="flex items-baseline gap-1">
-                        <span className="text-lg font-bold data-value text-amber">
-                          {owner.fortuneEstimee}
-                        </span>
-                        <span className="text-[10px] text-bureau-600">Md EUR</span>
-                      </div>
-                    )}
-                    {owner?.partCapital != null && (
-                      <div className="flex items-baseline gap-1">
-                        <span className="text-sm font-semibold data-value text-bureau-300">
-                          {owner.partCapital}%
-                        </span>
-                        <span className="text-[10px] text-bureau-600">controle</span>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Row 3: Type distribution micro-bar */}
-                  <div className="mt-3 flex items-center gap-2">
+                {/* Type distribution bar */}
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: "auto" }}>
+                  <div style={{ flex: 1 }}>
                     <TypeBar filiales={g.filiales} />
-                    <div className="flex gap-1.5 shrink-0">
-                      {typeCounts.slice(0, 3).map(([type, count]) => (
-                        <span
-                          key={type}
-                          className="text-[9px] data-value"
-                          style={{ color: TYPE_COLORS[type] }}
-                        >
-                          {count}
-                        </span>
-                      ))}
-                    </div>
+                  </div>
+                  <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
+                    {typeCounts.slice(0, 3).map(([type, count]) => (
+                      <span
+                        key={type}
+                        className="obs-mono"
+                        style={{
+                          fontSize: 9,
+                          letterSpacing: "0.05em",
+                          color: TYPE_COLORS[type] ?? "var(--color-fg-dim)",
+                        }}
+                      >
+                        {count}
+                      </span>
+                    ))}
                   </div>
                 </div>
               </button>
 
               {/* Expanded panel */}
               <div
-                className="grid transition-[grid-template-rows] duration-300 ease-out"
-                style={{ gridTemplateRows: isExpanded ? "1fr" : "0fr" }}
+                style={{
+                  display: "grid",
+                  gridTemplateRows: isExpanded ? "1fr" : "0fr",
+                  transition: "grid-template-rows 260ms ease",
+                }}
               >
-                <div className="overflow-hidden">
+                <div style={{ overflow: "hidden" }}>
                   {isExpanded && (
-                    <div className="mt-2 glass-panel rounded-xl p-6">
-                      <div className="grid gap-6 lg:grid-cols-[280px_1fr]">
-                        {/* Left: Owner dossier */}
-                        <div className="space-y-4">
-                          <div className="border-b border-bureau-700/30 pb-3">
-                            <p className="text-[9px] uppercase tracking-[0.2em] text-bureau-600 mb-2">
-                              Fiche proprietaire
-                            </p>
-                            {owner && (
-                              <h3 className="text-lg font-semibold text-bureau-100">
-                                {owner.prenom} {owner.nom}
-                              </h3>
-                            )}
-                            {owner?.bioCourte && (
-                              <p className="mt-1.5 text-xs text-bureau-400 leading-relaxed">
-                                {owner.bioCourte}
-                              </p>
-                            )}
-                          </div>
-
-                          {/* Metadata grid */}
-                          <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 text-[11px]">
-                            {owner?.formation && (
-                              <>
-                                <span className="text-bureau-600">Formation</span>
-                                <span className="text-bureau-300">{owner.formation}</span>
-                              </>
-                            )}
-                            {owner?.activitePrincipale && (
-                              <>
-                                <span className="text-bureau-600">Activite</span>
-                                <span className="text-bureau-300">{owner.activitePrincipale}</span>
-                              </>
-                            )}
-                            {owner?.partCapital != null && (
-                              <>
-                                <span className="text-bureau-600">Controle</span>
-                                <span className="text-bureau-300">
-                                  {owner.partCapital}% — {owner.typeControle}
-                                </span>
-                              </>
-                            )}
-                            {owner?.fortuneEstimee != null && (
-                              <>
-                                <span className="text-bureau-600">Fortune</span>
-                                <span className="text-amber data-value">
-                                  {fmt(owner.fortuneEstimee)} Md EUR
-                                </span>
-                              </>
-                            )}
-                          </div>
-
-                          {/* Gov link */}
-                          {owner?.gouvernementSlug && (
-                            <Link
-                              href={`/profils/${owner.gouvernementSlug}`}
-                              className="flex items-center gap-2 rounded-lg border
-                                         border-amber/20 bg-amber/5 px-3 py-2
-                                         text-xs text-amber hover:bg-amber/10
-                                         transition-colors"
+                    <div
+                      className="media-card-expanded"
+                      style={{
+                        marginTop: 1,
+                        background: "var(--color-ink-1)",
+                        border: "1px solid var(--line)",
+                        borderTop: "none",
+                        padding: "22px 28px",
+                        display: "grid",
+                        gap: 32,
+                        gridTemplateColumns: "minmax(240px, 300px) 1fr",
+                      }}
+                    >
+                      {/* Left: owner dossier */}
+                      <div>
+                        <div style={{ paddingBottom: 14, borderBottom: "1px solid var(--line)" }}>
+                          <p
+                            className="obs-mono"
+                            style={{
+                              fontSize: "var(--fs-mono-xs)",
+                              letterSpacing: "0.16em",
+                              color: "var(--color-fg-dim)",
+                              textTransform: "uppercase",
+                              marginBottom: 8,
+                            }}
+                          >
+                            Fiche proprietaire
+                          </p>
+                          {owner && (
+                            <h3
+                              className="hd"
+                              style={{
+                                fontSize: 22,
+                                fontWeight: 500,
+                                color: "var(--color-fg)",
+                                margin: 0,
+                                lineHeight: 1.15,
+                                letterSpacing: "-0.01em",
+                              }}
                             >
-                              <span className="h-1.5 w-1.5 rounded-full bg-amber" />
-                              Profil gouvernemental
-                              <span className="ml-auto text-bureau-600">&rarr;</span>
-                            </Link>
+                              {owner.prenom} {owner.nom}
+                            </h3>
                           )}
-
-                          {/* Political context */}
-                          {owner?.contextePolitique && (
-                            <div className="rounded-lg border border-rose/15 bg-rose/5 px-3 py-2.5">
-                              <p className="text-[9px] uppercase tracking-[0.15em] text-rose/70 mb-1">
-                                Contexte politique
-                              </p>
-                              <p className="text-[11px] text-bureau-300 leading-relaxed">
-                                {owner.contextePolitique}
-                              </p>
-                              {owner.sourceContextePolitique && (
-                                <p className="mt-1 text-[9px] text-bureau-600 italic">
-                                  Source : {owner.sourceContextePolitique}
-                                </p>
-                              )}
-                            </div>
-                          )}
-
-                          {/* Group description */}
-                          {g.description && (
-                            <p className="text-xs text-bureau-500 leading-relaxed border-t border-bureau-700/20 pt-3">
-                              {g.description}
+                          {owner?.bioCourte && (
+                            <p
+                              className="obs-serif"
+                              style={{
+                                marginTop: 10,
+                                fontSize: 13.5,
+                                color: "var(--color-fg-mute)",
+                                lineHeight: 1.5,
+                              }}
+                            >
+                              {owner.bioCourte}
                             </p>
                           )}
                         </div>
 
-                        {/* Right: Subsidiaries grid */}
-                        <div className="space-y-3">
-                          <p className="text-[9px] uppercase tracking-[0.2em] text-bureau-600">
-                            Actifs media ({g.filiales.length})
+                        {/* Metadata list */}
+                        <dl
+                          style={{
+                            marginTop: 14,
+                            display: "grid",
+                            gridTemplateColumns: "auto 1fr",
+                            columnGap: 14,
+                            rowGap: 6,
+                            fontSize: 11.5,
+                            alignItems: "baseline",
+                          }}
+                        >
+                          {owner?.formation && (
+                            <>
+                              <dt
+                                className="obs-mono"
+                                style={{
+                                  color: "var(--color-fg-dim)",
+                                  letterSpacing: "0.12em",
+                                  textTransform: "uppercase",
+                                  fontSize: "var(--fs-mono-xs)",
+                                }}
+                              >
+                                Formation
+                              </dt>
+                              <dd style={{ color: "var(--color-fg-mute)", margin: 0 }}>
+                                {owner.formation}
+                              </dd>
+                            </>
+                          )}
+                          {owner?.activitePrincipale && (
+                            <>
+                              <dt
+                                className="obs-mono"
+                                style={{
+                                  color: "var(--color-fg-dim)",
+                                  letterSpacing: "0.12em",
+                                  textTransform: "uppercase",
+                                  fontSize: "var(--fs-mono-xs)",
+                                }}
+                              >
+                                Activite
+                              </dt>
+                              <dd style={{ color: "var(--color-fg-mute)", margin: 0 }}>
+                                {owner.activitePrincipale}
+                              </dd>
+                            </>
+                          )}
+                          {owner?.partCapital != null && (
+                            <>
+                              <dt
+                                className="obs-mono"
+                                style={{
+                                  color: "var(--color-fg-dim)",
+                                  letterSpacing: "0.12em",
+                                  textTransform: "uppercase",
+                                  fontSize: "var(--fs-mono-xs)",
+                                }}
+                              >
+                                Controle
+                              </dt>
+                              <dd style={{ color: "var(--color-fg-mute)", margin: 0 }}>
+                                {owner.partCapital}% · {owner.typeControle}
+                              </dd>
+                            </>
+                          )}
+                          {owner?.fortuneEstimee != null && (
+                            <>
+                              <dt
+                                className="obs-mono"
+                                style={{
+                                  color: "var(--color-fg-dim)",
+                                  letterSpacing: "0.12em",
+                                  textTransform: "uppercase",
+                                  fontSize: "var(--fs-mono-xs)",
+                                }}
+                              >
+                                Fortune
+                              </dt>
+                              <dd
+                                style={{
+                                  color: "var(--color-warn)",
+                                  margin: 0,
+                                  fontFamily: "var(--font-mono)",
+                                }}
+                              >
+                                {fmt(owner.fortuneEstimee)} Md EUR
+                              </dd>
+                            </>
+                          )}
+                        </dl>
+
+                        {/* Gov link */}
+                        {owner?.gouvernementSlug && (
+                          <Link
+                            href={`/profils/${owner.gouvernementSlug}`}
+                            className="obs-mono"
+                            style={{
+                              marginTop: 14,
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 8,
+                              padding: "8px 10px",
+                              border: "1px solid oklch(0.55 0.10 80 / 0.35)",
+                              background: "var(--warn-bg)",
+                              color: "var(--color-warn)",
+                              fontSize: 11,
+                              letterSpacing: "0.14em",
+                              textTransform: "uppercase",
+                              textDecoration: "none",
+                            }}
+                          >
+                            <span
+                              style={{
+                                width: 5,
+                                height: 5,
+                                background: "var(--color-warn)",
+                                borderRadius: "50%",
+                              }}
+                            />
+                            Profil gouvernemental
+                            <span style={{ marginLeft: "auto", color: "var(--color-fg-dim)" }}>→</span>
+                          </Link>
+                        )}
+
+                        {/* Political context */}
+                        {owner?.contextePolitique && (
+                          <div
+                            style={{
+                              marginTop: 12,
+                              padding: "10px 12px",
+                              border: "1px solid oklch(0.55 0.12 27 / 0.28)",
+                              background: "var(--signal-bg)",
+                            }}
+                          >
+                            <p
+                              className="obs-mono"
+                              style={{
+                                fontSize: 9.5,
+                                letterSpacing: "0.14em",
+                                color: "var(--color-signal)",
+                                textTransform: "uppercase",
+                                marginBottom: 4,
+                              }}
+                            >
+                              Contexte politique
+                            </p>
+                            <p
+                              style={{
+                                fontSize: 11.5,
+                                color: "var(--color-fg-mute)",
+                                lineHeight: 1.55,
+                                margin: 0,
+                              }}
+                            >
+                              {owner.contextePolitique}
+                            </p>
+                            {owner.sourceContextePolitique && (
+                              <p
+                                className="obs-mono"
+                                style={{
+                                  marginTop: 6,
+                                  fontSize: 9,
+                                  letterSpacing: "0.08em",
+                                  color: "var(--color-fg-dim)",
+                                  textTransform: "uppercase",
+                                }}
+                              >
+                                Src · {owner.sourceContextePolitique}
+                              </p>
+                            )}
+                          </div>
+                        )}
+
+                        {/* Group description */}
+                        {g.description && (
+                          <p
+                            style={{
+                              marginTop: 14,
+                              paddingTop: 12,
+                              borderTop: "1px solid var(--line)",
+                              fontSize: 12.5,
+                              color: "var(--color-fg-dim)",
+                              lineHeight: 1.55,
+                            }}
+                          >
+                            {g.description}
                           </p>
+                        )}
+                      </div>
+
+                      {/* Right: subsidiaries grid */}
+                      <div>
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "baseline",
+                            justifyContent: "space-between",
+                            marginBottom: 14,
+                          }}
+                        >
+                          <p
+                            className="obs-mono"
+                            style={{
+                              fontSize: "var(--fs-mono-xs)",
+                              letterSpacing: "0.16em",
+                              color: "var(--color-fg-dim)",
+                              textTransform: "uppercase",
+                            }}
+                          >
+                            Actifs media · {g.filiales.length}
+                          </p>
+                          <span
+                            className="obs-mono"
+                            style={{
+                              fontSize: 9.5,
+                              letterSpacing: "0.12em",
+                              color: "var(--color-fg-faint)",
+                              textTransform: "uppercase",
+                            }}
+                          >
+                            Ligne pleine = lien gouv. / pointillé = orientation
+                          </span>
+                        </div>
+
+                        <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
                           {Object.entries(TYPE_LABELS)
                             .filter(([type]) => g.filiales.some((f) => f.type === type))
                             .map(([type, label]) => {
                               const items = g.filiales.filter((f) => f.type === type);
-                              const color = TYPE_COLORS[type] ?? "#64748b";
+                              const color = TYPE_COLORS[type] ?? "var(--color-fg-dim)";
                               return (
                                 <div key={type}>
-                                  <div className="flex items-center gap-2 mb-1.5">
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                      alignItems: "center",
+                                      gap: 8,
+                                      marginBottom: 6,
+                                      paddingBottom: 4,
+                                      borderBottom: "1px solid var(--line)",
+                                    }}
+                                  >
                                     <span
-                                      className="h-1.5 w-1.5 rounded-full"
-                                      style={{ background: color }}
+                                      style={{
+                                        width: 6,
+                                        height: 6,
+                                        background: color,
+                                        borderRadius: "50%",
+                                      }}
                                     />
-                                    <span className="text-[10px] uppercase tracking-[0.12em] text-bureau-500">
+                                    <span
+                                      className="obs-mono"
+                                      style={{
+                                        fontSize: "var(--fs-mono-xs)",
+                                        letterSpacing: "0.14em",
+                                        color: "var(--color-fg-mute)",
+                                        textTransform: "uppercase",
+                                      }}
+                                    >
                                       {label}
                                     </span>
-                                    <span className="text-[10px] data-value text-bureau-600">
+                                    <span
+                                      className="obs-mono"
+                                      style={{
+                                        fontSize: 9.5,
+                                        color: "var(--color-fg-dim)",
+                                        letterSpacing: "0.1em",
+                                      }}
+                                    >
                                       {items.length}
                                     </span>
                                   </div>
-                                  <div className="flex flex-wrap gap-1.5">
+                                  <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
                                     {items.map((f, i) => (
                                       <span
                                         key={f.nom}
-                                        className="fade-up inline-flex items-center gap-1.5 rounded-md
-                                                   border px-2 py-0.5 text-[11px]"
+                                        className="fade-up"
                                         style={{
-                                          borderColor: `${color}20`,
-                                          background: `${color}08`,
-                                          color,
-                                          animationDelay: `${i * 0.03}s`,
+                                          display: "inline-flex",
+                                          alignItems: "center",
+                                          gap: 6,
+                                          padding: "4px 8px",
+                                          border: `1px solid ${color}`,
+                                          background: "transparent",
+                                          color: color,
+                                          fontSize: 11.5,
+                                          letterSpacing: "0.01em",
+                                          animationDelay: `${i * 0.02}s`,
                                         }}
                                       >
                                         {f.orientation && (
                                           <span
-                                            className="h-1.5 w-1.5 rounded-full shrink-0"
                                             title={ORIENTATION_LABELS[f.orientation] ?? f.orientation}
-                                            style={{ background: ORIENTATION_COLORS[f.orientation] ?? "#64748b" }}
+                                            style={{
+                                              width: 5,
+                                              height: 5,
+                                              background: ORIENTATION_COLORS[f.orientation] ?? "var(--color-fg-dim)",
+                                              borderRadius: "50%",
+                                              flexShrink: 0,
+                                            }}
                                           />
                                         )}
                                         {f.nom}
                                         {f.signalementCount > 0 && (
-                                          <span className="rounded-sm bg-rose/20 px-1 text-[8px] font-bold text-rose">
+                                          <span
+                                            className="obs-mono"
+                                            style={{
+                                              marginLeft: 2,
+                                              padding: "0 4px",
+                                              fontSize: 9,
+                                              fontWeight: 600,
+                                              color: "var(--color-signal)",
+                                              background: "var(--signal-bg)",
+                                              border: "1px solid oklch(0.55 0.12 27 / 0.35)",
+                                            }}
+                                          >
                                             {f.signalementCount}
                                           </span>
                                         )}

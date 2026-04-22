@@ -110,7 +110,7 @@ export function PowerMap({ groups }: PowerMapProps) {
 
         {/* Connection lines */}
         {positioned.map((g) => {
-          const thickness = 0.5 + (g.filialeCount / maxCount) * 3;
+          const thickness = 0.6 + (g.filialeCount / maxCount) * 3;
           const color = TYPE_COLORS[g.dominantType] ?? "#64748b";
           const isHovered = hoveredSlug === g.slug;
           const isDimmed = hoveredSlug !== null && !isHovered;
@@ -123,8 +123,8 @@ export function PowerMap({ groups }: PowerMapProps) {
               y2={g.y}
               stroke={color}
               strokeWidth={isHovered ? thickness + 1 : thickness}
-              opacity={isHovered ? 0.5 : isDimmed ? 0.05 : 0.15}
-              strokeDasharray={g.hasGovLink ? "none" : "4 2"}
+              opacity={isHovered ? 0.65 : isDimmed ? 0.08 : 0.28}
+              strokeDasharray={g.hasGovLink ? "none" : "5 3"}
               style={{ transition: "opacity 0.3s ease, stroke-width 0.3s ease" }}
             />
           );
@@ -134,30 +134,42 @@ export function PowerMap({ groups }: PowerMapProps) {
         <circle
           cx={cx}
           cy={cy}
-          r={isMobile ? 36 : 44}
-          fill="rgba(8,12,20,0.9)"
-          stroke="rgba(45,212,191,0.2)"
-          strokeWidth={1.5}
+          r={isMobile ? 40 : 52}
+          fill="rgba(10,15,26,0.92)"
+          stroke="rgba(200,215,240,0.14)"
+          strokeWidth={1}
+        />
+        <circle
+          cx={cx}
+          cy={cy}
+          r={isMobile ? 40 : 52}
+          fill="none"
+          stroke="oklch(0.70 0.17 27 / 0.25)"
+          strokeWidth={0.5}
+          strokeDasharray="2 3"
         />
         <text
           x={cx}
-          y={cy - 6}
+          y={cy - 4}
           textAnchor="middle"
-          fill="#e2e8f0"
-          fontSize={isMobile ? 18 : 22}
-          fontWeight="bold"
+          fill="#e8eaf0"
+          fontFamily='"Source Serif 4","Source Serif Pro",Georgia,serif'
+          fontSize={isMobile ? 22 : 28}
+          fontWeight={400}
+          letterSpacing="-0.01em"
         >
           {totalCount}
         </text>
         <text
           x={cx}
-          y={cy + 12}
+          y={cy + 16}
           textAnchor="middle"
-          fill="#64748b"
-          fontSize={isMobile ? 7 : 8}
-          letterSpacing="0.15em"
+          fill="#8a93a8"
+          fontFamily='"JetBrains Mono","IBM Plex Mono",ui-monospace,monospace'
+          fontSize={isMobile ? 7.5 : 8.5}
+          letterSpacing="0.18em"
         >
-          MEDIAS
+          MÉDIAS RECENSÉS
         </text>
 
         {/* Owner nodes */}

@@ -1,6 +1,6 @@
 # Frontend Implementation
 
-> Last updated: Apr 21, 2026 — Session 46 (HATVP normalization + re-ingestion). ~26 active routes + 6 OG image routes, 49 components (42 + 7 bilan), 14 client components.
+> Last updated: Apr 22, 2026 — Session 50 (Claude Design **Variant A** adoption + `/dossiers/medias` full redesign + MediaBoard rewrite). ~27 active routes (+1 `/methodologie`) + 6 OG image routes, ~70 components (42 + 7 bilan + **21 investigative**), 14 client components. **5-item nav**: Dossiers | Signaux en Direct | Annuaire | Territoire | **Méthode**. Homepage is a refined editorial front-page (Variant A): `Dateline` → hero 2-col (`HeroLead` + `HeroVisualisation`) → 3 `SecondaryArticle` + `SignalsRail` → `InteractiveStrip` → `MethodologyNotes`. `/dossiers/medias` rebuilt around a unified `SectionHeader` with eyebrow + `FIG. N` ratio + `.hd` title + serif subtitle applied to all 8 sections.
 
 Complete reference for all UI pages, components, styling, and patterns.
 
@@ -21,13 +21,41 @@ Complete reference for all UI pages, components, styling, and patterns.
 
 ## Design System
 
-### Aesthetic: "Intelligence Bureau"
+### Aesthetic (Session 50 — Variant A "Édition refined editorial")
 
-Dark-mode civic dashboard. Deep navy base, teal for data/navigation accents, amber for financial metrics, rose for alerts/monuments. Instrument Serif for display headings, DM Sans for body text.
+Dark-mode editorial publication. Session 50 introduced a new oklch-based semantic token layer on top of the legacy `bureau-*` ramp — both coexist, migration is opt-in per-file. The new register is closer to Le Monde Décodeurs / Bellingcat (refined editorial with monospaced chrome) than the earlier "Intelligence Bureau" dashboard.
 
 ### Color Palette
 
 Custom Tailwind tokens in [globals.css](../src/app/globals.css):
+
+**Session 50 — new oklch token ramp** (canonical going forward):
+
+| Token | Value | Usage |
+|-------|-------|-------|
+| `--color-ink-0` | `#0a0f1a` | Page background |
+| `--color-ink-1` | `#0f1624` | Card/panel background (primary) |
+| `--color-ink-2` | `#141c2e` | Raised surface / hover state |
+| `--color-ink-3` | `#1b2438` | Accent surface |
+| `--color-fg` | `#e8eaf0` | Primary text / display |
+| `--color-fg-mute` | `#8a93a8` | Secondary text (AA on ink-0) |
+| `--color-fg-dim` | `#5a637a` | Muted labels, meta (decorative only on ink-0) |
+| `--color-fg-faint` | `#3f4860` | Faintest — ornaments, dividers, disabled |
+| `--color-signal` | `oklch(0.70 0.17 27)` | Warm red — alerts, critical, eyebrow--red |
+| `--color-signal-soft` | `oklch(0.48 0.12 27)` | Signal on dark fills |
+| `--color-verified` | `oklch(0.80 0.07 215)` | Slate-blue — verified, TV, press |
+| `--color-warn` | `oklch(0.82 0.10 80)` | Warmer amber — financial, GOV badges |
+| `--line` | `rgba(200,215,240,0.08)` | Hairline dividers |
+| `--line-2` | `rgba(200,215,240,0.14)` | Emphasized divider / hover border |
+| `--signal-bg` | `oklch(0.34 0.10 27 / 0.22)` | Signal fill behind text |
+| `--verified-bg` | `oklch(0.40 0.06 215 / 0.18)` | Verified fill |
+| `--warn-bg` | `oklch(0.45 0.10 80 / 0.18)` | Warn fill |
+| `--fs-mono-xs` | `10.5px` | Mono meta, eyebrow |
+| `--fs-mono-sm` | `11.5px` | Mono body |
+| `--fs-body` | `15px` | Body text |
+| `--fs-lede` | `17px` | Dek / subtitle |
+
+**Legacy ramp — still supported** (non-investigative pages):
 
 | Token | Hex | Usage |
 |-------|-----|-------|
@@ -42,24 +70,66 @@ Custom Tailwind tokens in [globals.css](../src/app/globals.css):
 | `bureau-200` | `#cbd5e1` | Primary text |
 | `bureau-100` | `#e2e8f0` | Headings, emphasis |
 | `teal` | `#2dd4bf` | Primary accent, CTAs, active states, "Pour" votes |
-| `teal-dim` | `#2dd4bf20` | Subtle teal backgrounds |
 | `amber` | `#f59e0b` | Economy, financial, "Abstention" votes |
-| `amber-dim` | `#f59e0b18` | Subtle amber backgrounds |
 | `rose` | `#f43f5e` | Monuments, "Contre" votes, rejections |
 | `blue` | `#3b82f6` | Territory, governance |
 
-### Typography
+### Typography (Session 50 — fonts swapped)
 
 Fonts loaded via `next/font/google` in [layout.tsx](../src/app/layout.tsx):
 
 | Font | Variable | Usage |
 |------|----------|-------|
-| DM Sans | `--font-body` | Body text, UI labels |
-| Instrument Serif | `--font-display` | Page titles, brand name |
+| **Inter** | `--font-body` | Body text, UI labels (replaces DM Sans) |
+| **Source Serif 4** | `--font-display` | Display headlines, serif h1s, italic emphasis (replaces Instrument Serif) — weights 400/500/600 + italic, `opsz 8..60` |
+| **JetBrains Mono** | `--font-mono` | Eyebrow labels, meta, FIG. N ratios, mono badges, data values (new — no monospace was loaded before) |
 
-Applied with: `font-[family-name:var(--font-display)]` for headings.
+Applied via utility classes: `.hd` for display headlines (`font-family: var(--font-display); letter-spacing: -0.012em; text-wrap: balance`), `.obs-serif` for serif body, `.obs-mono` for uppercase monospace labels (letter-spacing 0.14em default).
 
 ### Visual Effects
+
+**Session 50 — Variant A utility classes** (canonical investigative surfaces):
+
+| Class | Description |
+|-------|-------------|
+| `.obs-mono` | JetBrains Mono + uppercase + 0.14em tracking — eyebrow / meta labels |
+| `.obs-serif` | Source Serif 4 body copy |
+| `.hd` | Display headline: serif + weight 400 + `letter-spacing: -0.012em` + `text-wrap: balance` |
+| `.hd em` | Italic emphasis inside `.hd` — used for "*neuf milliardaires*" style emphasis |
+| `.eyebrow` | Mono uppercase 10.5px — section kicker in `var(--color-fg-mute)` |
+| `.eyebrow--red` | Eyebrow variant in `var(--color-signal)` (used as `◆ KICKER`) |
+| `.sig-tag` | Mono uppercase pill (2px radius) — signal red fill with border |
+| `.sig-tag--verified` | Slate-blue variant for verified / TV |
+| `.sig-tag--amber` | Amber variant for financial / GOV badges |
+| `.sig-tag--neutral` | Transparent + line-2 border — low-emphasis tag |
+| `.src-chip` | Source citation: mono label + dot + border (`/ SRC · ARCOM · HATVP /`) |
+| `.hair` / `.hair-2` | 1px divider lines using `--line` / `--line-2` |
+| `.lnk-arrow` | Mono uppercase link + arrow hover → signal red |
+| `.lnk` | Plain body link with underline in line-2, hover → signal red |
+| `.rule-diamond` | Horizontal divider with rotated 5×5 diamond center |
+| `.pulse` | 7×7 signal-red dot with ring pulse animation (2.2s, respects `prefers-reduced-motion`) |
+| `.obs-card` | 1px `--line` border + `--color-ink-1` bg + 14px padding — standard figure container |
+| `.obs-grain::before` | Radial-dot overlay 3px grid, 0.018 opacity |
+| `.obs-footnote` | Mono superscript in signal red, 9px — `[1]`/`[2]` references |
+
+**Session 50 — responsive grid classes** (page-specific, all declared in `globals.css`):
+
+| Class | Use |
+|-------|-----|
+| `.hero-grid` | Homepage Variant A: 1 col → `minmax(0,1.15fr) 340px` at lg: |
+| `.secondary-grid` | Homepage: 1→2→3+rail at md/lg |
+| `.secondary-rail` | Homepage signals rail positioning |
+| `.interactive-strip` | Full-width bordered card |
+| `.methodology-notes` / `.methodology-notes-grid` | 180px label + 2-col notes |
+| `.footer-grid` | Layout footer: 1→2→4 cols |
+| `.medias-hero-stats` | Medias dossier hero: 1→2→4 cols |
+| `.lobby-culture-grid` | Medias FIG. 5 2-col at md: |
+| `.powermap-layout` | Medias FIG. 1 `minmax(0,1fr) 300px` at lg: |
+| `.media-board-grid` | Medias FIG. 2 MediaBoard 3-col at lg: (orphan cell handled via equal-height via min-height + `SERVICE PUBLIC` placeholder) |
+| `.media-card` / `.media-card-expanded` | Per-card tile + expanded accordion; 1-col collapse at <768px |
+| `.dossier-section-anchor` | 72px `scroll-margin-top` offset for sticky-nav anchors |
+
+**Legacy utilities** (still used on non-investigative pages):
 
 | Effect | Class / Selector | Description |
 |--------|-----------------|-------------|
@@ -74,9 +144,8 @@ Applied with: `font-[family-name:var(--font-display)]` for headings.
 | Scrollbar hide | `.scrollbar-hide` | Hidden scrollbar for horizontal tab navigation |
 | Stat card | `.stat-card` | Hover lift (translateY -2px) + teal glow on stat number cards |
 | Stat gradients | `.stat-number-rose/amber/teal` | Gradient text (`background-clip: text`) for stat card numbers |
-| Owner card | `.owner-card` | Dark gradient bg + border-bureau-600 hover transition for media owner cards |
 | Bar segment | `.bar-segment` | Brightness hover (1.3) for stacked bar chart segments |
-| Filter active | `.filter-active` | Teal gradient bg + white text for active filter pills |
+| Filter active | `.filter-active` | Teal gradient bg + white text for active filter pills (legacy — MediaBoard swapped off this in Session 50) |
 | Section divider | `.section-divider` | Top border with gradient (transparent → bureau-600 → transparent) + 3rem top padding |
 | Desc block | `.desc-block` | Left 3px teal accent border for description paragraphs |
 | Lobby stat | `.lobby-stat` | Hover brightness (1.1) for lobbying stat cards |
@@ -86,10 +155,10 @@ Applied with: `font-[family-name:var(--font-display)]` for headings.
 | SIGINT section | `.sigint-section` | `position: relative; overflow: hidden` with animated scan-line (`::after` 1px teal gradient sweeping at 8s linear) |
 | SIGINT amber | `.sigint-amber::after` | Overrides scan-line gradient to amber — used on President/amber sections |
 | Glass panel | `.glass-panel` | Frosted glass: `rgba(12,16,24,0.65)` bg + `backdrop-filter: blur(12px)` + teal/8% border |
-| Dossier card | `.dossier-card` | Dark gradient card with hover luminous border (gradient mask technique) + `translateY(-3px)` lift |
+| Dossier card | `.dossier-card` | Dark gradient card with hover luminous border (gradient mask technique) + `translateY(-3px)` lift — replaced by `.media-card` / `.obs-card` on Variant A surfaces |
 | Dossier card active | `.dossier-card-active` | Expanded/selected state: teal/15% border + 80px teal glow |
 | Data value | `.data-value` | Tabular nums, `letter-spacing: 0.02em` for monospace data displays |
-| Live dot | `.live-dot` | 6px teal pulsing circle, `pulse-dot` keyframe 3s infinite |
+| Live dot | `.live-dot` | 6px teal pulsing circle, `pulse-dot` keyframe 3s infinite (use `.pulse` instead on new code) |
 | Live dot amber | `.live-dot-amber` | Same as live-dot but amber — used in President/classification bar |
 | Classification badge | `.classification-badge` | 9px uppercase, teal border, `letter-spacing: 0.2em` — `CLASSIFIÉ` / tier labels |
 | Threat bar | `.threat-bar` | 3px animated-fill bar at bottom edge of hero cards (`threat-fill` keyframe scaleX 0→1) |
@@ -101,15 +170,34 @@ Applied with: `font-[family-name:var(--font-display)]` for headings.
 
 [layout.tsx](../src/app/layout.tsx) provides the shell:
 
-- **Navbar**: Sticky top, backdrop-blur, SVG logo + "L'Observatoire" brand (click → `/`) + **`NavSearch`** (always-visible search form — `flex`, `w-80`, `/` keyboard shortcut to focus) + **5 nav links** (**Signaux**, **Profils**, **Votes**, **Territoire**, **Bilan Macron**) wrapped in `.nav-links` div (hidden on mobile via CSS) + **`MobileNav`** hamburger menu (visible only on mobile <768px). Session 39 restructure: collapsed from 9 to 4 items; Session 45: added Bilan Macron as 5th nav item.
-- **Main**: `flex-1` content area
-- **Footer**: Data source attribution ("data.gouv.fr, INSEE, Senat, HATVP") + "Patrimoine culturel" link + "L'Observatoire Citoyen 2025"
+- **Navbar** (Session 50 refresh): Sticky top, backdrop-blur, **`ObservatoireLogo`** SVG (concentric-circles crosshair — red outer, fg inner, red center dot; replaced the eye-glyph in Session 50) + "L'Observatoire // Bureau des données publiques" masthead + **`NavSearch`** (always-visible search form — `flex`, `w-80`, `/` keyboard shortcut to focus) + **5 nav links** (**Dossiers** → `/dossiers/bilan-macron` | **Signaux en Direct** → `/signaux` | **Annuaire** → `/profils` | **Territoire** → `/territoire` | **Méthode** → `/methodologie`) wrapped in `.nav-links` div (hidden on mobile via CSS) + **`MobileNav`** hamburger (mobile <768px). Nav labels use `.obs-mono` class. Session 39 collapsed 9→4; Session 48 replaced pyramid logo with eye-glyph + introduced investigative masthead; Session 50 swapped eye → concentric-circles crosshair and added 5th `Méthode` item.
+- **Main**: `flex-1` content area. Body/nav/footer migrated from `bureau-*` classes to `ink-*`/`fg-*` CSS variables in Session 50 (first reference file; rest of site still on `bureau-*` until Phase 5 sweep).
+- **Footer** (Session 50 — 4-col via `.footer-grid`): column 1 = masthead + tagline + version | column 2 = Méthodologie | column 3 = Accès | column 4 = **Contribuer** (Signaler une erreur, Lanceurs d'alerte, Newsletter — all `<span title="À venir">`). Bottom strip: copyright + tagline. Placeholder links use `<span title="À venir" class="cursor-help">` — never a broken `href`. Responsive: 1-col below `sm:`, 2-col at `sm:`, 4-col at `lg:`. Real working links: `/signaux`, `/patrimoine`, `/votes`, external `data.gouv.fr`.
 - **Mobile nav**: `MobileNav` client component — hamburger button (`.mobile-menu-btn`) toggles full-screen overlay (`.mobile-nav-overlay`) with `slideDown` animation. Closes on link click.
-- **Container**: `max-w-7xl px-6` on list pages; `max-w-4xl px-6` on profile detail pages (focused editorial width)
+- **Container**: `max-w-7xl px-6` on list pages; `max-w-4xl px-6` on profile detail pages (focused editorial width). Homepage uses Variant A grid classes instead (see Homepage entry below).
 
-**Breadcrumbs**: `/profils/*` pages use `{ label: "Profils", href: "/profils" }`. Legacy `/representants/*` pages still use `{ label: "Représentants", href: "/representants" }`. `PageHeader` component renders breadcrumbs with `/` separators.
+**Breadcrumbs**: `/profils/*` pages use `{ label: "Profils", href: "/profils" }`. `PageHeader` component renders breadcrumbs with `/` separators. Legacy `/representants/*` pages deleted in Session 43 — canonical routes only.
 
 **Metadata**: `"L'Observatoire Citoyen — Intelligence civique française"`
+
+## Homepage (Session 50 — Variant A)
+
+[`src/app/page.tsx`](../src/app/page.tsx) is a refined editorial front-page. Structure derived from the Claude Design mockup [`design-ref/variant-a.jsx`](../design-ref/variant-a.jsx).
+
+**Layout** (top→bottom):
+1. `Dateline` ribbon — `.pulse` dot + "Signaux en direct" eyebrow + current date + `Dernière ingestion · HH:MM UTC` (real `IngestionLog.createdAt`).
+2. Hero 2-col (`.hero-grid`, `minmax(0,1.15fr) 340px` at lg:): `HeroLead` (serif h1 up to 58px, italic third line, dek with `<Footnote>` superscripts, sources chip, read-link — **no byline**) | `HeroVisualisation` (340px aside wrapping `<FranceMap size="sm">` with pauvreté data, caption + legend gradient + source).
+3. Secondary grid (`.secondary-grid`): 3× `SecondaryArticle` in cols 1-3 + `SignalsRail` non-sticky in col 4 at lg: (1→2→3+rail at md/lg).
+4. `InteractiveStrip` full-width bordered card — lobby teaser using real PRESIDENCE AGORA count (12 819), CTA → `/signaux?type=lobby`.
+5. `MethodologyNotes` band — 180px label col + 2-col notes grid, with [1][2] `<Footnote>` references pointing to `/methodologie`.
+
+**Data source**: [`src/lib/homepage-data.ts`](../src/lib/homepage-data.ts) → `getHomepageData()` (`React.cache`-wrapped). 6 parallel queries: `getSignals`, `getTopLobbyTargets(6)`, `getHATVPTimeline`, `getIndicesSparklines`, `getDataHealth`, `getFranceMapData`. Variant A currently renders signals + mapData + revisionIso + one `lobbyTop` PRESIDENCE entry; other fields computed for future reuse.
+
+**AGORA `ministereCode` is UPPERCASE_UNDERSCORE** (`ECONOMIE_FINANCES`, `MATIGNON`, `PRESIDENCE`, `TRANSITION_ECOLOGIQUE`, `TRAVAIL_SOLIDARITES`, `CULTURE`, …). Label map in `homepage-data.ts::MINISTRY_LABELS`.
+
+**LARP discipline** (load-bearing since Session 48): no fake édition numbers (`DOSSIER N°12`, `ÉDITION 247`), no fake bylines (`PAR LA RÉDACTION · C. VOISIN`), no fake case-IDs (`DOS-12-2026`), no fake read-time (`LECTURE 18 MIN`), no fake source counts (`47 SOURCES`) unless computed from a real array, no fake figure ratios on homepage (`HeroVisualisation.figLabel` omitted), no `EN DIRECT` (use `Signaux en direct` eyebrow + honest `Dernière ingestion` timestamp), no `MISE À JOUR AUTO`.
+
+Icons are **inline SVG** — `lucide-react` intentionally NOT installed. Lead + secondary story metadata are hardcoded constants (`LEAD`, `SECONDARY`, `METHODOLOGY_NOTES`).
 
 ---
 
@@ -128,6 +216,7 @@ Applied with: `font-[family-name:var(--font-display)]` for headings.
 | `/votes` | Votes hub — 13 topic grid + recent scrutins |
 | `/votes/alignements` | Alignment matrix — N×N group co-vote heatmap, top 5 allies/opponents per group (ISR 86400) |
 | `/president` | **HTTP 308 permanent redirect → `/profils/emmanuel-macron`** |
+| `/methodologie` | **Placeholder (Session 50)** — 5-section skeleton (Sources / Signaux / Mise à jour / Correction / Charte éditoriale) with `ClassificationBar` + `Eyebrow` + `.hd` title + body + "Page dédiée — À venir" tag per section. 5th nav item. Real content pending. |
 
 ### Dossiers (3 surviving + 8 killed → redirected)
 
@@ -135,7 +224,7 @@ Applied with: `font-[family-name:var(--font-display)]` for headings.
 | Route | Topic |
 |-------|-------|
 | `/dossiers/bilan-macron` | **Bilan de la présidence Macron** *(Session 45)* — 7-section investigation dossier using static research data (`src/data/bilan-macron.ts`). Custom `BilanHeroSection` (4 stat cards + Bocquet quote), `BilanEconomieSection` (poverty, purchasing power, debt, fiscal gifts, employment — before/after tables with severity colors), `BilanSanteSection` (healthcare, social cuts, education, public services), `BilanDroitsSection` (police violence side-by-side cards, democratic erosion, labor rights, environment, social fabric), `BilanElitesSection` (billionaires, elite facts, revolving door table), `BilanContrasteSection` (3-column "Les deux Frances" grid + summary callout), sources footer. All 7 components in `src/components/bilan/`. Added to main nav as 5th item. Data from INSEE, Eurostat, DREES, Cour des Comptes, France Stratégie, Oxfam, CEVIPOF, Amnesty, RSF, EIU. |
-| `/dossiers/medias` | **Media ownership concentration** — `MediaBoard` (interactive owner cards), `ConcentrationChart` (CSS stacked bars), `CamembertChart` (SVG donut), votes culture, lobbying audiovisuel/presse (Session 35) |
+| `/dossiers/medias` | **Media ownership concentration** — rebuilt in Session 50 around a local `SectionHeader` helper (eyebrow `◆ KICKER` + `FIG. N` ratio + `.hd` serif title + `.obs-serif` subtitle + optional `SrcChip` meta) applied to all 8 sections. New investigative hero (inline — replaces `DossierHero`) with 4-col stat strip (10 groupes / 72 titres / 10 liens politiques / 20 signalements). Sections: **FIG. 1** Cartographie du pouvoir médiatique (`PowerMap` with side panel: Top 3 %, HHI, liens politiques, ARCOM alertes + ranking list — `.powermap-layout`) · **FIG. 2** Propriétaires, fortunes, filiales (`MediaBoard` — Session 50 rewrite: 3-col rectangular tiles on ink-1, mono rectangular filter pills, `.sig-tag` badges, equal-height cards with `SERVICE PUBLIC · 100% controle` placeholder fixing the Republique orphan alignment, expanded panel with owner dossier + filiales pills with per-type oklch borders) · **FIG. 3** Régulation audiovisuelle (`ArcomSection` — `getUTCFullYear` fix for hydration) · **FIG. 4** Connexions politiques (auto-fill minmax(320px,1fr) card grid of `contextePolitique`) · **FIG. 5** Lobbying Culture (`.lobby-culture-grid` 2-col BarRows for représentants + domaines) · **FIG. 6** Votes & lois culturelles (`TopicVoteList`) · **FIG. 7** Matrice titres × familles (`MediaTreemap`) · **FIG. 8** Intensité lobbying par ministère (`ConcentrationChart`). LARP stripped — no "Confidentiel", "Incidents régulatoires", "Liens croisés", "AGORA", "Analyse structurelle", "Surveillance active" badges. |
 | `/dossiers/financement-politique` | **Political financing** — cost per seat bars, funding structure stacked bars, electoral yield table, 2021-2024 evolution for RN/Renaissance/LFI/LR (Session 37) |
 
 **Killed dossier pages** (Session 39 — all redirect via `next.config.ts`):
@@ -253,19 +342,32 @@ Next.js `opengraph-image.tsx` files — `runtime = "nodejs"`, 1200×630, inline 
 
 ## Pages Detail
 
-### `/` — Homepage (Session 39 rewrite)
+### `/` — Homepage (Session 48 rewrite: investigative front-page)
 
 **File**: [page.tsx](../src/app/page.tsx) | `revalidate = 3600`
 
-**Data**: Top 6 signals (conflict, lobby, judicial), 5 recent scrutins with group votes, entity counts (députés, sénateurs, ministres, lobbyistes, scrutins).
+**Register**: editorial publication front-page (ProPublica / Bellingcat / Le Monde Décodeurs). Two-column `lg:` grid 8/4 — editorial content left, live signal ticker right (sticky). Masthead + footer live in [layout.tsx](../src/app/layout.tsx).
 
-**Sections**:
-1. **Search-first hero** — `.grid-bg` pattern, giant centered search bar, entity pills (Députés, Sénateurs, Ministres, Lobbyistes, Votes) each linking to `/profils/*` or `/votes`
-2. **Signaux récents** — Top 6 transparency signals inline, "Tous les signaux →" link to `/signaux`
-3. **Derniers Scrutins** — 5 most recent parliamentary votes with result badge + group breakdown
-4. **Votre Territoire** — `DeptLookup` client component → département dashboard redirect
+**Data** (single `Promise.all` in `getFrontPageData()`):
+- `getSignals()` — returns top 6 `UnifiedSignal`s + `totalSignals` + `critiqueCount`.
+- `prisma.ingestionLog.findFirst({ where: { source: "declarations", status: "success" }, orderBy: { createdAt: "desc" } })` — drives the top ingestion banner.
 
-Removed in Session 39: `HeroSlider`, dossier grid, KPI counters, economic indicators.
+**Sections** (top → bottom, left-then-right):
+1. **Ingestion banner** — thin strip. `IngestionBanner` component. Monospace text: `MISE À JOUR DE LA BASE · {rowsIngested} déclarations HATVP ingérées et croisées le {fmtDate(createdAt)}`. Hides if query returns `null`.
+2. **Lead story (`LeadStory`, left column)** — Bilan Macron dossier, hardcoded metadata. Rose `ENQUÊTE PRINCIPALE` label + date + read time. Serif 4xl-6xl headline (`font-[family-name:var(--font-display)]`), serif dek. Footer strip: `ProvenanceTag` (`SRC : INSEE · Eurostat · DREES · Oxfam · CEVIPOF`) + "Lire le dossier →". Links to `/dossiers/bilan-macron`.
+3. **Two secondary story cards** — `SecondaryStoryCard` × Medias + Financement Politique. Each: `ProvenanceTag` at top, serif xl-2xl headline, dek, "Lire le dossier →" CTA. Hardcoded metadata matching dossiers.
+4. **Interactive teaser (`InteractiveTeaser`)** — teal-accented card: `ANALYSE INTERACTIVE / Carte des départements : 101 territoires, 5 indicateurs`. Links to `/territoire`. White-background "Explorer la carte →" button for contrast.
+5. **Signal ticker (`SignalTicker`, right column, sticky on `lg:`)** — header strip with pulsing rose dot + `SIGNAUX EN DIRECT` + `MISE À JOUR AUTO` badge. Scrollable list of 6 `SignalTickerItem`s. Each: severity pill (uses `.severity-critique/.severity-notable/.severity-informatif` utilities) + `signal.subtitle` (in place of a fake timestamp — signals are computed, have no real time). Person name, narrative headline. Footer: `{total} signaux · {critique} critique(s)` + "Voir tous →" → `/signaux`.
+
+**Inline components** (all in `page.tsx`, not extracted to `src/components/`): `ProvenanceTag`, `IngestionBanner`, `LeadStory`, `SecondaryStoryCard`, `InteractiveTeaser`, `SignalTicker`, `SignalTickerItem`, plus 4 inline icon SVGs (`IconPulse`, `IconDatabase`, `IconChart`, `IconCommit`). `lucide-react` is intentionally NOT installed — all icons are inline SVG.
+
+**Constants** (in `page.tsx`): `LEAD_STORY` (href, label, headline, dek, sources, date, readTime) + `SECONDARY_STORIES` array for Medias/Financement.
+
+**Authority-claim discipline**: the upstream React mockup included `CELLULE D'INVESTIGATION` byline, fake `DOSSIER : SIG-849-B` code, and `CONF : ÉLEVÉE` tag — all intentionally stripped. No newsroom, no case-ID system, no methodology-backed confidence tiers yet. Only truthful editorial chrome kept (`ENQUÊTE PRINCIPALE`, real source tags, real dates).
+
+Session history:
+- Session 39 (Mar 26): killed `HeroSlider`, dossier grid, KPI counters → search-first hero + signal grid + recent scrutins + territory lookup.
+- Session 48 (Apr 21): full rewrite to the investigative front-page register described above. Search-first hero, dossier pills, recent-scrutin table, and dept-lookup block all removed — search still lives in the nav (`NavSearch`).
 
 ---
 
@@ -438,7 +540,50 @@ const declarations = await prisma.declarationInteret.findMany({
 
 ---
 
-## Components (22)
+## Components (~70 total)
+
+### Session 50 — Investigative primitives (`src/components/investigative/` — 21 files)
+
+All server components unless wrapping an existing client comp. Session 50 split primitives into two functional buckets:
+
+**Variant A primitives — used on the homepage**:
+
+| Component | Purpose |
+|-----------|---------|
+| `Dateline` | Ribbon at top: `.pulse` + "Signaux en direct" eyebrow + ISO date + `Dernière ingestion · HH:MM UTC` |
+| `HeroLead` | Hero headline: serif h1 up to 58px with italic third line, dek with `<Footnote>` refs, `SrcChip` strip, `ReadLink` |
+| `HeroVisualisation` | 340px aside — wraps client `<FranceMap size="sm">` with caption, gradient legend, `SrcChip`, optional `figLabel` (only render with real figure ratio) |
+| `SecondaryArticle` | Compact editorial card for secondary-grid items with `Spark` pulse preview |
+| `InteractiveStrip` | Full-width bordered card: lobby teaser with stat callout + CTA → `/signaux?type=lobby` |
+| `MethodologyNotes` | 180px label col + 2-col notes grid with `[1]`/`[2]` `<Footnote>` references linking `/methodologie` |
+
+**Shared primitives** (reused across Variant A + C):
+
+| Component | Purpose |
+|-----------|---------|
+| `SrcChip` | Source citation: `/ SRC · ARCOM · HATVP /` mono chip with dot |
+| `Footnote` | `<sup>` mono superscript in signal red |
+| `ReadLink` | `.lnk-arrow` "ANALYSER LE DOSSIER →" style link |
+| `Spark` | 12-point inline SVG sparkline (extracted from `indicator-card.tsx`) |
+| `Eyebrow` | `.eyebrow` / `.eyebrow--red` wrapper with tone + size props |
+| `SignalsRail` | Rail of 5-6 `SignalCardC` items. Props: `signals`, `compact`, `sticky?: boolean` (Variant A uses false) |
+| `SignalCardC` | Per-signal card with severity pill + dek |
+
+**Variant C primitives — built but currently unused on homepage** (retained for briefings, dashboards, `/signaux/[id]` detail pages, `/methodologie`):
+
+| Component | Purpose | Current use |
+|-----------|---------|-------------|
+| `ClassificationBar` | 3-col top chrome: `OPEN SOURCE · VÉRIFIABLE · HORODATÉ` / diamond ornament / `RÉV. ISO` | Homepage would-be header (unused) + `/methodologie` reuses it |
+| `BriefingRow` | Pulse + "Briefing du matin" eyebrow + signal counts | Unused |
+| `LeadDossier` | Dense hero with 7-source SrcChip | Unused |
+| `SecondaryDossierCard` | Compact dossier card for 3-col grid | Unused |
+| `BarRows` | Horizontal bar rows with rank + color gradient | Used on `/dossiers/medias` FIG. 5 (Lobbying Culture) |
+| `TimelineDots` | Pure-SVG HATVP year dots 2017→2026 | Unused |
+| `IndicesPanel` | 4-cell indices grid with `Spark` + delta badges | Unused |
+| `DataHealthStrip` | 6-col ingestion status with `aria-label` dots | Unused |
+| `ChoroplethFigure` | Figcap + client `FranceMap` + source chip | Available for any map needing the Variant A frame |
+
+`/methodologie` reuses `ClassificationBar` + `Eyebrow` — validates cross-route primitive reuse.
 
 ### New in Phase 2–4
 
@@ -1053,9 +1198,10 @@ Route (app)                                                   Type
 ```
 src/
 ├── app/
-│   ├── globals.css              # Theme colors, effects, animations
-│   ├── layout.tsx               # Root: fonts, navbar (4 items: Signaux/Profils/Votes/Territoire), footer
-│   ├── page.tsx                 # Homepage (ISR 3600)
+│   ├── globals.css              # Tokens (bureau-* + Session 50 ink-*/fg-*/signal/verified/warn), utilities, page-specific responsive grids (.hero-grid, .secondary-grid, .footer-grid, .media-board-grid, .medias-hero-stats, .lobby-culture-grid, .powermap-layout)
+│   ├── layout.tsx               # Root: fonts (Inter + Source Serif 4 + JetBrains Mono — Session 50), navbar (5 items Dossiers/Signaux en Direct/Annuaire/Territoire/Méthode with ObservatoireLogo crosshair), 4-col footer (.footer-grid, added Contribuer column)
+│   ├── page.tsx                 # Homepage — Variant A (ISR 3600): Dateline → HeroLead+HeroVisualisation → SecondaryArticle×3+SignalsRail → InteractiveStrip → MethodologyNotes
+│   ├── methodologie/page.tsx    # Placeholder (Session 50) — 5 sections, "Page dédiée — À venir"
 │   ├── opengraph-image.tsx      # OG 1200×630: platform brand + 8 dossier chips + 3 stats (Session 18/19)
 │   ├── signaux/
 │   │   └── page.tsx             # Signal feed with filter pills (ISR 3600 — Session 39)
@@ -1179,7 +1325,10 @@ src/
 │   ├── search-input.tsx         # Client: URL-based search with spinner
 │   ├── stat-card.tsx            # Server: number + label card
 │   ├── vote-badge.tsx           # Server: Pour/Contre/Abstention/Non-votant
-│   ├── media-board.tsx          # Client: interactive media owner cards with filter pills (Session 35)
+│   ├── media-board.tsx          # Client: media owner cards (Session 50 rewrite: .media-card ink-1 tiles, .sig-tag badges, equal-height grid, expanded panel with owner dossier + per-type oklch filiale pills)
+│   ├── media-treemap.tsx        # Server: SVG treemap of titles × families (used on /dossiers/medias FIG. 7)
+│   ├── power-map.tsx            # Server: SVG star-cluster of 10 groups around a central total-count hub (Session 50 polish: serif center label, JetBrains Mono tracking, dashed red outer ring, hover glow)
+│   ├── arcom-section.tsx        # Server: regulator signalements grouped by year (Session 50 fix: getUTCFullYear for SSR/client hydration consistency)
 │   ├── concentration-chart.tsx  # Server: CSS horizontal stacked bars by media type (Session 35)
 │   ├── camembert-chart.tsx      # Server: SVG donut chart for media group share (Session 35)
 │   ├── mobile-nav.tsx           # Client: hamburger menu + full-screen overlay (Session 35)
@@ -1187,6 +1336,29 @@ src/
 │   ├── scrutin-accordion.tsx    # Client: expandable scrutin list for law detail (Session 33)
 │   ├── group-expander.tsx       # Client: expandable party vote breakdown (Session 33)
 │   ├── conflict-drilldown.tsx   # Client: expandable per-tag vote list on Transparence tab (Session 37)
+│   ├── investigative/           # Session 50 — Variant A + C primitives (21 files — see Components section above)
+│   │   ├── dateline.tsx
+│   │   ├── hero-lead.tsx
+│   │   ├── hero-visualisation.tsx      # Wraps <FranceMap size="sm"> with caption + legend + source (linkBase="/territoire/" — trailing slash required to avoid 404 on dept click)
+│   │   ├── secondary-article.tsx
+│   │   ├── interactive-strip.tsx
+│   │   ├── methodology-notes.tsx
+│   │   ├── src-chip.tsx
+│   │   ├── footnote.tsx
+│   │   ├── read-link.tsx
+│   │   ├── spark.tsx
+│   │   ├── eyebrow.tsx
+│   │   ├── signals-rail.tsx            # Props: signals, compact?, showScore?, sticky? (false for Variant A)
+│   │   ├── signal-card-c.tsx
+│   │   ├── classification-bar.tsx      # Reused by /methodologie
+│   │   ├── briefing-row.tsx
+│   │   ├── lead-dossier.tsx
+│   │   ├── secondary-dossier-card.tsx
+│   │   ├── bar-rows.tsx                # Used on /dossiers/medias FIG. 5 (Lobbying Culture)
+│   │   ├── timeline-dots.tsx
+│   │   ├── indices-panel.tsx
+│   │   ├── data-health-strip.tsx
+│   │   └── choropleth-figure.tsx       # Same linkBase trailing-slash rule as HeroVisualisation
 │   └── gouvernement/            # Phase 9 section components (all async server components)
 │       ├── interets-section.tsx # Server: HATVP interests grouped by rubrique, <details> expander
 │       ├── mandats-section.tsx  # Server: government mandate timeline (border-l + dots)
@@ -1210,5 +1382,14 @@ src/
     ├── postal-resolver.ts       # resolvePostalCode(): CP → ResolvedTerritory[] (Session 14)
     ├── president-utils.ts       # getBaselineObservation() + computeDelta() (Phase 6)
     ├── france-map-data.ts       # getFranceMapData(): 4 parallel Prisma queries → Record<string, DeptData> (Phase 8A)
+    ├── homepage-data.ts         # Session 50 — getHomepageData() React.cache-wrapped, 6 parallel queries (signals, lobbyTop, hatvpTimeline, indices, dataHealth, mapData). MINISTRY_LABELS map uses UPPERCASE_UNDERSCORE AGORA codes
+    ├── normalize-name.ts        # Session 46 — NFD + strip U+0300-U+036F + lowercase + trim for HATVP name joins
+    ├── vote-tags.ts             # Session 43 — TAG_LABELS/TAG_ORDER/TAG_COLORS/VALID_TAGS shared across 6 consumers
+    ├── signals.ts               # Session 38+41 — getSignals() React.cache-wrapped, 6 collectors (conflit/porte/lobby/media/ecart/dissidence)
+    ├── signal-types.ts          # Session 38 — signal type/severity label constants
     └── search.ts                # globalSearch(): search_index view + president static injection (7B/Session 18)
+
+And data/:
+├── bilan-macron.ts      # Session 45+49 — typed constants for /dossiers/bilan-macron (all baselines rebased to 2017 in Session 49)
+└── indices.ts           # Session 50 — 4 static sparkline specs for Variant C IndicesPanel (anchors from bilan-macron.ts)
 ```
