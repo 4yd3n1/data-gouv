@@ -297,7 +297,7 @@ async function collectLobbyConcentration(
     if (!minister) continue; // Skip ministries without a current minister
 
     const orgs = topOrgs.map((o) => o.representantNom);
-    const headline = `${fmt(count)} actions de lobbying ciblant ${minister.titreCourt}`;
+    const headline = `${fmt(count)} déclarations AGORA ciblant ${minister.titreCourt}`;
     const detail =
       orgs.length > 0
         ? `Principaux représentants : ${orgs.slice(0, 2).join(", ")}`

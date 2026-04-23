@@ -100,6 +100,17 @@ export function FranceMap({
 
   const [min, max] = useMemo(() => getMinMax(data, activeIndicator), [data, activeIndicator]);
 
+  // Higher-is-worse indicators (pov, cho, det) invert the color ramp so darker = worse.
+  const computeFill = useCallback(
+    (value: number | null | undefined) => {
+      if (value == null || value <= 0) return "#1a2236";
+      const rawT = getT(value, min, max);
+      const t = activeConfig.higherIsBetter ? rawT : 1 - rawT;
+      return interpolateColor(t, activeConfig.palette);
+    },
+    [min, max, activeConfig.higherIsBetter, activeConfig.palette],
+  );
+
   // Sorted list for ranking sidebar
   const ranked = useMemo(() => {
     const entries = Object.entries(data).filter(([, d]) => d[activeIndicator] > 0);
@@ -190,10 +201,7 @@ export function FranceMap({
             {Object.entries(DEPT_PATHS).map(([code, geo]) => {
               if (["971", "972", "973", "974", "976"].includes(code)) return null;
               const value = data[code]?.[activeIndicator] ?? null;
-              const fill =
-                value != null && value > 0
-                  ? interpolateColor(getT(value, min, max), activeConfig.palette)
-                  : "#1a2236";
+              const fill = computeFill(value);
               const isHovered = hoveredCode === code;
               const isSelected = selectedCode === code;
               return (
@@ -216,10 +224,7 @@ export function FranceMap({
             {/* Overseas insets */}
             {Object.entries(OVERSEAS_INSETS).map(([code, inset]) => {
               const value = data[code]?.[activeIndicator] ?? null;
-              const fill =
-                value != null && value > 0
-                  ? interpolateColor(getT(value, min, max), activeConfig.palette)
-                  : "#1a2236";
+              const fill = computeFill(value);
               const isHovered = hoveredCode === code;
               const isSelected = selectedCode === code;
               return (
@@ -280,13 +285,15 @@ export function FranceMap({
             </div>
           )}
 
-          {/* Legend */}
+          {/* Legend — top of bar matches max-value color (inverted ramp for !higherIsBetter so dark = worse) */}
           <div className="absolute top-2 right-2 flex items-stretch gap-1">
             <div className="relative h-24 w-3">
               <div
                 className="w-3 h-24 rounded"
                 style={{
-                  background: `linear-gradient(to bottom, ${activeConfig.palette[6]}, ${activeConfig.palette[3]}, ${activeConfig.palette[0]})`,
+                  background: activeConfig.higherIsBetter
+                    ? `linear-gradient(to bottom, ${activeConfig.palette[6]}, ${activeConfig.palette[3]}, ${activeConfig.palette[0]})`
+                    : `linear-gradient(to bottom, ${activeConfig.palette[0]}, ${activeConfig.palette[3]}, ${activeConfig.palette[6]})`,
                 }}
               />
             </div>

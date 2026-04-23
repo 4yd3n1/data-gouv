@@ -65,9 +65,10 @@ async function fetchFranceMapData(): Promise<Record<string, DeptData>> {
   return result;
 }
 
-// Cache across all callers and requests; revalidate hourly (matches territory page ISR)
+// Cache across all callers and requests; revalidate hourly (matches territory page ISR).
+// Cache key v2 — rev'd after DOM poverty fallback seed (971/973/976).
 export const getFranceMapData = unstable_cache(
   fetchFranceMapData,
-  ["france-map-data"],
+  ["france-map-data-v2"],
   { revalidate: 3600 },
 );

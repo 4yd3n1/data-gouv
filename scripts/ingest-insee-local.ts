@@ -26,6 +26,19 @@ import {
   type InseeLocalValue,
 } from "./lib/insee-client";
 
+// INSEE Mélodi FILOSOFI 2021 has no poverty data for Guadeloupe (971), Guyane (973),
+// or Mayotte (976). Fallback to the most recent published DOM-specific figures,
+// metropolitan 60% threshold. Applied after the main loop so a re-ingest doesn't
+// clobber them. All upserts are idempotent via the composite unique key.
+const DOM_POVERTY_FALLBACK: InseeLocalValue[] = [
+  // INSEE Dossier Guadeloupe n°14 (juin 2020), FILOSOFI 2017
+  { geoType: "DEP", geoCode: "971", indicateur: "POVERTY_RATE", annee: 2017, valeur: 34.5, unite: "%", source: "FILOSOFI" },
+  // INSEE Insee Analyses Guyane n°45 (nov 2020), FILOSOFI 2017
+  { geoType: "DEP", geoCode: "973", indicateur: "POVERTY_RATE", annee: 2017, valeur: 52.9, unite: "%", source: "FILOSOFI" },
+  // INSEE Insee Flash Mayotte n°142 (2020), Enquête BMF 2018 (FILOSOFI excludes Mayotte)
+  { geoType: "DEP", geoCode: "976", indicateur: "POVERTY_RATE", annee: 2018, valeur: 77.3, unite: "%", source: "BMF_MAYOTTE" },
+];
+
 async function upsertStatLocale(values: InseeLocalValue[]): Promise<number> {
   let count = 0;
   for (const v of values) {
@@ -91,6 +104,9 @@ export async function ingestInseeLocal() {
       }
     }
 
+    const fallbackRows = await upsertStatLocale(DOM_POVERTY_FALLBACK);
+    totalRows += fallbackRows;
+    console.log(`  [INSEE Local] DOM poverty fallback: ${fallbackRows} rows upserted`);
     console.log(`  [INSEE Local] Total: ${totalRows} StatLocale rows upserted`);
 
     return {

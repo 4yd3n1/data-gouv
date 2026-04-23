@@ -1,6 +1,6 @@
 # Frontend Implementation
 
-> Last updated: Apr 22, 2026 — Session 50 (Claude Design **Variant A** adoption + `/dossiers/medias` full redesign + MediaBoard rewrite). ~27 active routes (+1 `/methodologie`) + 6 OG image routes, ~70 components (42 + 7 bilan + **21 investigative**), 14 client components. **5-item nav**: Dossiers | Signaux en Direct | Annuaire | Territoire | **Méthode**. Homepage is a refined editorial front-page (Variant A): `Dateline` → hero 2-col (`HeroLead` + `HeroVisualisation`) → 3 `SecondaryArticle` + `SignalsRail` → `InteractiveStrip` → `MethodologyNotes`. `/dossiers/medias` rebuilt around a unified `SectionHeader` with eyebrow + `FIG. N` ratio + `.hd` title + serif subtitle applied to all 8 sections.
+> Last updated: Apr 23, 2026 — Session 51 (map palette fix + Bilan Macron final corrections + DOM poverty fallback + `/signaux?type=lobby` dashboard + InteractiveStrip reframe). ~27 active routes + 6 OG image routes, ~72 components (42 + 7 bilan + 21 investigative + 2 signaux/lobby-* Session 51), 14 client components. **5-item nav**: Dossiers | Signaux en Direct | Annuaire | Territoire | Méthode. Homepage is Variant A: `Dateline` → hero 2-col (`HeroLead` + `HeroVisualisation`) → 3 `SecondaryArticle` + `SignalsRail` → `InteractiveStrip` (Session 51 reframe: "12 819 déclarations par 1 455 représentants (2018-2026)") → `MethodologyNotes`. `/signaux?type=lobby` is a dedicated 5-section lobby dashboard (Session 51). `FranceMap` flips palette direction for `!higherIsBetter` indicators so darker = worse universally.
 
 Complete reference for all UI pages, components, styling, and patterns.
 
@@ -188,7 +188,7 @@ Applied via utility classes: `.hd` for display headlines (`font-family: var(--fo
 1. `Dateline` ribbon — `.pulse` dot + "Signaux en direct" eyebrow + current date + `Dernière ingestion · HH:MM UTC` (real `IngestionLog.createdAt`).
 2. Hero 2-col (`.hero-grid`, `minmax(0,1.15fr) 340px` at lg:): `HeroLead` (serif h1 up to 58px, italic third line, dek with `<Footnote>` superscripts, sources chip, read-link — **no byline**) | `HeroVisualisation` (340px aside wrapping `<FranceMap size="sm">` with pauvreté data, caption + legend gradient + source).
 3. Secondary grid (`.secondary-grid`): 3× `SecondaryArticle` in cols 1-3 + `SignalsRail` non-sticky in col 4 at lg: (1→2→3+rail at md/lg).
-4. `InteractiveStrip` full-width bordered card — lobby teaser using real PRESIDENCE AGORA count (12 819), CTA → `/signaux?type=lobby`.
+4. `InteractiveStrip` full-width bordered card — lobby teaser with dual-metric framing (Session 51): "**12 819 déclarations** au registre AGORA par **1 455 représentants** d'intérêts (2018–2026)" + dek naming the top 4 lobbyists (Boury Tallon 535, FNMF 240, Com'Publics 210, Anthenor 202). CTA "OUVRIR LE DASHBOARD →" → `/signaux?type=lobby`. Data via `getPresidencyLobby()` in `src/lib/lobby-overview.ts`.
 5. `MethodologyNotes` band — 180px label col + 2-col notes grid, with [1][2] `<Footnote>` references pointing to `/methodologie`.
 
 **Data source**: [`src/lib/homepage-data.ts`](../src/lib/homepage-data.ts) → `getHomepageData()` (`React.cache`-wrapped). 6 parallel queries: `getSignals`, `getTopLobbyTargets(6)`, `getHATVPTimeline`, `getIndicesSparklines`, `getDataHealth`, `getFranceMapData`. Variant A currently renders signals + mapData + revisionIso + one `lobbyTop` PRESIDENCE entry; other fields computed for future reuse.
@@ -243,7 +243,8 @@ Icons are **inline SVG** — `lucide-react` intentionally NOT installed. Lead + 
 ### Signaux (Session 39, updated Session 41)
 | Route | Key Features |
 |-------|-------------|
-| `/signaux` | Transparency signal feed — URL-param-driven filter pills by type (Conflits, Portes tournantes, Lobbying, Médias, Déclarations, Dissidences) and by severity (Critique, Notable, Informatif). **Filter pills show per-type counts** (Session 41). When a type filter is active, data-fetching removes `take` limits to show all items. **Severity thresholds recalibrated** (Session 41): lobby CRITIQUE 10K→5K, gap CRITIQUE ratio 100→50. Deep-dive "Enquête" link cards at bottom for `/dossiers/medias` + `/dossiers/financement-politique`. |
+| `/signaux` | Transparency signal feed — URL-param-driven filter pills by type (Conflits, Portes tournantes, Lobbying, Médias, Déclarations, Dissidences) and by severity (Critique, Notable, Informatif). **Filter pills show per-type counts** (Session 41). When a type filter is active, data-fetching removes `take` limits to show all items. **Severity thresholds recalibrated** (Session 41): lobby CRITIQUE 10K→5K, gap CRITIQUE ratio 100→50. Deep-dive "Enquête" link cards at bottom for `/dossiers/medias` + `/dossiers/financement-politique`. **Session 51**: `?type=lobby` branches to a dedicated 5-section lobby dashboard (see `/signaux?type=lobby` row below); other type filters keep the signal-card grid. |
+| `/signaux?type=lobby` | **Lobby dashboard (Session 51)** — replaces the signal-card grid with 5 sections: (1) hero stat strip (2 747 représentants · 131 842 déclarations · 20 ministères · 2018-2026); (2) `Pression par ministère` 20-row table with concentration metric (% of declarations attributable to the top lobbyist); (3) `Top 20 représentants` with category, ministries-touched count, top 3 domains, link to `/profils/lobbyistes/[id]` when name matches; (4) `Top 20 domaines` (BarRows + detail cards) after `DOMAIN_SYNONYMS` normalization (~70 synonyms); (5) stacked-area timeline 2018-2026 × top 6 ministries + Autres. Closes with methodology callout explaining AGORA unit / row inflation / null sourceUrl / partial latest year. Data: `src/lib/lobby-overview.ts::getLobbyOverview()`. UI: `src/components/signaux/lobby-overview.tsx` + `lobby-timeline-chart.tsx`. No severity colour coding — the rewrite deliberately replaces tier-based framing with real numbers. |
 
 ### Profils (new canonical people section — Session 39)
 | Route | Key Features |
@@ -554,7 +555,7 @@ All server components unless wrapping an existing client comp. Session 50 split 
 | `HeroLead` | Hero headline: serif h1 up to 58px with italic third line, dek with `<Footnote>` refs, `SrcChip` strip, `ReadLink` |
 | `HeroVisualisation` | 340px aside — wraps client `<FranceMap size="sm">` with caption, gradient legend, `SrcChip`, optional `figLabel` (only render with real figure ratio) |
 | `SecondaryArticle` | Compact editorial card for secondary-grid items with `Spark` pulse preview |
-| `InteractiveStrip` | Full-width bordered card: lobby teaser with stat callout + CTA → `/signaux?type=lobby` |
+| `InteractiveStrip` | Full-width bordered card: lobby teaser with dual-metric headline ("12 819 déclarations par 1 455 représentants") + CTA → `/signaux?type=lobby` (Session 51 reframe) |
 | `MethodologyNotes` | 180px label col + 2-col notes grid with `[1]`/`[2]` `<Footnote>` references linking `/methodologie` |
 
 **Shared primitives** (reused across Variant A + C):

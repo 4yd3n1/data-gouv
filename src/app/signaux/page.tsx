@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { fmt, fmtDate } from "@/lib/format";
 import { SignalCard } from "@/components/signaux/signal-card";
+import { LobbyOverview } from "@/components/signaux/lobby-overview";
 import {
   getSignals,
   summarizeSignals,
@@ -9,6 +10,7 @@ import {
   type SignalType,
   type UnifiedSignal,
 } from "@/lib/signals";
+import { getLobbyOverview } from "@/lib/lobby-overview";
 import type { SignalSeverity } from "@/lib/signal-types";
 
 export const revalidate = 3600;
@@ -167,6 +169,12 @@ export default async function SignauxPage({
   const filterType = (sp.type ?? null) as SignalType | null;
   const filterSeverity = (sp.severity ?? null) as SignalSeverity | null;
   const offset = Math.max(0, parseInt(sp.offset ?? "0", 10) || 0);
+
+  // ?type=lobby renders the full lobby dashboard instead of the signal grid.
+  if (filterType === "lobby") {
+    const overview = await getLobbyOverview();
+    return <LobbyOverview data={overview} />;
+  }
 
   const allSignals = await getSignals();
   const summary = summarizeSignals(allSignals);

@@ -56,8 +56,8 @@ export const HERO_STATS: StatCard[] = [
   },
   {
     label: "Lits d'hôpital fermés",
-    value: "-30 000",
-    subtitle: "Depuis 2017 (DREES)",
+    value: "-45 500",
+    subtitle: "Fin 2013 -> fin 2024 (DREES)",
     color: "blue",
   },
 ];
@@ -99,15 +99,15 @@ export const POVERTY_DATA: BeforeAfter[] = [
     source: "INSEE / UNICEF France",
   },
   {
-    label: "Coefficient de Gini (Eurostat, x100)",
-    before: "28,8",
+    label: "Coefficient de Gini (niveau de vie)",
+    before: "0,292",
     beforeYear: "2017",
-    after: "30,4",
-    afterYear: "2024",
-    delta: "+1,6 pts",
+    after: "0,294",
+    afterYear: "2022",
+    delta: "+0,002 (stable sur la période disponible)",
     deltaDirection: "up",
-    severity: "notable",
-    source: "Eurostat (tessi190)",
+    severity: "informatif",
+    source: "INSEE (enquêtes Revenus fiscaux et sociaux)",
   },
   {
     label: "Sans-abri (SDF)",
@@ -386,14 +386,14 @@ export const EMPLOYMENT_METHODOLOGY: SourcedFact[] = [
 export const HEALTHCARE_DATA: BeforeAfter[] = [
   {
     label: "Lits d'hôpital",
-    before: "~399 000",
-    beforeYear: "fin 2017",
-    after: "369 400",
-    afterYear: "2023",
-    delta: "-29 600 lits sur le quinquennat",
+    before: "412 800",
+    beforeYear: "fin 2013",
+    after: "367 300",
+    afterYear: "fin 2024",
+    delta: "-45 500 lits (-11 %) sur 11 ans",
     deltaDirection: "down",
     severity: "critique",
-    source: "DREES / SAE",
+    source: "DREES (ER 1225, nov. 2025)",
   },
   {
     label: "Postes infirmiers vacants",
@@ -719,7 +719,7 @@ export const CONTRAST_ROWS: Array<{
   },
   {
     label: "Hôpital",
-    peuple: "~30 000 lits fermés depuis 2017, 87 % de désert médical",
+    peuple: "-45 500 lits fermés (2013-2024, DREES), 87 % de désert médical",
     elite: "2,4 Md EUR de consulting (McKinsey & co)",
     category: "social",
   },

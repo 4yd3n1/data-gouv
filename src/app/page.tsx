@@ -89,11 +89,14 @@ const METHODOLOGY_NOTES: readonly MethodologyNote[] = [
 export default async function HomePage() {
   const data = await getHomepageData();
 
-  // Real AGORA count for PRESIDENCE (ranks 5th in our top 6 ministry targets)
-  const presidencyBar = data.lobbyTop.find((b) => b.label === "Présidence Rép.");
-  const presidencyCount = presidencyBar?.value ?? 0;
-  const presidencyDisplay =
-    presidencyBar?.display ?? presidencyCount.toLocaleString("fr-FR");
+  const { declarations, representants, firstYear, lastYear, topReps } =
+    data.presidencyLobby;
+  const presidencyDek = (() => {
+    const parts = topReps
+      .slice(0, 4)
+      .map((r) => `${r.nom.toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase())} (${r.declarations})`);
+    return `Une déclaration = un (domaine × exercice × type d'action) rempli par un représentant enregistré HATVP — pas une rencontre. Principaux : ${parts.join(", ")}.`;
+  })();
 
   return (
     <>
@@ -121,8 +124,6 @@ export default async function HomePage() {
           data={data.mapData}
           indicator="pov"
           caption="Pauvreté monétaire par département, 2024"
-          legendLeft="− 8,0 %"
-          legendRight="+ 22,6 %"
           source="INSEE 2024"
         />
       </section>
@@ -151,19 +152,21 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Interactive strip — real AGORA count for Présidence */}
+      {/* Interactive strip — real AGORA counts for Présidence (representants + declarations) */}
       <section style={{ padding: "0 40px 32px" }}>
         <InteractiveStrip
           href="/signaux?type=lobby"
-          kicker="Analyse interactive"
+          kicker="Analyse interactive · Présidence de la République"
           headline={
             <>
-              Lobbying déclaré : <em>{presidencyDisplay} actions</em> ciblant
-              l&apos;Élysée depuis 2022
+              <em>{declarations.toLocaleString("fr-FR")} déclarations</em> au
+              registre AGORA par{" "}
+              <em>{representants.toLocaleString("fr-FR")} représentants</em>{" "}
+              d&apos;intérêts ({firstYear}–{lastYear})
             </>
           }
-          dek="Actions déclarées au registre AGORA par les représentants d'intérêts enregistrés HATVP auprès de la Présidence de la République. Filtrez par domaine ou type d'action."
-          cta="Explorer les signaux →"
+          dek={presidencyDek}
+          cta="Ouvrir le dashboard →"
         />
       </section>
 

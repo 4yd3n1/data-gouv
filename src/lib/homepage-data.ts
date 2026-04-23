@@ -2,45 +2,13 @@ import { cache } from "react";
 import { prisma } from "@/lib/db";
 import { getSignals, summarizeSignals, type UnifiedSignal } from "@/lib/signals";
 import { getFranceMapData } from "@/lib/france-map-data";
+import { getPresidencyLobby, type PresidencyLobbyStats } from "@/lib/lobby-overview";
+import { ministryLabel } from "@/lib/ministry-labels";
 import { INDICES_SPARK, type IndiceSpec } from "@/data/indices";
 import type { DeptData } from "@/data/indicators";
 import type { HealthCell } from "@/components/investigative/data-health-strip";
 import type { BarRowItem } from "@/components/investigative/bar-rows";
 import type { TimelineYear } from "@/components/investigative/timeline-dots";
-
-// Ministry code → display label (AGORA uses UPPERCASE_UNDERSCORE codes)
-const MINISTRY_LABELS: Record<string, string> = {
-  PRESIDENCE: "Présidence Rép.",
-  MATIGNON: "Premier Ministre",
-  ECONOMIE_FINANCES: "Min. Économie",
-  TRANSITION_ECOLOGIQUE: "Min. Transition",
-  INTERIEUR: "Min. Intérieur",
-  SANTE_FAMILLE: "Min. Santé",
-  TRAVAIL_SOLIDARITES: "Min. Travail",
-  EDUCATION: "Min. Éducation",
-  AGRICULTURE: "Min. Agriculture",
-  JUSTICE: "Min. Justice",
-  AFFAIRES_ETRANGERES: "Min. Aff. étrang.",
-  CULTURE: "Min. Culture",
-  ARMEES: "Min. Armées",
-  VILLE_LOGEMENT: "Min. Ville Logement",
-  OUTRE_MER: "Min. Outre-mer",
-  COHESION_TERRITOIRES: "Min. Territoires",
-  SPORTS: "Min. Sports",
-  INDUSTRIE: "Min. Industrie",
-  FONCTION_PUBLIQUE: "Min. Fonction publ.",
-  COMPTES_PUBLICS: "Min. Comptes publ.",
-};
-
-function ministryLabel(code: string): string {
-  return (
-    MINISTRY_LABELS[code] ??
-    code
-      .split("_")
-      .map((w) => w.charAt(0) + w.slice(1).toLowerCase())
-      .join(" ")
-  );
-}
 
 async function getTopLobbyTargets(limit: number): Promise<BarRowItem[]> {
   const rows = await prisma.actionLobby.groupBy({
@@ -66,7 +34,7 @@ async function getTopLobbyTargets(limit: number): Promise<BarRowItem[]> {
                 ? "oklch(0.42 0.08 27 / 0.55)"
                 : "oklch(0.38 0.07 27 / 0.5)";
     return {
-      label: ministryLabel(r.ministereCode),
+      label: ministryLabel(r.ministereCode, "short"),
       value,
       display: value.toLocaleString("fr-FR"),
       color,
@@ -178,6 +146,7 @@ export interface HomepageData {
   signals: UnifiedSignal[];
   summary: { total: number; critique: number };
   lobbyTop: BarRowItem[];
+  presidencyLobby: PresidencyLobbyStats;
   hatvpTimeline: TimelineYear[];
   indices: IndiceSpec[];
   dataHealth: HealthCell[];
@@ -189,6 +158,7 @@ export const getHomepageData = cache(async (): Promise<HomepageData> => {
   const [
     signals,
     lobbyTop,
+    presidencyLobby,
     hatvpTimeline,
     indices,
     dataHealth,
@@ -197,6 +167,7 @@ export const getHomepageData = cache(async (): Promise<HomepageData> => {
   ] = await Promise.all([
     getSignals(),
     getTopLobbyTargets(6),
+    getPresidencyLobby(),
     getHATVPTimeline(),
     getIndicesSparklines(),
     getDataHealth(),
@@ -211,6 +182,7 @@ export const getHomepageData = cache(async (): Promise<HomepageData> => {
       critique: summary.bySeverity.CRITIQUE,
     },
     lobbyTop,
+    presidencyLobby,
     hatvpTimeline,
     indices,
     dataHealth,
