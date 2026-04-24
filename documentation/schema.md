@@ -30,7 +30,7 @@ Complete reference for all Prisma models, fields, relations, indexes, and ingest
 | Vote Tags | ScrutinTag | ~3,170 |
 | Safety & Health | StatCriminalite, DensiteMedicale | varies |
 | Cross-reference | ConflictSignal | populated by `pnpm compute:conflicts` |
-| Government Profiles (Phase 9) | PersonnalitePublique, MandatGouvernemental, EntreeCarriere, InteretDeclare, EvenementJudiciaire, ActionLobby, **DecretDeport** | 110 persons, 49 mandats, 474 EntreeCarriere, **15 EvenementJudiciaire**, 1,988 InteretDeclare (Session 46 re-ingest), 131,842 ActionLobby, **11 DecretDeport** (Session 47) |
+| Government Profiles (Phase 9) | PersonnalitePublique, MandatGouvernemental, EntreeCarriere, InteretDeclare, EvenementJudiciaire, ActionLobby, **DecretDeport** | 110 persons, 49 mandats, 474 EntreeCarriere, **15 EvenementJudiciaire**, **2,102 InteretDeclare** (Session 55 dedup fix; was 1,988 in Session 46), 131,842 ActionLobby, **11 DecretDeport** (Session 47) |
 | Media Ownership (Session 35) | GroupeMedia, MediaProprietaire, ParticipationMedia, Filiale | 10 groups, 10 owners, 10 participations, 72 filiales |
 | System | IngestionLog | grows over time |
 

@@ -268,7 +268,7 @@ npx tsx scripts/update-wave2-findings.ts        # Add wave 2 findings (Tabarot P
 
 - **Source**: HATVP merged XML file (download with resume/retry)
   - `https://hatvp.fr/livraison/merge/declarations.xml` (~143MB)
-  - Local fallback cache: `documentation/hatvp-old-context/declarations.xml`
+  - Local fallback cache: `documentation/source-cache/declarations.xml`
 - **Prisma Models**: `DeclarationInteret`, `ParticipationFinanciere`, `RevenuDeclaration`
 - **Idempotency**: Delete-all then upsert per UUID. Child records (participations, revenus) cascade-deleted and recreated.
 - **Transformations**:
@@ -293,7 +293,7 @@ npx tsx scripts/update-wave2-findings.ts        # Add wave 2 findings (Tabarot P
 **File**: `scripts/ingest-organes.ts`
 
 - **Source**: Local JSON files (cached from AN open data)
-  - `documentation/hatvp-old-context/an-data/json/organe/` (~7,137 files)
+  - `documentation/source-cache/an-data/json/organe/` (~7,137 files)
 - **Prisma Model**: `Organe`
 - **Idempotency**: Upsert on `id` (uid from JSON)
 - **Transformations**:
@@ -310,7 +310,7 @@ npx tsx scripts/update-wave2-findings.ts        # Add wave 2 findings (Tabarot P
 **File**: `scripts/ingest-scrutins.ts`
 
 - **Source**: Local JSON files (cached from AN open data)
-  - `documentation/hatvp-old-context/scrutins/json/` (~5,831 files as of Mar 2026)
+  - `documentation/source-cache/scrutins/json/` (~5,831 files as of Mar 2026)
   - To update: download latest AN scrutin JSON archive, extract into this folder, re-run `pnpm ingest:scrutins`
 - **Prisma Models**: `Scrutin`, `GroupeVote`, `VoteRecord`
 - **Idempotency**:
@@ -333,7 +333,7 @@ npx tsx scripts/update-wave2-findings.ts        # Add wave 2 findings (Tabarot P
 **File**: `scripts/ingest-deports.ts`
 
 - **Source**: Local JSON files
-  - `documentation/hatvp-old-context/an-data/json/deport/` (~33 files)
+  - `documentation/source-cache/an-data/json/deport/` (~33 files)
 - **Prisma Model**: `Deport`
 - **Idempotency**: Upsert on `id` (uid)
 - **Transformations**:
@@ -605,6 +605,21 @@ npx tsx scripts/update-wave2-findings.ts        # Add wave 2 findings (Tabarot P
   - Link lobbying orgs to ministry portfolios (NOT directly to PersonnalitePublique)
 - **Volume**: ~131,842 ActionLobby rows
 - **Key**: Join via `MandatGouvernemental.ministereCode` -> `ActionLobby.ministereCode`
+
+---
+
+### Phase 9: HATVP InteretDeclare (Personnalite-linked interests)
+
+**File**: `scripts/ingest-hatvp.ts`
+
+- **Source**: Same merged XML as Wave 4 (`documentation/source-cache/declarations.xml`) + HATVP CSV index for `hatvpDossierId` backfill
+- **Prisma Models**: `InteretDeclare` (distinct from Wave 4's `DeclarationInteret` — this is per-activity, per-rubrique, FK `personnaliteId` → `PersonnalitePublique`)
+- **Name matching**: `nomNormalise` + `prenomNormalise` compound key (Session 46 — NFD + strip combining marks + lowercase; handles `NUNEZ` vs `Nuñez` and similar)
+- **Section → rubrique map** (`SECTIONS` in the script): `mandatElectifDto` → MANDAT_ELECTIF; `activProfCinqDerniereDto` + `activConsultantDto` → ACTIVITE_ANTERIEURE; `participationDirigeantDto` + `participationFinanciereDto` → PARTICIPATION; `activProfConjointDto` → ACTIVITE_CONJOINT; `fonctionBenevoleDto` → ACTIVITE_BENEVOLE; `revenusDto` → REVENU; `donAvantageDto` → DON_AVANTAGE
+- **Dedup key** (Session 55 fix): `(personnaliteId, declarationRef, rubrique, contenu[0:200], dateDebut)`. **`dateDebut` is load-bearing** — without it, a declarant holding the same role across multiple non-contiguous periods (e.g. Députée 2022-2024 + 2024-2025) registers separate `mandatElectifDto` items that all share `descriptionMandat` and would collapse to a single row. Pre-fix: 1,988 rows, 113 phantom-collapsed entries missing. Post-fix: 2,102 rows, all XML items represented.
+- **Volume**: 2,102 InteretDeclare rows covering 67 PersonnalitePublique (Session 55)
+- **Audit invariant**: each `<items>` block in the XML must produce exactly one `InteretDeclare` row. Verify via 3-way check (HATVP PDF from `hatvp.fr/fiche-nominative/?declarant={slug}` ↔ merged XML ↔ DB).
+- **Idempotency**: `findFirst` on dedup key → insert if not found. Re-run safe.
 
 ---
 
@@ -1231,7 +1246,7 @@ Across all waves:
 
 ### Local Documentation Directories
 
-- `documentation/hatvp-old-context/`
+- `documentation/source-cache/`
   - `scrutins/json/` — ~5,831 scrutin JSON files (AN open data, last updated Mar 2026)
   - `an-data/json/organe/` — ~7,137 organe JSON files
   - `an-data/json/deport/` — ~33 deport JSON files

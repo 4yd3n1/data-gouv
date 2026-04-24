@@ -1,6 +1,6 @@
 /**
  * Ingest AN organes (institutional bodies: political groups, committees, etc.)
- * Source: 7,137 JSON files at documentation/hatvp-old-context/an-data/json/organe/
+ * Source: 7,137 JSON files at documentation/source-cache/an-data/json/organe/
  */
 
 import "dotenv/config";
@@ -9,7 +9,7 @@ import * as path from "node:path";
 import { prisma } from "../src/lib/db";
 import { logIngestion } from "./lib/ingestion-log";
 
-const ORGANE_DIR = path.resolve(__dirname, "../documentation/hatvp-old-context/an-data/json/organe");
+const ORGANE_DIR = path.resolve(__dirname, "../documentation/source-cache/an-data/json/organe");
 
 function parseDateSafe(s?: string | null): Date | null {
   if (!s) return null;

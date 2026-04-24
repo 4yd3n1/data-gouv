@@ -1,6 +1,6 @@
 /**
  * Ingest parliamentary votes (scrutins) from AN open data.
- * Source: 4,691 JSON files at documentation/hatvp-old-context/scrutins/json/
+ * Source: 4,691 JSON files at documentation/source-cache/scrutins/json/
  *
  * Each file contains one scrutin with per-group breakdowns and individual vote records.
  * Creates: Scrutin + GroupeVote + VoteRecord rows.
@@ -12,7 +12,7 @@ import * as path from "node:path";
 import { prisma } from "../src/lib/db";
 import { logIngestion } from "./lib/ingestion-log";
 
-const SCRUTIN_DIR = path.resolve(__dirname, "../documentation/hatvp-old-context/scrutins/json");
+const SCRUTIN_DIR = path.resolve(__dirname, "../documentation/source-cache/scrutins/json");
 
 function parseDateSafe(s?: string | null): Date | null {
   if (!s) return null;

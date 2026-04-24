@@ -1,6 +1,6 @@
 /**
  * Ingest déport (conflict-of-interest recusal) declarations from AN open data.
- * Source: 33 JSON files at documentation/hatvp-old-context/an-data/json/deport/
+ * Source: 33 JSON files at documentation/source-cache/an-data/json/deport/
  */
 
 import "dotenv/config";
@@ -9,7 +9,7 @@ import * as path from "node:path";
 import { prisma } from "../src/lib/db";
 import { logIngestion } from "./lib/ingestion-log";
 
-const DEPORT_DIR = path.resolve(__dirname, "../documentation/hatvp-old-context/an-data/json/deport");
+const DEPORT_DIR = path.resolve(__dirname, "../documentation/source-cache/an-data/json/deport");
 
 function parseDateSafe(s?: string | null): Date | null {
   if (!s) return null;

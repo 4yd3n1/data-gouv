@@ -26,7 +26,7 @@ const LOCAL_CACHE_PATH = join(
   import.meta.dirname ?? process.cwd(),
   "..",
   "documentation",
-  "hatvp-old-context",
+  "source-cache",
   "declarations.xml"
 );
 const LOCAL_PATH = join(tmpdir(), "hatvp-declarations.xml");

@@ -33,7 +33,7 @@ next-env.d.ts
 
 # large data files (HATVP XML, raw datasets)
 documentation/HATVP-data/
-documentation/hatvp-old-context/
+documentation/source-cache/
 
 # reference PDFs and screenshots
 *.pdf

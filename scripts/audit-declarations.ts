@@ -42,7 +42,7 @@ const DECLARATIONS_URL = "https://hatvp.fr/livraison/merge/declarations.xml";
 const LOCAL_CACHE_PATH = join(
   process.cwd(),
   "documentation",
-  "hatvp-old-context",
+  "source-cache",
   "declarations.xml"
 );
 const DOWNLOAD_PATH = join(tmpdir(), "hatvp-declarations.xml");

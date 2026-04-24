@@ -31,7 +31,7 @@ const LOCAL_CACHE_PATH = join(
   import.meta.dirname ?? process.cwd(),
   "..",
   "documentation",
-  "hatvp-old-context",
+  "source-cache",
   "declarations.xml"
 );
 
@@ -213,7 +213,7 @@ function ensureArray<T>(val: T | T[] | undefined | null): T[] {
 
 /**
  * Stream the merged XML and yield each <declaration> block as a raw string.
- * Prefers the local cached copy (documentation/hatvp-old-context/declarations.xml)
+ * Prefers the local cached copy (documentation/source-cache/declarations.xml)
  * because HATVP's live server is unreliable and frequently drops connections.
  * Falls back to the public URL if the cache is missing.
  */
@@ -593,16 +593,20 @@ export async function ingestHatvp() {
       }
 
       // Upsert each interest entry
-      // Unique key: personnaliteId + declarationRef + rubrique + contenu (first 200 chars)
+      // Unique key: personnaliteId + declarationRef + rubrique + contenu + dateDebut.
+      // dateDebut is critical: a declarant holding the same role across multiple
+      // non-contiguous periods (e.g. Députée 2022-2024 and 2024-2025) registers
+      // separate mandatElectifDto items sharing descriptionMandat. Without
+      // dateDebut in the dedup key we collapse them into one row.
       for (const interet of interets) {
         try {
-          // Check for existing record to avoid duplicates (no unique constraint with contenu)
           const existing = await prisma.interetDeclare.findFirst({
             where: {
               personnaliteId: interet.personnaliteId,
               declarationRef: interet.declarationRef,
               rubrique: interet.rubrique,
               contenu: interet.contenu.substring(0, 200),
+              dateDebut: interet.dateDebut,
             },
           });
 
