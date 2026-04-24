@@ -640,7 +640,7 @@ export function LobbyOverview({ data }: { data: LobbyOverviewData }) {
             eyebrow="Évolution"
             figLabel={`FIG. 4 · ${timeline.years.length} exercices`}
             title={`Déclarations par année, ${timeline.years[0]?.year ?? ""}–${timeline.years[timeline.years.length - 1]?.year ?? ""}`}
-            subtitle="Volume cumulatif par exercice fiscal, stacké par les 6 ministères les plus ciblés. Les dernières années ne sont pas complètes : les filings arrivent au registre après la clôture de l'exercice."
+            subtitle="Volume cumulatif par exercice fiscal, stacké par les 6 ministères les plus ciblés. Chaque lobbyiste dispose de 3 mois après la clôture de son exercice pour déposer son rapport d'activité (art. 18-5 du règlement HATVP) — les deux dernières années sont donc mécaniquement incomplètes tant que les filings continuent d'arriver."
           />
 
           <div

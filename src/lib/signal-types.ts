@@ -66,6 +66,28 @@ export interface DeclarationGapSignal {
   ratio: number;
 }
 
+export interface LobbyOwnerLinkSignal {
+  severity: SignalSeverity;
+  lobbyisteId: string;
+  lobbyisteNom: string;
+  personKey: string;
+  nom: string;
+  prenom: string;
+  /** How the person is linked: dirigeant actuel, ancien dirigeant, mentionné dans HATVP, ancien employé. */
+  linkKind:
+    | "dirigeant_direct"
+    | "ancien_dirigeant"
+    | "carriere_prive"
+    | "interet_declare";
+  /** Free-text — fonction for dirigeant links, rubrique for InteretDeclare, titre for EntreeCarriere. */
+  linkLabel: string;
+  lobbyActionCount: number;
+  topMinistere: string | null;
+  sourceUrl: string | null;
+  sourceDate: Date | null;
+  verifie: boolean;
+}
+
 export interface PartyDisciplineSignal {
   severity: SignalSeverity;
   deputeId: string;
@@ -171,6 +193,22 @@ export function gapSeverity(ratio: number): SignalSeverity {
 export function disciplineSeverity(rate: number): SignalSeverity {
   if (rate > 0.5) return "CRITIQUE";
   if (rate > 0.25) return "NOTABLE";
+  return "INFORMATIF";
+}
+
+/**
+ * A person linked to a lobby by leadership / prior career / HATVP declaration.
+ * Severity reflects the intensity of that lobby's exposure (AGORA declarations)
+ * plus the directness of the tie.
+ */
+export function lobbyOwnerLinkSeverity(
+  linkKind: LobbyOwnerLinkSignal["linkKind"],
+  lobbyActionCount: number,
+): SignalSeverity {
+  const direct = linkKind === "dirigeant_direct" || linkKind === "ancien_dirigeant";
+  if (direct && lobbyActionCount >= 1_000) return "CRITIQUE";
+  if (direct && lobbyActionCount >= 100) return "NOTABLE";
+  if (lobbyActionCount >= 500) return "NOTABLE";
   return "INFORMATIF";
 }
 

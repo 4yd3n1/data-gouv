@@ -1,0 +1,162 @@
+{
+  "lobbyisteId": "447525452",
+  "nom": "Lysios",
+  "researched_at": "2026-04-23",
+  "notes": "Cabinet de conseil en affaires publiques fondé en 2003 par Jean-Luc Archambault. Paris + Brussels. Source éditoriale : recherche web session 53 (Contexte / Wikipedia / LinkedIn). Toutes les entrées sont verifie=false jusqu'à validation manuelle.",
+  "dirigeants": [
+    {
+      "nomNormalise": "archambault",
+      "prenomNormalise": "jean-luc",
+      "fonction": "Fondateur et Président",
+      "carriere": [
+        {
+          "titre": "Élève ingénieur du Corps des Mines",
+          "organisation": "École des Mines de Paris",
+          "categorie": "FORMATION",
+          "dateDebut": null,
+          "dateFin": null,
+          "source": "Wikipedia Jean-Luc Archambault",
+          "sourceUrl": "https://www.linkedin.com/in/jean-luc-archambault-572b24/",
+          "sourceDate": "2026-04-23",
+          "verifie": false,
+          "_ingested": true
+        },
+        {
+          "titre": "Conseiller industrie et environnement",
+          "organisation": "Secrétariat général aux affaires européennes (SGAE)",
+          "categorie": "FONCTION_PUBLIQUE",
+          "dateDebut": null,
+          "dateFin": null,
+          "source": "Lysios — page About us",
+          "sourceUrl": "https://www.lysios.fr/en/whoweare/",
+          "sourceDate": "2026-04-23",
+          "verifie": false,
+          "_ingested": true
+        },
+        {
+          "titre": "Conseiller",
+          "organisation": "Cabinet du ministre de l'Industrie Gérard Longuet puis Franck Borotra",
+          "categorie": "CABINET_MINISTERIEL",
+          "dateDebut": "1993-01-01",
+          "dateFin": "1997-06-02",
+          "source": "Wikipedia Jean-Luc Archambault / Lysios",
+          "sourceUrl": "https://www.lysios.fr/en/whoweare/",
+          "sourceDate": "2026-04-23",
+          "verifie": false,
+          "_ingested": true
+        },
+        {
+          "titre": "Directeur des technologies de l'information",
+          "organisation": "Direction générale de l'Industrie",
+          "categorie": "FONCTION_PUBLIQUE",
+          "dateDebut": null,
+          "dateFin": null,
+          "source": "Lysios",
+          "sourceUrl": "https://www.lysios.fr/en/whoweare/",
+          "sourceDate": "2026-04-23",
+          "verifie": false,
+          "_ingested": true
+        },
+        {
+          "titre": "Associé BNP Private Equity puis Directeur stratégie externe",
+          "organisation": "SFR",
+          "categorie": "ENTREPRISE_PRIVEE",
+          "dateDebut": null,
+          "dateFin": "2003-01-01",
+          "source": "LinkedIn Jean-Luc Archambault",
+          "sourceUrl": "https://www.linkedin.com/in/jean-luc-archambault-572b24/",
+          "sourceDate": "2026-04-23",
+          "verifie": false,
+          "_ingested": true
+        },
+        {
+          "titre": "Fondateur et Président",
+          "organisation": "Lysios",
+          "categorie": "LOBBY",
+          "dateDebut": "2003-01-01",
+          "dateFin": null,
+          "source": "Lysios",
+          "sourceUrl": "https://www.lysios.fr/en/whoweare/",
+          "sourceDate": "2026-04-23",
+          "verifie": false,
+          "_ingested": true
+        }
+      ]
+    },
+    {
+      "nomNormalise": "stefanini",
+      "prenomNormalise": "patrick",
+      "fonction": "Conseiller senior",
+      "carriere": [
+        {
+          "titre": "Directeur adjoint du cabinet du Premier ministre Alain Juppé",
+          "organisation": "Matignon",
+          "categorie": "CABINET_MINISTERIEL",
+          "dateDebut": "1995-05-18",
+          "dateFin": "1996-06-01",
+          "source": "Wikipedia Patrick Stefanini",
+          "sourceUrl": "https://fr.m.wikipedia.org/wiki/Patrick_Stefanini",
+          "sourceDate": "2026-04-23",
+          "verifie": false,
+          "_ingested": true
+        },
+        {
+          "titre": "Préfet du Puy-de-Dôme puis de la Gironde",
+          "organisation": "Préfectures",
+          "categorie": "FONCTION_PUBLIQUE",
+          "dateDebut": null,
+          "dateFin": null,
+          "source": "Wikipedia Patrick Stefanini",
+          "sourceUrl": "https://fr.m.wikipedia.org/wiki/Patrick_Stefanini",
+          "sourceDate": "2026-04-23",
+          "verifie": false,
+          "_ingested": true
+        },
+        {
+          "titre": "Conseiller d'État",
+          "organisation": "Conseil d'État",
+          "categorie": "FONCTION_PUBLIQUE",
+          "dateDebut": null,
+          "dateFin": null,
+          "source": "Wikipedia Patrick Stefanini",
+          "sourceUrl": "https://fr.m.wikipedia.org/wiki/Patrick_Stefanini",
+          "sourceDate": "2026-04-23",
+          "verifie": false,
+          "_ingested": true
+        },
+        {
+          "titre": "Conseiller senior",
+          "organisation": "Lysios",
+          "categorie": "LOBBY",
+          "dateDebut": "2018-01-01",
+          "dateFin": null,
+          "source": "Wikipedia Patrick Stefanini",
+          "sourceUrl": "https://fr.m.wikipedia.org/wiki/Patrick_Stefanini",
+          "sourceDate": "2026-04-23",
+          "verifie": false,
+          "_ingested": true
+        }
+      ]
+    }
+  ],
+  "positions": [
+    {
+      "thematique": "Régulation des plateformes numériques (DMA / DSA)",
+      "positionDeclaree": "Cabinet bilingue Paris-Bruxelles ; accompagne clients sur le Digital Markets Act, le Digital Services Act, et la loi SREN en France.",
+      "source": "Lysios — page services",
+      "sourceUrl": "https://www.lysios.fr/en/whoweare/",
+      "sourceDate": "2026-04-23",
+      "verifie": false,
+      "_ingested": true
+    },
+    {
+      "thematique": "Affaires industrielles et européennes",
+      "positionDeclaree": "Spécialisation multi-sectorielle : industrie, énergie, télécoms, affaires européennes. Environ 100 clients déclarés auprès de l'HATVP.",
+      "source": "Lysios / HATVP registre",
+      "sourceUrl": "https://www.hatvp.fr/fiche-organisation/?organisation=447525452",
+      "sourceDate": "2026-04-23",
+      "verifie": false,
+      "_ingested": true
+    }
+  ]
+}

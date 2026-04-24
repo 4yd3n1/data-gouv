@@ -146,12 +146,30 @@ function splitDomains(raw: string | null): string[] {
     .map(normalizeDomain);
 }
 
-function normalizeLobbyisteName(nom: string): string {
+export function normalizeLobbyisteName(nom: string): string {
   return nom
     .toUpperCase()
     .replace(/\s+(SAS|SA|SARL|SNC|EURL|GIE|SCOP|ASSOCIATION|FEDERATION|FÉDÉRATION)\b/gi, "")
     .replace(/\s+/g, " ")
     .trim();
+}
+
+/**
+ * Returns true if lobbyCore (upper-cased) appears as a whole-word token within
+ * orgUpper, or if orgUpper appears as a whole-word token within lobbyCore.
+ * Word boundaries prevent matches like ORANGE ↔ ORANGERIE or SNCF ↔ SNCF-RESEAU.
+ * Used for cross-referencing Lobbyiste.nom against EntreeCarriere.organisation
+ * and InteretDeclare.organisation.
+ */
+export function matchLobbyOrg(lobbyCore: string, orgUpper: string): boolean {
+  if (lobbyCore.length < 4 || orgUpper.length < 4) return false;
+  const escapeRe = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const reLobby = new RegExp(`\\b${escapeRe(lobbyCore)}\\b`);
+  if (reLobby.test(orgUpper)) return true;
+  // Reverse direction for acronyms: "MEDEF" lobby vs "MEDEF NATIONAL" org is fine above;
+  // this clause covers "MOUVEMENT DES ENTREPRISES DE FRANCE" lobby.nom vs "MEDEF" org.
+  const reOrg = new RegExp(`\\b${escapeRe(orgUpper)}\\b`);
+  return reOrg.test(lobbyCore);
 }
 
 async function fetchStats(): Promise<LobbyStats> {
@@ -454,6 +472,445 @@ export interface PresidencyLobbyStats {
   lastYear: string;
   topReps: { nom: string; declarations: number }[];
 }
+
+export interface LobbyisteDetailMinistryRow {
+  code: string;
+  label: string;
+  declarations: number;
+  share: number;
+  ministerSlug: string | null;
+  ministerLabel: string | null;
+}
+
+export interface LobbyisteDetailDomainRow {
+  label: string;
+  declarations: number;
+}
+
+export interface LobbyisteDetailSample {
+  id: string;
+  ministereCode: string;
+  ministereLabel: string;
+  domaine: string | null;
+  typeAction: string | null;
+  exercice: string | null;
+  depensesTranche: string | null;
+}
+
+export interface LobbyisteAgoraDetail {
+  matchedNames: string[];
+  totalDeclarations: number;
+  distinctMinistries: number;
+  distinctDomains: number;
+  firstYear: string;
+  lastYear: string;
+  topMinistry: LobbyisteDetailMinistryRow | null;
+  topDomain: LobbyisteDetailDomainRow | null;
+  byMinistry: LobbyisteDetailMinistryRow[];
+  byDomain: LobbyisteDetailDomainRow[];
+  timeline: LobbyTimeline;
+  samples: LobbyisteDetailSample[];
+}
+
+export const getLobbyisteAgoraDetail = cache(
+  async (targetName: string): Promise<LobbyisteAgoraDetail | null> => {
+    const target = normalizeLobbyisteName(targetName);
+    const distinctRows = await prisma.$queryRaw<
+      { representantNom: string }[]
+    >`
+      SELECT DISTINCT "representantNom" FROM "ActionLobby"
+      WHERE "representantNom" IS NOT NULL
+    `;
+    const matchedNames = distinctRows
+      .map((r) => r.representantNom)
+      .filter((n) => normalizeLobbyisteName(n) === target);
+    if (matchedNames.length === 0) return null;
+
+    const where = { representantNom: { in: matchedNames } };
+
+    const [byMinistryGrp, byDomainGrp, timelineGrp, samples, currentMinisters] =
+      await Promise.all([
+        prisma.actionLobby.groupBy({
+          by: ["ministereCode"],
+          where,
+          _count: { _all: true },
+        }),
+        prisma.actionLobby.groupBy({
+          by: ["domaine"],
+          where: { ...where, domaine: { not: null } },
+          _count: { _all: true },
+        }),
+        prisma.actionLobby.groupBy({
+          by: ["exercice", "ministereCode"],
+          where: { ...where, exercice: { not: null } },
+          _count: { _all: true },
+        }),
+        prisma.actionLobby.findMany({
+          where,
+          select: {
+            id: true,
+            ministereCode: true,
+            domaine: true,
+            typeAction: true,
+            exercice: true,
+            depensesTranche: true,
+          },
+          orderBy: [{ exercice: "desc" }, { createdAt: "desc" }],
+          take: 50,
+        }),
+        prisma.mandatGouvernemental.findMany({
+          where: { dateFin: null, ministereCode: { not: null } },
+          select: {
+            ministereCode: true,
+            personnalite: {
+              select: { slug: true, nom: true, prenom: true },
+            },
+          },
+          orderBy: { rang: "asc" },
+        }),
+      ]);
+
+    const ministerByCode = new Map<string, { slug: string; label: string }>();
+    for (const m of currentMinisters) {
+      if (!m.ministereCode || ministerByCode.has(m.ministereCode)) continue;
+      ministerByCode.set(m.ministereCode, {
+        slug: m.personnalite.slug,
+        label: `${m.personnalite.prenom} ${m.personnalite.nom}`,
+      });
+    }
+
+    const totalDeclarations = byMinistryGrp.reduce(
+      (s, r) => s + r._count._all,
+      0,
+    );
+
+    const byMinistry: LobbyisteDetailMinistryRow[] = byMinistryGrp
+      .map((r) => {
+        const minister = ministerByCode.get(r.ministereCode) ?? null;
+        return {
+          code: r.ministereCode,
+          label: ministryLabel(r.ministereCode),
+          declarations: r._count._all,
+          share:
+            totalDeclarations > 0 ? r._count._all / totalDeclarations : 0,
+          ministerSlug: minister?.slug ?? null,
+          ministerLabel: minister?.label ?? null,
+        };
+      })
+      .sort((a, b) => b.declarations - a.declarations);
+
+    const domainBucket = new Map<string, number>();
+    for (const r of byDomainGrp) {
+      const c = r._count._all;
+      for (const label of splitDomains(r.domaine)) {
+        domainBucket.set(label, (domainBucket.get(label) ?? 0) + c);
+      }
+    }
+    const byDomain: LobbyisteDetailDomainRow[] = [...domainBucket.entries()]
+      .map(([label, declarations]) => ({ label, declarations }))
+      .sort((a, b) => b.declarations - a.declarations);
+
+    const topMinCodes = byMinistry.slice(0, 6).map((r) => r.code);
+    const topMinSet = new Set(topMinCodes);
+    const yearMap = new Map<string, LobbyTimelineYear>();
+    for (const r of timelineGrp) {
+      const y = r.exercice;
+      if (!y) continue;
+      let entry = yearMap.get(y);
+      if (!entry) {
+        entry = { year: y, total: 0, byMinistry: {} };
+        yearMap.set(y, entry);
+      }
+      const c = r._count._all;
+      entry.total += c;
+      if (topMinSet.has(r.ministereCode)) {
+        entry.byMinistry[r.ministereCode] =
+          (entry.byMinistry[r.ministereCode] ?? 0) + c;
+      } else {
+        entry.byMinistry["__other__"] =
+          (entry.byMinistry["__other__"] ?? 0) + c;
+      }
+    }
+    const years = [...yearMap.values()].sort((a, b) =>
+      a.year.localeCompare(b.year),
+    );
+    const firstYear = years[0]?.year ?? "—";
+    const lastYear = years[years.length - 1]?.year ?? "—";
+
+    return {
+      matchedNames,
+      totalDeclarations,
+      distinctMinistries: byMinistry.length,
+      distinctDomains: byDomain.length,
+      firstYear,
+      lastYear,
+      topMinistry: byMinistry[0] ?? null,
+      topDomain: byDomain[0] ?? null,
+      byMinistry,
+      byDomain,
+      timeline: { years, topMinistryCodes: topMinCodes },
+      samples: samples.map((s) => ({
+        ...s,
+        ministereLabel: ministryLabel(s.ministereCode),
+      })),
+    };
+  },
+);
+
+/* ------------------------------------------------------------------ */
+/*  Lobbyist ownership (dirigeants + carrière + positions + gov ties)   */
+/* ------------------------------------------------------------------ */
+
+export interface LobbyOwnerDirigeant {
+  id: string;
+  nom: string;
+  prenom: string | null;
+  nomNormalise: string;
+  prenomNormalise: string | null;
+  fonction: string | null;
+  dateNaissanceAnnee: number | null;
+  dateDebut: Date | null;
+  dateFin: Date | null;
+  source: "RECHERCHE_ENTREPRISES" | "RNE_INPI" | "RESEARCH" | "HATVP";
+  sourceUrl: string | null;
+  sourceDate: Date | null;
+  verifie: boolean;
+  personnaliteId: string | null;
+  personnaliteSlug: string | null;
+  personnaliteCurrentMandat: string | null;
+  carriere: Array<{
+    id: string;
+    titre: string;
+    organisation: string | null;
+    categorie:
+      | "FORMATION"
+      | "FONCTION_PUBLIQUE"
+      | "CABINET_MINISTERIEL"
+      | "MANDAT_ELECTIF"
+      | "MANDAT_GOUVERNEMENTAL"
+      | "ENTREPRISE_PRIVEE"
+      | "LOBBY"
+      | "ASSOCIATION"
+      | "MEDIA"
+      | "AUTRE";
+    dateDebut: Date | null;
+    dateFin: Date | null;
+    source: string;
+    sourceUrl: string | null;
+    verifie: boolean;
+  }>;
+}
+
+export interface LobbyOwnerPosition {
+  id: string;
+  thematique: string;
+  positionDeclaree: string;
+  source: string;
+  sourceUrl: string | null;
+  sourceDate: Date | null;
+  verifie: boolean;
+}
+
+export interface LobbyOwnerGovTie {
+  kind: "carriere_prive" | "interet_declare";
+  personnaliteSlug: string;
+  nom: string;
+  prenom: string;
+  mandatTitre: string | null;
+  organisation: string;
+  titre: string;
+  rubrique: string | null;
+  dateDebut: Date | null;
+  dateFin: Date | null;
+}
+
+export interface LobbyOwnership {
+  dirigeants: LobbyOwnerDirigeant[];
+  positions: LobbyOwnerPosition[];
+  govTies: LobbyOwnerGovTie[];
+  counts: {
+    dirigeantsTotal: number;
+    dirigeantsMatched: number;
+    positionsVerifiees: number;
+    govTiesTotal: number;
+  };
+}
+
+export const getLobbyisteOwnership = cache(
+  async (lobbyisteId: string): Promise<LobbyOwnership> => {
+    const [dirigeantRows, positionRows, lobby] = await Promise.all([
+      prisma.lobbyisteDirigeant.findMany({
+        where: { lobbyisteId },
+        include: {
+          carriere: { orderBy: [{ dateDebut: "asc" }, { ordre: "asc" }] },
+          personnalite: {
+            select: {
+              slug: true,
+              mandats: {
+                where: { dateFin: null },
+                select: { titreCourt: true },
+                take: 1,
+              },
+            },
+          },
+        },
+        orderBy: [{ dateFin: "asc" }, { nom: "asc" }],
+      }),
+      prisma.lobbyistePosition.findMany({
+        where: { lobbyisteId },
+        orderBy: [{ verifie: "desc" }, { createdAt: "desc" }],
+      }),
+      prisma.lobbyiste.findUnique({
+        where: { id: lobbyisteId },
+        select: { nom: true },
+      }),
+    ]);
+
+    const govTies: LobbyOwnerGovTie[] = [];
+    if (lobby?.nom) {
+      const core = normalizeLobbyisteName(lobby.nom).toUpperCase();
+      if (core.length >= 4) {
+        const [careerHits, interetHits] = await Promise.all([
+          prisma.entreeCarriere.findMany({
+            where: {
+              categorie: { in: ["CARRIERE_PRIVEE", "ORGANISME"] },
+              organisation: { not: null },
+            },
+            select: {
+              categorie: true,
+              titre: true,
+              organisation: true,
+              dateDebut: true,
+              dateFin: true,
+              personnalite: {
+                select: {
+                  slug: true,
+                  nom: true,
+                  prenom: true,
+                  mandats: {
+                    where: { dateFin: null },
+                    select: { titreCourt: true },
+                    take: 1,
+                  },
+                },
+              },
+            },
+          }),
+          prisma.interetDeclare.findMany({
+            where: {
+              rubrique: {
+                in: ["ACTIVITE_ANTERIEURE", "ACTIVITE_CONJOINT", "PARTICIPATION"],
+              },
+              organisation: { not: null },
+            },
+            select: {
+              rubrique: true,
+              organisation: true,
+              contenu: true,
+              dateDebut: true,
+              dateFin: true,
+              personnalite: {
+                select: {
+                  slug: true,
+                  nom: true,
+                  prenom: true,
+                  mandats: {
+                    where: { dateFin: null },
+                    select: { titreCourt: true },
+                    take: 1,
+                  },
+                },
+              },
+            },
+          }),
+        ]);
+        const seen = new Set<string>();
+        for (const c of careerHits) {
+          const orgUpper = (c.organisation ?? "").toUpperCase();
+          if (orgUpper.length < 4) continue;
+          if (!matchLobbyOrg(core, orgUpper)) continue;
+          const key = `${c.personnalite.slug}:${c.titre}:${c.organisation}`;
+          if (seen.has(key)) continue;
+          seen.add(key);
+          govTies.push({
+            kind: "carriere_prive",
+            personnaliteSlug: c.personnalite.slug,
+            nom: c.personnalite.nom,
+            prenom: c.personnalite.prenom,
+            mandatTitre: c.personnalite.mandats[0]?.titreCourt ?? null,
+            organisation: c.organisation!,
+            titre: c.titre,
+            rubrique: null,
+            dateDebut: c.dateDebut,
+            dateFin: c.dateFin,
+          });
+        }
+        for (const i of interetHits) {
+          const orgUpper = (i.organisation ?? "").toUpperCase();
+          if (orgUpper.length < 4) continue;
+          if (!matchLobbyOrg(core, orgUpper)) continue;
+          const key = `${i.personnalite.slug}:${i.rubrique}:${i.organisation}`;
+          if (seen.has(key)) continue;
+          seen.add(key);
+          govTies.push({
+            kind: "interet_declare",
+            personnaliteSlug: i.personnalite.slug,
+            nom: i.personnalite.nom,
+            prenom: i.personnalite.prenom,
+            mandatTitre: i.personnalite.mandats[0]?.titreCourt ?? null,
+            organisation: i.organisation!,
+            titre: i.contenu ?? "",
+            rubrique: i.rubrique,
+            dateDebut: i.dateDebut,
+            dateFin: i.dateFin,
+          });
+        }
+      }
+    }
+
+    const dirigeants: LobbyOwnerDirigeant[] = dirigeantRows.map((d) => ({
+      id: d.id,
+      nom: d.nom,
+      prenom: d.prenom,
+      nomNormalise: d.nomNormalise,
+      prenomNormalise: d.prenomNormalise,
+      fonction: d.fonction,
+      dateNaissanceAnnee: d.dateNaissanceAnnee,
+      dateDebut: d.dateDebut,
+      dateFin: d.dateFin,
+      source: d.source,
+      sourceUrl: d.sourceUrl,
+      sourceDate: d.sourceDate,
+      verifie: d.verifie,
+      personnaliteId: d.personnaliteId,
+      personnaliteSlug: d.personnalite?.slug ?? null,
+      personnaliteCurrentMandat: d.personnalite?.mandats[0]?.titreCourt ?? null,
+      carriere: d.carriere.map((c) => ({
+        id: c.id,
+        titre: c.titre,
+        organisation: c.organisation,
+        categorie: c.categorie,
+        dateDebut: c.dateDebut,
+        dateFin: c.dateFin,
+        source: c.source,
+        sourceUrl: c.sourceUrl,
+        verifie: c.verifie,
+      })),
+    }));
+
+    return {
+      dirigeants,
+      positions: positionRows,
+      govTies,
+      counts: {
+        dirigeantsTotal: dirigeants.length,
+        dirigeantsMatched: dirigeants.filter((d) => d.personnaliteId != null).length,
+        positionsVerifiees: positionRows.filter((p) => p.verifie).length,
+        govTiesTotal: govTies.length,
+      },
+    };
+  },
+);
 
 export const getPresidencyLobby = cache(
   async (): Promise<PresidencyLobbyStats> => {

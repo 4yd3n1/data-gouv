@@ -10,7 +10,7 @@ datasource db {
 // ─── Territory Layer (COG - Code Officiel Géographique) ───
 
 model Region {
-  code     String @id // "84", "75", etc.
+  code     String  @id // "84", "75", etc.
   cheflieu String?
   tncc     Int? // Type de nom en clair (0-8)
   ncc      String // Uppercase: "ILE-DE-FRANCE"
@@ -25,7 +25,7 @@ model Region {
 }
 
 model Departement {
-  code       String @id // "75", "2A", "974", etc.
+  code       String  @id // "75", "2A", "974", etc.
   regionCode String
   cheflieu   String?
   tncc       Int?
@@ -35,7 +35,7 @@ model Departement {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  region    Region    @relation(fields: [regionCode], references: [code])
+  region          Region            @relation(fields: [regionCode], references: [code])
   communes        Commune[]
   deputes         Depute[]
   senateurs       Senateur[]
@@ -50,7 +50,7 @@ model Departement {
 }
 
 model Commune {
-  code            String @id // "75056", "13055", 5-char INSEE
+  code            String  @id // "75056", "13055", 5-char INSEE
   departementCode String
   regionCode      String // Denormalized for query convenience
   typecom         String // COM, COMA, COMD, ARM
@@ -79,42 +79,42 @@ model Commune {
 
 // Deputies - from Datan dataset (577 active, 2101 historic)
 model Depute {
-  id                  String    @id // PA1008, PA1567, etc.
-  legislature         Int
-  civilite            String // M., Mme
-  nom                 String
-  prenom              String
-  villeNaissance      String?
-  dateNaissance       DateTime?
-  age                 Int?
-  groupe              String // Political group full name
-  groupeAbrev         String // SOC, DR, RN, etc.
-  departementNom      String
-  departementCode     String // Raw code from source (may not exist in Departement table for overseas)
-  departementRefCode  String? // Nullable FK to Departement (set only when code exists)
-  circonscription     Int
-  datePriseFonction   DateTime?
-  profession          String?
-  email               String?
-  twitter             String?
-  facebook            String?
-  website             String?
-  nombreMandats       Int?
-  experienceDepute    String? // "9 ans"
-  scoreParticipation  Float?
-  scoreSpecialite     Float?
-  scoreLoyaute        Float?
-  scoreMajorite       Float?
-  photoUrl            String? // Official AN photo URL
-  actif               Boolean   @default(true)
-  dateMaj             DateTime?
-  createdAt           DateTime  @default(now())
-  updatedAt           DateTime  @updatedAt
+  id                 String    @id // PA1008, PA1567, etc.
+  legislature        Int
+  civilite           String // M., Mme
+  nom                String
+  prenom             String
+  villeNaissance     String?
+  dateNaissance      DateTime?
+  age                Int?
+  groupe             String // Political group full name
+  groupeAbrev        String // SOC, DR, RN, etc.
+  departementNom     String
+  departementCode    String // Raw code from source (may not exist in Departement table for overseas)
+  departementRefCode String? // Nullable FK to Departement (set only when code exists)
+  circonscription    Int
+  datePriseFonction  DateTime?
+  profession         String?
+  email              String?
+  twitter            String?
+  facebook           String?
+  website            String?
+  nombreMandats      Int?
+  experienceDepute   String? // "9 ans"
+  scoreParticipation Float?
+  scoreSpecialite    Float?
+  scoreLoyaute       Float?
+  scoreMajorite      Float?
+  photoUrl           String? // Official AN photo URL
+  actif              Boolean   @default(true)
+  dateMaj            DateTime?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
 
   nomNormalise    String @default("") // normalizeName(nom) — see src/lib/normalize-name.ts
   prenomNormalise String @default("") // normalizeName(prenom)
 
-  departement   Departement? @relation(fields: [departementRefCode], references: [code])
+  departement   Departement?           @relation(fields: [departementRefCode], references: [code])
   votes         VoteRecord[]
   deports       Deport[]
   personnalites PersonnalitePublique[]
@@ -144,12 +144,12 @@ model Senateur {
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
 
-  photoUrl       String? // Official Sénat photo URL
+  photoUrl String? // Official Sénat photo URL
 
   nomNormalise    String @default("") // normalizeName(nom) — see src/lib/normalize-name.ts
   prenomNormalise String @default("") // normalizeName(prenom)
 
-  departementRef Departement? @relation(fields: [departementCode], references: [code])
+  departementRef Departement?           @relation(fields: [departementCode], references: [code])
   mandats        MandatSenateur[]
   commissions    CommissionSenateur[]
   personnalites  PersonnalitePublique[]
@@ -200,7 +200,9 @@ model Lobbyiste {
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
 
-  actions ActionLobbyiste[]
+  actions    ActionLobbyiste[]
+  dirigeants LobbyisteDirigeant[]
+  positions  LobbyistePosition[]
 
   @@index([nom])
   @@index([categorieActivite])
@@ -279,8 +281,8 @@ model Musee {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  commune        Commune?            @relation(fields: [communeCode], references: [code])
-  departement    Departement?        @relation(fields: [departementCode], references: [code])
+  commune        Commune?             @relation(fields: [communeCode], references: [code])
+  departement    Departement?         @relation(fields: [departementCode], references: [code])
   frequentations FrequentationMusee[]
 
   @@index([nom])
@@ -349,19 +351,19 @@ model Monument {
 // ─── Declarations (HATVP interest declarations) ───
 
 model DeclarationInteret {
-  id                String    @id // UUID from HATVP XML
-  civilite          String?
-  nom               String
-  prenom            String
-  dateNaissance     DateTime?
-  typeDeclaration   String // "DI" (intérêts), "DIA" (intérêts et activités)
-  typeMandat        String // "Député", "Sénateur", "Ministre", "Maire ou adjoint municipal", etc.
-  organe            String? // "Seine-Saint-Denis(93)", "Occitanie (76)", etc.
-  qualiteDeclarant  String? // "Président EPCI", "maire", etc.
-  dateDepot         DateTime?
-  dateDebutMandat   DateTime?
+  id                  String    @id // UUID from HATVP XML
+  civilite            String?
+  nom                 String
+  prenom              String
+  dateNaissance       DateTime?
+  typeDeclaration     String // "DI" (intérêts), "DIA" (intérêts et activités)
+  typeMandat          String // "Député", "Sénateur", "Ministre", "Maire ou adjoint municipal", etc.
+  organe              String? // "Seine-Saint-Denis(93)", "Occitanie (76)", etc.
+  qualiteDeclarant    String? // "Président EPCI", "maire", etc.
+  dateDepot           DateTime?
+  dateDebutMandat     DateTime?
   totalParticipations Float? // Sum of all participationFinanciere evaluations
-  totalRevenus      Float? // Sum of latest-year remunerations across all activities
+  totalRevenus        Float? // Sum of latest-year remunerations across all activities
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -529,25 +531,25 @@ model Deport {
 
 // Elected officials from Répertoire National des Élus
 model Elu {
-  id                    String    @id @default(cuid())
-  typeMandat            String // "maire", "conseiller_municipal", "conseiller_departemental", "conseiller_regional", "depute_europeen", "conseiller_arrondissement", "membre_assemblee", "conseiller_francais_etranger", "assemblee_francais_etranger"
-  nom                   String
-  prenom                String
-  sexe                  String // "M", "F"
-  dateNaissance         DateTime?
-  codeCSP               String? // Socio-professional category code
-  libelleCSP            String? // Socio-professional category label
-  codeDepartement       String? // FK to Departement (set only when code exists)
-  libelleDepartement    String?
-  codeCommune           String? // FK to Commune (set only when code exists)
-  libelleCommune        String?
-  codeCanton            String? // For conseillers départementaux
-  libelleCanton         String?
-  codeCollParticuliere  String? // For collectivités à statut particulier
+  id                      String    @id @default(cuid())
+  typeMandat              String // "maire", "conseiller_municipal", "conseiller_departemental", "conseiller_regional", "depute_europeen", "conseiller_arrondissement", "membre_assemblee", "conseiller_francais_etranger", "assemblee_francais_etranger"
+  nom                     String
+  prenom                  String
+  sexe                    String // "M", "F"
+  dateNaissance           DateTime?
+  codeCSP                 String? // Socio-professional category code
+  libelleCSP              String? // Socio-professional category label
+  codeDepartement         String? // FK to Departement (set only when code exists)
+  libelleDepartement      String?
+  codeCommune             String? // FK to Commune (set only when code exists)
+  libelleCommune          String?
+  codeCanton              String? // For conseillers départementaux
+  libelleCanton           String?
+  codeCollParticuliere    String? // For collectivités à statut particulier
   libelleCollParticuliere String?
-  fonction              String? // Role: "Président", "Vice-président", etc.
-  dateDebutMandat       DateTime?
-  dateDebutFonction     DateTime?
+  fonction                String? // Role: "Président", "Vice-président", etc.
+  dateDebutMandat         DateTime?
+  dateDebutFonction       DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -582,7 +584,7 @@ model ElectionLegislative {
 
   createdAt DateTime @default(now())
 
-  candidats      CandidatLegislatif[]
+  candidats CandidatLegislatif[]
 
   @@unique([annee, tour, codeDepartement, codeCirconscription])
   @@index([annee, tour])
@@ -613,10 +615,10 @@ model CandidatLegislatif {
 
 // Political party accounts from CNCCFP
 model PartiPolitique {
-  id                   String @id @default(cuid())
-  codeCNCC             Int // Code_CNCCFP
-  nom                  String
-  exercice             Int // Year
+  id       String @id @default(cuid())
+  codeCNCC Int // Code_CNCCFP
+  nom      String
+  exercice Int // Year
 
   // Revenue
   cotisationsAdherents Float @default(0)
@@ -654,14 +656,14 @@ model PartiPolitique {
 
 model StatLocale {
   id         String   @id @default(cuid())
-  source     String   // "FILOSOFI", "RP", "REE"
-  indicateur String   // "MEDIAN_INCOME", "POVERTY_RATE", "POP_TOTAL", etc.
+  source     String // "FILOSOFI", "RP", "REE"
+  indicateur String // "MEDIAN_INCOME", "POVERTY_RATE", "POP_TOTAL", etc.
   annee      Int
-  geoType    String   // "COM", "DEP", "REG"
-  geoCode    String   // "75056", "75", "11"
+  geoType    String // "COM", "DEP", "REG"
+  geoCode    String // "75056", "75", "11"
   valeur     Float
-  unite      String   // "EUR", "%", "NB"
-  metadata   String?  // JSON for additional breakdowns
+  unite      String // "EUR", "%", "NB"
+  metadata   String? // JSON for additional breakdowns
   createdAt  DateTime @default(now())
 
   @@unique([source, indicateur, annee, geoType, geoCode])
@@ -674,31 +676,31 @@ model StatLocale {
 // ─── Local Government Finances (DGFIP) ───
 
 model BudgetLocal {
-  id               String   @id @default(cuid())
-  geoType          String   // "COM", "DEP"
-  geoCode          String   // commune/dept code
-  geoLibelle       String
-  annee            Int
-  population       Int?
+  id                String   @id @default(cuid())
+  geoType           String // "COM", "DEP"
+  geoCode           String // commune/dept code
+  geoLibelle        String
+  annee             Int
+  population        Int?
   // Revenue
-  totalRecettes    Float?
-  recettesFonct    Float?
-  recettesInvest   Float?
-  impotsTaxes      Float?
-  dotationsSubv    Float?
+  totalRecettes     Float?
+  recettesFonct     Float?
+  recettesInvest    Float?
+  impotsTaxes       Float?
+  dotationsSubv     Float?
   // Expenditure
-  totalDepenses    Float?
-  depensesFonct    Float?
-  depensesInvest   Float?
-  chargesPersonnel Float?
+  totalDepenses     Float?
+  depensesFonct     Float?
+  depensesInvest    Float?
+  chargesPersonnel  Float?
   // Debt
-  encoursDette     Float?
-  annuiteDette     Float?
+  encoursDette      Float?
+  annuiteDette      Float?
   // Derived
   resultatComptable Float?
-  depenseParHab    Float?
-  detteParHab      Float?
-  createdAt        DateTime @default(now())
+  depenseParHab     Float?
+  detteParHab       Float?
+  createdAt         DateTime @default(now())
 
   @@unique([geoType, geoCode, annee])
   @@index([geoType, geoCode])
@@ -709,12 +711,12 @@ model BudgetLocal {
 // ─── Vote Topic Tags ───
 
 model ScrutinTag {
-  id         String  @id @default(cuid())
-  scrutinId  String  // FK to Scrutin.id
-  tag        String  // "budget", "fiscalite", "sante", "logement", etc.
-  confidence Float   @default(1.0) // 0-1: 1.0 for multi-word match, 0.7 for single keyword
+  id         String @id @default(cuid())
+  scrutinId  String // FK to Scrutin.id
+  tag        String // "budget", "fiscalite", "sante", "logement", etc.
+  confidence Float  @default(1.0) // 0-1: 1.0 for multi-word match, 0.7 for single keyword
 
-  scrutin    Scrutin @relation(fields: [scrutinId], references: [id], onDelete: Cascade)
+  scrutin Scrutin @relation(fields: [scrutinId], references: [id], onDelete: Cascade)
 
   @@unique([scrutinId, tag])
   @@index([tag])
@@ -725,12 +727,12 @@ model ScrutinTag {
 
 model StatCriminalite {
   id              String   @id @default(cuid())
-  departementCode String   // FK to Departement (code)
-  indicateur      String   // "coups_blessures", "vols_sans_violence", "cambriolages", "violences_sexuelles", "escroqueries", "destructions"
+  departementCode String // FK to Departement (code)
+  indicateur      String // "coups_blessures", "vols_sans_violence", "cambriolages", "violences_sexuelles", "escroqueries", "destructions"
   annee           Int
-  total           Int?     // Raw count (number of offences recorded)
-  tauxPour1000    Float?   // Rate per 1,000 inhabitants
-  variationPct    Float?   // Year-over-year % change (may be null for first year)
+  total           Int? // Raw count (number of offences recorded)
+  tauxPour1000    Float? // Rate per 1,000 inhabitants
+  variationPct    Float? // Year-over-year % change (may be null for first year)
   createdAt       DateTime @default(now())
 
   departement Departement @relation(fields: [departementCode], references: [code])
@@ -745,12 +747,12 @@ model StatCriminalite {
 
 model DensiteMedicale {
   id              String   @id @default(cuid())
-  departementCode String   // FK to Departement (code)
-  specialite      String   // "MG" (médecin généraliste), "SPEC" (spécialiste), "INFIRMIER", "KINESITHERAPEUTE", "DENTISTE", "PHARMACIEN"
+  departementCode String // FK to Departement (code)
+  specialite      String // "MG" (médecin généraliste), "SPEC" (spécialiste), "INFIRMIER", "KINESITHERAPEUTE", "DENTISTE", "PHARMACIEN"
   annee           Int
-  nombreMedecins  Int      // Headcount (raw)
-  pour10k         Float?   // Practitioners per 10,000 inhabitants
-  population      Int?     // Reference population used for density calculation
+  nombreMedecins  Int // Headcount (raw)
+  pour10k         Float? // Practitioners per 10,000 inhabitants
+  population      Int? // Reference population used for density calculation
   createdAt       DateTime @default(now())
 
   departement Departement @relation(fields: [departementCode], references: [code])
@@ -767,12 +769,12 @@ model ConflictSignal {
   id                 String    @id @default(cuid())
   nom                String
   prenom             String
-  typeMandat         String    // "Député", "Sénateur"
-  deputeId           String?   // Depute.id (PA* format) when typeMandat == "Député"
-  secteurDeclaration String    // company name from ParticipationFinanciere.nomSociete
+  typeMandat         String // "Député", "Sénateur"
+  deputeId           String? // Depute.id (PA* format) when typeMandat == "Député"
+  secteurDeclaration String // company name from ParticipationFinanciere.nomSociete
   participationCount Int
   totalMontant       Float?
-  tag                String    // ScrutinTag tag value
+  tag                String // ScrutinTag tag value
   voteCount          Int
   votePour           Int
   voteContre         Int
@@ -791,21 +793,21 @@ model ConflictSignal {
 
 model LoiParlementaire {
   id           String    @id @default(cuid())
-  slug         String    @unique  // "reforme-retraites-2023"
-  titre        String             // "Loi portant réforme des retraites"
-  titreCourt   String             // "Réforme des retraites"
-  resumeSimple String             // 2-3 sentence plain French explanation
-  type         String             // "PLF" | "PLFSS" | "PROJET_LOI" | "PROPOSITION_LOI" | "MOTION_CENSURE"
-  statut       String             // "adopte" | "rejete" | "en_cours"
-  legislature  Int      @default(17)
+  slug         String    @unique // "reforme-retraites-2023"
+  titre        String // "Loi portant réforme des retraites"
+  titreCourt   String // "Réforme des retraites"
+  resumeSimple String // 2-3 sentence plain French explanation
+  type         String // "PLF" | "PLFSS" | "PROJET_LOI" | "PROPOSITION_LOI" | "MOTION_CENSURE"
+  statut       String // "adopte" | "rejete" | "en_cours"
+  legislature  Int       @default(17)
   dateVote     DateTime?
-  referenceAN  String?            // Official law reference, e.g. "2023-270"
-  dossierUrl   String?            // Assemblée Nationale dossier URL
-  tags         String[]           // Reuses existing 13-tag vocabulary
-  rang         Int      @default(0) // Display priority (lower = first)
-  createdAt    DateTime @default(now())
+  referenceAN  String? // Official law reference, e.g. "2023-270"
+  dossierUrl   String? // Assemblée Nationale dossier URL
+  tags         String[] // Reuses existing 13-tag vocabulary
+  rang         Int       @default(0) // Display priority (lower = first)
+  createdAt    DateTime  @default(now())
 
-  scrutins     ScrutinLoi[]
+  scrutins ScrutinLoi[]
 
   @@index([statut])
   @@index([legislature])
@@ -813,14 +815,14 @@ model LoiParlementaire {
 }
 
 model ScrutinLoi {
-  id          String @id @default(cuid())
-  loiId       String
-  scrutinId   String
-  role        String @default("PROCEDURAL") // "VOTE_FINAL" | "AMENDEMENT" | "ARTICLE" | "MOTION" | "PROCEDURAL"
-  ordre       Int    @default(0)
+  id        String @id @default(cuid())
+  loiId     String
+  scrutinId String
+  role      String @default("PROCEDURAL") // "VOTE_FINAL" | "AMENDEMENT" | "ARTICLE" | "MOTION" | "PROCEDURAL"
+  ordre     Int    @default(0)
 
-  loi         LoiParlementaire @relation(fields: [loiId], references: [id], onDelete: Cascade)
-  scrutin     Scrutin          @relation(fields: [scrutinId], references: [id])
+  loi     LoiParlementaire @relation(fields: [loiId], references: [id], onDelete: Cascade)
+  scrutin Scrutin          @relation(fields: [scrutinId], references: [id])
 
   @@unique([loiId, scrutinId])
   @@index([loiId])
@@ -980,6 +982,7 @@ model PersonnalitePublique {
   evenements     EvenementJudiciaire[]
   deports        DecretDeport[]
   mediaOwnership MediaProprietaire[]
+  dirigeantRoles LobbyisteDirigeant[]
 
   @@index([nom, prenom])
   @@index([nomNormalise, prenomNormalise])
@@ -1137,22 +1140,22 @@ model GroupeMedia {
 }
 
 model MediaProprietaire {
-  id                  String    @id @default(cuid())
-  slug                String    @unique
-  nom                 String
-  prenom              String
-  civilite            String?
-  photoUrl            String?
-  bioCourte           String?
-  formation           String?
-  dateNaissance       DateTime?
-  lieuNaissance       String?
-  fortuneEstimee      Float?
-  sourceFortuneEstimee String?
-  activitePrincipale        String?
-  contextePolitique         String?
-  sourceContextePolitique   String?
-  personnaliteId            String?
+  id                      String    @id @default(cuid())
+  slug                    String    @unique
+  nom                     String
+  prenom                  String
+  civilite                String?
+  photoUrl                String?
+  bioCourte               String?
+  formation               String?
+  dateNaissance           DateTime?
+  lieuNaissance           String?
+  fortuneEstimee          Float?
+  sourceFortuneEstimee    String?
+  activitePrincipale      String?
+  contextePolitique       String?
+  sourceContextePolitique String?
+  personnaliteId          String?
 
   personnalite   PersonnalitePublique? @relation(fields: [personnaliteId], references: [id])
   participations ParticipationMedia[]
@@ -1177,8 +1180,8 @@ model ParticipationMedia {
 }
 
 model Filiale {
-  id              String                @id @default(cuid())
-  slug            String                @unique
+  id              String                 @id @default(cuid())
+  slug            String                 @unique
   nom             String
   type            TypeMedia
   groupeId        String
@@ -1217,4 +1220,92 @@ model SignalementArcom {
   @@index([filialeId])
   @@index([type])
   @@index([date])
+}
+
+model LobbyisteDirigeant {
+  id                 String          @id @default(cuid())
+  lobbyisteId        String
+  nom                String
+  prenom             String?
+  nomNormalise       String
+  prenomNormalise    String?
+  fonction           String?
+  dateNaissanceAnnee Int?
+  nationalite        String?
+  dateDebut          DateTime?
+  dateFin            DateTime?
+  source             SourceDirigeant
+  sourceUrl          String?
+  sourceDate         DateTime?
+  personnaliteId     String?
+  verifie            Boolean         @default(false)
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+
+  lobbyiste    Lobbyiste                    @relation(fields: [lobbyisteId], references: [id], onDelete: Cascade)
+  personnalite PersonnalitePublique?        @relation(fields: [personnaliteId], references: [id])
+  carriere     LobbyisteDirigeantCarriere[]
+
+  @@unique([lobbyisteId, nomNormalise, prenomNormalise, fonction])
+  @@index([nomNormalise, prenomNormalise])
+  @@index([lobbyisteId])
+  @@index([personnaliteId])
+}
+
+model LobbyisteDirigeantCarriere {
+  id           String                 @id @default(cuid())
+  dirigeantId  String
+  titre        String
+  organisation String?
+  categorie    CategorieCarriereLobby
+  dateDebut    DateTime?
+  dateFin      DateTime?
+  source       String
+  sourceUrl    String?
+  sourceDate   DateTime?
+  verifie      Boolean                @default(false)
+  ordre        Int?
+  createdAt    DateTime               @default(now())
+
+  dirigeant LobbyisteDirigeant @relation(fields: [dirigeantId], references: [id], onDelete: Cascade)
+
+  @@index([dirigeantId])
+  @@index([organisation])
+}
+
+model LobbyistePosition {
+  id               String    @id @default(cuid())
+  lobbyisteId      String
+  thematique       String
+  positionDeclaree String
+  source           String
+  sourceUrl        String?
+  sourceDate       DateTime?
+  verifie          Boolean   @default(false)
+  createdAt        DateTime  @default(now())
+
+  lobbyiste Lobbyiste @relation(fields: [lobbyisteId], references: [id], onDelete: Cascade)
+
+  @@index([lobbyisteId])
+  @@index([thematique])
+}
+
+enum SourceDirigeant {
+  RECHERCHE_ENTREPRISES
+  RNE_INPI
+  RESEARCH
+  HATVP
+}
+
+enum CategorieCarriereLobby {
+  FORMATION
+  FONCTION_PUBLIQUE
+  CABINET_MINISTERIEL
+  MANDAT_ELECTIF
+  MANDAT_GOUVERNEMENTAL
+  ENTREPRISE_PRIVEE
+  LOBBY
+  ASSOCIATION
+  MEDIA
+  AUTRE
 }

@@ -1,4 +1,23 @@
+import Link from "next/link";
 import { prisma } from "@/lib/db";
+
+async function fetchLobbyRoles(personnaliteId: string | null | undefined) {
+  if (!personnaliteId) return [];
+  return prisma.lobbyisteDirigeant.findMany({
+    where: { personnaliteId },
+    include: {
+      lobbyiste: { select: { id: true, nom: true, categorieActivite: true } },
+    },
+    orderBy: [{ dateFin: "asc" }, { dateDebut: "desc" }],
+  });
+}
+
+function yearRange(d: Date | null, end: Date | null): string {
+  if (!d && !end) return "";
+  const y1 = d ? d.getUTCFullYear() : "";
+  const y2 = end ? end.getUTCFullYear() : d ? "présent" : "";
+  return `${y1}${y1 && y2 ? " → " : ""}${y2}`;
+}
 
 export async function LobbySection({
   ministereCode,
@@ -7,11 +26,17 @@ export async function LobbySection({
   ministereCode: string | null;
   personnaliteId?: string | null;
 }) {
+  const lobbyRoles = await fetchLobbyRoles(personnaliteId);
+  const hasLobbyRoles = lobbyRoles.length > 0;
+
   if (!ministereCode) {
     return (
-      <section>
-        <SectionHeader title="Lobbying déclaré ciblant ce portefeuille" />
-        <Placeholder text="Aucune action de lobby enregistrée par la HATVP pour ce portefeuille." />
+      <section className="space-y-8">
+        <div>
+          <SectionHeader title="Lobbying déclaré ciblant ce portefeuille" />
+          <Placeholder text="Aucune action de lobby enregistrée par la HATVP pour ce portefeuille." />
+        </div>
+        {hasLobbyRoles && <LobbyRolesBlock roles={lobbyRoles} />}
       </section>
     );
   }
@@ -48,9 +73,12 @@ export async function LobbySection({
 
   if (actions.length === 0) {
     return (
-      <section>
-        <SectionHeader title="Lobbying déclaré ciblant ce ministère" />
-        <Placeholder text="Aucune action déclarée ciblant ce ministère." />
+      <section className="space-y-8">
+        <div>
+          <SectionHeader title="Lobbying déclaré ciblant ce ministère" />
+          <Placeholder text="Aucune action déclarée ciblant ce ministère." />
+        </div>
+        {hasLobbyRoles && <LobbyRolesBlock roles={lobbyRoles} />}
       </section>
     );
   }
@@ -93,7 +121,8 @@ export async function LobbySection({
       : (years[0] ?? null);
 
   return (
-    <section>
+    <section className="space-y-8">
+      {hasLobbyRoles && <LobbyRolesBlock roles={lobbyRoles} />}
       <SectionHeader title="Lobbying déclaré ciblant ce ministère" />
 
       <div className="space-y-5">
@@ -192,6 +221,74 @@ function Placeholder({ text }: { text: string }) {
   return (
     <div className="rounded-xl border border-bureau-700/20 bg-bureau-800/10 px-4 py-3 text-xs text-bureau-500">
       {text}
+    </div>
+  );
+}
+
+type LobbyRole = Awaited<ReturnType<typeof fetchLobbyRoles>>[number];
+
+function LobbyRolesBlock({ roles }: { roles: LobbyRole[] }) {
+  const currentCount = roles.filter((r) => r.dateFin == null).length;
+  return (
+    <div>
+      <div className="mb-4 flex items-center gap-3">
+        <h2 className="text-xs font-semibold uppercase tracking-[0.15em] text-rose-400">
+          Dirigeant{roles.length > 1 ? "s" : ""} de lobby
+        </h2>
+        <div className="h-px flex-1 bg-rose-700/30" />
+      </div>
+      <div className="rounded-xl border border-rose-600/30 bg-rose-950/10 px-4 py-3">
+        <p className="mb-3 text-xs text-rose-200/80">
+          Cette personne figure{" "}
+          {currentCount > 0
+            ? `actuellement parmi les dirigeants déclarés de ${currentCount} organisation${currentCount > 1 ? "s" : ""} inscrite${currentCount > 1 ? "s" : ""} au registre HATVP`
+            : `parmi les anciens dirigeants déclarés d'au moins une organisation inscrite au registre HATVP`}
+          .
+        </p>
+        <ul className="space-y-2">
+          {roles.map((r) => {
+            const isCurrent = r.dateFin == null;
+            const range = yearRange(r.dateDebut, r.dateFin);
+            return (
+              <li
+                key={r.id}
+                className="flex items-start justify-between gap-4 border-t border-rose-700/20 pt-2 first:border-t-0 first:pt-0"
+              >
+                <div>
+                  <Link
+                    href={`/profils/lobbyistes/${r.lobbyiste.id}`}
+                    className="text-sm font-medium text-bureau-100 underline-offset-2 hover:underline"
+                  >
+                    {r.lobbyiste.nom}
+                  </Link>
+                  <div className="mt-1 text-xs text-bureau-400">
+                    {r.fonction ?? "Dirigeant"}
+                    {r.lobbyiste.categorieActivite
+                      ? ` · ${r.lobbyiste.categorieActivite}`
+                      : ""}
+                  </div>
+                </div>
+                <div className="shrink-0 text-right">
+                  <span
+                    className={`rounded-md border px-2 py-0.5 text-[10px] font-medium uppercase tracking-[0.1em] ${
+                      isCurrent
+                        ? "border-rose-500/40 bg-rose-500/10 text-rose-300"
+                        : "border-amber-500/40 bg-amber-500/10 text-amber-300"
+                    }`}
+                  >
+                    {isCurrent ? "En fonction" : "Ancien"}
+                  </span>
+                  {range && (
+                    <div className="mt-1 text-[10px] tabular-nums text-bureau-500">
+                      {range}
+                    </div>
+                  )}
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
     </div>
   );
 }

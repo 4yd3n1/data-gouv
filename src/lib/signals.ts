@@ -1,4 +1,5 @@
 import { cache } from "react";
+import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/db";
 import { fmt, fmtEuro, fmtPct } from "@/lib/format";
 import {
@@ -7,9 +8,11 @@ import {
   lobbySeverity,
   gapSeverity,
   disciplineSeverity,
+  lobbyOwnerLinkSeverity,
   SEVERITY_ORDER,
   type SignalSeverity,
 } from "@/lib/signal-types";
+import { normalizeLobbyisteName, matchLobbyOrg } from "@/lib/lobby-overview";
 
 /* ------------------------------------------------------------------ */
 /*  Unified signal types                                               */
@@ -19,6 +22,7 @@ export type SignalType =
   | "conflit"
   | "porte"
   | "lobby"
+  | "lobby-owner"
   | "media"
   | "ecart"
   | "dissidence";
@@ -27,6 +31,7 @@ export const SIGNAL_TYPE_LABELS: Record<SignalType, string> = {
   conflit: "Conflits",
   porte: "Portes tournantes",
   lobby: "Lobbying",
+  "lobby-owner": "Liens lobby",
   media: "Nexus médias",
   ecart: "Écarts HATVP",
   dissidence: "Dissidences",
@@ -39,6 +44,8 @@ export const SIGNAL_TYPE_DESCRIPTIONS: Record<SignalType, string> = {
     "Carrière privée recoupant le portefeuille occupé actuellement — ancien employeur, ancien administrateur.",
   lobby:
     "Ministère figurant parmi les cibles les plus fréquentes des représentants d'intérêts enregistrés à l'HATVP.",
+  "lobby-owner":
+    "Personnalité publique liée à un lobby : dirigeant actuel ou ancien, ou ayant mentionné cette organisation dans sa déclaration HATVP.",
   media:
     "Propriétaire de médias dont les liens politiques sont documentés par des sources publiques.",
   ecart:
@@ -516,22 +523,257 @@ async function collectPartyDiscipline(
   }
 }
 
+async function collectLobbyOwnerLinks(
+  map: Map<string, UnifiedSignal>,
+): Promise<void> {
+  // 1. Preload all lobbies with a non-empty nom. Used for ILIKE search keys.
+  const lobbies = await prisma.lobbyiste.findMany({
+    select: { id: true, nom: true },
+  });
+
+  // Skip lobbies whose name collapses to < 4 chars after suffix strip (too broad)
+  const lobbiesFiltered = lobbies
+    .map((l) => ({
+      id: l.id,
+      nom: l.nom,
+      searchCore: normalizeLobbyisteName(l.nom),
+    }))
+    .filter((l) => l.searchCore.length >= 4);
+
+  if (lobbiesFiltered.length === 0) return;
+
+  // 2. Per-lobby AGORA declaration count + top ministry (one query each)
+  const agoraStats = new Map<string, { count: number; topMin: string | null }>();
+
+  const nomCoreSet = new Set(lobbiesFiltered.map((l) => l.nom));
+  const agoraRows = await prisma.actionLobby.groupBy({
+    by: ["representantNom", "ministereCode"],
+    where: { representantNom: { in: [...nomCoreSet] } },
+    _count: { id: true },
+  });
+  for (const r of agoraRows) {
+    const cur = agoraStats.get(r.representantNom) ?? { count: 0, topMin: null };
+    cur.count += r._count.id;
+    if (!cur.topMin || (r._count.id > 0 && r.ministereCode)) {
+      cur.topMin = r.ministereCode ?? cur.topMin;
+    }
+    agoraStats.set(r.representantNom, cur);
+  }
+
+  // 3. Structural links from LobbyisteDirigeant (Phase 2 data)
+  const structuralDirigeants = await prisma.lobbyisteDirigeant.findMany({
+    where: { personnaliteId: { not: null } },
+    include: {
+      lobbyiste: { select: { id: true, nom: true } },
+      personnalite: {
+        select: {
+          slug: true,
+          nom: true,
+          prenom: true,
+          mandats: {
+            where: { dateFin: null },
+            select: { titreCourt: true },
+            take: 1,
+          },
+        },
+      },
+    },
+  });
+
+  for (const d of structuralDirigeants) {
+    if (!d.personnalite) continue;
+    const stats = agoraStats.get(d.lobbyiste.nom) ?? { count: 0, topMin: null };
+    const current = d.dateFin == null;
+    const linkKind = current ? "dirigeant_direct" : "ancien_dirigeant";
+    const severity = lobbyOwnerLinkSeverity(linkKind, stats.count);
+
+    const mandat = d.personnalite.mandats[0];
+    const subtitle = mandat?.titreCourt ?? "Personnalité publique";
+    const headline =
+      current
+        ? `${d.fonction ?? "Dirigeant"} de ${d.lobbyiste.nom}`
+        : `Ancien ${d.fonction ?? "dirigeant"} de ${d.lobbyiste.nom}`;
+    const detail =
+      stats.count > 0
+        ? `${fmt(stats.count)} déclarations AGORA du lobby`
+        : undefined;
+
+    upsert(map, {
+      personKey: `ministre:${d.personnalite.slug}`,
+      entityType: "ministre",
+      href: `/profils/${d.personnalite.slug}?tab=mandats`,
+      nom: d.personnalite.nom,
+      prenom: d.personnalite.prenom,
+      subtitle,
+      type: "lobby-owner",
+      severity,
+      headline,
+      detail,
+      chips: stats.topMin ? [stats.topMin] : undefined,
+      exposure: (current ? 10_000 : 2_000) + stats.count,
+    });
+  }
+
+  // 4. Freetext links from EntreeCarriere.organisation — "former lobby exec now in government"
+  // We look for ministers (PersonnalitePublique) whose private-sector career
+  // entries contain a lobby core-name as a substring.
+  const pps = await prisma.personnalitePublique.findMany({
+    select: {
+      slug: true,
+      nom: true,
+      prenom: true,
+      mandats: {
+        where: { dateFin: null },
+        select: { titreCourt: true, portefeuille: true, ministereCode: true },
+        take: 1,
+      },
+      carriere: {
+        where: {
+          categorie: { in: ["CARRIERE_PRIVEE", "ORGANISME"] },
+          organisation: { not: null },
+        },
+        select: { organisation: true, titre: true, dateDebut: true, dateFin: true },
+      },
+      interets: {
+        where: {
+          rubrique: { in: ["ACTIVITE_ANTERIEURE", "ACTIVITE_CONJOINT", "PARTICIPATION"] },
+          organisation: { not: null },
+        },
+        select: { rubrique: true, contenu: true, organisation: true, montant: true },
+      },
+    },
+  });
+
+  // Pre-compile per-lobby regexes ONCE (previously built inside the hot loop,
+  // causing ~12M RegExp compilations per request). Also cache the upper-cased
+  // core and its first two tokens for the `indexOf` prefilter.
+  const escapeRe = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const lobbyCompiled = lobbiesFiltered.map((l) => {
+    const core = l.searchCore.toUpperCase();
+    return {
+      id: l.id,
+      nom: l.nom,
+      core,
+      reLobby: new RegExp(`\\b${escapeRe(core)}\\b`),
+    };
+  });
+
+  for (const p of pps) {
+    if (!p.carriere.length && !p.interets.length) continue;
+
+    const seenLobbyIds = new Set<string>();
+
+    const checkOrg = (
+      orgUpper: string,
+      onMatch: (lobby: (typeof lobbyCompiled)[number]) => void,
+    ): void => {
+      if (orgUpper.length < 4) return;
+      // Compile the reverse-direction regex ONCE per org (not once per lobby).
+      const reOrg = new RegExp(`\\b${escapeRe(orgUpper)}\\b`);
+      for (const lobby of lobbyCompiled) {
+        if (seenLobbyIds.has(lobby.id)) continue;
+        // Cheap substring prefilter: if neither name is a substring of the
+        // other, word-boundary regex can't match either. `indexOf` is ~100×
+        // faster than RegExp.test. This skips ~99% of pairs.
+        if (
+          orgUpper.indexOf(lobby.core) === -1 &&
+          lobby.core.indexOf(orgUpper) === -1
+        )
+          continue;
+        if (lobby.reLobby.test(orgUpper) || reOrg.test(lobby.core)) {
+          onMatch(lobby);
+          seenLobbyIds.add(lobby.id);
+        }
+      }
+    };
+
+    for (const c of p.carriere) {
+      const orgUpper = (c.organisation ?? "").toUpperCase();
+      checkOrg(orgUpper, (lobby) => {
+        const stats = agoraStats.get(lobby.nom) ?? { count: 0, topMin: null };
+        const severity = lobbyOwnerLinkSeverity("carriere_prive", stats.count);
+        const mandat = p.mandats[0];
+        const headline = `${c.titre} — ${c.organisation}`;
+        const detail =
+          stats.count > 0
+            ? `${lobby.nom} a déposé ${fmt(stats.count)} déclarations AGORA`
+            : undefined;
+        upsert(map, {
+          personKey: `ministre:${p.slug}`,
+          entityType: "ministre",
+          href: `/profils/${p.slug}?tab=mandats`,
+          nom: p.nom,
+          prenom: p.prenom,
+          subtitle: mandat?.titreCourt ?? "Personnalité publique",
+          type: "lobby-owner",
+          severity,
+          headline,
+          detail,
+          chips: stats.topMin ? [stats.topMin] : undefined,
+          exposure: 1_500 + stats.count * 0.5,
+        });
+      });
+    }
+
+    for (const i of p.interets) {
+      const orgUpper = (i.organisation ?? "").toUpperCase();
+      checkOrg(orgUpper, (lobby) => {
+        const stats = agoraStats.get(lobby.nom) ?? { count: 0, topMin: null };
+        const severity = lobbyOwnerLinkSeverity("interet_declare", stats.count);
+        const mandat = p.mandats[0];
+        const rubriqueLabel =
+          i.rubrique === "ACTIVITE_CONJOINT"
+            ? "Activité du conjoint"
+            : i.rubrique === "PARTICIPATION"
+              ? "Participation financière"
+              : "Activité antérieure";
+        const headline = `${rubriqueLabel} : ${i.organisation}`;
+        const detail =
+          stats.count > 0
+            ? `${lobby.nom} — ${fmt(stats.count)} déclarations AGORA`
+            : undefined;
+        upsert(map, {
+          personKey: `ministre:${p.slug}`,
+          entityType: "ministre",
+          href: `/profils/${p.slug}?tab=declarations`,
+          nom: p.nom,
+          prenom: p.prenom,
+          subtitle: mandat?.titreCourt ?? "Personnalité publique",
+          type: "lobby-owner",
+          severity,
+          headline,
+          detail,
+          chips: stats.topMin ? [stats.topMin] : undefined,
+          exposure: 1_200 + stats.count * 0.3,
+        });
+      });
+    }
+  }
+}
+
 /* ------------------------------------------------------------------ */
 /*  Entry point                                                         */
 /* ------------------------------------------------------------------ */
 
 /**
- * Returns all signals from all 6 collectors, deduplicated by person and
- * sorted by severity then total exposure. Wrapped in React.cache so
- * multiple callers within the same request share one fetch.
+ * Returns all signals from all 7 collectors, deduplicated by person and
+ * sorted by severity then total exposure.
+ *
+ * Two-level caching:
+ *   - `unstable_cache` (10 min revalidate) shares the result across requests
+ *     and users. Signals are a deterministic function of DB state that only
+ *     changes when data is re-ingested, so cross-request caching is safe.
+ *   - `React.cache` wraps the outer call so multiple callers in the same
+ *     request tree (e.g. homepage + ProfileSignalBanner) share one lookup.
  */
-export const getSignals = cache(async (): Promise<UnifiedSignal[]> => {
+const computeSignals = async (): Promise<UnifiedSignal[]> => {
   const map = new Map<string, UnifiedSignal>();
 
   await Promise.all([
     collectConflicts(map),
     collectRevolvingDoors(map),
     collectLobbyConcentration(map),
+    collectLobbyOwnerLinks(map),
     collectMediaNexus(map),
     collectDeclarationGaps(map),
     collectPartyDiscipline(map),
@@ -542,7 +784,17 @@ export const getSignals = cache(async (): Promise<UnifiedSignal[]> => {
     if (sevDiff !== 0) return sevDiff;
     return b.totalExposure - a.totalExposure;
   });
-});
+};
+
+const cachedComputeSignals = unstable_cache(
+  computeSignals,
+  ["unified-signals-v1"],
+  { revalidate: 600, tags: ["signals"] },
+);
+
+export const getSignals = cache(
+  async (): Promise<UnifiedSignal[]> => cachedComputeSignals(),
+);
 
 /**
  * Counts by type and severity for the filter bar and live metrics.
@@ -561,6 +813,7 @@ export function summarizeSignals(signals: UnifiedSignal[]): {
     conflit: 0,
     porte: 0,
     lobby: 0,
+    "lobby-owner": 0,
     media: 0,
     ecart: 0,
     dissidence: 0,

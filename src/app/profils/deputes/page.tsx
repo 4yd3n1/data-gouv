@@ -19,6 +19,7 @@ const TYPE_CHIP_STYLE: Record<SignalType, string> = {
   conflit: "border-rose/30 text-rose bg-rose/5",
   porte: "border-amber/30 text-amber bg-amber/5",
   lobby: "border-amber/30 text-amber bg-amber/5",
+  "lobby-owner": "border-rose/30 text-rose bg-rose/5",
   media: "border-rose/30 text-rose bg-rose/5",
   ecart: "border-amber/30 text-amber bg-amber/5",
   dissidence: "border-teal/30 text-teal bg-teal/5",

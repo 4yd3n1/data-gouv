@@ -1,0 +1,62 @@
+{
+  "lobbyisteId": "398995142",
+  "nom": "Com'Publics",
+  "researched_at": "2026-04-23",
+  "notes": "Cabinet de conseil en affaires publiques fondé en 1994 par Marc Teyssier d'Orfeuil. Spécialisation : clubs parlementaires + networking. Source : Wikipedia + presse (Les Jours). NB : la recherche Agent C a suggéré que Teyssier d'Orfeuil a été 'député' Paris 11e 1989-1995 mais notre base Depute/Senateur ne le confirme pas ; il s'agit vraisemblablement d'un conseiller du 11e arrondissement (municipal), pas d'un député national. Claim laissée à vérifier manuellement.",
+  "dirigeants": [
+    {
+      "nomNormalise": "teyssier d'orfeuil",
+      "prenomNormalise": "marc",
+      "fonction": "Fondateur",
+      "carriere": [
+        {
+          "titre": "Délégué départemental — Rassemblement pour la République (RPR)",
+          "organisation": "RPR",
+          "categorie": "ASSOCIATION",
+          "dateDebut": "1984-01-01",
+          "dateFin": null,
+          "source": "Les Jours — fiche personnage",
+          "sourceUrl": "https://lesjours.fr/personnages/marc-teyssier-d-orfeuil/",
+          "sourceDate": "2026-04-23",
+          "verifie": false,
+          "_ingested": true
+        },
+        {
+          "titre": "Mandat électif (à vérifier — Conseil de Paris 11e arrondissement, pas député national)",
+          "organisation": "Conseil de Paris / mairie du 11e arrondissement",
+          "categorie": "MANDAT_ELECTIF",
+          "dateDebut": "1989-01-01",
+          "dateFin": "1995-01-01",
+          "source": "Wikipedia Com'Publics",
+          "sourceUrl": "https://fr.wikipedia.org/wiki/Com%27Publics",
+          "sourceDate": "2026-04-23",
+          "verifie": false,
+          "_ingested": true
+        },
+        {
+          "titre": "Fondateur",
+          "organisation": "Com'Publics",
+          "categorie": "LOBBY",
+          "dateDebut": "1994-11-04",
+          "dateFin": null,
+          "source": "Com'Publics",
+          "sourceUrl": "https://www.compublics.com/",
+          "sourceDate": "2026-04-23",
+          "verifie": false,
+          "_ingested": true
+        }
+      ]
+    }
+  ],
+  "positions": [
+    {
+      "thematique": "Organisation de clubs parlementaires et diners",
+      "positionDeclaree": "Com'Publics opère de nombreux clubs thématiques (Club des parlementaires, Club des élus, etc.) permettant aux entreprises clientes d'accéder informellement aux décideurs politiques. Base : restaurant 'Chez Françoise' comme lieu récurrent de ces rencontres.",
+      "source": "Les Jours / Wikipedia",
+      "sourceUrl": "https://lesjours.fr/personnages/marc-teyssier-d-orfeuil/",
+      "sourceDate": "2026-04-23",
+      "verifie": false,
+      "_ingested": true
+    }
+  ]
+}

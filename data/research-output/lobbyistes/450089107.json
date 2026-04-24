@@ -1,0 +1,98 @@
+{
+  "lobbyisteId": "450089107",
+  "nom": "Anthenor Public Affairs",
+  "researched_at": "2026-04-23",
+  "notes": "Cabinet d'affaires publiques fondé en 2003 par Gilles Lamarque (ex-Publicis, ex-Renault). Parcours qualifié de 'revolving door' privé : institution patronale → communication → corporate → conseil. Source : site Anthenor + LinkedIn + HATVP.",
+  "dirigeants": [
+    {
+      "nomNormalise": "lamarque",
+      "prenomNormalise": "gilles",
+      "fonction": "Fondateur et Président",
+      "carriere": [
+        {
+          "titre": "Sciences Po Paris et INSEAD",
+          "organisation": "Sciences Po + INSEAD",
+          "categorie": "FORMATION",
+          "dateDebut": null,
+          "dateFin": null,
+          "source": "LinkedIn Gilles Lamarque",
+          "sourceUrl": "https://www.linkedin.com/in/gilles-lamarque-3a96533",
+          "sourceDate": "2026-04-23",
+          "verifie": false,
+          "_ingested": true
+        },
+        {
+          "titre": "Chargé d'études législatives",
+          "organisation": "CNPF (aujourd'hui MEDEF)",
+          "categorie": "ASSOCIATION",
+          "dateDebut": "1988-01-01",
+          "dateFin": "1994-01-01",
+          "source": "Anthenor — About Us",
+          "sourceUrl": "https://anthenor.fr/nous-connaitre/",
+          "sourceDate": "2026-04-23",
+          "verifie": false,
+          "_ingested": true
+        },
+        {
+          "titre": "Consultant affaires publiques institutionnelles",
+          "organisation": "Publicis",
+          "categorie": "ENTREPRISE_PRIVEE",
+          "dateDebut": null,
+          "dateFin": null,
+          "source": "Anthenor — About Us",
+          "sourceUrl": "https://anthenor.fr/nous-connaitre/",
+          "sourceDate": "2026-04-23",
+          "verifie": false,
+          "_ingested": true
+        },
+        {
+          "titre": "Directeur des affaires publiques",
+          "organisation": "Renault",
+          "categorie": "ENTREPRISE_PRIVEE",
+          "dateDebut": null,
+          "dateFin": "2003-09-01",
+          "source": "Anthenor — About Us",
+          "sourceUrl": "https://anthenor.fr/nous-connaitre/",
+          "sourceDate": "2026-04-23",
+          "verifie": false,
+          "_ingested": true
+        },
+        {
+          "titre": "Fondateur et Président",
+          "organisation": "Anthenor Public Affairs",
+          "categorie": "LOBBY",
+          "dateDebut": "2003-09-01",
+          "dateFin": null,
+          "source": "Anthenor — About Us",
+          "sourceUrl": "https://anthenor.fr/nous-connaitre/",
+          "sourceDate": "2026-04-23",
+          "verifie": false,
+          "_ingested": true
+        },
+        {
+          "titre": "Secrétaire général",
+          "organisation": "Association Française des Conseils en Lobbying (AFCL)",
+          "categorie": "ASSOCIATION",
+          "dateDebut": null,
+          "dateFin": null,
+          "source": "AFCL",
+          "sourceUrl": "https://www.afcl.net/",
+          "sourceDate": "2026-04-23",
+          "verifie": false,
+          "_ingested": true
+        }
+      ]
+    }
+  ],
+  "positions": [
+    {
+      "thematique": "Multi-sectoriel — affaires publiques généralistes",
+      "positionDeclaree": "Environ 117 clients déclarés auprès de l'HATVP. Spécialisations connues : pharma, technologies, mobilité, énergie. Pas de positionnement politique public affiché ; cabinet à positionnement 'technocratique / relations institutionnelles'.",
+      "source": "HATVP registre / Anthenor",
+      "sourceUrl": "https://www.hatvp.fr/fiche-organisation/?organisation=450089107",
+      "sourceDate": "2026-04-23",
+      "verifie": false,
+      "_ingested": true
+    }
+  ]
+}

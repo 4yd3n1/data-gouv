@@ -6,6 +6,7 @@ import { ProfileHero } from "@/components/profile-hero";
 import { ProfileTabs } from "@/components/profile-tabs";
 import { MandatsSection } from "@/components/gouvernement/mandats-section";
 import { InteretsSection } from "@/components/gouvernement/interets-section";
+import { RemunerationsPanel } from "@/components/gouvernement/remunerations-panel";
 import { CareerSection } from "@/components/gouvernement/career-section";
 import { LobbySection } from "@/components/gouvernement/lobby-section";
 import { JudiciaireSection } from "@/components/gouvernement/judiciaire-section";
@@ -20,6 +21,7 @@ import { DeportSection } from "@/components/gouvernement/deport-section";
 import { ProfileSignalBanner } from "@/components/profile-signal-banner";
 import { ShareButton } from "@/components/share-button";
 import { getPromesseSummary, BIO, PROMESSES } from "@/data/president-macron";
+import { normalizeName } from "@/lib/normalize-name";
 
 export const revalidate = 3600;
 
@@ -250,6 +252,17 @@ export default async function GouvernementProfilePage({
                 </span>
               </div>
             )}
+            <RemunerationsPanel
+              nomNormalise={
+                personnalite.nomNormalise || normalizeName(personnalite.nom)
+              }
+              prenomNormalise={
+                personnalite.prenomNormalise ||
+                normalizeName(personnalite.prenom)
+              }
+              personnaliteId={personnalite.id}
+              hatvpDossierId={personnalite.hatvpDossierId}
+            />
             {deportCount > 0 && (
               <div id="deports">
                 <DeportSection personnaliteId={personnalite.id} />

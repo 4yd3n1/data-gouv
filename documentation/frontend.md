@@ -258,7 +258,7 @@ Icons are **inline SVG** — `lucide-react` intentionally NOT installed. Lead + 
 | `/profils/[slug]` | Minister profile — `ProfileHero` + `ProfileTabs` + `DeportBanner` (Session 47) + `ProfileSignalBanner`. Tabs: Parcours / Déclarations HATVP / Mandats & Lobbying / Affaires judiciaires (conditional) / Activité parlementaire (conditional). Déclarations HATVP tab renders `DeportSection` (Session 47) above `InteretsSection` when `DecretDeport` rows exist. Anchor `#deports` deep-links to the section. |
 | `/profils/elus` | Local officials list — 593K rows, paginated |
 | `/profils/lobbyistes` | Search, pagination |
-| `/profils/lobbyistes/[id]` | Info panel, actions list |
+| `/profils/lobbyistes/[id]` | **Investigative profile (Session 52)** — Variant A hero (serif h1 + categorie + 6-field metadata grid: type, SIREN, effectif, CA, adresse, inscription HATVP), 4-cell stat strip (déclarations AGORA · ministères ciblés + 1ᵉʳ · domaines + 1ᵉʳ · période), FIG. 1 ministry table with part-% and current-minister link, FIG. 2 top-10 domain BarRows (synonym-normalized), FIG. 3 stacked-area timeline (top 6 ministries + Autres, only when >1 exercice), FIG. 4 50-row declarations table (exercice / ministère / domaine / typeAction / tranche). Data: `src/lib/lobby-overview.ts::getLobbyisteAgoraDetail(name)` — matches `Lobbyiste.nom` to `ActionLobby.representantNom` via `normalizeLobbyisteName`; returns null when no AGORA row matches, page renders transparent "aucune déclaration AGORA appariée" notice and only the legacy `ActionLobbyiste` block. |
 | `/profils/partis` | Year selector, sort options, aggregate stats |
 | `/profils/partis/[id]` | Revenue/expense breakdown bars, multi-year table |
 | `/profils/comparer` | Deputy comparison (4-state) |

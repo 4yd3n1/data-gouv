@@ -18,6 +18,7 @@ const TYPE_TEXT: Record<SignalType, string> = {
   conflit: "text-rose-300",
   porte: "text-amber-300",
   lobby: "text-amber-300",
+  "lobby-owner": "text-rose-300",
   media: "text-rose-300",
   ecart: "text-amber-300",
   dissidence: "text-teal-300",

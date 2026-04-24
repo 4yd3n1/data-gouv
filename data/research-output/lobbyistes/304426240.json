@@ -1,0 +1,138 @@
+{
+  "lobbyisteId": "304426240",
+  "nom": "Fédération Nationale de la Mutualité Française",
+  "researched_at": "2026-04-23",
+  "notes": "Fédération mutualiste historique (1902). Représente ~1000 mutuelles santé + prévoyance. Source éditoriale : recherche web session 53. Tous les claims sont verifie=false jusqu'à validation manuelle.",
+  "dirigeants": [
+    {
+      "nomNormalise": "chenut",
+      "prenomNormalise": "eric",
+      "fonction": "Président",
+      "carriere": [
+        {
+          "titre": "Fondateur",
+          "organisation": "La Mutuelle des Étudiants (LMDE)",
+          "categorie": "ASSOCIATION",
+          "dateDebut": "2000-01-01",
+          "dateFin": null,
+          "source": "Mutualité Française — présidence",
+          "sourceUrl": "https://www.mutualite.fr/qui-sommes-nous/organisation/la-presidence/eric-chenut/",
+          "sourceDate": "2026-04-23",
+          "verifie": false,
+          "_ingested": true
+        },
+        {
+          "titre": "Administrateur puis délégué administrateur",
+          "organisation": "MGEN",
+          "categorie": "ASSOCIATION",
+          "dateDebut": "2003-01-01",
+          "dateFin": null,
+          "source": "Mutualité Française — présidence",
+          "sourceUrl": "https://www.mutualite.fr/qui-sommes-nous/organisation/la-presidence/eric-chenut/",
+          "sourceDate": "2026-04-23",
+          "verifie": false,
+          "_ingested": true
+        },
+        {
+          "titre": "Vice-président, affaires santé et sociales",
+          "organisation": "FNMF",
+          "categorie": "ASSOCIATION",
+          "dateDebut": "2013-01-01",
+          "dateFin": "2017-01-01",
+          "source": "Mutualité Française",
+          "sourceUrl": "https://www.mutualite.fr/qui-sommes-nous/organisation/la-presidence/eric-chenut/",
+          "sourceDate": "2026-04-23",
+          "verifie": false,
+          "_ingested": true
+        },
+        {
+          "titre": "Président",
+          "organisation": "FNMF",
+          "categorie": "ASSOCIATION",
+          "dateDebut": "2021-10-05",
+          "dateFin": null,
+          "source": "Mutualité Française",
+          "sourceUrl": "https://www.mutualite.fr/qui-sommes-nous/organisation/la-presidence/eric-chenut/",
+          "sourceDate": "2026-04-23",
+          "verifie": false,
+          "_ingested": true
+        }
+      ]
+    },
+    {
+      "nomNormalise": "beaudet",
+      "prenomNormalise": "thierry",
+      "fonction": "Ancien Président (2016-2021)",
+      "carriere": [
+        {
+          "titre": "Président",
+          "organisation": "MGEN",
+          "categorie": "ASSOCIATION",
+          "dateDebut": "2009-01-01",
+          "dateFin": "2017-01-01",
+          "source": "Wikipedia Thierry Beaudet",
+          "sourceUrl": "https://www.lecese.fr/membre/thierry-beaudet",
+          "sourceDate": "2026-04-23",
+          "verifie": false,
+          "_ingested": true
+        },
+        {
+          "titre": "Président",
+          "organisation": "FNMF",
+          "categorie": "ASSOCIATION",
+          "dateDebut": "2016-01-01",
+          "dateFin": "2021-09-30",
+          "source": "Wikipedia Thierry Beaudet",
+          "sourceUrl": "https://www.lecese.fr/membre/thierry-beaudet",
+          "sourceDate": "2026-04-23",
+          "verifie": false,
+          "_ingested": true
+        },
+        {
+          "titre": "Président",
+          "organisation": "Groupe VYV",
+          "categorie": "ASSOCIATION",
+          "dateDebut": "2017-09-01",
+          "dateFin": "2021-06-01",
+          "source": "Wikipedia Thierry Beaudet",
+          "sourceUrl": "https://www.lecese.fr/membre/thierry-beaudet",
+          "sourceDate": "2026-04-23",
+          "verifie": false,
+          "_ingested": true
+        },
+        {
+          "titre": "Président du Conseil économique, social et environnemental",
+          "organisation": "CESE",
+          "categorie": "MANDAT_GOUVERNEMENTAL",
+          "dateDebut": "2021-05-18",
+          "dateFin": null,
+          "source": "CESE — fiche membre",
+          "sourceUrl": "https://www.lecese.fr/membre/thierry-beaudet",
+          "sourceDate": "2026-04-23",
+          "verifie": false,
+          "_ingested": true
+        }
+      ]
+    }
+  ],
+  "positions": [
+    {
+      "thematique": "Protection sociale complémentaire (santé, prévoyance)",
+      "positionDeclaree": "Défend l'inclusion de l'assurance maladie complémentaire dans l'architecture de protection sociale. Engagée sur la 100 % Santé, la reste-à-charge zéro, et la prise en charge des soins dentaires / optiques / auditifs.",
+      "source": "Mutualité Française — axes de plaidoyer",
+      "sourceUrl": "https://www.mutualite.fr/",
+      "sourceDate": "2026-04-23",
+      "verifie": false,
+      "_ingested": true
+    },
+    {
+      "thematique": "Autonomie et dépendance",
+      "positionDeclaree": "Plaide pour la création d'un cinquième risque autonomie financé de manière solidaire. Prend position sur le financement des EHPAD et le virage domiciliaire.",
+      "source": "Mutualité Française",
+      "sourceUrl": "https://www.mutualite.fr/",
+      "sourceDate": "2026-04-23",
+      "verifie": false,
+      "_ingested": true
+    }
+  ]
+}

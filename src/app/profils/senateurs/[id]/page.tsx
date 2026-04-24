@@ -25,6 +25,7 @@ import { ProfileHero } from "@/components/profile-hero";
 import { ProfileTabs } from "@/components/profile-tabs";
 import { ProfileSignalBanner } from "@/components/profile-signal-banner";
 import { DeclarationSection } from "@/components/declaration-section";
+import { RemunerationsPanel } from "@/components/gouvernement/remunerations-panel";
 
 const COMMISSION_DOMAINS: Array<{ pattern: RegExp; keywords: string[] }> = [
   { pattern: /affaires sociales|sant\u00e9/i, keywords: ["sant\u00e9", "sante", "pharma"] },
@@ -253,7 +254,12 @@ export default async function SenateurDetailPage({
 
         {/* ── Déclarations ── */}
         {tab === "declarations" && (
-          <div className="fade-up">
+          <div className="space-y-8 fade-up">
+            <RemunerationsPanel
+              nomNormalise={s.nomNormalise}
+              prenomNormalise={s.prenomNormalise}
+              personnaliteId={null}
+            />
             {declarations.length > 0 ? (
               <DeclarationSection declarations={declarations} />
             ) : (

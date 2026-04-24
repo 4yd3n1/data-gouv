@@ -26,6 +26,7 @@ import { ProfileHero } from "@/components/profile-hero";
 import { ProfileTabs } from "@/components/profile-tabs";
 import { VoteBadge } from "@/components/vote-badge";
 import { DeclarationSection } from "@/components/declaration-section";
+import { RemunerationsPanel } from "@/components/gouvernement/remunerations-panel";
 import { ConflictAlert } from "@/components/conflict-alert";
 import { ConflictDrilldown } from "@/components/conflict-drilldown";
 import { ProfileSignalBanner } from "@/components/profile-signal-banner";
@@ -301,7 +302,12 @@ export default async function DeputeDetailPage({
 
         {/* ── Déclarations ── */}
         {tab === "declarations" && (
-          <div className="fade-up">
+          <div className="space-y-8 fade-up">
+            <RemunerationsPanel
+              nomNormalise={d.nomNormalise}
+              prenomNormalise={d.prenomNormalise}
+              personnaliteId={null}
+            />
             {declarations.length > 0 ? (
               <DeclarationSection declarations={declarations} />
             ) : (
