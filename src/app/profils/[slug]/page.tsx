@@ -262,6 +262,7 @@ export default async function GouvernementProfilePage({
               }
               personnaliteId={personnalite.id}
               hatvpDossierId={personnalite.hatvpDossierId}
+              mandatType={activeMandat?.type ?? null}
             />
             {deportCount > 0 && (
               <div id="deports">

@@ -1,7 +1,9 @@
 import Link from "next/link";
+import type { TypeMandat } from "@prisma/client";
 import { Eyebrow } from "@/components/investigative/eyebrow";
 import { SrcChip } from "@/components/investigative/src-chip";
 import { fmtEuro, fmtDate, fmtShortDate, fmtCompact } from "@/lib/format";
+import { getBaremeOfficiel } from "@/lib/baremes-officiels";
 import {
   getRemunerations,
   type RemunerationsPosition,
@@ -13,6 +15,10 @@ type Props = {
   prenomNormalise: string;
   personnaliteId?: string | null;
   hatvpDossierId?: string | null;
+  /** Type of the currently active MandatGouvernemental, when the person is in
+   *  office. Triggers display of the official indemnité tile (décret 2002-562
+   *  + 2012-983) in place of the "Postes" count. */
+  mandatType?: TypeMandat | null;
 };
 
 const TYPE_ORDER = ["mandat_electif", "professionnel", "consultant", "dirigeant"] as const;
@@ -39,8 +45,10 @@ export async function RemunerationsPanel({
   prenomNormalise,
   personnaliteId,
   hatvpDossierId,
+  mandatType,
 }: Props) {
   const data = await getRemunerations({ nomNormalise, prenomNormalise, personnaliteId });
+  const bareme = getBaremeOfficiel(mandatType);
 
   // Empty across all three potential sources -> don't render at all.
   if (
@@ -111,11 +119,19 @@ export async function RemunerationsPanel({
           sub="toutes déclarations HATVP"
           emphasis
         />
-        <StatTile
-          label={data.totalsFromYearly ? "Activités" : "Postes"}
-          value={totalPostsCount > 0 ? String(totalPostsCount) : "—"}
-          sub={postesSubLabel}
-        />
+        {bareme ? (
+          <StatTile
+            label="Indemnité officielle"
+            value={fmtEuro(bareme.brutAnnuel)}
+            sub={`brut annuel · ${bareme.label} · ${bareme.decretRefs[0]}`}
+          />
+        ) : (
+          <StatTile
+            label={data.totalsFromYearly ? "Activités" : "Postes"}
+            value={totalPostsCount > 0 ? String(totalPostsCount) : "—"}
+            sub={postesSubLabel}
+          />
+        )}
         <StatTile
           label="Période couverte"
           value={periodLabel}
@@ -223,6 +239,13 @@ export async function RemunerationsPanel({
           Un exercice partiel en cours de mandat peut apparaître sous-estimé. Les
           participations financières figurent ici à titre indicatif et ne sont pas
           agrégées au cumul.
+          {bareme && (
+            <>
+              {" "}L&apos;indemnité officielle ({fmtEuro(bareme.brutAnnuel)} brut
+              annuel pour {baremeArticle(bareme.label)}) est fixée par le {bareme.decretRefs.join(" et le ")}
+              , indexée sur le point d&apos;indice de la fonction publique.
+            </>
+          )}
         </p>
       </footer>
     </section>
@@ -609,6 +632,16 @@ function YearlyChart({ years }: { years: RemunerationsYear[] }) {
       </div>
     </div>
   );
+}
+
+/* ── Bareme article helper ──────────────────────────────────────────── */
+
+function baremeArticle(label: string): string {
+  // "Premier ministre" → "le Premier ministre"; "Secrétaire d'État" → "un secrétaire d'État"
+  if (label.startsWith("Président") || label.startsWith("Premier")) {
+    return `le ${label}`;
+  }
+  return `un ${label.toLowerCase()}`;
 }
 
 /* ── Period formatter ───────────────────────────────────────────────── */
