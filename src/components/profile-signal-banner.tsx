@@ -51,18 +51,15 @@ export async function ProfileSignalBanner({ keys }: { keys: string[] }) {
               </span>
             </div>
             <ul className="mt-2 space-y-1.5">
-              {match.narratives.map((n, i) => {
-                const type = match.types[Math.min(i, match.types.length - 1)];
-                return (
-                  <li key={i} className="text-sm leading-snug text-bureau-200">
-                    <span className={`mr-2 text-[10px] uppercase tracking-wider ${TYPE_TEXT[type]}`}>
-                      {SIGNAL_TYPE_LABELS[type]}
-                    </span>
-                    {n.headline}
-                    {n.detail && <span className="text-bureau-500"> · {n.detail}</span>}
-                  </li>
-                );
-              })}
+              {match.narratives.map((n, i) => (
+                <li key={i} className="text-sm leading-snug text-bureau-200">
+                  <span className={`mr-2 text-[10px] uppercase tracking-wider ${TYPE_TEXT[n.type]}`}>
+                    {SIGNAL_TYPE_LABELS[n.type]}
+                  </span>
+                  {n.headline}
+                  {n.detail && <span className="text-bureau-500"> · {n.detail}</span>}
+                </li>
+              ))}
             </ul>
           </div>
           <Link
