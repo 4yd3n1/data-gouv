@@ -22,6 +22,7 @@ import { ProfileSignalBanner } from "@/components/profile-signal-banner";
 import { ShareButton } from "@/components/share-button";
 import { getPromesseSummary, BIO, PROMESSES } from "@/data/president-macron";
 import { normalizeName } from "@/lib/normalize-name";
+import { getBaremeOfficiel } from "@/lib/baremes-officiels";
 
 export const revalidate = 3600;
 
@@ -262,7 +263,7 @@ export default async function GouvernementProfilePage({
               }
               personnaliteId={personnalite.id}
               hatvpDossierId={personnalite.hatvpDossierId}
-              mandatType={activeMandat?.type ?? null}
+              bareme={getBaremeOfficiel(activeMandat?.type)}
             />
             {deportCount > 0 && (
               <div id="deports">

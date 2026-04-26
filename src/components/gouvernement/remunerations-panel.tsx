@@ -1,9 +1,8 @@
 import Link from "next/link";
-import type { TypeMandat } from "@prisma/client";
 import { Eyebrow } from "@/components/investigative/eyebrow";
 import { SrcChip } from "@/components/investigative/src-chip";
 import { fmtEuro, fmtDate, fmtShortDate, fmtCompact } from "@/lib/format";
-import { getBaremeOfficiel } from "@/lib/baremes-officiels";
+import type { BaremeOfficiel } from "@/lib/baremes-officiels";
 import {
   getRemunerations,
   type RemunerationsPosition,
@@ -15,10 +14,10 @@ type Props = {
   prenomNormalise: string;
   personnaliteId?: string | null;
   hatvpDossierId?: string | null;
-  /** Type of the currently active MandatGouvernemental, when the person is in
-   *  office. Triggers display of the official indemnité tile (décret 2002-562
-   *  + 2012-983) in place of the "Postes" count. */
-  mandatType?: TypeMandat | null;
+  /** Pre-resolved official indemnity (gov: décret 2002-562/2012-983;
+   *  parliamentary: ordonnance 58-1210). When set, replaces the "Postes" tile
+   *  with an "Indemnité officielle" tile and adds a methodology citation. */
+  bareme?: BaremeOfficiel | null;
 };
 
 const TYPE_ORDER = ["mandat_electif", "professionnel", "consultant", "dirigeant"] as const;
@@ -45,10 +44,9 @@ export async function RemunerationsPanel({
   prenomNormalise,
   personnaliteId,
   hatvpDossierId,
-  mandatType,
+  bareme,
 }: Props) {
   const data = await getRemunerations({ nomNormalise, prenomNormalise, personnaliteId });
-  const bareme = getBaremeOfficiel(mandatType);
 
   // Empty across all three potential sources -> don't render at all.
   if (
@@ -123,7 +121,7 @@ export async function RemunerationsPanel({
           <StatTile
             label="Indemnité officielle"
             value={fmtEuro(bareme.brutAnnuel)}
-            sub={`brut annuel · ${bareme.label} · ${bareme.decretRefs[0]}`}
+            sub={`brut annuel · ${bareme.label} · ${bareme.references[0]}`}
           />
         ) : (
           <StatTile
@@ -242,7 +240,7 @@ export async function RemunerationsPanel({
           {bareme && (
             <>
               {" "}L&apos;indemnité officielle ({fmtEuro(bareme.brutAnnuel)} brut
-              annuel pour {baremeArticle(bareme.label)}) est fixée par le {bareme.decretRefs.join(" et le ")}
+              annuel pour {baremeArticle(bareme.label)}) est fixée par {bareme.references.join(" + ")}
               , indexée sur le point d&apos;indice de la fonction publique.
             </>
           )}

@@ -27,6 +27,7 @@ import { ProfileTabs } from "@/components/profile-tabs";
 import { VoteBadge } from "@/components/vote-badge";
 import { DeclarationSection } from "@/components/declaration-section";
 import { RemunerationsPanel } from "@/components/gouvernement/remunerations-panel";
+import { getBaremeParlementaire } from "@/lib/baremes-officiels";
 import { ConflictAlert } from "@/components/conflict-alert";
 import { ConflictDrilldown } from "@/components/conflict-drilldown";
 import { ProfileSignalBanner } from "@/components/profile-signal-banner";
@@ -307,6 +308,7 @@ export default async function DeputeDetailPage({
               nomNormalise={d.nomNormalise}
               prenomNormalise={d.prenomNormalise}
               personnaliteId={null}
+              bareme={getBaremeParlementaire("depute")}
             />
             {declarations.length > 0 ? (
               <DeclarationSection declarations={declarations} />

@@ -26,6 +26,7 @@ import { ProfileTabs } from "@/components/profile-tabs";
 import { ProfileSignalBanner } from "@/components/profile-signal-banner";
 import { DeclarationSection } from "@/components/declaration-section";
 import { RemunerationsPanel } from "@/components/gouvernement/remunerations-panel";
+import { getBaremeParlementaire } from "@/lib/baremes-officiels";
 
 const COMMISSION_DOMAINS: Array<{ pattern: RegExp; keywords: string[] }> = [
   { pattern: /affaires sociales|sant\u00e9/i, keywords: ["sant\u00e9", "sante", "pharma"] },
@@ -259,6 +260,7 @@ export default async function SenateurDetailPage({
               nomNormalise={s.nomNormalise}
               prenomNormalise={s.prenomNormalise}
               personnaliteId={null}
+              bareme={getBaremeParlementaire("senateur")}
             />
             {declarations.length > 0 ? (
               <DeclarationSection declarations={declarations} />
