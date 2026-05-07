@@ -18,11 +18,27 @@ const mono = JetBrains_Mono({
   variable: "--font-mono",
 });
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: "L'Observatoire — Bureau des données publiques",
   description:
     "Plateforme indépendante d'intelligence civique. Gouvernance, votes, lobbying, territoire — 800 000+ lignes de données publiques croisées (HATVP, AGORA, Assemblée, Sénat, INSEE).",
+  twitter: {
+    card: "summary_large_image",
+  },
 };
+
+const LD_ORGANIZATION = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "L'Observatoire Citoyen",
+  alternateName: "Bureau des données publiques",
+  url: SITE_URL,
+  description:
+    "Plateforme indépendante d'intelligence civique. Surveille les institutions démocratiques françaises à partir de données publiques vérifiables.",
+} as const;
 
 const NAV = [
   { href: "/dossiers/bilan-macron", label: "Dossiers" },
@@ -134,16 +150,19 @@ function Footer() {
         { label: "Sources de données", href: "/methodologie" },
         { label: "Définition des signaux", href: "/signaux" },
         { label: "Mise à jour des données", href: "/methodologie" },
-        { label: "Politique de correction" },
-        { label: "Charte éditoriale" },
+        { label: "Politique de correction", href: "/methodologie#correction" },
+        { label: "Charte éditoriale", href: "/methodologie#charte" },
       ],
     },
     {
       title: "Accès",
       items: [
         { label: "Annuaire", href: "/profils" },
+        { label: "Mon député", href: "/mon-depute" },
+        { label: "Vérifications", href: "/v" },
         { label: "Registre des votes", href: "/votes" },
         { label: "Territoire", href: "/territoire" },
+        { label: "Souveraineté économique", href: "/souverainete" },
         { label: "Patrimoine culturel", href: "/patrimoine" },
         { label: "data.gouv.fr", href: "https://www.data.gouv.fr", external: true },
       ],
@@ -151,10 +170,10 @@ function Footer() {
     {
       title: "Contribuer",
       items: [
-        { label: "Signaler une erreur" },
+        { label: "Signaler une erreur", href: "/signaler-une-erreur" },
         { label: "Proposer une enquête" },
-        { label: "Lanceurs d'alerte" },
-        { label: "Transparence financière" },
+        { label: "Lanceurs d'alerte", href: "/apropos#lanceurs-alerte" },
+        { label: "Transparence financière", href: "/apropos#financement" },
         { label: "Newsletter" },
       ],
     },
@@ -288,7 +307,17 @@ function Footer() {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="fr" className={`${body.variable} ${display.variable} ${mono.variable}`}>
+    <html
+      lang="fr"
+      data-scroll-behavior="smooth"
+      className={`${body.variable} ${display.variable} ${mono.variable}`}
+    >
+      <head>
+        {/* JSON-LD: Organization — typed server constant, React children pattern (no innerHTML) */}
+        <script id="ld-organization" type="application/ld+json">
+          {JSON.stringify(LD_ORGANIZATION)}
+        </script>
+      </head>
       <body
         className="flex min-h-screen flex-col antialiased"
         style={{

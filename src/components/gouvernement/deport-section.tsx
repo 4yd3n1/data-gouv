@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
 import type { BasisDeport } from "@prisma/client";
+import { SourceChip } from "@/components/source-chip";
 
 const BASIS_LABEL: Record<BasisDeport, string> = {
   ANCIEN_EMPLOYEUR: "Ancien employeur",
@@ -105,16 +106,13 @@ export async function DeportSection({
             )}
 
             {d.sourceUrl && (
-              <div className="mt-3 flex items-center gap-1.5 text-xs text-bureau-600">
-                <span>Source :</span>
-                <a
-                  href={d.sourceUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-bureau-500 underline decoration-bureau-700 hover:text-bureau-300"
-                >
-                  {d.sourceOutlet ?? "info.gouv.fr"}
-                </a>
+              <div className="mt-3">
+                <SourceChip
+                  outlet={d.sourceOutlet ?? "info.gouv.fr"}
+                  url={d.sourceUrl}
+                  date={d.dateDecret}
+                  type="officiel"
+                />
               </div>
             )}
           </article>

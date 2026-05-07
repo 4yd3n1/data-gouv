@@ -1,6 +1,6 @@
 # Database Schema Reference
 
-> Last updated: Apr 21, 2026 (Session 46)
+> Last updated: May 7, 2026 (Session 68 UI note — no schema migration; HATVP DI/DSP Documents tab now consumes the Session 65 patrimoine layer through `HatvpDeclarationsSection`)
 
 Complete reference for all Prisma models, fields, relations, indexes, and ingestion sources.
 
@@ -32,9 +32,14 @@ Complete reference for all Prisma models, fields, relations, indexes, and ingest
 | Cross-reference | ConflictSignal | populated by `pnpm compute:conflicts` |
 | Government Profiles (Phase 9) | PersonnalitePublique, MandatGouvernemental, EntreeCarriere, InteretDeclare, EvenementJudiciaire, ActionLobby, **DecretDeport** | 110 persons, 49 mandats, 474 EntreeCarriere, **15 EvenementJudiciaire**, **2,102 InteretDeclare** (Session 55 dedup fix; was 1,988 in Session 46), 131,842 ActionLobby, **11 DecretDeport** (Session 47) |
 | Media Ownership (Session 35) | GroupeMedia, MediaProprietaire, ParticipationMedia, Filiale | 10 groups, 10 owners, 10 participations, 72 filiales |
+| **Souveraineté économique (Session 61)** | **AcquisitionEtrangere** | **35 phases / 28 distinct cases (2014–2026)** |
+| **Public Input (Pre-2027 launch wave)** | **ErrorReport, NewsletterPending** | **0 (newly migrated; populated via public forms)** |
+| **Patrimoine (Session 65)** | **DeclarationPatrimoine, PatrimoineRow** | **44 declarations · ~1 013 rows** (parsed from PDFs in `documentation/HATVP-PDF/`) |
 | System | IngestionLog | grows over time |
 
-**Total models**: 43 + IngestionLog
+**Total models**: 57 (verified via `grep -c "^model " prisma/schema.prisma`; Session 65 added `DeclarationPatrimoine` + `PatrimoineRow`).
+
+> ⚠️ This count drifted across earlier handoffs (Session 47 reported 44, Session 53 reported 46, Session 61 added `AcquisitionEtrangere`). Pre-2027 launch wave verified the actual count and added `ErrorReport` + `NewsletterPending`. Session 65 added the patrimoine layer. Some earlier-session models (`LobbyisteDirigeant` family from Session 53) are not yet listed in the per-layer table above — see [`handoff.md`](handoff.md) and [`blueprint.md`](blueprint.md).
 
 ### Name normalization (Session 46)
 
@@ -543,6 +548,74 @@ Income sources declared per activity type.
 
 ---
 
+## Patrimoine Layer — HATVP DSP (Session 65)
+
+Parsed from PDFs in [`documentation/HATVP-PDF/`](HATVP-PDF/) by [`scripts/ingest-dsp-pdf.ts`](../scripts/ingest-dsp-pdf.ts) (uses `pdftotext -layout` from poppler). Source: HATVP-published PDFs (`https://www.hatvp.fr/livraison/dossiers/{slug}-(dsp|dspm|dspfm){dossierId}-gouvernement.pdf`). 44 declarations × ~16 rows each = **~1 013 PatrimoineRow**, covering 30 ministers of Lecornu II + DSPM/DSPFM revisions. Stored deliberately as JSON-payload rows because the 12 PDF sections each have different column shapes (Immeubles 5 cols, Comptes 2 cols, Passif 5 cols) — strongly-typed per-section schemas would have been brittle to HATVP form changes.
+
+**UI consumer (Session 68)**: [`HatvpDeclarationsSection`](../src/components/gouvernement/hatvp-declarations-section.tsx) is the canonical profile `Documents` tab. It combines this DSP layer with `DeclarationInteret` / `RevenuDeclaration` DI data via [`getDossierData()`](../src/lib/dossier-data.ts), then presents assets, passif, net patrimoine, public income, non-public income, and elected mandates separately. This is a renderer change only; the schema did not change.
+
+### `DeclarationPatrimoine`
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | String PK | dossierId derived from filename, e.g. `"dsp34805"` (NOT cuid — stable HATVP identifier so re-ingestion is idempotent) |
+| `personnaliteId` | String? FK | References `PersonnalitePublique.id`. Nullable when no normalized-name match (e.g. `de Montchalin` slug variation) |
+| `nomNormalise` | String | Output of `normalizeName(nom)` |
+| `prenomNormalise` | String | Output of `normalizeName(prenom)` |
+| `organe` | String? | "Garde des sceaux ministre de la justice" — currently null because cover page is image-rendered (see Critical quirks below) |
+| `dateDebutMandat` | DateTime? | Currently null (cover-page extraction limitation) |
+| `dateDepot` | DateTime? | Currently null (cover-page extraction limitation) |
+| `regimeMatrimonial` | String? | "Communauté légale réduite aux acquêts" — currently null (cover-page) |
+| `sourcePdfUrl` | String? | Full HATVP PDF URL |
+| `typeDeclaration` | String | `"DSP"`, `"DSPM"` (modificative), or `"DSPFM"` (fin de mandat) |
+
+**Relations**: `rows PatrimoineRow[]`, `personnalite PersonnalitePublique?`
+
+**Indexes**: `(nomNormalise, prenomNormalise)`, `personnaliteId`
+
+### `PatrimoineRow`
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | String PK | cuid() |
+| `declarationId` | String FK | References `DeclarationPatrimoine.id` (cascade) |
+| `rubriqueNum` | Int | 1..12 (mirrors HATVP §N° section number) |
+| `rubriqueTitre` | String | Full PDF section title, e.g. "Les immeubles bâtis et non bâtis" |
+| `ordre` | Int | Display order within section |
+| `isNeant` | Boolean | `true` when section was rendered as "Néant" in the PDF (no rows) |
+| `description` | Json | Free-form key:value object — fields vary per section (e.g. `{ Type: "Appartement", Département: "59", "Date d'acquisition": "2023" }`) |
+| `valeur` | Json? | Amount-bearing fields keyed by label (e.g. `{ "Valeur vénale": 225000, "Prix d'acquisition": 225000 }`) |
+
+**Relations**: `declaration DeclarationPatrimoine`
+
+**Indexes**: `declarationId`, `rubriqueNum`
+
+**Section reference** (`rubriqueNum`):
+
+| § | Title | Common keys |
+|---|-------|-------------|
+| 1 | Immeubles bâtis et non bâtis | Type, Département, Superficie bâtie, Régime juridique, Quote-part détenue, Valeur vénale |
+| 2 | Parts de SCI | Dénomination, Actif, Passif, Capital détenu |
+| 3 | Valeurs mobilières non cotées | Dénomination, Pourcentage, Valeur vénale |
+| 4 | Instruments financiers | Description, Titulaire, Valeur vénale |
+| 5 | Assurances vie | Etablissement, Date de souscription, Souscripteur, Valeur de rachat |
+| 6 | Comptes bancaires + épargne | Description (Compte courant/Livret), Titulaire, Solde |
+| 7 | Biens mobiliers > 10 k€ | Description, Valeur vénale |
+| 8 | Véhicules à moteur | Description, Entrée dans le patrimoine, Valeur vénale |
+| 9 | Fonds de commerce | Description, Actif, Endettement |
+| 10 | Espèces & stock-options > 10 k€ | Description, Valeur vénale |
+| 11 | Biens à l'étranger | Description, Valeur vénale |
+| 12 | Passif | Créancier, Nature, Date, Montant total de l'emprunt, Somme restant à rembourser, Montant des mensualités |
+
+**Critical quirks**:
+- **Cover page is image-rendered in most DSPs** — `pdftotext` returns empty for page 1. The ingest script identifies the person from the page-2 running header `DSP/{NOM}-{Prenom}` instead of the cover. As a side-effect, `dateDepot` / `dateDebutMandat` / `organe` / `regimeMatrimonial` are currently null on most rows. Backfill candidate: cross-link to the same person's `DeclarationInteret.dateDepot` (filed alongside).
+- **Header surname-prenom split** — `parseHeader()` splits at the first hyphen where the right side is mixed-case. When BOTH sides are uppercase (FERRARI-MARINA, NUNEZ-LAURENT), it falls back to filename parsing.
+- **`§1° Immeubles` is parsed from `pdftotext -layout` output**, not linear, because linear mode separates columns from rows when there are multiple properties (Lecornu's 3 properties came back column-by-column). Layout mode preserves row alignment; the parser walks lines starting with a Type word (`Maison`, `Appartement`, `Terrain`, etc.) at column 0.
+- **Amount column order in §1°**: `[Prix d'acquisition, Valeur vénale, Montant des travaux]` — verified across Darmanin / Lecornu / Panifous spot-checks.
+- **UI renderers**: [`src/components/gouvernement/hatvp-declarations-section.tsx`](../src/components/gouvernement/hatvp-declarations-section.tsx) `<HatvpDeclarationsSection>` is the canonical public profile surface on `/profils/[slug]?tab=documents`: it presents DI + DSP as two readable blocks with public income, non-public income, elected mandates, assets, passif, and net patrimoine. [`src/components/gouvernement/hatvp-dossier.tsx`](../src/components/gouvernement/hatvp-dossier.tsx) `<HatvpDossier>` remains the PDF-faithful/raw audit renderer; per-section row layouts are handled by named subcomponents (`DspImmeublesRows`, `DspAssurancesRows`, `DspComptesRows`, `DspPassifRows`, `DspGenericRows` for the rest).
+
+---
+
 ## Parliamentary Votes Layer (AN open data)
 
 Source: Assemblée Nationale open data XML. Ingested by `scripts/ingest-organes.ts`, `scripts/ingest-scrutins.ts`, `scripts/ingest-deports.ts`.
@@ -895,6 +968,74 @@ Tracks every ingestion run with timing, row counts, status, and metadata.
 
 ---
 
+## Public Input Layer (Pre-2027 launch wave)
+
+User-generated submissions captured by public-facing forms. Migration `20260502120101_add_error_report_and_newsletter_pending`.
+
+### Enums
+
+```prisma
+enum ErrorReportType {
+  FACTUEL
+  SOURCE
+  TYPO
+  AUTRE
+}
+
+enum ErrorReportStatus {
+  PENDING
+  RESOLVED
+  REJECTED
+}
+```
+
+### `ErrorReport`
+
+Reader-submitted correction requests from `/signaler-une-erreur`. Server action persists; moderation queue is not yet built (P1 polish).
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | String PK | cuid() |
+| `url` | String | Page URL the report references (auto-filled from `?from=` query) |
+| `type` | `ErrorReportType` | `FACTUEL` / `SOURCE` / `TYPO` / `AUTRE` |
+| `description` | String | Required — the report body, `minLength={10}` enforced client-side |
+| `contact` | String? | Optional reporter email |
+| `status` | `ErrorReportStatus` | `PENDING` (default) / `RESOLVED` / `REJECTED` |
+| `resolutionNote` | String? | Editor-side note when status changes |
+| `createdAt` | DateTime | Auto |
+| `updatedAt` | DateTime | `@updatedAt` |
+
+**Indexes**: `@@index([status, createdAt])` for the moderation queue.
+
+**Audit log**: every submission also writes a row to `IngestionLog` with `source: "error-report"` and the metadata payload (so corrections are visible in the ingestion summary). Pattern uses `prisma.ingestionLog.create()` directly — `logIngestion()` helper in `scripts/lib/` is script-context only and not importable from App Router server actions.
+
+**Reuse**: `import { ErrorReportType, ErrorReportStatus } from "@prisma/client"`.
+
+### `NewsletterPending`
+
+Stub for the deferred P2.1 newsletter pipeline. The `/v/[slug]` and homepage forms ship now to capture early subscribers; mail-provider wiring lands later.
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | String PK | cuid() |
+| `email` | String | `@unique` — deduplicates re-submissions |
+| `sourceSlug` | String? | Which `/v/[slug]` page captured the signup; nullable for homepage / generic CTAs |
+| `createdAt` | DateTime | Auto |
+
+**Indexes**: `@@index([createdAt])` for retention reports.
+
+**Critical pattern**: server actions use `upsert` (not `create`) on `email`, so duplicate signups don't throw `P2002`:
+
+```ts
+await prisma.newsletterPending.upsert({
+  where: { email },
+  create: { email, sourceSlug: slug },
+  update: {},
+});
+```
+
+---
+
 ## Local Data Layer (Phase 1 additions)
 
 Source: INSEE Mélodi API (anonymous, no API key) + OFGL Opendatasoft. Ingested by `scripts/ingest-insee-local.ts` + `scripts/ingest-budgets.ts`.
@@ -1166,6 +1307,24 @@ The `Commune` table contains COM (full communes), ARM (Paris/Lyon/Marseille arro
 
 Stored as `String?` rather than `Json` to avoid Prisma adapter type issues. Parse with `JSON.parse()` when reading.
 
+### `remotion_reader` Postgres role (Pre-2027 launch wave — P0.3)
+
+SQL-only migration `20260502143648_add_remotion_reader_role`. Creates a SELECT-only Postgres role consumed by the Remotion repo at `/Users/aydenmomika/remotion/remotion/` for cross-repo Prisma reads.
+
+```sql
+CREATE ROLE remotion_reader WITH LOGIN PASSWORD '...';
+GRANT CONNECT ON DATABASE datagouv TO remotion_reader;
+GRANT USAGE ON SCHEMA public TO remotion_reader;
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO remotion_reader;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO remotion_reader;
+```
+
+Wrapped in `DO $$ BEGIN ... EXCEPTION WHEN duplicate_object THEN NULL; END $$;` so re-runs are idempotent. Migration applied via `pnpm prisma migrate deploy` (recorded in `_prisma_migrations` row 21). Verification: `psql -U remotion_reader -d datagouv -c "INSERT ..."` rejects with `permission denied for table …`; `SELECT COUNT(*) FROM "PersonnalitePublique"` returns 110.
+
+**Consumer**: Remotion's `scripts/generate-fact-check.ts` providers (4 — `personnalite`, `judicial`, `lobby`, `conflict`). Schema is symlinked: `data-gouv/prisma/schema.prisma` → `remotion/remotion/prisma/schema.prisma`. Remotion's `prisma.config.ts` injects the `remotion_reader` `DATABASE_URL` at runtime (Prisma 7 dropped the `datasources` constructor option; `@prisma/adapter-pg` + `pg.Pool` mirrors data-gouv's pattern).
+
+**Password rotation**: `remotion_reader_local_only` is a placeholder for local dev. Rotate before this leaves the developer's machine — change in both the SQL migration AND the Remotion `.env.local`.
+
 ### Postal code → Commune resolution (static file, no DB model)
 
 `src/data/postal-codes.json` — 6,328 entries, La Poste Hexasmal dataset. Maps French postal codes to lists of INSEE commune codes: `{ "75011": ["75111"], "01000": ["01053", "01344"], ... }`. Used by `src/lib/postal-resolver.ts` to resolve a postal code to département + région context for the `/mon-territoire` page. ARM commune codes (Paris 75001–75020 → 75111, etc.) are resolved to their parent COM via `Commune.comparent`.
@@ -1270,6 +1429,8 @@ Career timeline entries. Two sources: (1) Auto-generated by `scripts/generate-ca
 
 **Indexes**: `personnaliteId`, `categorie`
 
+**UI consumers**: `<CareerSection>` (year-grouped detail rows in the Parcours tab) and `<TrajectoireHero>` (Session 60 cont — persistent career swim-lane rendered above the tabs on `/profils/[slug]`, visible on every tab without a click). Both go through `mergeCareerEntries` to dedupe HATVP/ASSEMBLEE/PRESSE rows referring to the same role.
+
 ---
 
 ### `InteretDeclare`
@@ -1370,7 +1531,7 @@ Distinct from the legacy `Deport` model (per-instance AN deputy recusals inside 
 
 **Enum `BasisDeport`**: `ANCIEN_EMPLOYEUR | PARTICIPATION_FINANCIERE | FAMILLE_CONJOINT | MANDAT_ANTERIEUR | ACTIVITE_BENEVOLE | PROCEDURE_JUDICIAIRE | AUTRE`
 
-**Display rule**: `DeportBanner` renders below the `ProfileHero` on every tab when `deports.length > 0`. Full detail via `DeportSection` inside the Déclarations HATVP tab (`#deports` anchor).
+**Display rule**: `DeportBanner` renders below the `ProfileHero` on non-Documents tabs when `deports.length > 0`. Full detail via `DeportSection` inside the `Signaux` tab (`#deports` anchor). Déports are PM/JORF conflict-prevention records, not HATVP DI/DSP rows.
 
 **Row count**: 11 (Session 47 seed from info.gouv.fr registre — HATVP press release cited 14, 3 décrets likely signed but not yet in the registre).
 
@@ -1488,3 +1649,101 @@ A subsidiary media outlet (TV channel, newspaper, radio station, etc.) belonging
 | `rang` | Int | Display order within group |
 
 **Indexes**: `groupeId`, `type`, `nom`
+
+---
+
+## Souveraineté économique (Session 61)
+
+Hand-curated, sourced corpus of foreign acquisitions (and attempted acquisitions, vetoes, sauvetages, rachats étatiques) of French strategic companies, 2014–2026. Powers the `/souverainete` dashboard.
+
+Multi-phase deals (Photonis Teledyne→HLD, Alstom→GE→Arabelle, Eutelsat fusion→state recap, Segault Flowserve→Framatome, SFR Altice→créanciers→opérateurs FR) are modelled as parent + child rows linked via self-FK `parentDealId`.
+
+### Enums
+
+**`CategorieAcquisition`** (10 values — high-level outcome):
+`CESSION_ETRANGERE | VETO_IEF | RETRAIT_POLITIQUE | SAUVETAGE_DOMESTIQUE | RACHAT_ETATIQUE | FUSION_DOMICILIATION | SCISSION_DOMICILIATION | ANCRAGE_DOMESTIQUE | VENTE_DETRESSE | RESTRUCTURATION_DETTE`
+
+**`MesureEtat`** (10 values — what the State did publicly):
+`AUCUNE | VETO | CONDITIONS | ACTION_DE_PREFERENCE | ACTION_SPECIFIQUE | BPIFRANCE_MINORITAIRE | ANCRAGE_PARTAGE | RACHAT_ETAT | RECAPITALISATION_ETAT | STANDSTILL`
+
+`AUCUNE` ≠ no IEF instruction — IEF decisions are confidential by default. It means *no public trace* (no published commitment, veto, golden share, anchoring, or buyback). Useful as a transparency proxy.
+
+**`SecteurStrategique`** (21 values):
+`DEFENSE_AEROSPACE | DEFENSE_NUCLEAIRE | ENERGIE | TELECOM | SEMICONDUCTEUR | BIOMETRIE_IDENTITE | CYBERSECURITE | BIOTECH_PHARMA | SANTE_OTC | GRANDE_DISTRIBUTION | AGROALIMENTAIRE | MEDIA_AUDIOVISUEL | AUTOMOBILE | AERONAUTIQUE_CIVIL | IT_SERVICES_HPC | CHIMIE_MATERIAUX | BTP_CIMENT | LOGISTIQUE_PORTUAIRE | MUSIQUE_DIVERTISSEMENT | IOT_TELECOM | AUTRE`
+
+**`PaysAcquereur`** (18 values):
+`ETATS_UNIS | ROYAUME_UNI | ALLEMAGNE | ITALIE | SUISSE | PAYS_BAS | CANADA | CHINE | SINGAPOUR | EMIRATS_ARABES_UNIS | TURQUIE | INDE | SUEDE | JAPON | COREE_DU_SUD | LUXEMBOURG | FRANCE | MULTIPLE | AUTRE`
+
+`FRANCE` is used for sauvetages domestiques (HLD-Photonis, Airbus-Safran-Tikehau pour Aubert & Duval, Framatome-Segault, recap État Eutelsat, État-Bull). `MULTIPLE` covers consortia (Eutelsat-OneWeb, créanciers Altice, scission Vivendi).
+
+### `AcquisitionEtrangere`
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | String PK | cuid() |
+| `cibleNom` | String | Target company name (e.g., "Lafarge SA", "Aubert & Duval") |
+| `cibleSecteur` | SecteurStrategique | Sector enum |
+| `cibleSousSecteur` | String? | Free-text precision ("Tubes intensificateurs de lumière") |
+| `cibleSiren` | String? | Optional SIREN |
+| `cibleSiteHistorique` | String? | City/region anchor ("Toulouse", "Brive-la-Gaillarde") |
+| `acquereurNom` | String | Primary acquirer name |
+| `acquereurPays` | PaysAcquereur | Country enum |
+| `acquereurType` | String? | "PE", "Industriel coté", "Famille", "Souverain", "Créanciers" |
+| `dateAnnonce` | DateTime? | Deal announcement date |
+| `dateCloture` | DateTime? | Closing date — null if blocked, withdrawn, or pending |
+| `valeurEur` | BigInt? | Enterprise value in € (raw, not cents) |
+| `categorie` | CategorieAcquisition | High-level outcome enum |
+| `mesureEtat` | MesureEtat | What the State did publicly (default `AUCUNE`) |
+| `ministreReferent` | String? | Primary minister of record ("Bruno Le Maire", "Sébastien Lecornu") |
+| `iefDeclenche` | Boolean? | `null` if uncertain, `true`/`false` if confirmed |
+| `iefReference` | String? | Décret reference: "R.151-3 CMF", "Décret 2019-1590", etc. |
+| `contexte` | String | 2–4 sentence factual summary |
+| `enjeuxSouverainete` | String | Why it matters — explicit sovereignty thesis |
+| `contextePolitique` | String? | Election proximity, government context |
+| `sourcePrincipale` | String | Primary outlet name |
+| `sourceUrl` | String | Primary URL |
+| `sourceDate` | DateTime | Publication date of primary source |
+| `sourcesAdditionnelles` | Json? | `[{outlet, url, date}, ...]` array of secondary sources |
+| `verifie` | Boolean | Default `false` — `true` once cross-checked against primary |
+| `precedeMacron` | Boolean | Default `false` — `true` if closed before May 2017 election |
+| `parentDealId` | String? | Self-FK for multi-phase deals (cascade: SetNull) |
+| `parentDeal` | AcquisitionEtrangere? | Self-relation `"DealPhases"` |
+| `phasesEnfants` | AcquisitionEtrangere[] | Reverse self-relation |
+| `createdAt` | DateTime | Auto |
+| `updatedAt` | DateTime | Auto `@updatedAt` |
+
+**Indexes**: `cibleNom`, `categorie`, `acquereurPays`, `cibleSecteur`, `dateAnnonce`, `verifie`, `parentDealId`.
+
+**No unique constraint** — composite `(cibleNom, dateAnnonce, categorie)` is the de-facto idempotency key inside `seed-acquisitions-etrangeres.ts`. Re-running the seed mutates rather than duplicating.
+
+**Ingestion**: `pnpm tsx scripts/seed-acquisitions-etrangeres.ts` — typed seed file with 34 hand-curated entries. Idempotent. Two-pass upsert: parents first, then children resolve `parentSeedKey` → `parentDealId` via in-memory map. Logs to `IngestionLog` via `logIngestion("seed-acquisitions-etrangeres", …)`.
+
+**Aggregator**: [`src/lib/souverainete-data.ts`](../src/lib/souverainete-data.ts) → `getSouveraineteOverview()` (`React.cache`-wrapped). Computes 4-stat hero strip + breakdowns by country, sector, category, État measure, and year.
+
+**Vetoes français counter**: only counts `categorie = VETO_IEF` rows where `iefReference` does NOT mention "Commission européenne" — distinguishes French IEF vetoes (Photonis 2020, Segault 2023) from EU competition vetoes (Alstom-Siemens 2019).
+
+**Cumulative cession value**: sum of `valeurEur` filtered to `categorie = CESSION_ETRANGERE` only — excludes fusion/scission/rachat/sauvetage values to avoid double-counting (Stellantis 38 Md€, Essilor 48 Md€, Technip 13 Md€ are FUSION_DOMICILIATION, not cession).
+
+### Display & UI rules
+
+- **`/souverainete`** is a Server Component page with `revalidate=86400`. Section components live in [`src/components/souverainete/`](../src/components/souverainete/).
+- **Table sort**: antichronologique by `dateAnnonce` desc, fallback `dateCloture`.
+- **Parent-child indentation**: child rows render with 32px left padding + horizontal hairline tick under the parent.
+- **Source attribution is non-optional** — every row must show its `sourcePrincipale` as a clickable external link.
+- **No cascade from `verifie=false`** — unverified rows still render (verified just adds editorial confidence). Distinct from `EvenementJudiciaire`, where `verifie=false` means do-not-display.
+- **LARP discipline** (Session 48 rule): no fake édition numbers, no fake bylines, no fake case-IDs, no fake source counts. Row-level source URL + publication date is the only valid sourcing surface.
+
+### Categorisation reference
+
+| Categorie | Examples |
+|-----------|----------|
+| CESSION_ETRANGERE | Morpho/Idemia (2017), Linxens (2018), Manurhin (2018), Souriau (2019), Latécoère (2019), Sentryo (2019), Talend (2021), Bolloré Africa (2022), Exxelia (2023), Believe (2024), Opella/Doliprane (2025), Alstom-GE (2015 — pré-Macron), SFR-Altice (2014 — pré-Macron) |
+| FUSION_DOMICILIATION | Lafarge-Holcim (2015), Technip-FMC (2017), Essilor-Luxottica (2018), Stellantis (2021), Forvia-Hella (2022), Eutelsat-OneWeb (2023) |
+| VETO_IEF | Photonis-Teledyne (2020 — France), Segault-Flowserve (2023 — France), Alstom-Siemens (2019 — EU) |
+| RETRAIT_POLITIQUE | Carrefour-Couche-Tard (2021) |
+| SAUVETAGE_DOMESTIQUE | Photonis-HLD (2021), Aubert & Duval (2023), Segault-Framatome (2025), SFR-opérateurs FR (2026 en cours) |
+| RACHAT_ETATIQUE | EDF-Arabelle (2024), Eutelsat-recap (2025), Atos→Bull-État (2026) |
+| SCISSION_DOMICILIATION | Vivendi 4-way split (2024) |
+| ANCRAGE_DOMESTIQUE | Soitec-NSIG (2016 — pré-Macron) |
+| VENTE_DETRESSE | Sigfox-UnaBiz (2022), Polytechnyl-Lone Star (2026) |
+| RESTRUCTURATION_DETTE | Altice (2024–2025) |

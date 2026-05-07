@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import { prisma } from "@/lib/db";
@@ -8,6 +9,22 @@ import { Avatar } from "@/components/avatar";
 import { VoteBadge } from "@/components/vote-badge";
 import { ScrutinResultBadge } from "@/components/scrutin-result-badge";
 import { TAG_LABELS } from "@/lib/vote-tags";
+
+export const metadata: Metadata = {
+  title: "Votes de votre député — L'Observatoire Citoyen",
+  description:
+    "Recherchez un député par nom et consultez son historique de votes à l'Assemblée nationale.",
+  openGraph: {
+    title: "Votes de votre député — L'Observatoire Citoyen",
+    description:
+      "Recherchez un député par nom et consultez son historique de votes à l'Assemblée nationale.",
+  },
+  twitter: {
+    title: "Votes de votre député — L'Observatoire Citoyen",
+    description:
+      "Recherchez un député par nom et consultez son historique de votes à l'Assemblée nationale.",
+  },
+};
 
 const POSITION_COLORS: Record<string, string> = {
   pour:      "text-teal",

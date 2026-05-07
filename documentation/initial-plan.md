@@ -315,12 +315,12 @@ In `src/components/gouvernement/`:
 | `JudiciaireSection` | `EvenementJudiciaire` (only `verifie = true`) |
 | `ParliamentarySection` | Conditional; 4 score bars + vote-contradiction alert + recent votes |
 | **`DeportBanner`** (Session 47) | Cross-tab red strip below `ProfileHero` showing décret de déport |
-| **`DeportSection`** (Session 47) | Full décret cards in Déclarations HATVP tab |
+| **`DeportSection`** (Session 47) | Full décret cards in the `Signaux` tab (`#deports` anchor) |
 | `MediaTutelleSection` | For Culture minister — ARCOM signalements + top filiales |
 | `PresidentBilanSection` | President-only: KPI grid + chômage timeline |
 | `PresidentPromessesSection` | President-only: promise evaluation w/ evidence |
 | `PresidentLobbyingSection` | President-only: power lobbyists + consulting firms |
-| `PresidentDeclarationsSection` | President-only: `DeclarationInteret` (different model) |
+| `PresidentDeclarationsSection` | Legacy president-only `DeclarationInteret` renderer; current president declarations use the shared HATVP DI/DSP Documents surface |
 
 ### Specialized sections
 `ConflictAlert` · `ConflictDrilldown` (client, expandable tag-grouped vote list) · `DeclarationSection` (client) · `DossierHero` · `DossierNav` · `GroupExpander` (client) · `LoiCard` · `MediaBoard` (client) · `ArcomSection` · `ScrutinAccordion` (client) · `ScrutinResultBadge` · `SignalCard` · `VoteBadge` · `DeptLookup` (client) · 7 components in `src/components/bilan/`

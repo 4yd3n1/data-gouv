@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { PageHeader } from "@/components/page-header";
@@ -12,6 +13,22 @@ import {
   type UnifiedSignal,
 } from "@/lib/signals";
 import type { SignalSeverity } from "@/lib/signal-types";
+
+export const metadata: Metadata = {
+  title: "Députés — L'Observatoire Citoyen",
+  description:
+    "Annuaire des 577 députés de l'Assemblée nationale : votes, déclarations HATVP, conflits d'intérêts et signaux croisés.",
+  openGraph: {
+    title: "Annuaire des députés — L'Observatoire Citoyen",
+    description:
+      "Annuaire des 577 députés de l'Assemblée nationale : votes, déclarations HATVP, conflits d'intérêts et signaux croisés.",
+  },
+  twitter: {
+    title: "Annuaire des députés — L'Observatoire Citoyen",
+    description:
+      "Annuaire des 577 députés de l'Assemblée nationale : votes, déclarations HATVP, conflits d'intérêts et signaux croisés.",
+  },
+};
 
 const PER_PAGE = 30;
 

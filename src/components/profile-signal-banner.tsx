@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getSignals, SIGNAL_TYPE_LABELS, type SignalType } from "@/lib/signals";
 import type { SignalSeverity } from "@/lib/signal-types";
+import { SignalFormula } from "@/components/signal-formula";
 
 const SEVERITY_RULE: Record<SignalSeverity, string> = {
   CRITIQUE: "bg-rose",
@@ -50,7 +51,7 @@ export async function ProfileSignalBanner({ keys }: { keys: string[] }) {
                 {match.types.map((t) => SIGNAL_TYPE_LABELS[t]).join(" · ")}
               </span>
             </div>
-            <ul className="mt-2 space-y-1.5">
+            <ul className="mt-2 space-y-3">
               {match.narratives.map((n, i) => (
                 <li key={i} className="text-sm leading-snug text-bureau-200">
                   <span className={`mr-2 text-[10px] uppercase tracking-wider ${TYPE_TEXT[n.type]}`}>
@@ -58,6 +59,7 @@ export async function ProfileSignalBanner({ keys }: { keys: string[] }) {
                   </span>
                   {n.headline}
                   {n.detail && <span className="text-bureau-500"> · {n.detail}</span>}
+                  <SignalFormula type={n.type} variant="inline" />
                 </li>
               ))}
             </ul>

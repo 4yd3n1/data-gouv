@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { fmt } from "@/lib/format";
@@ -5,6 +6,22 @@ import { PageHeader } from "@/components/page-header";
 import { SearchInput } from "@/components/search-input";
 import { Pagination } from "@/components/pagination";
 import { Suspense } from "react";
+
+export const metadata: Metadata = {
+  title: "Élus locaux — L'Observatoire Citoyen",
+  description:
+    "Annuaire des élus locaux français : maires, conseillers départementaux, régionaux et communautaires, issus des dernières élections.",
+  openGraph: {
+    title: "Annuaire des élus locaux — L'Observatoire Citoyen",
+    description:
+      "Annuaire des élus locaux français : maires, conseillers départementaux, régionaux et communautaires, issus des dernières élections.",
+  },
+  twitter: {
+    title: "Annuaire des élus locaux — L'Observatoire Citoyen",
+    description:
+      "Annuaire des élus locaux français : maires, conseillers départementaux, régionaux et communautaires, issus des dernières élections.",
+  },
+};
 
 const PER_PAGE = 40;
 

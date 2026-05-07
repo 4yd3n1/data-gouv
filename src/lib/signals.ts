@@ -113,6 +113,23 @@ type UpsertInput = {
 function upsert(map: Map<string, UnifiedSignal>, input: UpsertInput): void {
   const existing = map.get(input.personKey);
   if (existing) {
+    // Drop identical-payload narratives (same type + same headline). Surfaces:
+    // (a) lobby-owner emitting twice when one source row matches two sibling
+    //     Lobbyiste rows with the same nom (e.g. Bergé "Victory");
+    // (b) lobby-owner emitting thrice when one declared interest matches the
+    //     parent + subsidiary lobbies sharing a core string (e.g. Papin
+    //     "CREDIT AGRICOLE" → CREDIT AGRICOLE / CREDIT AGRICOLE SA / FNCA).
+    // First-match wins. Callers that want the highest-signal variant first
+    // (e.g. the AGORA-active lobby over the dormant one) must sort their
+    // candidates upstream.
+    const isDuplicate = existing.narratives.some(
+      (n) => n.type === input.type && n.headline === input.headline,
+    );
+    if (isDuplicate) {
+      existing.severity = worstSeverity([existing.severity, input.severity]);
+      existing.totalExposure += input.exposure;
+      return;
+    }
     if (!existing.types.includes(input.type)) {
       existing.types.push(input.type);
     }
@@ -646,17 +663,22 @@ async function collectLobbyOwnerLinks(
 
   // Pre-compile per-lobby regexes ONCE (previously built inside the hot loop,
   // causing ~12M RegExp compilations per request). Also cache the upper-cased
-  // core and its first two tokens for the `indexOf` prefilter.
+  // core and its first two tokens for the `indexOf` prefilter. Sorted desc by
+  // AGORA count so when several lobbies share a searchCore (parent + subs),
+  // the most-active one wins the upsert headline-dedup race.
   const escapeRe = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  const lobbyCompiled = lobbiesFiltered.map((l) => {
-    const core = l.searchCore.toUpperCase();
-    return {
-      id: l.id,
-      nom: l.nom,
-      core,
-      reLobby: new RegExp(`\\b${escapeRe(core)}\\b`),
-    };
-  });
+  const lobbyCompiled = lobbiesFiltered
+    .map((l) => {
+      const core = l.searchCore.toUpperCase();
+      return {
+        id: l.id,
+        nom: l.nom,
+        core,
+        agoraCount: agoraStats.get(l.nom)?.count ?? 0,
+        reLobby: new RegExp(`\\b${escapeRe(core)}\\b`),
+      };
+    })
+    .sort((a, b) => b.agoraCount - a.agoraCount);
 
   for (const p of pps) {
     if (!p.carriere.length && !p.interets.length) continue;
@@ -719,6 +741,13 @@ async function collectLobbyOwnerLinks(
       const orgUpper = (i.organisation ?? "").toUpperCase();
       checkOrg(orgUpper, (lobby) => {
         const stats = agoraStats.get(lobby.nom) ?? { count: 0, topMin: null };
+        // Skip zero-AGORA interet_declare matches. The HATVP lobbyiste table
+        // contains many small civic associations and municipal bodies that
+        // never file with AGORA — matching them adds noise (e.g. Lecornu's
+        // declared participation in a local sports body that happened to
+        // share a token with a registered "lobby"). For dirigeant_direct or
+        // carriere_prive ties, even 0 AGORA is meaningful and stays.
+        if (stats.count === 0) return;
         const severity = lobbyOwnerLinkSeverity("interet_declare", stats.count);
         const mandat = p.mandats[0];
         const rubriqueLabel =
@@ -779,6 +808,31 @@ const computeSignals = async (): Promise<UnifiedSignal[]> => {
     collectPartyDiscipline(map),
   ]);
 
+  // Cross-collector merge: when both `ecart` and `lobby` fire on the same
+  // person and lead with the same actionLobby count, fold the lobby
+  // narrative's representants list into the ecart narrative's detail and
+  // drop the standalone lobby entry. Both collectors read the same count
+  // from `actionLobby`, so the leading number repeats verbatim — visually
+  // confusing in the À SURVEILLER strip.
+  for (const signal of map.values()) {
+    const ecartIdx = signal.narratives.findIndex((n) => n.type === "ecart");
+    const lobbyIdx = signal.narratives.findIndex((n) => n.type === "lobby");
+    if (ecartIdx === -1 || lobbyIdx === -1) continue;
+    const ecart = signal.narratives[ecartIdx]!;
+    const lobby = signal.narratives[lobbyIdx]!;
+    // Both headlines start with a French-formatted number ("17 425 ...").
+    const ecartLead = ecart.headline.match(/^[\d\s]+/)?.[0].trim();
+    const lobbyLead = lobby.headline.match(/^[\d\s]+/)?.[0].trim();
+    if (!ecartLead || ecartLead !== lobbyLead) continue;
+    if (lobby.detail) {
+      ecart.detail = ecart.detail
+        ? `${ecart.detail} · ${lobby.detail}`
+        : lobby.detail;
+    }
+    signal.narratives.splice(lobbyIdx, 1);
+    signal.types = signal.types.filter((t) => t !== "lobby");
+  }
+
   return Array.from(map.values()).sort((a, b) => {
     const sevDiff = SEVERITY_ORDER[a.severity] - SEVERITY_ORDER[b.severity];
     if (sevDiff !== 0) return sevDiff;
@@ -788,7 +842,7 @@ const computeSignals = async (): Promise<UnifiedSignal[]> => {
 
 const cachedComputeSignals = unstable_cache(
   computeSignals,
-  ["unified-signals-v1"],
+  ["unified-signals-v2"],
   { revalidate: 600, tags: ["signals"] },
 );
 

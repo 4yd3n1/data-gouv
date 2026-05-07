@@ -1,6 +1,12 @@
 import type { NextConfig } from "next";
 
+const projectRoot = process.cwd();
+
 const nextConfig: NextConfig = {
+  turbopack: {
+    root: projectRoot,
+  },
+  outputFileTracingRoot: projectRoot,
   async redirects() {
     return [
       // Legacy /gouvernance → /profils (final destination)
@@ -52,6 +58,75 @@ const nextConfig: NextConfig = {
       // Phase 5: territory consolidation
       { source: "/economie", destination: "/territoire/economie", permanent: true },
       { source: "/comparer/territoires", destination: "/territoire/comparer", permanent: true },
+      // P0.5: /votes/mon-depute → /mon-depute (308 permanent)
+      { source: "/votes/mon-depute", destination: "/mon-depute", permanent: true },
+
+      // ── Profile tab key migrations to 5-section frame (HTTP 308) ──
+      // Minister tabs (excludes emmanuel-macron — president keeps specialized tabs)
+      ...["parcours", "dossier", "hatvp", "mandats", "judiciaire", "parlementaire"].flatMap(
+        (oldTab) => {
+          const newTab =
+            oldTab === "parcours"
+              ? "chronologie"
+              : oldTab === "dossier" || oldTab === "hatvp"
+                ? "documents"
+                : oldTab === "mandats" || oldTab === "parlementaire"
+                  ? "relations"
+                  : "signaux"; // judiciaire
+          return [
+            {
+              source: "/profils/:slug((?!emmanuel-macron$)[^/]+)",
+              has: [{ type: "query" as const, key: "tab", value: oldTab }],
+              destination: `/profils/:slug?tab=${newTab}`,
+              permanent: true,
+            },
+          ];
+        },
+      ),
+      // Deputy tabs
+      {
+        source: "/profils/deputes/:id",
+        has: [{ type: "query" as const, key: "tab", value: "transparence" }],
+        destination: "/profils/deputes/:id?tab=signaux",
+        permanent: true,
+      },
+      {
+        source: "/profils/deputes/:id",
+        has: [{ type: "query" as const, key: "tab", value: "declarations" }],
+        destination: "/profils/deputes/:id?tab=documents",
+        permanent: true,
+      },
+      {
+        source: "/profils/deputes/:id",
+        has: [{ type: "query" as const, key: "tab", value: "infos" }],
+        destination: "/profils/deputes/:id?tab=resume",
+        permanent: true,
+      },
+      // Senator tabs
+      {
+        source: "/profils/senateurs/:id",
+        has: [{ type: "query" as const, key: "tab", value: "mandats" }],
+        destination: "/profils/senateurs/:id?tab=chronologie",
+        permanent: true,
+      },
+      {
+        source: "/profils/senateurs/:id",
+        has: [{ type: "query" as const, key: "tab", value: "transparence" }],
+        destination: "/profils/senateurs/:id?tab=signaux",
+        permanent: true,
+      },
+      {
+        source: "/profils/senateurs/:id",
+        has: [{ type: "query" as const, key: "tab", value: "declarations" }],
+        destination: "/profils/senateurs/:id?tab=documents",
+        permanent: true,
+      },
+      {
+        source: "/profils/senateurs/:id",
+        has: [{ type: "query" as const, key: "tab", value: "infos" }],
+        destination: "/profils/senateurs/:id?tab=resume",
+        permanent: true,
+      },
     ];
   },
 };

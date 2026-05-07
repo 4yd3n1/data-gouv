@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { fmt } from "@/lib/format";
@@ -6,6 +7,22 @@ import { FranceMap } from "@/components/france-map";
 import { getFranceMapData } from "@/lib/france-map-data";
 
 export const revalidate = 86400; // Territory data changes only on ingestion
+
+export const metadata: Metadata = {
+  title: "Territoire — L'Observatoire Citoyen",
+  description:
+    "Tableau de bord territorial : revenus, emploi, densité médicale, logement et pauvreté pour les 101 départements français.",
+  openGraph: {
+    title: "Territoire — L'Observatoire Citoyen",
+    description:
+      "Tableau de bord territorial : revenus, emploi, densité médicale, logement et pauvreté pour les 101 départements français.",
+  },
+  twitter: {
+    title: "Territoire — L'Observatoire Citoyen",
+    description:
+      "Tableau de bord territorial : revenus, emploi, densité médicale, logement et pauvreté pour les 101 départements français.",
+  },
+};
 
 export default async function TerritoirePage() {
   const [regions, mapData] = await Promise.all([

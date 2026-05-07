@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { fmt, fmtEuro, fmtCompact } from "@/lib/format";
@@ -5,6 +6,22 @@ import { PageHeader } from "@/components/page-header";
 import { SearchInput } from "@/components/search-input";
 import { Pagination } from "@/components/pagination";
 import { Suspense } from "react";
+
+export const metadata: Metadata = {
+  title: "Partis politiques — L'Observatoire Citoyen",
+  description:
+    "Financement des partis politiques français : aide publique, dons, comptes de campagne et coût par siège depuis 2021.",
+  openGraph: {
+    title: "Partis politiques — L'Observatoire Citoyen",
+    description:
+      "Financement des partis politiques français : aide publique, dons, comptes de campagne et coût par siège depuis 2021.",
+  },
+  twitter: {
+    title: "Partis politiques — L'Observatoire Citoyen",
+    description:
+      "Financement des partis politiques français : aide publique, dons, comptes de campagne et coût par siège depuis 2021.",
+  },
+};
 
 const PER_PAGE = 40;
 

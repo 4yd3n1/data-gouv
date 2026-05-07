@@ -1,36 +1,55 @@
 import { prisma } from "@/lib/db";
 import { ClassificationBar } from "@/components/investigative/classification-bar";
 import { Eyebrow } from "@/components/investigative/eyebrow";
+import { SIGNAL_REGISTRY } from "@/lib/signal-types";
+import type { SignalType } from "@/lib/signals";
 
 export const revalidate = 3600;
 
-const SECTIONS = [
+const EDITORIAL_SECTIONS: Array<{ id?: string; kicker: string; title: string; body: string; thresholds?: { critique?: string; notable?: string; informatif?: string } }> = [
   {
     kicker: "Section 1",
     title: "Sources de données",
-    body: "HATVP (déclarations d'intérêts et de patrimoine), AGORA (actions de lobbying déclarées), Assemblée Nationale (scrutins et interventions), Sénat (mandats), data.gouv.fr (listes départementales, budgets locaux), INSEE (macro-indicateurs, cartes socio-économiques), DREES (santé), CNCCFP (comptes de campagne). Chaque source est horodatée dans le strip en pied de page d'accueil.",
+    body: "HATVP (déclarations d’intérêts et de patrimoine), AGORA (actions de lobbying déclarées), Assemblée Nationale (scrutins et interventions), Sénat (mandats), data.gouv.fr (listes départementales, budgets locaux), INSEE (macro-indicateurs, cartes socio-économiques), DREES (santé), CNCCFP (comptes de campagne). Chaque source est horodatée dans le strip en pied de page d’accueil.",
   },
   {
     kicker: "Section 2",
     title: "Définition des signaux",
-    body: "Six types détectés par requêtes croisées : conflits d'intérêts (carrière privée vs portefeuille ministériel), portes tournantes (transitions public-privé < 3 ans), lobbying (concentration AGORA par ministère cible), médias (proximité propriétaires-exécutif), écarts HATVP (retards de dépôt), dissidences (votes contre ligne de groupe). Seuils recalibrés session 41.",
+    body: "Sept types détectés par requêtes croisées : conflits d’intérêts potentiels (participation financière HATVP croisée avec votes sectoriels), portes tournantes (carrière privée recoupant le portefeuille ministériel), lobbying (concentration AGORA par ministère cible), lien personnel avec un lobby (dirigeant·e, carrière ou intérêt déclaré HATVP), médias (propriétaires de médias avec liens politiques documentés), écarts HATVP × AGORA (lobbying intense sans déclaration correspondante), dissidences (votes contre ligne de groupe). Détail par type, formule et seuils ci-dessous (sections « Signal A » à « Signal G »). Un signal est un croisement de données, pas une preuve.",
   },
   {
     kicker: "Section 3",
     title: "Mise à jour des données",
-    body: "HATVP : cache local XML re-téléchargé hebdomadairement ; AGORA : import complet JSON ; Assemblée : derniers scrutins récupérés quotidiennement. Les timestamps réels de chaque ingestion apparaissent sur la bande « IngestionLog » en pied de page d'accueil.",
+    body: "HATVP : cache local XML re-téléchargé hebdomadairement ; AGORA : import complet JSON ; Assemblée : derniers scrutins récupérés quotidiennement. Les timestamps réels de chaque ingestion apparaissent sur la bande « IngestionLog » en pied de page d’accueil.",
   },
   {
+    id: "correction",
     kicker: "Section 4",
     title: "Politique de correction",
-    body: "Toute erreur factuelle signalée est corrigée avec mention datée dans le fil Git public. Les déclarations ne sont jamais réécrites : les corrections apparaissent en erratum. Contact à venir.",
+    body: "Toute erreur factuelle signalée est corrigée avec mention datée dans le fil Git public. Les déclarations ne sont jamais réécrites : les corrections apparaissent en erratum. Contact à venir.",
   },
   {
+    id: "charte",
     kicker: "Section 5",
     title: "Charte éditoriale",
-    body: "Ne pas présumer de la culpabilité à partir d'une mise en examen. Citer la source primaire et la date pour chaque fait judiciaire. Ne jamais synthétiser sans citation explicite. Langage mesuré : « Lobbying déclaré ciblant ce ministère » (pas « influences du lobby sur ce ministre »).",
+    body: "Ne pas présumer de la culpabilité à partir d’une mise en examen. Citer la source primaire et la date pour chaque fait judiciaire. Ne jamais synthétiser sans citation explicite. Langage mesuré : « Lobbying déclaré ciblant ce ministère » (pas « influences du lobby sur ce ministre »).",
   },
 ];
+
+const SIGNAL_SECTIONS = (
+  Object.entries(SIGNAL_REGISTRY) as [
+    SignalType,
+    (typeof SIGNAL_REGISTRY)[SignalType],
+  ][]
+).map(([type, entry], idx) => ({
+  id: type,
+  kicker: `Signal ${String.fromCharCode(65 + idx)}`,
+  title: entry.label,
+  body: `${entry.formula} ${entry.caveat}`,
+  thresholds: entry.thresholds,
+}));
+
+const SECTIONS = [...EDITORIAL_SECTIONS, ...SIGNAL_SECTIONS];
 
 export default async function MethodologiePage() {
   const latest = await prisma.ingestionLog.findFirst({
@@ -89,7 +108,7 @@ export default async function MethodologiePage() {
         }}
       >
         {SECTIONS.map((s) => (
-          <article key={s.title} style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          <article key={s.title} id={s.id} style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             <Eyebrow>{s.kicker}</Eyebrow>
             <h2
               className="hd"
@@ -114,14 +133,68 @@ export default async function MethodologiePage() {
             >
               {s.body}
             </p>
-            <div style={{ marginTop: 4 }}>
-              <span
-                className="sig-tag sig-tag--neutral"
-                title="Page dédiée à venir"
+            {s.thresholds ? (
+              <dl
+                style={{
+                  marginTop: 6,
+                  borderLeft: "1px solid var(--color-fg-faint)",
+                  paddingLeft: 14,
+                  fontSize: 13,
+                  color: "var(--color-fg-mute)",
+                  display: "grid",
+                  gap: 4,
+                }}
               >
-                Page dédiée — À venir
-              </span>
-            </div>
+                {s.thresholds.critique ? (
+                  <div>
+                    <dt
+                      style={{
+                        display: "inline",
+                        fontWeight: 500,
+                        textTransform: "uppercase",
+                        letterSpacing: "0.1em",
+                        fontSize: 11,
+                      }}
+                    >
+                      Critique :
+                    </dt>{" "}
+                    <dd style={{ display: "inline", margin: 0 }}>{s.thresholds.critique}</dd>
+                  </div>
+                ) : null}
+                {s.thresholds.notable ? (
+                  <div>
+                    <dt
+                      style={{
+                        display: "inline",
+                        fontWeight: 500,
+                        textTransform: "uppercase",
+                        letterSpacing: "0.1em",
+                        fontSize: 11,
+                      }}
+                    >
+                      Notable :
+                    </dt>{" "}
+                    <dd style={{ display: "inline", margin: 0 }}>{s.thresholds.notable}</dd>
+                  </div>
+                ) : null}
+                {s.thresholds.informatif ? (
+                  <div>
+                    <dt
+                      style={{
+                        display: "inline",
+                        fontWeight: 500,
+                        textTransform: "uppercase",
+                        letterSpacing: "0.1em",
+                        fontSize: 11,
+                      }}
+                    >
+                      Informatif :
+                    </dt>{" "}
+                    <dd style={{ display: "inline", margin: 0 }}>{s.thresholds.informatif}</dd>
+                  </div>
+                ) : null}
+              </dl>
+            ) : null}
           </article>
         ))}
       </section>

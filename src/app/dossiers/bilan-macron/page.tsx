@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getDossier } from "@/lib/dossier-config";
 import { DossierNav } from "@/components/dossier-nav";
@@ -9,6 +10,22 @@ import { BilanElitesSection } from "@/components/bilan/bilan-elites-section";
 import { BilanContrasteSection } from "@/components/bilan/bilan-contraste-section";
 
 export const revalidate = 86400;
+
+export const metadata: Metadata = {
+  title: "Bilan Macron — L'Observatoire Citoyen",
+  description:
+    "Analyse chiffrée de la présidence Macron (2017–2026) : économie, santé, droits, environnement, élites et cohésion sociale sur neuf ans de données.",
+  openGraph: {
+    title: "Bilan Macron — L'Observatoire Citoyen",
+    description:
+      "Analyse chiffrée de la présidence Macron (2017–2026) : économie, santé, droits, environnement, élites et cohésion sociale sur neuf ans de données.",
+  },
+  twitter: {
+    title: "Bilan Macron — L'Observatoire Citoyen",
+    description:
+      "Analyse chiffrée de la présidence Macron (2017–2026) : économie, santé, droits, environnement, élites et cohésion sociale sur neuf ans de données.",
+  },
+};
 
 export default async function BilanMacronPage() {
   const dossier = getDossier("bilan-macron");

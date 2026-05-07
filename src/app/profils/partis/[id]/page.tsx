@@ -5,6 +5,15 @@ import { PageHeader } from "@/components/page-header";
 import { notFound } from "next/navigation";
 import { getNuancesForParty, isCoalition } from "@/lib/nuance-party-map";
 import { getNuanceStyle } from "@/lib/nuance-colors";
+import { SourceChip } from "@/components/source-chip";
+
+function SectionTitle({ children }: { children: React.ReactNode }) {
+  return (
+    <h2 className="mb-4 text-xs font-semibold uppercase tracking-[0.15em] text-bureau-500">
+      {children}
+    </h2>
+  );
+}
 
 export async function generateMetadata({
   params,
@@ -108,9 +117,18 @@ export default async function PartiDetailPage({ params }: { params: Promise<{ id
         ]}
       />
 
-      <div className="mx-auto max-w-6xl px-6 py-8">
-        {/* Top-level financial summary */}
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 mb-8">
+      <div className="mx-auto max-w-6xl px-6 py-8 space-y-10">
+        <section>
+          <SectionTitle>Résumé</SectionTitle>
+          <div className="mb-4">
+            <SourceChip
+              outlet="CNCCFP"
+              type="officiel"
+              basis={`Comptes certifiés, exercice ${parti.exercice}`}
+            />
+          </div>
+          {/* Top-level financial summary */}
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           <div className="rounded-lg border border-bureau-700/20 bg-bureau-800/20 p-4">
             <p className="text-[10px] uppercase tracking-widest text-bureau-500">Recettes</p>
             <p className="mt-1 text-xl font-bold text-teal">{fmtEuro(parti.totalProduits)}</p>
@@ -129,10 +147,28 @@ export default async function PartiDetailPage({ params }: { params: Promise<{ id
             <p className="text-[10px] uppercase tracking-widest text-bureau-500">Disponibilités</p>
             <p className="mt-1 text-xl font-bold text-blue">{fmtEuro(parti.disponibilites)}</p>
           </div>
-        </div>
+          </div>
+        </section>
 
-        {/* Revenue / Expense breakdown side by side */}
-        <div className="grid gap-6 sm:grid-cols-2 mb-8">
+        <section>
+          <SectionTitle>Signaux</SectionTitle>
+          <div className="rounded border border-bureau-700/20 bg-bureau-800/15 px-4 py-3 text-sm text-bureau-500">
+            <p className="italic">
+              Les signaux de transparence (conflits d&apos;intérêts, lien lobby,
+              dissidence) sont calculés au niveau des personnalités publiques
+              affiliées à ce parti. Voir leurs fiches individuelles pour les
+              détails.
+            </p>
+            <p className="mt-2 border-t border-bureau-700/20 pt-2 text-[11px] italic text-bureau-600">
+              Un signal est un croisement de données, pas une preuve.
+            </p>
+          </div>
+        </section>
+
+        <section>
+          <SectionTitle>Documents & sources</SectionTitle>
+          {/* Revenue / Expense breakdown side by side */}
+          <div className="grid gap-6 sm:grid-cols-2">
           {/* Recettes */}
           <div className="rounded-xl border border-bureau-700/20 bg-bureau-800/20 p-5">
             <h2 className="text-sm font-medium text-bureau-200 mb-4">Détail des recettes</h2>
@@ -188,12 +224,15 @@ export default async function PartiDetailPage({ params }: { params: Promise<{ id
               </div>
             )}
           </div>
-        </div>
+          </div>
+        </section>
 
         {/* Multi-year comparison if available */}
         {allYears.length > 1 && (
+        <section>
+          <SectionTitle>Chronologie — évolution pluriannuelle</SectionTitle>
           <div className="rounded-xl border border-bureau-700/20 bg-bureau-800/20 p-5">
-            <h2 className="text-sm font-medium text-bureau-200 mb-4">&Eacute;volution pluriannuelle</h2>
+            <h3 className="sr-only">&Eacute;volution pluriannuelle</h3>
             <div className="overflow-x-auto">
               <table className="w-full text-xs">
                 <thead>
@@ -229,12 +268,15 @@ export default async function PartiDetailPage({ params }: { params: Promise<{ id
               </table>
             </div>
           </div>
+        </section>
         )}
 
         {/* Election performance (Législatives 2024) */}
         {electionStats && (
-          <div className="rounded-xl border border-bureau-700/20 bg-bureau-800/20 p-5 mt-8">
-            <h2 className="text-sm font-medium text-bureau-200 mb-4">Performance &eacute;lectorale &mdash; L&eacute;gislatives 2024</h2>
+        <section>
+          <SectionTitle>Relations — performance électorale</SectionTitle>
+          <div className="rounded-xl border border-bureau-700/20 bg-bureau-800/20 p-5">
+            <h3 className="sr-only">Performance &eacute;lectorale &mdash; L&eacute;gislatives 2024</h3>
             {electionStats.isCoalitionData && (
               <p className="mb-3 text-[10px] uppercase tracking-widest text-amber">
                 Donn&eacute;es de coalition ({electionStats.nuances.map(n => getNuanceStyle(n).label).join(" + ")})
@@ -261,6 +303,7 @@ export default async function PartiDetailPage({ params }: { params: Promise<{ id
               )}
             </div>
           </div>
+        </section>
         )}
       </div>
     </>

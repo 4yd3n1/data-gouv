@@ -1,6 +1,6 @@
 # Frontend Implementation
 
-> Last updated: Apr 23, 2026 — Session 51 (map palette fix + Bilan Macron final corrections + DOM poverty fallback + `/signaux?type=lobby` dashboard + InteractiveStrip reframe). ~27 active routes + 6 OG image routes, ~72 components (42 + 7 bilan + 21 investigative + 2 signaux/lobby-* Session 51), 14 client components. **5-item nav**: Dossiers | Signaux en Direct | Annuaire | Territoire | Méthode. Homepage is Variant A: `Dateline` → hero 2-col (`HeroLead` + `HeroVisualisation`) → 3 `SecondaryArticle` + `SignalsRail` → `InteractiveStrip` (Session 51 reframe: "12 819 déclarations par 1 455 représentants (2018-2026)") → `MethodologyNotes`. `/signaux?type=lobby` is a dedicated 5-section lobby dashboard (Session 51). `FranceMap` flips palette direction for `!higherIsBetter` indicators so darker = worse universally.
+> Last updated: May 7, 2026 — Session 68 HATVP Documents simplification. Minister `Documents` now renders `<HatvpDeclarationsSection>`: a clean DI + DSP surface with public income, non-public income, elected mandates, assets, passif, and net patrimoine separated. Pre-2027 launch wave remains shipped (P0.1 Legitimacy Stack + P0.2 `/v/[slug]` landing pages + P0.3 AI pipeline + P0.4 polish audit + P0.5 `/mon-depute` rebrand). ~34 active routes + 9 OG image routes + 5 Twitter card routes. **5-item nav unchanged**: Dossiers | Signaux en Direct | Annuaire | Territoire | Méthode. Homepage is hybrid Variant A editorial top + dashboard sections below. JSON-LD `Organization` injected at root layout, `Person` + `GovernmentPosition` on profile routes. `robots.ts` + `sitemap.ts` (8 166 URLs, env-driven hostname via `NEXT_PUBLIC_SITE_URL`). Root error boundaries (`not-found.tsx`, `loading.tsx`, `error.tsx`).
 
 Complete reference for all UI pages, components, styling, and patterns.
 
@@ -11,11 +11,114 @@ Complete reference for all UI pages, components, styling, and patterns.
 - **Next.js 16** App Router — all pages are React Server Components by default
 - **Tailwind CSS 4** with custom theme tokens defined in `globals.css`
 - **No client-side data fetching** — every page queries Prisma directly at render time
-- **14 client components**: `SearchInput`, `Avatar`, `DeclarationSection`, `ProfileTabs`, `DeptLookup`, `NavSearch`, `SearchBox`, `FranceMap`, `DeltaBadge`, `GroupExpander`, `ScrutinAccordion`, `MediaBoard`, `MobileNav`, `ConflictDrilldown` (all use `"use client"`) — `HeroSlider` deleted in Session 39
+- **15 client components** (Wave 1C added `share-buttons`): `SearchInput`, `Avatar`, `DeclarationSection`, `ProfileTabs`, `DeptLookup`, `NavSearch`, `SearchBox`, `FranceMap`, `DeltaBadge`, `GroupExpander`, `ScrutinAccordion`, `MediaBoard`, `MobileNav`, `ConflictDrilldown`, **`mon-depute/share-buttons`** (all use `"use client"`)
 - **1 shared lib**: `nuance-colors.ts` — political party color mapping used by elections pages
+- **Cross-repo shared package** (Pre-2027 launch wave — P0.3): `viral-schemas` at `/Users/aydenmomika/packages/viral-schemas/`, depended on via `"viral-schemas": "file:../packages/viral-schemas"`. Exports the 7 Zod fact-check schemas (`PlatformSchema`, `BrandingSchema`, `StatItemSchema`, `BeforeAfterItemSchema`, `RankingItemSchema`, `QuoteItemSchema`, `VerifiedPromiseSchema`, `RealityDataPointSchema`) + `ContrastFactCheckPropsSchema` + `PromiseFactCheckPropsSchema`. Consumed by data-gouv (`/v/[slug]` manifest reader) and the sibling Remotion repo (`scripts/generate-fact-check.ts`). Build via `pnpm --filter viral-schemas build`. After any schema change: `pnpm install` in BOTH consumers.
 - **French localization** throughout: `<html lang="fr">`, `fr-FR` locale for numbers/dates
-- **ISR** (`export const revalidate = N`): homepage + votes = 3600s; profils hub + economie + patrimoine + territoire hub = 86400s; profiles = dynamic (no revalidate); dossiers (medias, financement-politique, bilan-macron) = 86400s
-- **generateMetadata**: all 9 key dynamic routes export `generateMetadata` for SEO
+- **ISR** (`export const revalidate = N`): homepage + votes = 3600s; profils hub + economie + patrimoine + territoire hub = 86400s; profiles = dynamic (no revalidate); dossiers (medias, financement-politique, bilan-macron) = 86400s; `/v/[slug]` + `/mon-depute` = 3600s (Pre-2027 launch wave)
+- **generateMetadata**: 9 key dynamic routes + 11 list/hub pages added by P0.4 batch 1 fixes (`/profils/{deputes,senateurs,elus,lobbyistes,partis}`, `/territoire`, `/territoire/economie`, `/votes`, `/votes/mon-depute`, `/dossiers/bilan-macron`, `/patrimoine`)
+- **Canonical hostname**: `process.env.NEXT_PUBLIC_SITE_URL` (`http://localhost:3000` dev fallback). Used by `robots.ts`, `sitemap.ts`, JSON-LD, OG/Twitter card URLs, share-buttons URL construction, `metadataBase` on root layout. Bake the real hostname into the deployment env before launch — search engines cache `<link rel="canonical">` and JSON-LD `url` fields.
+
+---
+
+## Pre-2027 launch wave (May 2 2026 — P0.1 + P0.2 + P0.3 + P0.4 + P0.5)
+
+Trust + conversion infrastructure shipped before the L52-1 commercial-advertising blackout. Reference plans at `~/.claude/plans/{ok-give-me-final-dazzling-wave,p0-1-legitimacy-stack,p0-2-landing-pages,p0-3-ai-pipeline,p0-4-polish-audit,p0-5-mon-depute,misty-swinging-ladybug}.md`.
+
+### New routes (6)
+
+| Route | Purpose |
+|-------|---------|
+| `/apropos` | Async Server Component, mirrors `methodologie/page.tsx` structure (`ClassificationBar` + `Eyebrow` + 7 sections). Anchor IDs `#financement` and `#lanceurs-alerte` (footer links target these). Minimal-disclosure copy until P1.3 funding stack lands. |
+| `/signaler-une-erreur` + `/merci` | Reader-correction form. Auto-fills `?from=` query into URL field; `<select>` enum (FACTUEL/SOURCE/TYPO/AUTRE); required description (`minLength={10}`); optional contact. Server Action persists to `ErrorReport` model + writes audit log to `IngestionLog` with `source: "error-report"` (uses `prisma.ingestionLog.create()` directly — `logIngestion()` helper is script-context only). `/merci` page is `robots: { index: false }`. |
+| `/v/[slug]` | Per-video fact-check landing page. Reads draft JSON from `process.env.REMOTION_DRAFTS_DIR ?? ../remotion/remotion/src/data/drafts/`, parses via `viral-schemas` Zod (Contrast/Promise discriminated by shape), renders Eyebrow + verdict + side-by-side / quote / sources expanded + 3 CTAs (profile, embed stub "À venir", newsletter form → `NewsletterPending` upsert). 5 existing drafts live: `lecornu-5pm`, `dissolution-pari`, `oxfam-milliardaires`, `pedopsychiatrie`, `policier-deces` (slugs derived via `deriveSlugFromFilename` — kebab-cased filename minus `FactCheck-` prefix). |
+| `/v` | Index page listing all parseable drafts via `listDrafts()`. Category filter chips (ECONOMIE/SOCIAL/SANTE/DEMOCRATIE/CLIMAT). |
+| `/mon-depute` | Share-optimized deputy lookup. 3-state UX: empty prompt (postal input + 3 example postal codes) / ambiguous chooser (`?cp=` resolves to multiple communes) / resolved card. Branded `<DeputeCard />` + `<ShareButtons />` (5 buttons, WhatsApp first). **Multi-circonscription disclaimer** (May 2 — verification fix): when a single commune covers >1 circonscriptions (e.g. Paris=18, Lyon=14, Marseille=7), title pluralizes (`Vos députés — 75008 (18 circonscriptions)`) and a notice with link to `elections.interieur.gouv.fr` instructs the user to pick their circonscription. All N cards still render — data accuracy preserved, framing made honest. **Underlying gap**: no commune→circonscription mapping in the schema yet — INSEE COG doesn't ship one, and `Depute.circonscription` (number) isn't joined. Real fix is a future ingestion (legislative election results → commune codes). |
+
+### New 308 redirect
+
+`/votes/mon-depute` → `/mon-depute` (preserves inbound links from prior video outputs). Configured in `next.config.ts`.
+
+### Sitemap + robots
+
+- `src/app/sitemap.ts` — `MetadataRoute.Sitemap`. 8 166 entries: 110 personnalites + 2 101 deputes + 1 943 senateurs + 3 883 lobbyistes + 101 départements + 11 dossiers + 13 static routes. Hostname from `NEXT_PUBLIC_SITE_URL`. `revalidate = 3600`.
+- `src/app/robots.ts` — `MetadataRoute.Robots`. Allows all, disallows `/api/` + `/admin/`. `Sitemap:` directive.
+- **`/v` not yet in `STATIC_ROUTES`** — wire when first new draft with `_meta.published: true` ships from the LLM pipeline. The 5 existing drafts ARE listed via `listDrafts()`.
+
+### Root error boundaries
+
+- `src/app/not-found.tsx` — editorial 404, no fake error codes. Search bar links to `/recherche`. Falls back from any unmatched dynamic route.
+- `src/app/loading.tsx` — 3-line `.pulse` skeleton.
+- `src/app/error.tsx` — `"use client"` boundary, "Réessayer" + "Accueil" actions.
+
+### JSON-LD structured data (Schema.org)
+
+Component: `src/components/json-ld.tsx` — typed object literal → JSON.stringify (no XSS surface; data is server-rendered from typed Prisma queries).
+
+| Route | Schema | Notes |
+|-------|--------|-------|
+| Root layout | `Organization` | Static `<script type="application/ld+json">` in `<head>`. `name: "L'Observatoire Citoyen"`, `alternateName: "Bureau des données publiques"`, env-driven `url`. |
+| `/profils/[slug]` | `Person` + `hasOccupation: GovernmentPosition` | Pre-2027 polish wave fixed `hasOccupation.@type` from `GovernmentOrganization` → `GovernmentPosition` (the Schema.org subtype Google Rich Results expects for elected/appointed offices). |
+| `/profils/deputes/[id]` | `Person` | No `GovernmentPosition` (legislator role differs). |
+| `/profils/senateurs/[id]` | `Person` | Same as deputes. |
+
+Verify via Google Rich Results test post-deploy.
+
+### OG / Twitter cards (consolidation)
+
+Sitewide pattern — every OG image at 1200×630 / Twitter at 1200×600, copies the `src/app/profils/deputes/[id]/opengraph-image.tsx` (230 LoC) reference. **No remote `<img>` in satori** — initials monogram for missing photos.
+
+OG routes (9 total):
+- Root `/opengraph-image` (sitewide brand, static)
+- `/profils/[slug]/opengraph-image` (Pre-2027 launch wave)
+- `/profils/deputes/[id]/opengraph-image` (existing)
+- `/signaux/opengraph-image` (Pre-2027 launch wave)
+- `/dossiers/[slug]/opengraph-image` (Pre-2027 launch wave)
+- `/dossiers/logement/opengraph-image` (legacy, may be obsolete post-Session-39)
+- `/territoire/[departementCode]/opengraph-image` (existing)
+- `/votes/scrutins/[id]/opengraph-image` (existing)
+- `/v/[slug]/opengraph-image` (Pre-2027 launch wave)
+- `/mon-depute/opengraph-image` (Pre-2027 launch wave — reads `searchParams.{cp,commune}`)
+
+Twitter card routes (5 — all new in Pre-2027 launch wave):
+- Root `/twitter-image`, `/profils/[slug]/twitter-image`, `/signaux/twitter-image`, `/dossiers/[slug]/twitter-image`, `/v/[slug]/twitter-image`, `/mon-depute/twitter-image`
+
+`metadata.twitter` block in root layout: `twitter: { card: "summary_large_image" }` (handle omitted — better absent than wrong until a real account is provisioned).
+
+### Footer activation (5 placeholders converted, 2 remain)
+
+`src/app/layout.tsx` `FOOTER_COLUMNS` array. Pre-2027 launch wave converted `<span title="À venir">` → `<Link>` for: `Politique de correction` → `/methodologie#correction`, `Charte éditoriale` → `/methodologie#charte`, `Signaler une erreur` → `/signaler-une-erreur`, `Lanceurs d'alerte` → `/apropos#lanceurs-alerte`, `Transparence financière` → `/apropos#financement`. Wave 1C added `Mon député` → `/mon-depute` to the Accès column. Wave 3 added `Vérifications` → `/v` to the Accès column. Anchor IDs added to `methodologie/page.tsx` (sections 4 + 5) and `apropos/page.tsx` (sections 3 + 5).
+
+**Remaining `<span title="À venir">` placeholders (2)**: `Newsletter` (deferred to P2.1 — form ships to `NewsletterPending` model now, mail-provider wiring later) and `Proposer une enquête` (no target route planned in this wave).
+
+### P0.4 batch 1 fixes (cross-cutting Majors)
+
+1. **`prefers-reduced-motion` global gate** — `src/app/globals.css` `@media (prefers-reduced-motion: reduce)` block extended with 6 selectors: `.fade-up`, `.bar-fill`, `.live-dot`, `.live-dot-amber`, `.pulse-dot`, `.sigint-section::after`. All set `animation: none !important`. Previously only `.pulse` was gated.
+2. **`generateMetadata` on 11 list/hub pages** — added static `metadata` exports to `/profils/{deputes,senateurs,elus,lobbyistes,partis}`, `/territoire`, `/territoire/economie`, `/votes`, `/votes/mon-depute`, `/dossiers/bilan-macron`, `/patrimoine`. `/profils/ministres` already had a literal metadata export; `/mon-territoire` already had `Metadata` typed export.
+3. **`/profils/ministres` mobile spot-fix** — `PresidentCard` and `PremierMinistreCard` `w-full max-w-lg` → `w-full max-w-full sm:max-w-lg` + `overflow-hidden` + responsive padding. Brackets clipped on mobile.
+4. **French typography sweep** — narrow non-breaking space (NNBSP, U+202F) before `: ; ! ?`, curly apostrophes (U+2019), in editorial copy on `src/app/{page,methodologie/page,apropos/page,signaler-une-erreur/page,mon-depute/page}.tsx`. Scope was 5 files; **dossier section components (`/components/bilan/*`, `/app/dossiers/sante/page.tsx`) not swept** — defer to P1.
+5. **`/territoire/comparer` amber accent** — `MetricRow` B-better path `bg-teal/5` → `bg-amber/5` (matches dept-B accent everywhere else on the page).
+6. **`/signaux` LARP fix** — `Dernière analyse : {fmtDate(new Date())}` (render-time fake) → `prisma.ingestionLog.findFirst()` query in the page's `Promise.all`, displayed as real `IngestionLog.createdAt` or fallback `mise à jour quotidienne`.
+
+### Polish wave (a11y + JSON-LD type + LCP triage)
+
+After launch-gate Lighthouse flagged a11y violations:
+- **`<dl>` structure on `/v/[slug]`** — `<SrcChip>` was a sibling element to `<dd>` inside the `<dl>`, making it an invalid direct child. Moved inside `<dd>`. axe `definition-list` rule passes.
+- **`label-content-name-mismatch`** — embed stub `<button>` `aria-label` differed from visible text. Dropped the `aria-label` (visible text is self-explanatory); kept `title` for sighted hover.
+- **Color contrast (WCAG AA 4.5:1 on body text)** — `--color-fg-dim` `#5a637a` → `#727d93` (3.19:1 → 4.63:1 against `#0a0f1a`); `--color-bureau-400` `#64748b` → `#7a8399` (4.03:1 → 5.05:1). `--color-fg-faint` `#3f4860` (2.10:1) intentionally NOT bumped — exclusively decorative use (SVG strokes, separator dots, chart fills, exempt from WCAG 1.4.3 text contrast).
+- **`target-size` (44×44 px minimum)** — `min-h-[44px] min-w-[44px]` on `share-button.tsx` profile button (was `py-1 px-3` ≈ 26px), `.mobile-menu-btn` `40px` → `44px`, `france-map.tsx` close button + "Voir le tableau de bord →" button.
+- **JSON-LD `GovernmentPosition`** — see "JSON-LD structured data" above.
+- **LCP on `/v/[slug]` (4.4s)** — root cause: `getDraft()` falls into an O(n) full-scan with per-file Zod validation when slug doesn't filename-derive in step 1. TODO comment in place; quick fix needs a build-time slug→filename index + integration test coverage.
+
+### Wave 2 — P0.3 cross-repo AI pipeline
+
+No data-gouv UI surface (only DB migration `20260502143648_add_remotion_reader_role` — see [`schema.md`](schema.md) "remotion_reader Postgres role"). Cross-repo plumbing lives in:
+- `/Users/aydenmomika/packages/viral-schemas/` (new shared schemas package)
+- `/Users/aydenmomika/remotion/remotion/{src/lib/{db,draft-llm}.ts, scripts/{generate-fact-check,smoke-prisma,llm-cost-report}.ts, prisma/schema.prisma → symlinked, prisma.config.ts, .env.local}`
+
+`draft-llm.ts` uses Anthropic SDK (Claude Opus 4.7 default; `--model` flag overrides) with prompt caching on the system prompt, SHA-256 idempotency cache at `src/data/drafts/.cache/<hash>.json`, Zod-validated output with up to 2 corrective retries on parse failure. JSONL cost log at `logs/llm-calls.jsonl`. **Sourcing gate untouched**: humans still register fact-checks in `Root.tsx` (augment-only, not auto-publish). `/v/[slug]` reads the same draft JSON the LLM produces — single source of truth for both video and HTML surfaces.
+
+**ANTHROPIC_API_KEY**: placeholder in `.env.local`. Set the real key to enable end-to-end LLM generation; until then `npx tsx scripts/generate-fact-check.ts personnalite:<slug>` fails gracefully at the LLM call boundary (Prisma query, prompt construction, cache key all execute correctly).
 
 ---
 
@@ -201,12 +304,14 @@ Icons are **inline SVG** — `lucide-react` intentionally NOT installed. Lead + 
 
 ---
 
-## Route Map (~35 active + ~30 legacy + 5 OG image routes)
+## Route Map (~33 active post-launch-wave + ~30 legacy + 9 OG image routes + 5 Twitter cards)
+
+**Pre-2027 launch wave additions** (May 2 2026): `/apropos`, `/signaler-une-erreur`, `/signaler-une-erreur/merci`, `/v/[slug]`, `/v`, `/mon-depute`. All detailed in the "Pre-2027 launch wave" section above. Existing routes below unchanged unless noted.
 
 ### Static (prerendered at build time)
 | Route | Purpose |
 |-------|---------|
-| `/` | Homepage — search-first hero with giant search bar, entity pills (Députés, Sénateurs, Ministres, Lobbyistes, Votes), inline top 6 signals, 5 recent votes, territory lookup. Session 39 rewrite: removed HeroSlider, dossier grid, KPI counters, economic indicators. |
+| `/` | Homepage — hybrid editorial + dashboard. Top half uses Variant A editorial front page (Bilan Macron lead, linked poverty map rail, 3 dossier cards, signals rail, AGORA interactive strip, methodology notes); lower half keeps the civic dashboard sections from Session 66 (`GouvernementBoard`, `VotesStructurants`, `HatvpScoreboard`) plus `/mon-depute` CTA. |
 | `/profils` | **People hub** (Session 39) — index page linking to all people sections: députés, sénateurs, ministres, lobbyistes, partis, élus, comparer |
 | `/profils/ministres` | Government index — Lecornu II government (37 members), grouped by type (President → PM → Ministres → Délégués → Secrétaires), avatar grid, links to profiles. Supports `?gouvernement=borne|attal|barnier` filter. Copy of `/gouvernement` page with updated links. |
 | `/elections` | Hub — Législatives 2024 card + national summary stats |
@@ -216,7 +321,7 @@ Icons are **inline SVG** — `lucide-react` intentionally NOT installed. Lead + 
 | `/votes` | Votes hub — 13 topic grid + recent scrutins |
 | `/votes/alignements` | Alignment matrix — N×N group co-vote heatmap, top 5 allies/opponents per group (ISR 86400) |
 | `/president` | **HTTP 308 permanent redirect → `/profils/emmanuel-macron`** |
-| `/methodologie` | **Placeholder (Session 50)** — 5-section skeleton (Sources / Signaux / Mise à jour / Correction / Charte éditoriale) with `ClassificationBar` + `Eyebrow` + `.hd` title + body + "Page dédiée — À venir" tag per section. 5th nav item. Real content pending. |
+| `/methodologie` | Methodology page — base sections (Sources / Signaux / Mise à jour / Correction / Charte éditoriale) plus Session 66 anchored signal formulas (`#conflit`, `#porte`, `#lobby`, `#lobby-owner`, `#media`, `#ecart`, `#dissidence`) generated from `SIGNAL_REGISTRY`. |
 
 ### Dossiers (3 surviving + 8 killed → redirected)
 
@@ -255,7 +360,7 @@ Icons are **inline SVG** — `lucide-react` intentionally NOT installed. Lead + 
 | `/profils/senateurs` | Search, pagination |
 | `/profils/senateurs/[id]` | **Redirects to `/profils/[slug]`** if `PersonnalitePublique.senateurId` matches. Otherwise: Hero profile + tabs (Mandats & Commissions / Déclarations / **Transparence** / Informations). Transparence tab: commission-lobbying overlap via `COMMISSION_DOMAINS` regex → `ActionLobbyiste.count` queries |
 | `/profils/ministres` | Government index — SIGINT organigram, `?gouvernement=` filter |
-| `/profils/[slug]` | Minister profile — `ProfileHero` + `ProfileTabs` + `DeportBanner` (Session 47) + `ProfileSignalBanner`. Tabs: Parcours / Déclarations HATVP / Mandats & Lobbying / Affaires judiciaires (conditional) / Activité parlementaire (conditional). Déclarations HATVP tab renders `DeportSection` (Session 47) above `InteretsSection` when `DecretDeport` rows exist. Anchor `#deports` deep-links to the section. |
+| `/profils/[slug]` | Minister profile — `ProfileHero` + `ProfileTabs` + `StaleDataNotice`; `ProfileSignalBanner`, `DeportBanner`, and `TrajectoireHero` are hidden on `?tab=documents` to keep the HATVP reading surface quiet. Standard non-president tabs: **Résumé / Signaux / CV public / Relations / Déclarations HATVP** (`tab=resume|signaux|chronologie|relations|documents`). `Documents` renders `<HatvpDeclarationsSection>` (Session 68): DI + DSP summaries, public/government income, non-public income badged `Non public`, elected mandates, assets, passif, net patrimoine, and grouped DSP rows. `Signaux` contains conflict/deport/judicial surfaces, including `DeportSection` at `#deports`. President keeps specialized tabs; `?tab=declarations` also uses `<HatvpDeclarationsSection>` where data exists. |
 | `/profils/elus` | Local officials list — 593K rows, paginated |
 | `/profils/lobbyistes` | Search, pagination |
 | `/profils/lobbyistes/[id]` | **Investigative profile (Session 52)** — Variant A hero (serif h1 + categorie + 6-field metadata grid: type, SIREN, effectif, CA, adresse, inscription HATVP), 4-cell stat strip (déclarations AGORA · ministères ciblés + 1ᵉʳ · domaines + 1ᵉʳ · période), FIG. 1 ministry table with part-% and current-minister link, FIG. 2 top-10 domain BarRows (synonym-normalized), FIG. 3 stacked-area timeline (top 6 ministries + Autres, only when >1 exercice), FIG. 4 50-row declarations table (exercice / ministère / domaine / typeAction / tranche). Data: `src/lib/lobby-overview.ts::getLobbyisteAgoraDetail(name)` — matches `Lobbyiste.nom` to `ActionLobby.representantNom` via `normalizeLobbyisteName`; returns null when no AGORA row matches, page renders transparent "aucune déclaration AGORA appariée" notice and only the legacy `ActionLobbyiste` block. |
@@ -296,7 +401,7 @@ Old `/representants/*` routes still exist with identical pages. Will be replaced
 | `/votes/lois` | Parliamentary Laws hub — 19 major laws. Filters: statut (Tous/Adoptés/Rejetés), type (PLF/PROJET_LOI/etc), tag pills. `LoiCard` grid with inline GroupBar + **role breakdown** (amendment/article/motion counts per card, Session 41). `revalidate = 3600`. [Session 33] |
 | `/votes/lois/[slug]` | Law detail — hero stats (votants/pour/contre/abstentions), `GroupExpander` (party breakdown, expandable deputy list), `ScrutinAccordion` (**role-grouped**: Final Vote pinned, then Articles/Amendements/Motions/Procedural collapsible sections with adopted/rejected counts + filter pills, Session 41). `generateMetadata` for SEO. [Session 33] |
 | `/votes/par-sujet/[tag]` | Tag-filtered scrutins, pagination, vote bars, related tags. **Default `?vue=final`** excludes amendment-titled scrutins; toggle to `?vue=tous` shows all. Amendment count indicator shown when filtered. [Session 41] |
-| `/votes/mon-depute` | 3-state deputy lookup: empty → list → detail with tag breakdown |
+| `/votes/mon-depute` | **HTTP 308 → `/mon-depute`** (Pre-2027 launch wave). Original 3-state deputy lookup file remains in tree as a fallback but the `next.config.ts` redirect takes precedence at runtime. |
 | `/votes/alignements` | N×N group alignment heatmap. Backed by `src/lib/alignment.ts` (`computeAlignment()`). Top 5 allies (teal) and opponents (rose) per group. ISR 86400. |
 
 ### Comparaisons (Phase 7D)
@@ -326,16 +431,21 @@ Old `/representants/*` routes still exist with identical pages. Will be replaced
 | `/patrimoine/monuments` | Search, protection type filter, pagination |
 | `/patrimoine/monuments/[id]` | Info panel, GPS link, description/historique |
 
-### OG Image Routes (Phase 7E + Session 18/19 fixes)
-Next.js `opengraph-image.tsx` files — `runtime = "nodejs"`, 1200×630, inline styles only (no Tailwind).
+### OG Image Routes (Phase 7E + Session 18/19 fixes + Pre-2027 launch wave additions)
+Next.js `opengraph-image.tsx` files — `runtime = "nodejs"`, 1200×630, inline styles only (no Tailwind). Twitter card routes mirror at 1200×600 — see the consolidation table in the "Pre-2027 launch wave" section.
 
 | Route | Key Data |
 |-------|----------|
 | `/opengraph-image` | Homepage brand — platform name, tagline, stat cards. Static, no DB. |
 | `/dossiers/logement/opengraph-image` | Logement dossier — queries live housing stats: avg vacancy rate + avg secondary rate (StatLocale) + vote count (ScrutinTag). |
-| `/representants/deputes/[id]/opengraph-image` | Initials monogram + name + groupe + participation % + vote count + conflict count |
+| `/profils/deputes/[id]/opengraph-image` | Initials monogram + name + groupe + participation % + vote count + conflict count (canonical pattern, 230 LoC reference) |
 | `/territoire/[departementCode]/opengraph-image` | Dept + region name + 3 INSEE indicators (MEDIAN_INCOME, POVERTY_RATE, UNEMPLOYMENT_RATE) + counts (deputés, sénateurs, élus) |
-| `/gouvernance/scrutins/[id]/opengraph-image` | Result badge (ADOPTÉ green / REJETÉ red) + truncated title + pour/contre bar + vote counts |
+| `/votes/scrutins/[id]/opengraph-image` | Result badge (ADOPTÉ green / REJETÉ red) + truncated title + pour/contre bar + vote counts |
+| **`/profils/[slug]/opengraph-image`** | Pre-2027 launch wave — minister identity + 2 stats (mandats, intérêts HATVP) |
+| **`/signaux/opengraph-image`** | Pre-2027 launch wave — conflict count + type breakdown + last-update timestamp |
+| **`/dossiers/[slug]/opengraph-image`** | Pre-2027 launch wave — dossier label/subtitle/stat/sources, accent color from dossier config |
+| **`/v/[slug]/opengraph-image`** | Pre-2027 launch wave — top accent bar (color from `branding.category`) + framingTitle + verdict bottom strip |
+| **`/mon-depute/opengraph-image`** | Pre-2027 launch wave — initials monogram (rose-tinted when conflicts > 0) + name + party + circonscription + postal code badge. Reads `searchParams.{cp,commune}`. |
 
 **Critical rule**: never use remote `<img src>` in satori/ImageResponse — network failures crash the route with `chrome-error://chromewebdata/`. Always use initials or inline SVG.
 
@@ -779,18 +889,21 @@ Twelve server components in `src/components/gouvernement/`. Each is a self-conta
 
 | Component | File | Purpose |
 |-----------|------|---------|
-| `InteretsSection` | [gouvernement/interets-section.tsx](../src/components/gouvernement/interets-section.tsx) | HATVP declared interests grouped by `rubrique`, progressive disclosure (first 5 inline, rest in native `<details><summary>`), `InteretItem` sub-component, conflict alert per item |
+| `HatvpDeclarationsSection` (Session 68) | [gouvernement/hatvp-declarations-section.tsx](../src/components/gouvernement/hatvp-declarations-section.tsx) | **Canonical profile Documents tab.** Async server component for `/profils/[slug]?tab=documents` and president `?tab=declarations`. Fetches `getDossierData()` once and renders DI + DSP in a clean investigation surface: top source chips → two summary cards (DI: public income / non-public income / elected mandates / financial participations; DSP: assets / passif / net / populated sections) → two detail columns. DI detail splits into `Fonctions publiques et gouvernementales`, `Revenus non publics déclarés` (book/private/consulting/publisher income badged `Non public`), `Mandats électifs`, and `Autres intérêts déclarés`. DSP detail prioritizes Immeubles / Assurances vie / Comptes & épargne / Passif and keeps secondary sections collapsed. Use this component for user-facing HATVP declaration reading. |
+| `InteretsSection` | [gouvernement/interets-section.tsx](../src/components/gouvernement/interets-section.tsx) | HATVP declared interests grouped by `rubrique`, progressive disclosure (first 5 inline, rest in native `<details><summary>`), `InteretItem` sub-component, conflict alert per item. **Legacy/raw grouped-interest view** retained for lower-level use; no longer the canonical `Documents` tab surface. `PARTICIPATION` label is "Organes dirigeants et organismes" because financial participations directes are a separate HATVP rubrique. |
+| `HatvpDossier` (Session 65) | [gouvernement/hatvp-dossier.tsx](../src/components/gouvernement/hatvp-dossier.tsx) | **PDF-faithful DI + DSP renderer.** Single async server component that mirrors the official HATVP record (Déclaration d'intérêts + Déclaration de situation patrimoniale) with numbered sections. Structure: identity strip → synthesis hero → sticky section nav → DI body (§1°-§7°) → DSP body (§1°-§12°) → attestation footer. Density rules: heavy sections auto-collapse, empty sections render as "Néant" chip strip, multi-year DI positions fold year-by-year amounts into `<details>`. It remains useful for audits/raw dossier review, but `<HatvpDeclarationsSection>` is now the active profile UX. |
 | `MandatsSection` | [gouvernement/mandats-section.tsx](../src/components/gouvernement/mandats-section.tsx) | Timeline of government mandates (`border-l` vertical line, dot per mandate, active = teal dot) |
-| `CareerSection` | [gouvernement/career-section.tsx](../src/components/gouvernement/career-section.tsx) | Vertical career timeline from `EntreeCarriere`. Dot color by `categorie` (teal=gouvernemental, blue=électif, amber=fonction publique, purple=formation). **Session 44**: accepts `ministereCode` + `portefeuille` props; `CARRIERE_PRIVEE` entries matching `PORTFOLIO_KEYWORDS` get amber dot + "Porte tournante" badge via `matchRevolvingDoor()`. "Parcours partiel" notice when no PRESSE source. |
+| `CareerSection` | [gouvernement/career-section.tsx](../src/components/gouvernement/career-section.tsx) | Year-grouped career detail from `EntreeCarriere`. Dot color by `categorie` (teal=gouvernemental, blue=électif, amber=fonction publique, purple=formation). **Session 44**: accepts `ministereCode` + `portefeuille` props; `CARRIERE_PRIVEE` entries matching `PORTFOLIO_KEYWORDS` get amber dot + "Porte tournante" badge via `matchRevolvingDoor()`. "Parcours partiel" notice when no PRESSE source. **Session 60 cont**: the swim-lane chart was lifted out into `<TrajectoireHero>`; this component now renders just the `SummaryStrip` + year-grouped detail rows. Exports `LaneTimeline` + `detectReconduit` for `TrajectoireHero` to consume. |
+| `TrajectoireHero` (Session 60 cont) | [gouvernement/trajectoire-hero.tsx](../src/components/gouvernement/trajectoire-hero.tsx) | Persistent career swim-lane rendered above the tabs on `/profils/[slug]`. Visible on every tab without a click. Async server component, prop `personnaliteId`. Queries `EntreeCarriere` + `mergeCareerEntries`, computes `minYear`/`maxYear`/`span`/`reconduit`, renders the imported `LaneTimeline` in a bordered hero card. Returns `null` for sparse profiles (no dated entries). Editorial intent: identity-first reading order — hero (now) → signal banner (today's flags) → trajectoire (the arc) → tab details (the transcript). Multi-role officials (deputy → minister → ex-gov private role) surface as bars across multiple lanes simultaneously, no UI special-case needed. |
 | `LobbySection` | [gouvernement/lobby-section.tsx](../src/components/gouvernement/lobby-section.tsx) | `ActionLobby` data for current `ministereCode`: total count, top 5 orgs by count, top 6 domains, year range. **Session 44**: accepts `personnaliteId` prop; queries `EntreeCarriere` for `CARRIERE_PRIVEE` orgs; top lobby orgs matching a career org get amber border + "Ancien employeur" tag. Source link to AGORA registry. |
 | `JudiciaireSection` | [gouvernement/judiciaire-section.tsx](../src/components/gouvernement/judiciaire-section.tsx) | Verified judicial events only (`verifie = true`); renders `null` when count = 0 |
-| `DeportBanner` (Session 47) | [gouvernement/deport-banner.tsx](../src/components/gouvernement/deport-banner.tsx) | **Cross-tab alert.** Red-bordered strip rendered below `ProfileHero` when `DecretDeport` rows exist. Shows first scope inline + "N autres périmètres" overflow count + décret number; clicks through to `?tab=hatvp#deports`. Hidden for president. Renders `null` when count = 0. |
-| `DeportSection` (Session 47) | [gouvernement/deport-section.tsx](../src/components/gouvernement/deport-section.tsx) | Full list of `DecretDeport` cards inside the Déclarations HATVP tab. Per card: `BasisDeport` badge (rose for `ANCIEN_EMPLOYEUR` / `PARTICIPATION_FINANCIERE` / `PROCEDURE_JUDICIAIRE`, amber for family/mandate/bénévole), `jorfRef`, `dateDecret`, `Périmètre récusé` block, `Motif` block, `info.gouv.fr` source link. Ordered by `dateDecret desc`. |
+| `DeportBanner` (Session 47) | [gouvernement/deport-banner.tsx](../src/components/gouvernement/deport-banner.tsx) | **Cross-tab alert.** Red-bordered strip rendered below `ProfileHero` when `DecretDeport` rows exist. Shows first scope inline + "N autres périmètres" overflow count + décret number; clicks through to `?tab=signaux#deports`. Hidden for president and hidden on `Documents` to keep the DI/DSP surface focused. Renders `null` when count = 0. |
+| `DeportSection` (Session 47) | [gouvernement/deport-section.tsx](../src/components/gouvernement/deport-section.tsx) | Full list of `DecretDeport` cards inside the `Signaux` tab. Per card: `BasisDeport` badge (rose for `ANCIEN_EMPLOYEUR` / `PARTICIPATION_FINANCIERE` / `PROCEDURE_JUDICIAIRE`, amber for family/mandate/bénévole), `jorfRef`, `dateDecret`, `Périmètre récusé` block, `Motif` block, `info.gouv.fr` source link. Ordered by `dateDecret desc`. |
 | `ParliamentarySection` | [gouvernement/parliamentary-section.tsx](../src/components/gouvernement/parliamentary-section.tsx) | Conditional — renders `null` if neither `deputeId` nor `senateurId` set. Deputies: 4 score bars, group/department, 8 recent vote links with `VoteBadge`, contact pills. **Session 44**: accepts `ministereCode` prop; `MINISTERECODE_TO_TAGS` maps 20 ministry codes to ScrutinTag values; queries VoteRecord for "contre" votes on portfolio-tagged scrutins; amber alert box "Votes en tension avec le portefeuille actuel" with count badge, 5 example votes (red "contre" pills + scrutin links), and disclaimer. Senators: group/department, active commissions (top 3), date of office. |
 | `PresidentBilanSection` | [gouvernement/president-bilan-section.tsx](../src/components/gouvernement/president-bilan-section.tsx) | **President-only.** KPI grid (chômage, PIB, dette, SMIC from `Indicateur`), chômage timeline (`TimelineChart`), electoral results from `BIO.elections`, brief bio note. Baseline computed via `getBaselineObservation` at `ELECTION_DATES[2017]`. |
 | `PresidentPromessesSection` | [gouvernement/president-promesses-section.tsx](../src/components/gouvernement/president-promesses-section.tsx) | **President-only.** Props: `electionYear: 2017 \| 2022`. Election selector links (to `?tab=promesses&election=YEAR`), summary bar, promise cards with INSEE evidence blocks and parliament vote links. Data: `Indicateur` + `ScrutinTag` counts. |
 | `PresidentLobbyingSection` | [gouvernement/president-lobbying-section.tsx](../src/components/gouvernement/president-lobbying-section.tsx) | **President-only.** Overview stats, power lobbyist cards, consulting firm grid, domain cross-reference. Data: `ActionLobbyiste` group-by domain + curated SIREN action counts + `ScrutinTag` counts. |
-| `PresidentDeclarationsSection` | [gouvernement/president-declarations-section.tsx](../src/components/gouvernement/president-declarations-section.tsx) | **President-only.** Fetches `DeclarationInteret` by name "Macron" (different model from `InteretDeclare`). Summary stats, `ConflictAlert` for declarations with participations, `DeclarationSection` full list. |
+| `PresidentDeclarationsSection` | [gouvernement/president-declarations-section.tsx](../src/components/gouvernement/president-declarations-section.tsx) | **Legacy president-only renderer.** The active president `?tab=declarations` path now uses `<HatvpDeclarationsSection>` for consistency with ministers where data exists. |
 
 ---
 
@@ -1214,8 +1327,8 @@ src/
 │   │   ├── senateurs/
 │   │   │   ├── page.tsx
 │   │   │   └── [id]/page.tsx
-│   │   ├── ministres/page.tsx   # Copy of /gouvernement with updated links (ISR 3600)
-│   │   ├── [slug]/page.tsx      # Copy of /gouvernement/[slug] with updated links
+│   │   ├── ministres/page.tsx   # Government index (ISR 3600)
+│   │   ├── [slug]/page.tsx      # Minister profile: 5-section frame + HATVP DI/DSP Documents tab
 │   │   ├── elus/page.tsx
 │   │   ├── lobbyistes/
 │   │   │   ├── page.tsx
@@ -1361,6 +1474,8 @@ src/
 │   │   ├── data-health-strip.tsx
 │   │   └── choropleth-figure.tsx       # Same linkBase trailing-slash rule as HeroVisualisation
 │   └── gouvernement/            # Phase 9 section components (all async server components)
+│       ├── hatvp-declarations-section.tsx # Server: canonical DI + DSP Documents tab
+│       ├── hatvp-dossier.tsx    # Server: PDF-faithful DI + DSP raw/audit renderer
 │       ├── interets-section.tsx # Server: HATVP interests grouped by rubrique, <details> expander
 │       ├── mandats-section.tsx  # Server: government mandate timeline (border-l + dots)
 │       ├── career-section.tsx   # Server: career timeline (MandatGouvernemental + Depute/Senateur entries)

@@ -178,7 +178,7 @@ function computeSummary(entries: MergedCareerEntry[]): Summary {
 // Count distinct governments a given "Ministre de X" title has been held under.
 // Presidential titles are excluded — a president spans multiple PM rotations by
 // design, so "reconduit ×N" misreads as renewal.
-function detectReconduit(entries: MergedCareerEntry[]): Map<string, number> {
+export function detectReconduit(entries: MergedCareerEntry[]): Map<string, number> {
   const groups = new Map<string, string[]>();
   for (const e of entries) {
     if (e.categorie !== "MANDAT_GOUVERNEMENTAL") continue;
@@ -271,20 +271,6 @@ export async function CareerSection({
   }
   const orderedYears = [...byYear.keys()].sort((a, b) => b - a);
 
-  const withDates = entries.filter((e) => e.dateDebut);
-  const now = new Date();
-  const minYear = withDates.length
-    ? Math.min(...withDates.map((e) => (e.dateDebut as Date).getFullYear()))
-    : null;
-  const maxYear = withDates.length
-    ? Math.max(
-        ...withDates.map((e) =>
-          e.dateFin ? (e.dateFin as Date).getFullYear() : now.getFullYear(),
-        ),
-      )
-    : null;
-  const span = minYear != null && maxYear != null ? maxYear - minYear : 0;
-
   const summary = computeSummary(entries);
   const reconduit = detectReconduit(entries);
   const concurrent = detectConcurrent(entries);
@@ -294,16 +280,6 @@ export async function CareerSection({
       <SectionHeader title="Parcours" />
 
       <SummaryStrip summary={summary} />
-
-      {span > 0 && minYear != null && maxYear != null && (
-        <LaneTimeline
-          entries={withDates}
-          minYear={minYear}
-          maxYear={maxYear}
-          span={span}
-          reconduit={reconduit}
-        />
-      )}
 
       <div className="space-y-10">
         {orderedYears.map((year) => (
@@ -388,7 +364,7 @@ function SummaryStrip({ summary }: { summary: Summary }) {
   );
 }
 
-function LaneTimeline({
+export function LaneTimeline({
   entries,
   minYear,
   maxYear,

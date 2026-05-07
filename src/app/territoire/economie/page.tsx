@@ -1,8 +1,25 @@
+import type { Metadata } from "next";
 import { prisma } from "@/lib/db";
 import { fmt } from "@/lib/format";
 import { PageHeader } from "@/components/page-header";
 
 export const revalidate = 86400; // Revalidate every 24h — economy data changes on ingestion only
+
+export const metadata: Metadata = {
+  title: "Économie nationale — L'Observatoire Citoyen",
+  description:
+    "Indicateurs macro-économiques français : PIB, chômage, dette publique, inflation et commerce extérieur depuis 2000.",
+  openGraph: {
+    title: "Économie nationale — L'Observatoire Citoyen",
+    description:
+      "Indicateurs macro-économiques français : PIB, chômage, dette publique, inflation et commerce extérieur depuis 2000.",
+  },
+  twitter: {
+    title: "Économie nationale — L'Observatoire Citoyen",
+    description:
+      "Indicateurs macro-économiques français : PIB, chômage, dette publique, inflation et commerce extérieur depuis 2000.",
+  },
+};
 
 function MiniChart({ data, color = "teal" }: { data: { label: string; value: number }[]; color?: string }) {
   if (data.length === 0) return null;

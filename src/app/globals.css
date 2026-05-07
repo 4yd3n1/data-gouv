@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import "../../node_modules/tailwindcss/index.css";
 
 @theme {
   --color-bureau-950: #080c14;
@@ -7,7 +7,7 @@
   --color-bureau-700: #1a2236;
   --color-bureau-600: #243049;
   --color-bureau-500: #3b4f6e;
-  --color-bureau-400: #64748b;
+  --color-bureau-400: #7a8399;
   --color-bureau-300: #94a3b8;
   --color-bureau-200: #cbd5e1;
   --color-bureau-100: #e2e8f0;
@@ -27,7 +27,7 @@
 
   --color-fg: #e8eaf0;
   --color-fg-mute: #8a93a8;
-  --color-fg-dim: #5a637a;
+  --color-fg-dim: #727d93;
   --color-fg-faint: #3f4860;
 
   --color-signal: oklch(0.70 0.17 27);
@@ -225,7 +225,7 @@ body::after {
   display: none;
   align-items: center;
   justify-content: center;
-  width: 40px; height: 40px;
+  width: 44px; height: 44px;
   border: 1px solid rgba(26,34,54,0.5);
   border-radius: 10px;
   background: rgba(17,24,39,0.5);
@@ -625,6 +625,12 @@ html { scroll-behavior: smooth; }
 }
 @media (prefers-reduced-motion: reduce) {
   .pulse { animation: none; }
+  .fade-up { animation: none !important; transition: none !important; transform: none !important; }
+  .bar-fill { animation: none !important; transition: none !important; }
+  .live-dot { animation: none !important; }
+  .live-dot-amber { animation: none !important; }
+  .pulse-dot { animation: none !important; }
+  .sigint-section::after { animation: none !important; }
 }
 
 /* Footnote superscript */

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { fmt, fmtDate } from "@/lib/format";
+import { prisma } from "@/lib/db";
 import { SignalCard } from "@/components/signaux/signal-card";
 import { LobbyOverview } from "@/components/signaux/lobby-overview";
 import {
@@ -179,7 +180,13 @@ export default async function SignauxPage({
     return <LobbyOverview data={overview} />;
   }
 
-  const allSignals = await getSignals();
+  const [allSignals, latestLog] = await Promise.all([
+    getSignals(),
+    prisma.ingestionLog.findFirst({
+      orderBy: { createdAt: "desc" },
+      select: { createdAt: true },
+    }),
+  ]);
   const summary = summarizeSignals(allSignals);
 
   // Apply filters
@@ -405,7 +412,7 @@ export default async function SignauxPage({
             Les signaux sont générés automatiquement par croisement de données publiques
             (HATVP, Assemblée nationale, Sénat, registre AGORA, ARCOM). Un signal ne constitue
             pas une accusation : il identifie une corrélation mesurable entre deux jeux de données.
-            Dernière analyse : {fmtDate(new Date())}.
+            Dernière ingestion : {latestLog ? fmtDate(latestLog.createdAt) : "mise à jour quotidienne"}.
           </p>
         </section>
       </div>

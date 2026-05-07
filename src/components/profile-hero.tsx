@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Avatar } from "@/components/avatar";
 import { ScoreGauge } from "@/components/score-gauge";
+import { DataFreshnessBadge } from "@/components/data-freshness-badge";
 
 interface Breadcrumb {
   label: string;
@@ -19,6 +20,8 @@ interface ProfileHeroProps {
   status: { active: boolean; label: string };
   breadcrumbs: Breadcrumb[];
   badge?: string;
+  /** Last updated timestamp — e.g. `derniereMaj`. Renders the freshness badge in the status row. */
+  lastUpdated?: Date | string | null;
   stats?: Stat[];
   scores?: Array<{
     value: number | null;
@@ -41,6 +44,7 @@ export function ProfileHero({
   status,
   breadcrumbs,
   badge,
+  lastUpdated,
   stats,
   scores,
   contact,
@@ -97,17 +101,20 @@ export function ProfileHero({
 
             <p className="mt-2 text-[15px] leading-snug text-bureau-300">{subtitle}</p>
 
-            <div className="mt-2.5 flex items-center gap-1.5 text-xs">
-              <span
-                className={`h-1.5 w-1.5 rounded-full ${
-                  status.active
-                    ? "bg-teal shadow-[0_0_6px_rgba(45,212,191,0.5)]"
-                    : "bg-bureau-600"
-                }`}
-              />
-              <span className={status.active ? "text-teal" : "text-bureau-500"}>
-                {status.label}
+            <div className="mt-2.5 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs">
+              <span className="flex items-center gap-1.5">
+                <span
+                  className={`h-1.5 w-1.5 rounded-full ${
+                    status.active
+                      ? "bg-teal shadow-[0_0_6px_rgba(45,212,191,0.5)]"
+                      : "bg-bureau-600"
+                  }`}
+                />
+                <span className={status.active ? "text-teal" : "text-bureau-500"}>
+                  {status.label}
+                </span>
               </span>
+              {lastUpdated ? <DataFreshnessBadge date={lastUpdated} /> : null}
             </div>
 
             {hasContact && (

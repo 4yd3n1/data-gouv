@@ -15,6 +15,7 @@ export interface MemberSeed {
   photoUrl?: string;
   formation?: string;
   dateDebut?: Date;
+  dateFinOverride?: Date;
   deputeNom?: string;
   deputePrenom?: string;
   senateurNom?: string;

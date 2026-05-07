@@ -1,5 +1,7 @@
 import { cache } from "react";
+import type { RubriqueInteret } from "@prisma/client";
 import { prisma } from "@/lib/db";
+import { normalizeName } from "@/lib/normalize-name";
 
 /**
  * Public-office income aggregator — unified across ministers, deputies and
@@ -21,6 +23,7 @@ export type RemunerationsPosition = {
   dateDebut: Date | null;
   dateFin: Date | null;
   montant: number | null;
+  rubrique?: RubriqueInteret;
   declarationRef: string;
   dateDepot: Date | null;
 };
@@ -74,12 +77,59 @@ function monthKey(d: Date | null): string {
   return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}`;
 }
 
+/**
+ * Aggregate per-year HATVP revenus into a stacked-by-type breakdown.
+ *
+ * Dedupe key: (description, employeur, annee). Caller passes rows already
+ * ordered by declaration recency (typically declarations sorted by dateDepot
+ * desc, flattened) — first occurrence of a key wins. This mirrors the
+ * convention from `getRemunerations` so the dossier chart and the
+ * `RemunerationsPanel` chart agree on the same numbers.
+ */
+export function aggregateYearlyRevenues(
+  revenus: Array<{
+    type: string;
+    description: string | null;
+    employeur: string | null;
+    annee: number | null;
+    montant: number | null;
+  }>,
+): RemunerationsYear[] {
+  const revenuMap = new Map<string, { annee: number; type: string; montant: number }>();
+  for (const r of revenus) {
+    if (r.annee === null || r.montant === null) continue;
+    const rKey = `${(r.description ?? "").toLowerCase().trim()}|${(r.employeur ?? "").toLowerCase().trim()}|${r.annee}`;
+    if (revenuMap.has(rKey)) continue;
+    revenuMap.set(rKey, { annee: r.annee, type: r.type, montant: r.montant });
+  }
+  const byYear = new Map<number, RemunerationsYear>();
+  for (const r of revenuMap.values()) {
+    let y = byYear.get(r.annee);
+    if (!y) {
+      y = { annee: r.annee, total: 0, byType: {} };
+      byYear.set(r.annee, y);
+    }
+    y.total += r.montant;
+    y.byType[r.type] = (y.byType[r.type] ?? 0) + r.montant;
+  }
+  return [...byYear.values()].sort((a, b) => a.annee - b.annee);
+}
+
 function buildPositionKey(
   contenu: string | null,
   organisation: string | null,
   dateDebut: Date | null,
 ): string {
   return `${(contenu ?? "").trim().toLowerCase()}|${(organisation ?? "").trim().toLowerCase()}|${monthKey(dateDebut)}`;
+}
+
+function incomeTextKey(value: string | null): string {
+  return normalizeName(
+    (value ?? "")
+      .replace(/\s*\[Données non publiées\]\s*/gi, " ")
+      .replace(/\s+/g, " ")
+      .trim(),
+  );
 }
 
 export const getRemunerations = cache(
@@ -136,6 +186,43 @@ export const getRemunerations = cache(
     for (const i of interets) if (i.dateDeclaration) depotDates.push(i.dateDeclaration.getTime());
     const latestDepotDate = depotDates.length ? new Date(Math.max(...depotDates)) : null;
 
+    const revenusWithEmployer = declarations
+      .flatMap((d) => d.revenus)
+      .filter((r) => r.description && r.employeur?.trim());
+
+    function inferEmployer(
+      title: string,
+      start: Date | null,
+      end: Date | null,
+    ): string | null {
+      const key = incomeTextKey(title);
+      if (!key) return null;
+      const candidates = revenusWithEmployer.filter(
+        (r) => incomeTextKey(r.description) === key,
+      );
+      if (candidates.length === 0) return null;
+
+      const startYear = start?.getUTCFullYear();
+      const endYear = end?.getUTCFullYear();
+      let scoped = candidates;
+      if (startYear != null) {
+        const sameStartYear = candidates.filter((r) => r.annee === startYear);
+        if (sameStartYear.length > 0) {
+          scoped = sameStartYear;
+        } else if (endYear != null) {
+          const inRange = candidates.filter(
+            (r) => r.annee != null && r.annee >= startYear && r.annee <= endYear,
+          );
+          if (inRange.length > 0) scoped = inRange;
+        }
+      }
+
+      return (
+        [...scoped].sort((a, b) => (b.montant ?? 0) - (a.montant ?? 0))[0]
+          ?.employeur?.trim() ?? null
+      );
+    }
+
     // ─── Positions from InteretDeclare (rubriques MANDAT_ELECTIF + ACTIVITE_ANTERIEURE) ───
     // Dedupe by (contenu, organisation, month-of-dateDebut): keep the row from
     // the LATEST dateDeclaration. Under orderBy desc, first-seen wins.
@@ -143,15 +230,18 @@ export const getRemunerations = cache(
     for (const item of interets) {
       if (item.rubrique === "REVENU") continue; // treated only via RevenuDeclaration / yearly
       if (item.rubrique !== "MANDAT_ELECTIF" && item.rubrique !== "ACTIVITE_ANTERIEURE") continue;
-      const key = buildPositionKey(item.contenu, item.organisation, item.dateDebut);
+      const organisation =
+        item.organisation ?? inferEmployer(item.contenu, item.dateDebut, item.dateFin);
+      const key = buildPositionKey(item.contenu, organisation, item.dateDebut);
       if (positionsMap.has(key)) continue; // latest-depot already captured
       positionsMap.set(key, {
         key,
         title: item.contenu,
-        organisation: item.organisation,
+        organisation,
         dateDebut: item.dateDebut,
         dateFin: item.dateFin,
         montant: item.montant,
+        rubrique: item.rubrique,
         declarationRef: item.declarationRef,
         dateDepot: item.dateDeclaration,
         dateDeclaration: item.dateDeclaration,
@@ -190,6 +280,7 @@ export const getRemunerations = cache(
         dateDebut: p.dateDebut,
         dateFin: p.dateFin,
         montant: p.montant,
+        rubrique: p.rubrique,
         declarationRef: p.declarationRef,
         dateDepot: p.dateDepot,
       };
@@ -213,28 +304,11 @@ export const getRemunerations = cache(
     let currentAnnualTotal = sumMontant(currentPositions);
 
     // ─── Yearly breakdown (from RevenuDeclaration across ALL declarations) ───
-    // Dedupe by (description, employeur, annee) — first seen wins (latest depot
-    // under dateDepot desc). Then group by annee, sum per type.
-    const revenuMap = new Map<string, { annee: number; type: string; montant: number }>();
-    for (const d of declarations) {
-      for (const r of d.revenus) {
-        if (r.annee === null || r.montant === null) continue;
-        const rKey = `${(r.description ?? "").toLowerCase().trim()}|${(r.employeur ?? "").toLowerCase().trim()}|${r.annee}`;
-        if (revenuMap.has(rKey)) continue;
-        revenuMap.set(rKey, { annee: r.annee, type: r.type, montant: r.montant });
-      }
-    }
-    const byYear = new Map<number, RemunerationsYear>();
-    for (const r of revenuMap.values()) {
-      let y = byYear.get(r.annee);
-      if (!y) {
-        y = { annee: r.annee, total: 0, byType: {} };
-        byYear.set(r.annee, y);
-      }
-      y.total += r.montant;
-      y.byType[r.type] = (y.byType[r.type] ?? 0) + r.montant;
-    }
-    const yearlyBreakdown = [...byYear.values()].sort((a, b) => a.annee - b.annee);
+    // Flatten declarations (already ordered dateDepot desc) and run the shared
+    // aggregator so the chart matches the dossier-tab variant byte-for-byte.
+    const yearlyBreakdown = aggregateYearlyRevenues(
+      declarations.flatMap((d) => d.revenus),
+    );
 
     const firstYear = yearlyBreakdown.length ? yearlyBreakdown[0].annee : null;
     const lastYear = yearlyBreakdown.length ? yearlyBreakdown[yearlyBreakdown.length - 1].annee : null;

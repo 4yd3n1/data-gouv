@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { PageHeader } from "@/components/page-header";
@@ -5,6 +6,22 @@ import { SearchInput } from "@/components/search-input";
 import { Pagination } from "@/components/pagination";
 import { Avatar } from "@/components/avatar";
 import { Suspense } from "react";
+
+export const metadata: Metadata = {
+  title: "Sénateurs — L'Observatoire Citoyen",
+  description:
+    "Annuaire des sénateurs : mandats, commissions, déclarations HATVP et signaux croisés par croisement de données publiques.",
+  openGraph: {
+    title: "Annuaire des sénateurs — L'Observatoire Citoyen",
+    description:
+      "Annuaire des sénateurs : mandats, commissions, déclarations HATVP et signaux croisés par croisement de données publiques.",
+  },
+  twitter: {
+    title: "Annuaire des sénateurs — L'Observatoire Citoyen",
+    description:
+      "Annuaire des sénateurs : mandats, commissions, déclarations HATVP et signaux croisés par croisement de données publiques.",
+  },
+};
 
 const PER_PAGE = 30;
 

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getHomepageData } from "@/lib/homepage-data";
 import { Dateline } from "@/components/investigative/dateline";
 import { HeroLead } from "@/components/investigative/hero-lead";
@@ -12,6 +13,9 @@ import {
   MethodologyNotes,
   type MethodologyNote,
 } from "@/components/investigative/methodology-notes";
+import { GouvernementBoard } from "@/components/gouvernement-board";
+import { VotesStructurants } from "@/components/votes-structurants";
+import { HatvpScoreboard } from "@/components/hatvp-scoreboard";
 
 export const revalidate = 3600;
 
@@ -81,7 +85,8 @@ const METHODOLOGY_NOTES: readonly MethodologyNote[] = [
   {
     n: 2,
     body: "Patrimoine cumulé des milliardaires français : 571 Md€ (2017) → 1 228 Md€ (2024).",
-    source: "Classement Challenges / Forbes, croisé avec Oxfam « Inégalités extrêmes », 2024",
+    source:
+      "Classement Challenges / Forbes, croisé avec Oxfam « Inégalités extrêmes », 2024",
     href: "/methodologie",
   },
 ];
@@ -94,7 +99,10 @@ export default async function HomePage() {
   const presidencyDek = (() => {
     const parts = topReps
       .slice(0, 4)
-      .map((r) => `${r.nom.toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase())} (${r.declarations})`);
+      .map(
+        (r) =>
+          `${r.nom.toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase())} (${r.declarations})`,
+      );
     return `Une déclaration = un (domaine × exercice × type d'action) rempli par un représentant enregistré HATVP — pas une rencontre. Principaux : ${parts.join(", ")}.`;
   })();
 
@@ -102,7 +110,7 @@ export default async function HomePage() {
     <>
       <Dateline revisionIso={data.revisionIso} />
 
-      {/* Hero */}
+      {/* ── Editorial frame (Variant A) ── */}
       <section
         className="hero-grid"
         style={{
@@ -128,7 +136,6 @@ export default async function HomePage() {
         />
       </section>
 
-      {/* Secondary trio + rail */}
       <section
         className="secondary-grid"
         style={{
@@ -152,7 +159,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Interactive strip — real AGORA counts for Présidence (representants + declarations) */}
       <section style={{ padding: "0 40px 32px" }}>
         <InteractiveStrip
           href="/signaux?type=lobby"
@@ -170,9 +176,64 @@ export default async function HomePage() {
         />
       </section>
 
-      {/* Methodology footnotes */}
       <section style={{ padding: "0 40px 36px" }}>
         <MethodologyNotes notes={METHODOLOGY_NOTES} />
+      </section>
+
+      {/* ── Civic dashboard (below the fold) ── */}
+      <div
+        aria-hidden="true"
+        style={{
+          margin: "8px 40px 28px",
+          borderTop: "1px solid var(--color-ink-2, #1c2434)",
+        }}
+      />
+
+      <section
+        style={{ padding: "0 40px 8px" }}
+        aria-labelledby="dashboard-eyebrow"
+      >
+        <p
+          id="dashboard-eyebrow"
+          className="obs-mono"
+          style={{
+            fontSize: 11,
+            letterSpacing: "0.14em",
+            textTransform: "uppercase",
+            color: "var(--color-fg-mute)",
+          }}
+        >
+          ◆ Tableau de bord civique · données en direct
+        </p>
+      </section>
+
+      <GouvernementBoard />
+
+      <VotesStructurants />
+
+      <HatvpScoreboard />
+
+      <section style={{ padding: "0 40px 40px" }}>
+        <p
+          className="obs-mono"
+          style={{
+            fontSize: 13,
+            color: "var(--color-fg-dim)",
+            letterSpacing: "0.06em",
+          }}
+        >
+          Trouver votre député &rarr;{" "}
+          <Link
+            href="/mon-depute"
+            style={{
+              color: "var(--color-fg-mute)",
+              textDecoration: "underline",
+              textUnderlineOffset: 3,
+            }}
+          >
+            /mon-depute
+          </Link>
+        </p>
       </section>
     </>
   );

@@ -36,7 +36,6 @@ function useContainerWidth(ref: React.RefObject<HTMLDivElement | null>) {
       if (w && w > 0) setWidth(w);
     });
     observer.observe(ref.current);
-    setWidth(ref.current.clientWidth || 800);
     return () => observer.disconnect();
   }, [ref]);
   return width;

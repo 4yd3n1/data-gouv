@@ -4,7 +4,7 @@ import { prisma } from "@/lib/db";
 const RUBRIQUE_LABEL: Record<string, string> = {
   ACTIVITE_ANTERIEURE: "Activités professionnelles antérieures",
   MANDAT_ELECTIF: "Mandats électifs",
-  PARTICIPATION: "Participations financières",
+  PARTICIPATION: "Organes dirigeants et organismes",
   ACTIVITE_CONJOINT: "Activités du conjoint",
   ACTIVITE_BENEVOLE: "Fonctions bénévoles",
   REVENU: "Revenus",
@@ -138,6 +138,13 @@ function DeclarationsView({ interets }: { interets: Interet[] }) {
                   ({items.length})
                 </span>
               </h3>
+              {rubrique === "PARTICIPATION" && (
+                <p className="mb-2 text-xs leading-relaxed text-bureau-500">
+                  Mandats dans des organismes publics ou privés. Les
+                  participations financières directes sont une rubrique
+                  distincte du dossier HATVP complet.
+                </p>
+              )}
               <ul className="space-y-2">
                 {visible.map((item) => (
                   <InteretItem key={item.id} item={item} />

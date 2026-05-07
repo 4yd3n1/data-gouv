@@ -14,6 +14,9 @@ import { LECORNU_CONFIG, LECORNU_RESHUFFLE_DEPARTURES } from "./data/gouvernemen
 import { BORNE_CONFIG } from "./data/gouvernement-borne";
 import { ATTAL_CONFIG } from "./data/gouvernement-attal";
 import { BARNIER_CONFIG } from "./data/gouvernement-barnier";
+import { PHILIPPE_1_CONFIG } from "./data/gouvernement-philippe-1";
+import { PHILIPPE_2_CONFIG } from "./data/gouvernement-philippe-2";
+import { CASTEX_CONFIG } from "./data/gouvernement-castex";
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
@@ -33,8 +36,6 @@ const MACRON: MemberSeed = {
     "ENA (promotion L\u00e9opold S\u00e9dar Senghor, 2004), Sciences Po Paris, universit\u00e9 Paris-Nanterre (philosophie)",
 };
 
-const DATE_FIN_BAYROU = new Date("2025-10-11");
-const GOUVERNEMENT_BAYROU = "Gouvernement Fran\u00e7ois Bayrou";
 const DATE_FIN_RESHUFFLE = new Date("2026-02-25");
 
 // ─── Seed a single government ────────────────────────────────────────────────
@@ -107,6 +108,8 @@ async function seedGovernment(config: GovernmentConfig) {
 
     const dateDebut = member.dateDebut ?? config.dateDebut;
 
+    const dateFin = member.dateFinOverride !== undefined ? member.dateFinOverride : config.dateFin;
+
     if (existingMandat) {
       await prisma.mandatGouvernemental.update({
         where: { id: existingMandat.id },
@@ -119,7 +122,7 @@ async function seedGovernment(config: GovernmentConfig) {
           portefeuille: member.portefeuille ?? null,
           ministereCode: member.ministereCode ?? null,
           dateDebut,
-          dateFin: config.dateFin,
+          dateFin,
         },
       });
       updated++;
@@ -133,7 +136,7 @@ async function seedGovernment(config: GovernmentConfig) {
           premierMinistre: config.premierMinistre,
           president: config.president,
           dateDebut,
-          dateFin: config.dateFin,
+          dateFin,
           rang: member.rang,
           type: member.type,
           portefeuille: member.portefeuille ?? null,
@@ -155,21 +158,46 @@ async function seedGovernment(config: GovernmentConfig) {
 async function main() {
   console.log("=== Government Seed (multi-government) ===\n");
 
-  // Close Bayrou mandates
-  console.log("Closing Bayrou government mandates...");
-  const closedBayrou = await prisma.mandatGouvernemental.updateMany({
-    where: { gouvernement: GOUVERNEMENT_BAYROU, dateFin: null },
-    data: { dateFin: DATE_FIN_BAYROU },
-  });
-  console.log(`  Closed ${closedBayrou.count} Bayrou mandates`);
-
   // Seed governments chronologically
   const governments = [
+    PHILIPPE_1_CONFIG,
+    PHILIPPE_2_CONFIG,
+    CASTEX_CONFIG,
     BORNE_CONFIG,
     ATTAL_CONFIG,
     BARNIER_CONFIG,
     LECORNU_CONFIG,
   ].filter((g): g is GovernmentConfig => g !== null);
+
+  // Auto-close any prior cabinet still open in DB. Uses the currently-active
+  // config (dateFin === null) as the source of truth: every row belonging to
+  // a different gouvernement string with dateFin = null gets closed at the
+  // active cabinet's dateDebut. Covers (a) configs deleted from this script
+  // (e.g. Bayrou, no longer in the array), (b) renames between sessions
+  // (Lecornu → Lecornu II), and (c) any future reshuffle that introduces a
+  // new gouvernement string. Idempotent: a second run finds no open priors.
+  const activeConfigs = governments.filter((g) => g.dateFin === null);
+  if (activeConfigs.length > 1) {
+    throw new Error(
+      `Multiple active cabinets in configs (dateFin=null): ${activeConfigs
+        .map((g) => g.gouvernement)
+        .join(", ")}. Only one government may be active at a time.`,
+    );
+  }
+  const activeConfig = activeConfigs[0];
+  if (activeConfig) {
+    console.log(
+      `Closing prior cabinet mandates (active: ${activeConfig.gouvernement} since ${activeConfig.dateDebut.toISOString().slice(0, 10)})...`,
+    );
+    const closedPriors = await prisma.mandatGouvernemental.updateMany({
+      where: {
+        dateFin: null,
+        gouvernement: { not: activeConfig.gouvernement },
+      },
+      data: { dateFin: activeConfig.dateDebut },
+    });
+    console.log(`  Closed ${closedPriors.count} prior mandate(s)`);
+  }
 
   for (const gov of governments) {
     await seedGovernment(gov);

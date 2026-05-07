@@ -57,20 +57,27 @@ export function CamembertChart({ groups, title }: CamembertChartProps) {
   const outerR = 80;
   const innerR = 45;
 
-  let currentAngle = 0;
-  const slices = sorted.map((g, i) => {
-    const angle = (g.count / total) * 360;
-    const startAngle = currentAngle;
-    const endAngle = currentAngle + angle;
-    currentAngle = endAngle;
+  const slices = sorted.reduce<
+    Array<SliceData & { color: string; endAngle: number; path: string; pct: number }>
+  >(
+    (acc, g, i) => {
+      const startAngle = acc.at(-1)?.endAngle ?? 0;
+      const angle = (g.count / total) * 360;
+      const endAngle = startAngle + angle;
 
-    return {
-      ...g,
-      color: GROUP_COLORS[i % GROUP_COLORS.length],
-      path: donutArc(cx, cy, outerR, innerR, startAngle, endAngle),
-      pct: Math.round((g.count / total) * 100),
-    };
-  });
+      return [
+        ...acc,
+        {
+          ...g,
+          endAngle,
+          color: GROUP_COLORS[i % GROUP_COLORS.length],
+          path: donutArc(cx, cy, outerR, innerR, startAngle, endAngle),
+          pct: Math.round((g.count / total) * 100),
+        },
+      ];
+    },
+    [],
+  );
 
   return (
     <div className="rounded-xl border border-bureau-700/20 bg-bureau-800/10 p-6">

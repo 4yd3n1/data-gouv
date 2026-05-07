@@ -24,7 +24,7 @@ export function ShareButton({
     <button
       type="button"
       onClick={copy}
-      className="inline-flex items-center gap-1.5 rounded-full border border-bureau-700/40 bg-bureau-800/40 px-3 py-1 text-xs text-bureau-400 transition-all hover:border-teal/30 hover:text-teal"
+      className="inline-flex min-h-[44px] min-w-[44px] items-center gap-1.5 rounded-full border border-bureau-700/40 bg-bureau-800/40 px-3 py-1 text-xs text-bureau-400 transition-all hover:border-teal/30 hover:text-teal"
     >
       <svg
         className="h-3 w-3"

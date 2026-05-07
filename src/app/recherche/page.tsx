@@ -1,7 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
-import { globalSearch, VALID_ENTITY_TYPES, ENTITY_LABELS, type EntityType } from "@/lib/search";
+import {
+  globalSearch,
+  enrichSearchResults,
+  VALID_ENTITY_TYPES,
+  ENTITY_LABELS,
+  type EntityType,
+} from "@/lib/search";
+import { SIGNAL_TYPE_LABELS, type SignalType } from "@/lib/signals";
 import { SearchBox } from "@/components/search-box";
 
 export async function generateMetadata({
@@ -70,7 +77,8 @@ async function SearchResults({
     );
   }
 
-  const results = await globalSearch(q.trim(), 30, type);
+  const rawResults = await globalSearch(q.trim(), 30, type);
+  const results = await enrichSearchResults(rawResults, 5);
 
   if (results.length === 0) {
     return (
@@ -109,30 +117,59 @@ async function SearchResults({
       {results.map((result, i) => {
         const entityType = result.entityType as EntityType;
         const iconColor = ENTITY_COLORS[entityType] ?? "bg-bureau-700 text-bureau-400";
+        const signalEntries = Object.entries(result.signalsByType) as [
+          SignalType,
+          number,
+        ][];
+        const severityClass =
+          result.topSeverity === "CRITIQUE"
+            ? "severity-critique"
+            : result.topSeverity === "NOTABLE"
+              ? "severity-notable"
+              : "severity-informatif";
         return (
           <Link
             key={`${result.entityType}-${result.entityId}-${i}`}
             href={result.url}
-            className="flex items-center gap-4 rounded-xl border border-bureau-700/40 bg-bureau-900/40 px-4 py-3 transition-colors hover:border-teal/30 hover:bg-bureau-800/60"
+            className="group flex flex-col gap-3 rounded-xl border border-bureau-700/40 bg-bureau-900/40 p-4 transition-colors hover:border-teal/30 hover:bg-bureau-800/60"
           >
-            <div
-              className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-xs font-bold ${iconColor}`}
-            >
-              {ENTITY_ICONS[entityType] ?? "?"}
+            <div className="flex items-center gap-4">
+              <div
+                className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-xs font-bold ${iconColor}`}
+              >
+                {ENTITY_ICONS[entityType] ?? "?"}
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-semibold text-bureau-100">
+                  {result.title}
+                </p>
+                <p className="truncate text-xs text-bureau-500">{result.subtitle}</p>
+              </div>
+              <span className="shrink-0 text-xs uppercase tracking-[0.08em] text-bureau-500 transition-colors group-hover:text-teal">
+                Investiguer →
+              </span>
             </div>
-            <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-semibold text-bureau-100">{result.title}</p>
-              <p className="truncate text-xs text-bureau-500">{result.subtitle}</p>
-            </div>
-            <svg
-              className="h-4 w-4 shrink-0 text-bureau-600"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-            </svg>
+
+            {signalEntries.length > 0 && (
+              <div className="flex flex-wrap items-center gap-2 border-t border-bureau-800/40 pt-3">
+                {result.topSeverity ? (
+                  <span
+                    className={`rounded-sm px-1.5 py-0.5 text-[10px] uppercase tracking-[0.1em] ${severityClass}`}
+                  >
+                    {result.topSeverity}
+                  </span>
+                ) : null}
+                {signalEntries.map(([type, n]) => (
+                  <span
+                    key={type}
+                    className="rounded-sm border border-bureau-700/40 bg-bureau-800/40 px-2 py-0.5 text-[10px] text-bureau-300"
+                  >
+                    {SIGNAL_TYPE_LABELS[type]}
+                    {n > 1 ? <span className="ml-1 text-bureau-500">{n}</span> : null}
+                  </span>
+                ))}
+              </div>
+            )}
           </Link>
         );
       })}

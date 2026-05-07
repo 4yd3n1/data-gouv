@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
 import type { TypeEvenement, StatutEvenement } from "@prisma/client";
+import { SourceChip } from "@/components/source-chip";
 
 // CRITICAL: Only display events where verifie = true
 // Unverified events must never appear on public pages.
@@ -134,26 +135,13 @@ export async function JudiciaireSection({
                     {ev.resume}
                   </p>
 
-                  {/* Source */}
-                  <div className="mt-2 flex items-center gap-1.5 text-xs text-bureau-600">
-                    <span>Source :</span>
-                    {ev.sourceUrl ? (
-                      <a
-                        href={ev.sourceUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-bureau-500 underline decoration-bureau-700 hover:text-bureau-300"
-                      >
-                        {ev.sourcePrincipale}
-                        {ev.sourceDate && (
-                          <span className="ml-1">
-                            ({formatDate(ev.sourceDate)})
-                          </span>
-                        )}
-                      </a>
-                    ) : (
-                      <span>{ev.sourcePrincipale}</span>
-                    )}
+                  <div className="mt-2">
+                    <SourceChip
+                      outlet={ev.sourcePrincipale}
+                      url={ev.sourceUrl}
+                      date={ev.sourceDate}
+                      type="presse"
+                    />
                   </div>
                 </div>
               </div>

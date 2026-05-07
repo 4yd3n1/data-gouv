@@ -129,7 +129,7 @@ function PresidentCard({ p }: { p: Personnalite }) {
   return (
     <Link
       href={`/profils/${p.slug}`}
-      className="group gov-hero-card sigint-section sigint-amber relative flex w-full max-w-lg items-center gap-7 rounded-xl border border-amber/22 bg-amber/[0.028] px-8 py-7 text-amber"
+      className="group gov-hero-card sigint-section sigint-amber relative flex w-full max-w-full items-center gap-4 overflow-hidden rounded-xl border border-amber/22 bg-amber/[0.028] px-4 py-5 text-amber sm:max-w-lg sm:gap-7 sm:px-8 sm:py-7"
       style={{
         boxShadow:
           "0 0 90px -25px rgba(245,158,11,0.14), 0 0 0 1px rgba(245,158,11,0.04) inset",
@@ -179,7 +179,7 @@ function PremierMinistreCard({ p }: { p: Personnalite }) {
   return (
     <Link
       href={`/profils/${p.slug}`}
-      className="group gov-hero-card sigint-section relative flex w-full max-w-lg items-center gap-7 rounded-xl border border-teal/18 bg-teal/[0.02] px-8 py-7 text-teal"
+      className="group gov-hero-card sigint-section relative flex w-full max-w-full items-center gap-4 overflow-hidden rounded-xl border border-teal/18 bg-teal/[0.02] px-4 py-5 text-teal sm:max-w-lg sm:gap-7 sm:px-8 sm:py-7"
       style={{
         boxShadow:
           "0 0 80px -25px rgba(45,212,191,0.10), 0 0 0 1px rgba(45,212,191,0.03) inset",

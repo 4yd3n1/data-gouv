@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { fmt } from "@/lib/format";
@@ -5,6 +6,22 @@ import { PageHeader } from "@/components/page-header";
 import { SearchInput } from "@/components/search-input";
 import { Pagination } from "@/components/pagination";
 import { Suspense } from "react";
+
+export const metadata: Metadata = {
+  title: "Représentants d'intérêts — L'Observatoire Citoyen",
+  description:
+    "Annuaire des lobbyistes enregistrés HATVP : organisations, actions déclarées au registre AGORA et liens avec l'exécutif.",
+  openGraph: {
+    title: "Représentants d'intérêts — L'Observatoire Citoyen",
+    description:
+      "Annuaire des lobbyistes enregistrés HATVP : organisations, actions déclarées au registre AGORA et liens avec l'exécutif.",
+  },
+  twitter: {
+    title: "Représentants d'intérêts — L'Observatoire Citoyen",
+    description:
+      "Annuaire des lobbyistes enregistrés HATVP : organisations, actions déclarées au registre AGORA et liens avec l'exécutif.",
+  },
+};
 
 const PER_PAGE = 30;
 

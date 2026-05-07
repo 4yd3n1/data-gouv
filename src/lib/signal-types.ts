@@ -1,3 +1,5 @@
+import type { SignalType } from "@/lib/signals";
+
 export type SignalSeverity = "CRITIQUE" | "NOTABLE" | "INFORMATIF";
 
 /* ------------------------------------------------------------------ */
@@ -216,4 +218,118 @@ export const SEVERITY_ORDER: Record<SignalSeverity, number> = {
   CRITIQUE: 0,
   NOTABLE: 1,
   INFORMATIF: 2,
+};
+
+/* ------------------------------------------------------------------ */
+/*  Signal registry — formula, caveat, thresholds, methodology link    */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Structured metadata for every signal type. Consumed by `<SignalFormula />`,
+ * the corrections feed, and the methodology page anchors.
+ *
+ * Every entry MUST carry the caveat — a signal is a cross-reference, not proof.
+ * Memory: feedback_signal_caveats.md.
+ */
+export interface SignalRegistryEntry {
+  label: string;
+  formula: string;
+  caveat: string;
+  methodologyAnchor: string;
+  thresholds?: {
+    critique?: string;
+    notable?: string;
+    informatif?: string;
+  };
+}
+
+const UNIVERSAL_CAVEAT =
+  "Un signal est un croisement de données, pas une preuve.";
+
+export const SIGNAL_REGISTRY: Record<SignalType, SignalRegistryEntry> = {
+  conflit: {
+    label: "Conflit d'intérêts potentiel",
+    formula:
+      "Une participation financière déclarée à l'HATVP croisée avec un vote sur un texte tagué dans le même secteur.",
+    caveat: UNIVERSAL_CAVEAT,
+    methodologyAnchor: "/methodologie#conflit",
+    thresholds: {
+      critique: "Plus de 500 000 € déclarés et au moins 5 votes sur le sujet.",
+      notable: "Plus de 100 000 € ou au moins 3 votes.",
+      informatif: "En dessous de ces seuils.",
+    },
+  },
+  porte: {
+    label: "Porte tournante",
+    formula:
+      "Une carrière privée passée recoupant le portefeuille ministériel actuel par mots-clés sectoriels (banque, pharma, énergie, etc.).",
+    caveat: UNIVERSAL_CAVEAT,
+    methodologyAnchor: "/methodologie#porte",
+    thresholds: {
+      critique: "Au moins 3 mots-clés sectoriels recoupés.",
+      notable: "Au moins 1 mot-clé recoupé.",
+    },
+  },
+  lobby: {
+    label: "Pression de lobby sur le ministère",
+    formula:
+      "Le ministère figure parmi les cibles les plus fréquentes des représentants d'intérêts enregistrés à l'HATVP (registre AGORA).",
+    caveat: UNIVERSAL_CAVEAT,
+    methodologyAnchor: "/methodologie#lobby",
+    thresholds: {
+      critique: "Plus de 5 000 déclarations AGORA ciblant le ministère.",
+      notable: "Plus de 1 500.",
+      informatif: "En dessous.",
+    },
+  },
+  "lobby-owner": {
+    label: "Lien personnel avec un lobby",
+    formula:
+      "La personne est dirigeante actuelle ou ancienne d'un lobby enregistré, ou mentionne ce lobby dans sa déclaration HATVP.",
+    caveat: UNIVERSAL_CAVEAT,
+    methodologyAnchor: "/methodologie#lobby-owner",
+    thresholds: {
+      critique:
+        "Lien direct (dirigeant·e) avec un lobby ayant déposé plus de 1 000 déclarations AGORA.",
+      notable:
+        "Lien direct moins intense, ou lien indirect avec un lobby très actif.",
+      informatif: "Lien indirect, lobby peu actif.",
+    },
+  },
+  media: {
+    label: "Nexus médias",
+    formula:
+      "La personne est propriétaire d'un média dont les liens politiques sont documentés par des sources publiques.",
+    caveat: UNIVERSAL_CAVEAT,
+    methodologyAnchor: "/methodologie#media",
+    thresholds: {
+      critique:
+        "Propriétaire enregistré comme personnalité publique sur le site.",
+      notable: "Propriétaire identifié uniquement par sources presse.",
+    },
+  },
+  ecart: {
+    label: "Écart entre lobbying ciblé et déclarations HATVP",
+    formula:
+      "Activité de lobby intense ciblant ce ministère sans déclaration d'intérêts correspondante au registre HATVP.",
+    caveat: UNIVERSAL_CAVEAT,
+    methodologyAnchor: "/methodologie#ecart",
+    thresholds: {
+      critique: "Plus de 50 actions de lobby par déclaration HATVP.",
+      notable: "Plus de 15.",
+      informatif: "En dessous.",
+    },
+  },
+  dissidence: {
+    label: "Dissidence vis-à-vis du groupe",
+    formula:
+      "Vote contre la position majoritaire du groupe politique sur les scrutins finaux.",
+    caveat: UNIVERSAL_CAVEAT,
+    methodologyAnchor: "/methodologie#dissidence",
+    thresholds: {
+      critique: "Plus de 50 % des votes finaux contre la position du groupe.",
+      notable: "Plus de 25 %.",
+      informatif: "En dessous.",
+    },
+  },
 };

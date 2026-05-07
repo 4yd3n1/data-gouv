@@ -1,9 +1,26 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { fmt } from "@/lib/format";
 import { PageHeader } from "@/components/page-header";
 
 export const revalidate = 86400; // Heritage data changes only on ingestion
+
+export const metadata: Metadata = {
+  title: "Patrimoine culturel — L'Observatoire Citoyen",
+  description:
+    "Musées et monuments historiques en France : fréquentation, localisation et cartographie par département.",
+  openGraph: {
+    title: "Patrimoine culturel — L'Observatoire Citoyen",
+    description:
+      "Musées et monuments historiques en France : fréquentation, localisation et cartographie par département.",
+  },
+  twitter: {
+    title: "Patrimoine culturel — L'Observatoire Citoyen",
+    description:
+      "Musées et monuments historiques en France : fréquentation, localisation et cartographie par département.",
+  },
+};
 
 function capitalizeMuseumName(name: string): string {
   if (!name) return name;

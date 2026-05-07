@@ -89,7 +89,7 @@ export function FranceMap({
   const [activeIndicator, setActiveIndicator] = useState<IndicatorKey>(defaultIndicator);
   const [hoveredCode, setHoveredCode] = useState<string | null>(null);
   const [internalSelected, setInternalSelected] = useState<string | null>(null);
-  const [tooltipPos, setTooltipPos] = useState<{ x: number; y: number } | null>(null);
+  const [tooltipPos, setTooltipPos] = useState<{ x: number; y: number; width: number } | null>(null);
 
   const selectedCode = externalSelected ?? internalSelected;
   const isLg = size === "lg";
@@ -141,7 +141,11 @@ export function FranceMap({
   const handleSvgMouseMove = useCallback((e: React.MouseEvent<SVGSVGElement>) => {
     if (!svgRef.current) return;
     const rect = svgRef.current.getBoundingClientRect();
-    setTooltipPos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+    setTooltipPos({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+      width: rect.width,
+    });
   }, []);
 
   const handleSvgMouseLeave = useCallback(() => {
@@ -263,7 +267,7 @@ export function FranceMap({
             <div
               className="absolute pointer-events-none z-10 bg-bureau-900/95 border border-bureau-600 rounded px-2.5 py-1.5 text-xs backdrop-blur-sm"
               style={{
-                left: Math.min(tooltipPos.x + 12, (svgRef.current?.clientWidth ?? 500) - 150),
+                left: Math.max(4, Math.min(tooltipPos.x + 12, tooltipPos.width - 150)),
                 top: Math.max(tooltipPos.y - 48, 4),
               }}
             >
@@ -377,7 +381,8 @@ export function FranceMap({
                   <span className="ml-2 text-bureau-400 font-mono text-xs">{selectedCode}</span>
                 </div>
                 <button
-                  className="text-bureau-500 hover:text-bureau-300 text-xs transition-colors"
+                  aria-label="Fermer le détail"
+                  className="flex min-h-[44px] min-w-[44px] items-center justify-center text-bureau-500 hover:text-bureau-300 text-xs transition-colors"
                   onClick={() => setInternalSelected(null)}
                 >
                   ✕
@@ -424,7 +429,7 @@ export function FranceMap({
               </div>
               <div className="mt-3 text-right">
                 <button
-                  className="text-xs text-bureau-400 hover:text-teal transition-colors"
+                  className="min-h-[44px] px-2 text-xs text-bureau-400 hover:text-teal transition-colors"
                   onClick={() => router.push(`/territoire/${selectedCode}`)}
                 >
                   Voir le tableau de bord →

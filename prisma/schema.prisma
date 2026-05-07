@@ -940,6 +940,39 @@ enum BasisDeport {
   AUTRE
 }
 
+enum ModaliteAffiliation {
+  ADHESION // Adhésion formelle (carte)
+  INVESTITURE // Investi candidat sous l'étiquette
+  RALLIEMENT // Soutien public sans adhésion formelle
+  DEMISSION // Quitté volontairement
+  EXCLUSION // Exclu par le parti
+  DISSIDENCE // Élu sans investiture / contre la ligne
+  REBRANDING // Continuité (LREM → Renaissance)
+}
+
+enum SourceParti {
+  WIKIPEDIA
+  ASSEMBLEE_NATIONALE
+  SENAT
+  PRESSE_TIER_1 // AFP, Le Monde, Mediapart
+  PRESSE_TIER_2 // Libération, Le Figaro
+  DECLARATION_PUBLIQUE
+  MANUELLE
+}
+
+enum FamillePolitique {
+  EXTREME_GAUCHE
+  GAUCHE
+  CENTRE_GAUCHE
+  CENTRE
+  CENTRE_DROIT
+  DROITE
+  EXTREME_DROITE
+  ECOLOGISTE
+  REGIONALISTE
+  DIVERS
+}
+
 enum OrientationEditoriale {
   DROITE
   CENTRE_DROIT
@@ -976,13 +1009,15 @@ model PersonnalitePublique {
   depute   Depute?   @relation(fields: [deputeId], references: [id])
   senateur Senateur? @relation(fields: [senateurId], references: [id])
 
-  mandats        MandatGouvernemental[]
-  carriere       EntreeCarriere[]
-  interets       InteretDeclare[]
-  evenements     EvenementJudiciaire[]
-  deports        DecretDeport[]
-  mediaOwnership MediaProprietaire[]
-  dirigeantRoles LobbyisteDirigeant[]
+  mandats           MandatGouvernemental[]
+  carriere          EntreeCarriere[]
+  interets          InteretDeclare[]
+  evenements        EvenementJudiciaire[]
+  deports           DecretDeport[]
+  mediaOwnership    MediaProprietaire[]
+  dirigeantRoles    LobbyisteDirigeant[]
+  patrimoines       DeclarationPatrimoine[]
+  affiliationsParti AffiliationParti[]
 
   @@index([nom, prenom])
   @@index([nomNormalise, prenomNormalise])
@@ -1031,6 +1066,30 @@ model EntreeCarriere {
 
   @@index([personnaliteId])
   @@index([categorie])
+}
+
+model AffiliationParti {
+  id             String              @id @default(cuid())
+  personnaliteId String
+  parti          String // "Les Républicains", "MoDem", "La République En Marche", "Renaissance"
+  partiCode      String // Normalized: "LR", "MODEM", "LREM", "RE", "HOR", "PS", "PCF", "LFI", "EELV", "RN", "DVD", "DVG"
+  famille        FamillePolitique
+  dateDebut      DateTime
+  dateFin        DateTime? // null = active
+  modalite       ModaliteAffiliation
+  source         SourceParti
+  sourceUrl      String?
+  sourceDate     DateTime?
+  notes          String?
+  verifie        Boolean             @default(false)
+  derniereMaj    DateTime            @default(now()) @updatedAt
+
+  personnalite PersonnalitePublique @relation(fields: [personnaliteId], references: [id], onDelete: Cascade)
+
+  @@unique([personnaliteId, partiCode, dateDebut])
+  @@index([personnaliteId, dateDebut])
+  @@index([partiCode])
+  @@index([famille])
 }
 
 model InteretDeclare {
@@ -1308,4 +1367,201 @@ enum CategorieCarriereLobby {
   ASSOCIATION
   MEDIA
   AUTRE
+}
+
+enum CategorieAcquisition {
+  CESSION_ETRANGERE
+  VETO_IEF
+  RETRAIT_POLITIQUE
+  SAUVETAGE_DOMESTIQUE
+  RACHAT_ETATIQUE
+  FUSION_DOMICILIATION
+  SCISSION_DOMICILIATION
+  ANCRAGE_DOMESTIQUE
+  VENTE_DETRESSE
+  RESTRUCTURATION_DETTE
+}
+
+enum MesureEtat {
+  AUCUNE
+  VETO
+  CONDITIONS
+  ACTION_DE_PREFERENCE
+  ACTION_SPECIFIQUE
+  BPIFRANCE_MINORITAIRE
+  ANCRAGE_PARTAGE
+  RACHAT_ETAT
+  RECAPITALISATION_ETAT
+  STANDSTILL
+}
+
+enum SecteurStrategique {
+  DEFENSE_AEROSPACE
+  DEFENSE_NUCLEAIRE
+  ENERGIE
+  TELECOM
+  SEMICONDUCTEUR
+  BIOMETRIE_IDENTITE
+  CYBERSECURITE
+  BIOTECH_PHARMA
+  SANTE_OTC
+  GRANDE_DISTRIBUTION
+  AGROALIMENTAIRE
+  MEDIA_AUDIOVISUEL
+  AUTOMOBILE
+  AERONAUTIQUE_CIVIL
+  IT_SERVICES_HPC
+  CHIMIE_MATERIAUX
+  BTP_CIMENT
+  LOGISTIQUE_PORTUAIRE
+  MUSIQUE_DIVERTISSEMENT
+  IOT_TELECOM
+  AUTRE
+}
+
+enum PaysAcquereur {
+  ETATS_UNIS
+  ROYAUME_UNI
+  ALLEMAGNE
+  ITALIE
+  SUISSE
+  PAYS_BAS
+  CANADA
+  CHINE
+  SINGAPOUR
+  EMIRATS_ARABES_UNIS
+  TURQUIE
+  INDE
+  SUEDE
+  JAPON
+  COREE_DU_SUD
+  LUXEMBOURG
+  FRANCE
+  MULTIPLE
+  AUTRE
+}
+
+model AcquisitionEtrangere {
+  id                    String                 @id @default(cuid())
+  cibleNom              String
+  cibleSecteur          SecteurStrategique
+  cibleSousSecteur      String?
+  cibleSiren            String?
+  cibleSiteHistorique   String?
+  acquereurNom          String
+  acquereurPays         PaysAcquereur
+  acquereurType         String?
+  dateAnnonce           DateTime?
+  dateCloture           DateTime?
+  valeurEur             BigInt?
+  categorie             CategorieAcquisition
+  mesureEtat            MesureEtat             @default(AUCUNE)
+  ministreReferent      String?
+  iefDeclenche          Boolean?
+  iefReference          String?
+  contexte              String
+  enjeuxSouverainete    String
+  contextePolitique     String?
+  sourcePrincipale      String
+  sourceUrl             String
+  sourceDate            DateTime
+  sourcesAdditionnelles Json?
+  verifie               Boolean                @default(false)
+  precedeMacron         Boolean                @default(false)
+  parentDealId          String?
+  parentDeal            AcquisitionEtrangere?  @relation("DealPhases", fields: [parentDealId], references: [id], onDelete: SetNull)
+  phasesEnfants         AcquisitionEtrangere[] @relation("DealPhases")
+  createdAt             DateTime               @default(now())
+  updatedAt             DateTime               @updatedAt
+
+  @@index([cibleNom])
+  @@index([categorie])
+  @@index([acquereurPays])
+  @@index([cibleSecteur])
+  @@index([dateAnnonce])
+  @@index([verifie])
+  @@index([parentDealId])
+}
+
+// ─── Pre-2027 Launch — Wave 1 ───
+// Net-new tables, no relations to other models. See ~/.claude/plans/misty-swinging-ladybug.md.
+
+// User-submitted error reports from /signaler-une-erreur (P0.1 Legitimacy stack).
+model ErrorReport {
+  id             String             @id @default(cuid())
+  url            String
+  type           ErrorReportType
+  description    String
+  contact        String?
+  status         ErrorReportStatus  @default(PENDING)
+  resolutionNote String?
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+
+  @@index([status, createdAt])
+}
+
+enum ErrorReportType {
+  FACTUEL
+  SOURCE
+  TYPO
+  AUTRE
+}
+
+enum ErrorReportStatus {
+  PENDING
+  RESOLVED
+  REJECTED
+}
+
+// Newsletter signups captured before mail provider wiring (P0.2 /v/[slug] stub).
+model NewsletterPending {
+  id         String   @id @default(cuid())
+  email      String   @unique
+  sourceSlug String?
+  createdAt  DateTime @default(now())
+
+  @@index([createdAt])
+}
+
+// ─── HATVP Déclaration de Situation Patrimoniale (DSP) ───
+// Parsed from PDFs in documentation/HATVP-PDF/. JSON-row design lets the
+// renderer mirror the PDF's 12 sections without per-section schema.
+
+model DeclarationPatrimoine {
+  id                String    @id // dossierId from filename, e.g. "dsp34805"
+  personnaliteId    String?
+  nomNormalise      String
+  prenomNormalise   String
+  organe            String? // "Garde des sceaux ministre de la justice"
+  dateDebutMandat   DateTime?
+  dateDepot         DateTime?
+  regimeMatrimonial String?
+  sourcePdfUrl      String?
+  typeDeclaration   String // "DSP" or "DSPM" (modificative) or "DSPFM" (fin de mandat)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  rows         PatrimoineRow[]
+  personnalite PersonnalitePublique? @relation(fields: [personnaliteId], references: [id])
+
+  @@index([nomNormalise, prenomNormalise])
+  @@index([personnaliteId])
+}
+
+model PatrimoineRow {
+  id            String  @id @default(cuid())
+  declarationId String
+  rubriqueNum   Int // 1..12
+  rubriqueTitre String // "Les immeubles bâtis et non bâtis"
+  ordre         Int     @default(0)
+  isNeant       Boolean @default(false)
+  description   Json // { Type: "Appartement", Departement: "59", ... }
+  valeur        Json? // { "Prix d'acquisition": 225000, "Valeur vénale": 225000 }
+
+  declaration DeclarationPatrimoine @relation(fields: [declarationId], references: [id], onDelete: Cascade)
+
+  @@index([declarationId])
+  @@index([rubriqueNum])
 }

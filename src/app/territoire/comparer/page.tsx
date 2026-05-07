@@ -610,7 +610,7 @@ function MetricRow({
           {label}
         </p>
       </div>
-      <div className={`flex-1 px-5 py-4 text-right ${bBetter ? "bg-teal/5" : "bg-bureau-800/10"}`}>
+      <div className={`flex-1 px-5 py-4 text-right ${bBetter ? "bg-amber/5" : "bg-bureau-800/10"}`}>
         <p className={`text-xl font-bold tabular-nums ${bBetter ? "text-teal" : "text-bureau-200"}`}>
           {valB}
         </p>

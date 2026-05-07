@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { fmt, fmtDate } from "@/lib/format";
@@ -6,6 +7,22 @@ import { ScrutinResultBadge } from "@/components/scrutin-result-badge";
 import { TAG_LABELS, TAG_ORDER, TAG_COLORS } from "@/lib/vote-tags";
 
 export const revalidate = 3600; // Revalidate every hour — new scrutins ingested periodically
+
+export const metadata: Metadata = {
+  title: "Scrutins — L'Observatoire Citoyen",
+  description:
+    "Tous les scrutins de l'Assemblée nationale : résultats par député, par thème et par groupe politique depuis 2017.",
+  openGraph: {
+    title: "Scrutins — L'Observatoire Citoyen",
+    description:
+      "Tous les scrutins de l'Assemblée nationale : résultats par député, par thème et par groupe politique depuis 2017.",
+  },
+  twitter: {
+    title: "Scrutins — L'Observatoire Citoyen",
+    description:
+      "Tous les scrutins de l'Assemblée nationale : résultats par député, par thème et par groupe politique depuis 2017.",
+  },
+};
 
 export default async function VotesPage() {
   const [tagCounts, totalScrutins, adoptedCount, recentScrutins, topLois] = await Promise.all([

@@ -1,12 +1,11 @@
 import { Suspense } from "react";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import type { Metadata } from "next";
 import { prisma } from "@/lib/db";
 import { ProfileHero } from "@/components/profile-hero";
 import { ProfileTabs } from "@/components/profile-tabs";
 import { MandatsSection } from "@/components/gouvernement/mandats-section";
-import { InteretsSection } from "@/components/gouvernement/interets-section";
-import { RemunerationsPanel } from "@/components/gouvernement/remunerations-panel";
+import { HatvpDeclarationsSection } from "@/components/gouvernement/hatvp-declarations-section";
 import { CareerSection } from "@/components/gouvernement/career-section";
 import { LobbySection } from "@/components/gouvernement/lobby-section";
 import { JudiciaireSection } from "@/components/gouvernement/judiciaire-section";
@@ -14,15 +13,31 @@ import { ParliamentarySection } from "@/components/gouvernement/parliamentary-se
 import { PresidentBilanSection } from "@/components/gouvernement/president-bilan-section";
 import { PresidentPromessesSection } from "@/components/gouvernement/president-promesses-section";
 import { PresidentLobbyingSection } from "@/components/gouvernement/president-lobbying-section";
-import { PresidentDeclarationsSection } from "@/components/gouvernement/president-declarations-section";
 import { MediaTutelleSection } from "@/components/gouvernement/media-tutelle-section";
 import { DeportBanner } from "@/components/gouvernement/deport-banner";
 import { DeportSection } from "@/components/gouvernement/deport-section";
+import { SouveraineteSection } from "@/components/gouvernement/souverainete-section";
+import { TrajectoireHero } from "@/components/gouvernement/trajectoire-hero";
 import { ProfileSignalBanner } from "@/components/profile-signal-banner";
+import { ProfileSummary } from "@/components/gouvernement/profile-summary";
+import { StaleDataNotice } from "@/components/stale-data-notice";
 import { ShareButton } from "@/components/share-button";
 import { getPromesseSummary, BIO, PROMESSES } from "@/data/president-macron";
-import { normalizeName } from "@/lib/normalize-name";
-import { getBaremeOfficiel } from "@/lib/baremes-officiels";
+import { JsonLd } from "@/components/json-ld";
+
+/**
+ * Standard-minister tab order (5-section frame). The president variant keeps
+ * its specialized tabs (parcours / promesses / bilan / lobbying / declarations
+ * / judiciaire) — see plan §Phase 2.
+ */
+const STANDARD_TAB_REDIRECTS: Record<string, string> = {
+  parcours: "chronologie",
+  dossier: "documents",
+  hatvp: "documents",
+  mandats: "relations",
+  judiciaire: "signaux",
+  parlementaire: "relations",
+};
 
 export const revalidate = 3600;
 
@@ -100,6 +115,16 @@ export default async function GouvernementProfilePage({
       })
     : 0;
 
+  // Standard ministers use the 5-section frame; president keeps specialized tabs.
+  // Primary path: next.config.ts HTTP 308 redirects (excluding president slug).
+  // This in-page guard catches any old key that slips through.
+  if (!isPresident && rawTab && STANDARD_TAB_REDIRECTS[rawTab]) {
+    permanentRedirect(`/profils/${slug}?tab=${STANDARD_TAB_REDIRECTS[rawTab]}`);
+  }
+
+  const signauxCount =
+    deportCount + judiciaireCount + (hasConflictAlert ? 1 : 0);
+
   const tabs = isPresident
     ? [
         { key: "parcours", label: "Parcours", count: carriereCount || undefined },
@@ -116,29 +141,52 @@ export default async function GouvernementProfilePage({
           : []),
       ]
     : [
-        { key: "parcours", label: "Parcours", count: carriereCount || undefined },
-        { key: "hatvp", label: "Déclarations HATVP", count: interetCount || undefined },
+        { key: "resume", label: "Résumé" },
+        { key: "signaux", label: "Signaux", count: signauxCount || undefined },
         {
-          key: "mandats",
-          label: "Mandats & Lobbying",
+          key: "chronologie",
+          label: "CV public",
+          count: carriereCount || undefined,
+        },
+        {
+          key: "relations",
+          label: "Relations",
           count: personnalite.mandats.length || undefined,
         },
-        ...(judiciaireCount > 0
-          ? [{ key: "judiciaire", label: "Affaires judiciaires", count: judiciaireCount }]
-          : []),
-        ...(hasParlementaire
-          ? [{ key: "parlementaire", label: "Activité parlementaire" }]
-          : []),
+        {
+          key: "documents",
+          label: "Déclarations HATVP",
+        },
       ];
 
-  const defaultTab = isPresident ? "promesses" : "parcours";
+  const defaultTab = isPresident ? "promesses" : "resume";
   const validTabKeys = tabs.map((t) => t.key);
   const tab = rawTab && validTabKeys.includes(rawTab) ? rawTab : defaultTab;
 
   const promesseSummary = isPresident ? getPromesseSummary(2022) : null;
 
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  const personSchema = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: `${personnalite.prenom} ${personnalite.nom}`,
+    url: `${siteUrl}/profils/${personnalite.slug}`,
+    ...(personnalite.photoUrl ? { image: personnalite.photoUrl } : {}),
+    ...(personnalite.hatvpDossierId ? { sameAs: [personnalite.hatvpDossierId] } : {}),
+    ...(currentMandat
+      ? {
+          hasOccupation: {
+            "@type": "GovernmentPosition",
+            name: currentMandat.gouvernement ?? "",
+          },
+          jobTitle: currentMandat.titreCourt ?? currentMandat.titre,
+        }
+      : {}),
+  };
+
   return (
     <>
+      <JsonLd id={`ld-person-${personnalite.slug}`} data={personSchema} />
       <ProfileHero
         avatar={{ src: personnalite.photoUrl, initials }}
         name={`${personnalite.prenom} ${personnalite.nom}`}
@@ -183,6 +231,7 @@ export default async function GouvernementProfilePage({
           { label: "Ministres", href: "/profils/ministres" },
           { label: `${personnalite.prenom} ${personnalite.nom}` },
         ]}
+        lastUpdated={personnalite.derniereMaj}
         stats={
           isPresident
             ? undefined
@@ -200,22 +249,105 @@ export default async function GouvernementProfilePage({
         </Suspense>
       </ProfileHero>
 
-      {deportCount > 0 && !isPresident && (
+      {deportCount > 0 && !isPresident && tab !== "documents" && (
         <div className="mt-5">
           <DeportBanner
             personnaliteId={personnalite.id}
-            hatvpTabHref={`/profils/${personnalite.slug}?tab=hatvp#deports`}
+            hatvpTabHref={`/profils/${personnalite.slug}?tab=signaux#deports`}
           />
         </div>
       )}
 
-      <div className="mt-5">
-        <ProfileSignalBanner keys={[`ministre:${personnalite.slug}`]} />
+      {tab !== "documents" && (
+        <div className="mt-5">
+          <ProfileSignalBanner keys={[`ministre:${personnalite.slug}`]} />
+        </div>
+      )}
+
+      <div className="mx-auto mt-5 max-w-6xl px-6">
+        <StaleDataNotice date={personnalite.derniereMaj} />
       </div>
 
+      {tab !== "documents" && <TrajectoireHero personnaliteId={personnalite.id} />}
+
       <div className="mx-auto max-w-6xl px-6 py-8">
-        {/* ── Parcours ── */}
-        {tab === "parcours" && (
+        {/* ─── PRESIDENT VARIANT ─── (specialized tabs, unchanged) */}
+        {tab === "parcours" && isPresident && (
+          <div className="fade-up">
+            <CareerSection
+              personnaliteId={personnalite.id}
+              ministereCode={currentMandat?.ministereCode}
+              portefeuille={currentMandat?.portefeuille}
+            />
+          </div>
+        )}
+        {tab === "promesses" && isPresident && (
+          <PresidentPromessesSection electionYear={electionYear} />
+        )}
+        {tab === "bilan" && isPresident && <PresidentBilanSection />}
+        {tab === "lobbying" && isPresident && (
+          <div className="space-y-8 fade-up">
+            <PresidentLobbyingSection />
+            <SouveraineteSection
+              nom={personnalite.nom}
+              prenom={personnalite.prenom}
+            />
+          </div>
+        )}
+        {tab === "declarations" && isPresident && (
+          <HatvpDeclarationsSection
+            personnaliteId={personnalite.id}
+            prenom={personnalite.prenom}
+            nom={personnalite.nom}
+            hatvpDossierId={personnalite.hatvpDossierId}
+          />
+        )}
+        {tab === "judiciaire" && isPresident && (
+          <div className="fade-up">
+            <JudiciaireSection personnaliteId={personnalite.id} />
+          </div>
+        )}
+
+        {/* ─── STANDARD MINISTER 5-SECTION FRAME ─── */}
+        {tab === "resume" && !isPresident && (
+          <ProfileSummary
+            currentRole={currentMandat?.titre ?? "Membre du gouvernement"}
+            portefeuille={currentMandat?.portefeuille}
+            gouvernement={currentMandat?.gouvernement}
+            active={activeMandat !== undefined}
+            slug={personnalite.slug}
+            counts={{
+              mandats: personnalite.mandats.length,
+              carriere: carriereCount,
+              interets: interetCount,
+              deports: deportCount,
+              judiciaire: judiciaireCount,
+            }}
+          />
+        )}
+
+        {tab === "signaux" && !isPresident && (
+          <div className="space-y-8 fade-up">
+            {hasConflictAlert && (
+              <div className="flex items-start gap-3 rounded-xl border border-amber-600/30 bg-amber-950/20 px-4 py-3 text-sm text-amber-300">
+                <span className="shrink-0 font-semibold">Alerte :</span>
+                <span>
+                  Des conflits d&apos;intérêts potentiels ont été identifiés
+                  dans les déclarations HATVP. Voir l&apos;onglet Documents pour
+                  le détail des participations.
+                </span>
+              </div>
+            )}
+            {deportCount > 0 && (
+              <div id="deports">
+                <DeportSection personnaliteId={personnalite.id} />
+              </div>
+            )}
+            <JudiciaireSection personnaliteId={personnalite.id} />
+          </div>
+        )}
+
+        {tab === "chronologie" && !isPresident && (
           <div className="fade-up">
             <CareerSection
               personnaliteId={personnalite.id}
@@ -225,88 +357,37 @@ export default async function GouvernementProfilePage({
           </div>
         )}
 
-        {/* ── Promesses (president only) ── */}
-        {tab === "promesses" && isPresident && (
-          <PresidentPromessesSection electionYear={electionYear} />
-        )}
-
-        {/* ── Bilan économique (president only) ── */}
-        {tab === "bilan" && isPresident && <PresidentBilanSection />}
-
-        {/* ── Lobbying & Agenda (president only) ── */}
-        {tab === "lobbying" && isPresident && <PresidentLobbyingSection />}
-
-        {/* ── Déclarations HATVP (president — uses DeclarationInteret model) ── */}
-        {tab === "declarations" && isPresident && (
-          <PresidentDeclarationsSection />
-        )}
-
-        {/* ── Déclarations HATVP (standard ministers — uses InteretDeclare model) ── */}
-        {tab === "hatvp" && !isPresident && (
-          <div className="space-y-8 fade-up">
-            {hasConflictAlert && (
-              <div className="flex items-start gap-3 rounded-xl border border-amber-600/30 bg-amber-950/20 px-4 py-3 text-sm text-amber-300">
-                <span className="shrink-0 font-semibold">Alerte :</span>
-                <span>
-                  Des conflits d&apos;intérêts potentiels ont été identifiés
-                  dans les déclarations HATVP.
-                </span>
-              </div>
-            )}
-            <RemunerationsPanel
-              nomNormalise={
-                personnalite.nomNormalise || normalizeName(personnalite.nom)
-              }
-              prenomNormalise={
-                personnalite.prenomNormalise ||
-                normalizeName(personnalite.prenom)
-              }
-              personnaliteId={personnalite.id}
-              hatvpDossierId={personnalite.hatvpDossierId}
-              bareme={getBaremeOfficiel(activeMandat?.type)}
-            />
-            {deportCount > 0 && (
-              <div id="deports">
-                <DeportSection personnaliteId={personnalite.id} />
-              </div>
-            )}
-            <InteretsSection
-              personnaliteId={personnalite.id}
-              hatvpDossierId={personnalite.hatvpDossierId}
-            />
-          </div>
-        )}
-
-        {/* ── Mandats & Lobbying (standard ministers) ── */}
-        {tab === "mandats" && !isPresident && (
+        {tab === "relations" && !isPresident && (
           <div className="space-y-8 fade-up">
             <MandatsSection mandats={personnalite.mandats} />
             <LobbySection
               ministereCode={currentMandat?.ministereCode ?? null}
               personnaliteId={personnalite.id}
             />
+            <SouveraineteSection
+              nom={personnalite.nom}
+              prenom={personnalite.prenom}
+            />
             {currentMandat?.ministereCode && (
               <MediaTutelleSection ministereCode={currentMandat.ministereCode} />
+            )}
+            {hasParlementaire && (
+              <ParliamentarySection
+                deputeId={personnalite.deputeId}
+                senateurId={personnalite.senateurId}
+                ministereCode={currentMandat?.ministereCode}
+              />
             )}
           </div>
         )}
 
-        {/* ── Affaires judiciaires ── */}
-        {tab === "judiciaire" && (
-          <div className="fade-up">
-            <JudiciaireSection personnaliteId={personnalite.id} />
-          </div>
-        )}
-
-        {/* ── Activité parlementaire (standard profiles only) ── */}
-        {tab === "parlementaire" && hasParlementaire && !isPresident && (
-          <div className="fade-up">
-            <ParliamentarySection
-              deputeId={personnalite.deputeId}
-              senateurId={personnalite.senateurId}
-              ministereCode={currentMandat?.ministereCode}
-            />
-          </div>
+        {tab === "documents" && !isPresident && (
+          <HatvpDeclarationsSection
+            personnaliteId={personnalite.id}
+            prenom={personnalite.prenom}
+            nom={personnalite.nom}
+            hatvpDossierId={personnalite.hatvpDossierId}
+          />
         )}
       </div>
 
